@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — ScrumIA</title>
+<meta name="description" content="ScrumIA reference: the eleven modules and their skills, the roles, the config file, and how to write your own module.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/reference.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/reference.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/reference.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/reference.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ScrumIA — reference">
+<meta property="og:description" content="ScrumIA reference: the eleven modules and their skills, the roles, the config file, and how to write your own module.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/reference.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Main">
+      <a href="index.html">Overview</a>
+      <a href="index.html#composer">Compose</a>
+      <a href="workflow.html">Workflow</a>
+      <a href="reference.html" aria-current="page">Reference</a>
+      <a href="about.html">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="reference.html" aria-current="true" lang="en">EN</a>
+        <a href="fr/reference.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<h1>Reference</h1>
+<p class="section-intro">Modules, skills, configuration, and how to write your own.</p>
+
+<section id="modules">
+  <h2>The modules</h2>
+
+  <h3><code>scrumia-core</code> — the kernel</h3>
+  <p>Fills no slot and does nothing on its own. It describes the composition and makes it legible to agents. The only non-optional module.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-init</code></td><td>Installs or checks the composition, generates the <code>CLAUDE.md</code> section</td></tr>
+        <tr><td><code>scrumia-compose</code></td><td>Inspects, changes or diagnoses the composition</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-rules</code> — no slot</h3>
+  <p>Sits beside <code>scrumia-core</code>: the rules-hierarchy format itself — index, guides, decisions — that lets a module's knowledge skill, or a project's own conventions, load only the guide a task routes to instead of one growing file. Fills no slot. <strong>Assumes</strong> nothing beyond <code>scrumia-core</code>. <strong>Costs</strong> one more layer to author correctly — a section is overhead below three distinct concerns.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-rules</code></td><td>The format reference: anatomy, navigation, precedence between sections — read first</td></tr>
+        <tr><td><code>scrumia-rules-setup</code></td><td>Scaffolds a project-local section: interview, harvest from code and lint configs, write, register in <code>CLAUDE.md</code></td></tr>
+        <tr><td><code>scrumia-rules-update</code></td><td>Evolves a rule: challenges its decision, refines or supersedes it, updates the guide, logs the change</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-specs</code> — slot <code>specs</code></h3>
+  <p>Per-feature specs, TDD-oriented. A contextual file catalogue rather than one document. <strong>Assumes</strong> specs live in the repo next to the code. <strong>Costs</strong> more judgement when writing than a fixed template.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-specs-setup</code></td><td>Creates the specs tree</td></tr>
+        <tr><td><code>scrumia-feature</code></td><td>Creates, updates or audits a feature</td></tr>
+        <tr><td><code>scrumia-specs-find</code></td><td>Finds a rule, walks dependencies, loads minimal context</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-github-project</code> — slot <code>tracker</code></h3>
+  <p>Issues, sub-issues, GitHub Projects columns, branches and PRs. A <code>PreToolUse</code> hook blocks stateful files in the repo. <strong>Assumes</strong> an authenticated <code>gh</code>. <strong>Costs</strong> a hard GitHub dependency and nothing offline.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-project-setup</code></td><td>Columns, labels, issue templates</td></tr>
+        <tr><td><code>scrumia-refine</code></td><td>Moves a ticket from Backlog to Ready for dev</td></tr>
+        <tr><td><code>scrumia-ticket</code></td><td>Runs a ticket: worktree, spec, code, tests, review, PR</td></tr>
+        <tr><td><code>scrumia-review</code></td><td>Routes a PR review and synthesises</td></tr>
+        <tr><td><code>scrumia-status</code></td><td>Progress view, computed on demand</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-teams</code> — slot <code>team</code></h3>
+  <div class="grid grid-3">
+    <div class="card card-manager">
+      <span class="tag">opus · memory: project</span>
+      <h3>manager</h3>
+      <p>Board, splitting, routing, cadence. Doesn't own business rules, architecture, or the merge.</p>
+    </div>
+    <div class="card card-business">
+      <span class="tag">fable · memory: project</span>
+      <h3>business</h3>
+      <p>Rules, vocabulary, compliance. Doesn't own architecture, stack, or planning.</p>
+    </div>
+    <div class="card card-tech">
+      <span class="tag">fable · memory: project</span>
+      <h3>tech</h3>
+      <p>Architecture, contracts, debt, quality. Doesn't own business rules or priorities.</p>
+    </div>
+  </div>
+  <p>Each boundary is a <strong>line of refusal</strong> — without it, the three collapse into one generalist and the split stops paying for itself. Three isn't a magic number: roles are enabled, disabled and added by config. Turning one off is a documented trade-off, not a downgrade.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-team-setup</code></td><td>Active roles, their models, escalation rules</td></tr>
+        <tr><td><code>scrumia-sprint</code></td><td>Builds a sprint and consumes it in dynamic workflows</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-discovery</code> — slot <code>discovery</code></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-brainstorm</code></td><td>Challenges an idea until it can be split</td></tr>
+        <tr><td><code>scrumia-split</code></td><td>Splits into features, creates issues, ships specs on a branch</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-impl-rust</code> — slot <code>implementation</code></h3>
+  <p>Invalid states made unrepresentable, <code>Result</code> at the boundaries, typed errors per layer. <strong>Refuses</strong> <code>unwrap()</code> in production, clones that appease the borrow checker, single-implementer traits.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-rust</code></td><td>The reference, loaded before writing Rust in a covered app</td></tr>
+        <tr><td><code>scrumia-rust-audit</code></td><td>Measures an existing app against the rules, finding by finding</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-impl-solidjs</code> — slot <code>implementation</code></h3>
+  <p>Fine-grained reactivity without React reflexes, behaviour-first component tests, structure by feature. <strong>Refuses</strong> destructured props, effects used as derivations, components that fetch.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-solidjs</code></td><td>The reference, loaded before writing SolidJS in a covered app</td></tr>
+        <tr><td><code>scrumia-solidjs-audit</code></td><td>Measures an existing app against the rules, finding by finding</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-practice-tdd</code> — slot <code>practices</code></h3>
+  <p>Refines one point of the implementation contract: <strong>how we test</strong>. The cycle operationalized for an agent, the mock boundary, AC-to-test mapping.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-tdd</code></td><td>The reference: cycle, mock boundary, where TDD stops</td></tr>
+        <tr><td><code>scrumia-tdd-audit</code></td><td>The real state of an app's test safety net</td></tr>
+        <tr><td><code>scrumia-tdd-refactor</code></td><td>Puts a zone under test before touching it</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-practice-solid</code> — slot <code>practices</code></h3>
+  <p>Refines one point of the implementation contract: <strong>which design principles</strong>. The five principles, each with its application limit — over-application is audited on equal footing with violations.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-solid-principles</code></td><td>The reference: the five, with their limits, in OO and functional alike</td></tr>
+        <tr><td><code>scrumia-solid-audit</code></td><td>Violations and over-applications, on equal footing</td></tr>
+        <tr><td><code>scrumia-solid-refactor</code></td><td>Resolves one finding, in safe steps</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3><code>scrumia-practice-tanstack-query</code> — slot <code>practices</code></h3>
+  <p>Refines one point of the implementation contract: <strong>how the app talks to the server and caches what it gets back</strong> — query keys, invalidation, optimistic updates, the boundary against client-only state. Ported from real monorepo use: 9 guides, 13 decisions. <strong>Assumes</strong> a stack TanStack Query ships for (React, Solid, Vue, Svelte). <strong>Costs</strong> a caching model to learn — the audit and refactor skills that would measure and close the gap aren't built yet.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-tanstack-query</code></td><td>The reference: query keys, cache invalidation, optimistic updates, the server/client boundary</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="config">
+  <h2>Configuration</h2>
+  <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>
+
+<pre><code>project:
+  name: <span class="k">"my-project"</span>
+  repo: <span class="k">"tibs245/my-project"</span>
+
+composition:
+  specs:     scrumia-specs
+  tracker:   scrumia-github-project
+  team:      scrumia-teams
+  discovery: scrumia-discovery
+  design:    null
+
+apps:
+  - name: web
+    path: apps/web
+    type: frontend
+    implementation: scrumia-impl-solidjs
+    practices: [scrumia-practice-tdd]
+  - name: api
+    path: apps/api
+    type: backend
+    implementation: scrumia-impl-rust
+    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+
+settings:
+  autonomy:
+    level: guided
+    auto_merge: []
+  specs:
+    root: <span class="k">"features"</span>
+  tracker:
+    columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
+  team:
+    roles: [manager, business, tech]
+    sprint:
+      max_tickets: 5</code></pre>
+
+  <p>Two conventions that matter: a missing module is declared <code>null</code> rather than omitted — "not chosen yet" and "deliberately without" are different things. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.</p>
+</section>
+
+<section id="impl">
+  <h2>Implementation modules and practices</h2>
+  <p>The most personal slots. <code>implementation</code> and <code>practices</code> both take several modules at once, mapped app by app. Two competent developers can hold opposite views here and neither is wrong, which is exactly why these are replaceable modules rather than kernel rules.</p>
+
+  <h3>The contract</h3>
+  <p>A skill the agent loads <strong>before writing code</strong> in that app, covering four things:</p>
+  <ol>
+    <li><strong>How you test</strong> — which level for which change, what gets stubbed and what doesn't, how an <code>AC-n</code> becomes a test</li>
+    <li><strong>Which design principles</strong> — named <em>and situated</em>. "We apply SOLID" guides nobody; a principle without a boundary becomes a reflex, and reflexes produce needless abstraction</li>
+    <li><strong>How code is laid out</strong> — precise enough that an agent places a new file without hesitating</li>
+    <li><strong>What is refused</strong> — the most useful part, and the most often skipped. An agent that knows what's rejected self-corrects</li>
+  </ol>
+
+  <h3>How practices compose</h3>
+  <p>A practice module refines <strong>one named point</strong> of that contract — TDD refines "how you test", SOLID refines "which design principles" — and ships three skills: the reference, the audit, the refactor. The implementation module <em>situates</em> each practice for its stack. One precedence rule: <strong>specific beats generic</strong> — implementation module over practice, project override over both.</p>
+
+  <h3>Overriding without forking</h3>
+  <p>Declared settings under <code>settings.implementation.&lt;module&gt;</code> and <code>settings.practices.&lt;module&gt;</code>, plus optional project override files (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) the module reads and honours over its own rules. A module offering neither gets forked at the first disagreement — and that fork never sees an update.</p>
+
+  <div class="note">
+    <span class="note-title">Sketched, not built</span>
+    <p><code>scrumia-design</code> is specified but not implemented. It would build on Claude Design, reachable from Claude Code through <code>DesignSync</code> and the <code>/design-sync</code> skill.</p>
+  </div>
+
+  <h3>Rules hierarchy</h3>
+  <p>Each knowledge skill becomes a routing index instead of one fat file: <code>00-index.md</code> loaded first and always, <code>guides/NN-topic.md</code> loaded only on demand, <code>decisions/D-NN-slug.md</code> opened only when a rule is challenged. A <code>section.json</code> declares the globs a section governs. In a monorepo, an app's <code>path</code> in <code>apps[]</code> anchors which sections apply where — the same <strong>specific beats generic</strong> precedence, one level down. See <code>scrumia-rules</code> above and <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md">ADR-0011</a>.</p>
+</section>
+
+<section id="write">
+  <h2>Writing a module</h2>
+  <p>Three rules, no more:</p>
+  <ol>
+    <li><strong>Fill a slot</strong> — an existing one, or a new one you define and document</li>
+    <li><strong>Document your settings</strong> under <code>settings.&lt;slot&gt;</code></li>
+    <li><strong>Provide your <code>CLAUDE.md</code> line</strong> — the sentence that tells an agent what it needs without reading you</li>
+  </ol>
+  <p>And one prohibition: <strong>never assume another module is present</strong>. If a capability is missing, say so and propose the next step rather than failing.</p>
+
+<pre><code><span class="c"># validate before publishing</span>
+claude plugin validate ./plugins/scrumia-core
+claude plugin validate .
+
+<span class="c"># try without installing</span>
+claude --plugin-dir ./plugins/scrumia-core</code></pre>
+
+  <p>A new slot is warranted when a real project would fill it <em>differently</em>. Otherwise it's one more skill in an existing module.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">The eleven decisions</a>
+    <a class="btn btn-ghost" href="workflow.html">Workflow</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

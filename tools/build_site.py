@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""Build the bilingual static site from one template per page + one string file per language.
+
+    site/templates/<page>.html      the structure, written once
+    site/templates/partials/*.html  shared chrome ({{>head}}, {{>header}}, {{>footer}})
+    site/i18n/<lang>/common.json    chrome strings (nav, footer, theme)
+    site/i18n/<lang>/<page>.json    page strings
+
+Output: site/<page>.html (en), site/fr/<page>.html (fr), plus sitemap.xml.
+A key missing in any language fails the build — that is the anti-divergence guard.
+
+Run from anywhere: python3 tools/build_site.py
+Adding a language = add site/i18n/<lang>/ and one entry to LANGS below.
+"""
+
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+SITE = ROOT / "site"
+TPL = SITE / "templates"
+I18N = SITE / "i18n"
+SITE_URL = "https://tibs245.github.io/scrumia/"
+PAGES = ["index", "workflow", "reference", "about"]
+LANGS = {
+    "en": {"out": SITE, "prefix": "", "root": ""},
+    "fr": {"out": SITE / "fr", "prefix": "fr/", "root": "../"},
+}
+
+TOKEN = re.compile(r"\{\{([@>]?[A-Za-z0-9_.-]+)\}\}")
+ERRORS: list[str] = []
+
+
+def url_for(lang: str, page: str) -> str:
+    base = SITE_URL + LANGS[lang]["prefix"]
+    return base if page == "index" else base + page + ".html"
+
+
+def specials(lang: str, page: str) -> dict[str, str]:
+    sp = {
+        "@lang": lang,
+        "@root": LANGS[lang]["root"],
+        "@canonical": url_for(lang, page),
+        "@url_en": url_for("en", page),
+        "@url_fr": url_for("fr", page),
+        "@to_en": (page + ".html") if lang == "en" else "../" + page + ".html",
+        "@to_fr": ("fr/" + page + ".html") if lang == "en" else page + ".html",
+        "@en_current": ' aria-current="true"' if lang == "en" else "",
+        "@fr_current": ' aria-current="true"' if lang == "fr" else "",
+    }
+    for p in PAGES:
+        sp["@cur_" + p] = ' aria-current="page"' if p == page else ""
+    return sp
+
+
+def load_strings(lang: str, page: str) -> dict[str, str]:
+    strings: dict[str, str] = {}
+    for name in ("common", page):
+        path = I18N / lang / f"{name}.json"
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            ERRORS.append(f"{path.relative_to(ROOT)}: missing")
+            continue
+        except json.JSONDecodeError as e:
+            ERRORS.append(f"{path.relative_to(ROOT)}: invalid JSON — {e}")
+            continue
+        overlap = strings.keys() & data.keys()
+        if overlap:
+            ERRORS.append(f"{path.relative_to(ROOT)}: keys already in common.json: {sorted(overlap)}")
+        strings.update(data)
+    return strings
+
+
+def render(template: str, strings: dict[str, str], sp: dict[str, str], origin: str, used: set[str]) -> str:
+    def include(match: re.Match) -> str:
+        name = match.group(1)
+        path = TPL / "partials" / f"{name}.html"
+        if not path.exists():
+            ERRORS.append(f"{origin}: unknown partial {{{{>{name}}}}}")
+            return ""
+        return path.read_text(encoding="utf-8").rstrip("\n")
+
+    # Partials first (one level is all we use), then tokens.
+    template = re.sub(r"\{\{>([A-Za-z0-9_-]+)\}\}", include, template)
+
+    def substitute(match: re.Match) -> str:
+        key = match.group(1)
+        if key.startswith("@"):
+            if key not in sp:
+                ERRORS.append(f"{origin}: unknown special {{{{{key}}}}}")
+                return ""
+            return sp[key]
+        if key not in strings:
+            ERRORS.append(f"{origin}: missing string '{key}'")
+            return ""
+        used.add(key)
+        value = strings[key]
+        # Non-string values (e.g. an object injected into a <script>) render as JSON.
+        return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+
+    return TOKEN.sub(substitute, template)
+
+
+def build() -> int:
+    for lang, cfg in LANGS.items():
+        cfg["out"].mkdir(parents=True, exist_ok=True)
+        for page in PAGES:
+            tpl_path = TPL / f"{page}.html"
+            if not tpl_path.exists():
+                ERRORS.append(f"{tpl_path.relative_to(ROOT)}: missing template")
+                continue
+            strings = load_strings(lang, page)
+            used: set[str] = set()
+            origin = f"{page}.html [{lang}]"
+            html = render(tpl_path.read_text(encoding="utf-8"), strings, specials(lang, page), origin, used)
+            if "{{" in html:
+                ERRORS.append(f"{origin}: unresolved '{{{{' left in output")
+            unused = {k for k in strings if k not in used}
+            # Chrome keys are shared: only warn about unused page-level keys.
+            page_keys = set(json.loads((I18N / lang / f"{page}.json").read_text(encoding="utf-8")).keys()) \
+                if (I18N / lang / f"{page}.json").exists() else set()
+            for key in sorted(unused & page_keys):
+                print(f"warning: {origin}: unused string '{key}'")
+            (cfg["out"] / f"{page}.html").write_text(html, encoding="utf-8")
+
+    urls = [url_for(lang, page) for page in PAGES for lang in LANGS]
+    sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',
+               '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        sitemap.append(f"  <url><loc>{u}</loc></url>")
+    sitemap.append("</urlset>")
+    (SITE / "sitemap.xml").write_text("\n".join(sitemap) + "\n", encoding="utf-8")
+
+    if ERRORS:
+        for e in ERRORS:
+            print(f"error: {e}")
+        print(f"\nbuild failed: {len(ERRORS)} error(s)")
+        return 1
+    pages = len(PAGES) * len(LANGS)
+    print(f"built {pages} pages + sitemap.xml")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(build())

@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+# ScrumIA — the single place that talks to GitHub Projects v2. JSON on stdout.
+# Traps this guards against: ../skills/scrumia-status/references/projects-v2.md
+
+set -uo pipefail
+
+CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+DEFAULT_LIMIT=200
+
+die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
+warn() { echo "board.sh: $1" >&2; }
+
+usage() {
+  cat >&2 <<'EOF'
+board.sh <command> [args]
+
+  doctor                        Check config, auth and board reachability
+  columns                       Status field id and its option ids
+  find <issue>                  Resolve a card's item-id
+  move <issue> <column>         Move a card to a column
+  read [--query Q] [--limit N]  Read the board, grouped by status
+  ready [--milestone M]         Tickets ready for dev, optionally one sprint
+  epic <issue>                  An epic and its native sub-issues
+
+`read` defaults to "-status:Done"; pass --all to lift it.
+EOF
+  exit 2
+}
+
+load_config() {
+  [ -f "$CONFIG" ] || die "no $CONFIG — run /scrumia-core:scrumia-init first"
+  if command -v yq >/dev/null 2>&1; then
+    CFG=$(yq -o=json '.' "$CONFIG" 2>/dev/null)
+  elif python3 -c 'import yaml' >/dev/null 2>&1; then
+    CFG=$(python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])) or {}, sys.stdout)' "$CONFIG" 2>/dev/null)
+  else
+    die "need yq or python3+PyYAML to read $CONFIG"
+  fi
+  [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
+
+  REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
+  [ -n "$REPO" ] || die "project.repo missing from $CONFIG"
+  REPO_OWNER=${REPO%%/*}
+  REPO_NAME=${REPO##*/}
+  # A user-owned board can track an org-owned repo, so the two owners differ.
+  OWNER=$(jq -r --arg d "$REPO_OWNER" '.settings.tracker.owner // $d' <<<"$CFG")
+  PROJECT_NUMBER=$(jq -r '.settings.tracker.project_number // empty' <<<"$CFG")
+  FIELD_ID=$(jq -r '.settings.tracker.board.field_id // empty' <<<"$CFG")
+}
+
+need_project() {
+  [ -n "$PROJECT_NUMBER" ] || die "settings.tracker.project_number missing — run scrumia-project-setup"
+}
+
+# Skills name a flow step ("in_progress"), boards name a column ("IN PROGRESS").
+# Without this, adopting an existing board means renaming its columns to suit us.
+resolve_column() {
+  local key="$1" mapped
+  mapped=$(jq -r --arg k "$key" '.settings.tracker.board.flow[$k] // empty' <<<"$CFG")
+  echo "${mapped:-$key}"
+}
+
+option_id() {
+  local column="$1" id
+  id=$(jq -r --arg c "$column" '.settings.tracker.board.options[$c] // empty' <<<"$CFG")
+  if [ -z "$id" ]; then
+    # GitHub ships "In Progress"; a hand-made board may read "IN PROGRESS".
+    id=$(jq -r --arg c "$column" '
+      .settings.tracker.board.options // {}
+      | to_entries
+      | map(select((.key|ascii_downcase) == ($c|ascii_downcase)))
+      | (.[0].value // empty)' <<<"$CFG")
+    [ -n "$id" ] && warn "column '$column' matched case-insensitively — config and board disagree on casing"
+  fi
+  echo "$id"
+}
+
+cmd_doctor() {
+  local auth_ok=false scope_ok=false board_ok=false detail=""
+  if gh auth status >/dev/null 2>&1; then
+    auth_ok=true
+    gh auth status 2>&1 | grep -q "'project'" && scope_ok=true
+  else
+    detail="gh not authenticated — run: gh auth login"
+  fi
+  if [ -n "$PROJECT_NUMBER" ] && $auth_ok; then
+    if gh project view "$PROJECT_NUMBER" --owner "$OWNER" --format json >/dev/null 2>&1; then
+      board_ok=true
+    else
+      detail="project $PROJECT_NUMBER unreachable under owner $OWNER"
+    fi
+  fi
+  $scope_ok || [ -n "$detail" ] || detail="gh lacks the 'project' scope — run: gh auth refresh -s project"
+  jq -n --arg repo "$REPO" --arg owner "$OWNER" --arg pn "$PROJECT_NUMBER" \
+        --arg fid "$FIELD_ID" --arg detail "$detail" \
+        --argjson auth "$auth_ok" --argjson scope "$scope_ok" --argjson board "$board_ok" '
+    {ok: ($auth and $board), repo: $repo, owner: $owner,
+     project_number: (if $pn == "" then null else ($pn|tonumber) end),
+     field_id: (if $fid == "" then null else $fid end),
+     checks: {authenticated: $auth, project_scope: $scope, board_reachable: $board},
+     detail: (if $detail == "" then null else $detail end)}'
+}
+
+cmd_columns() {
+  need_project
+  local out
+  out=$(gh project field-list "$PROJECT_NUMBER" --owner "$OWNER" --limit 100 --format json 2>&1) \
+    || die "field-list failed: $out"
+  jq -e '.fields[] | select(.name == "Status")
+      | {field_id: .id, options: [.options[] | {name, id}]}' <<<"$out" \
+    || die "no Status field on project $PROJECT_NUMBER"
+}
+
+cmd_find() {
+  local issue="${1:-}"; [ -n "$issue" ] || usage
+  local out
+  # Asking the issue for its card keeps this immune to board size.
+  out=$(gh api graphql -f query='
+    query($owner:String!,$repo:String!,$number:Int!){
+      repository(owner:$owner,name:$repo){
+        issue(number:$number){
+          title
+          projectItems(first:20){ nodes{ id project{ id number title } } }
+        }
+      }
+    }' -F owner="$REPO_OWNER" -F repo="$REPO_NAME" -F number="$issue" 2>&1) \
+    || die "graphql lookup failed for issue #$issue: $out"
+
+  jq -e '.data.repository.issue' >/dev/null 2>&1 <<<"$out" \
+    || die "issue #$issue not found in $REPO"
+
+  local result
+  result=$(jq --arg pn "$PROJECT_NUMBER" --arg issue "$issue" '
+    .data.repository.issue as $i
+    | ($i.projectItems.nodes
+       | map(select($pn == "" or (.project.number|tostring) == $pn))) as $match
+    | {issue: ($issue|tonumber), title: $i.title,
+       found: ($match|length > 0),
+       item_id: ($match[0].id // null),
+       project_id: ($match[0].project.id // null),
+       on_boards: [$i.projectItems.nodes[].project.title]}' <<<"$out")
+
+  if [ "$(jq -r '.found' <<<"$result")" = "false" ]; then
+    warn "issue #$issue is not on project $PROJECT_NUMBER — add it before moving its card"
+  fi
+  echo "$result"
+}
+
+cmd_move() {
+  local issue="${1:-}" requested="${2:-}"
+  [ -n "$issue" ] && [ -n "$requested" ] || usage
+  need_project
+  [ -n "$FIELD_ID" ] || die "settings.tracker.board.field_id missing — run scrumia-project-setup"
+
+  local column; column=$(resolve_column "$requested")
+  local opt; opt=$(option_id "$column")
+  [ -n "$opt" ] || die "column '$column' has no option id in $CONFIG — known: $(jq -r '.settings.tracker.board.options // {} | keys | join(", ")' <<<"$CFG")"
+
+  local card; card=$(cmd_find "$issue") || exit 1
+  [ "$(jq -r '.found' <<<"$card")" = "true" ] || die "issue #$issue has no card on project $PROJECT_NUMBER"
+  local item_id project_id out
+  item_id=$(jq -r '.item_id' <<<"$card")
+  project_id=$(jq -r '.project_id' <<<"$card")
+
+  # --project-id is mandatory for non-draft items and is the usual cause of failure.
+  out=$(gh project item-edit --project-id "$project_id" --id "$item_id" \
+          --field-id "$FIELD_ID" --single-select-option-id "$opt" 2>&1)
+  if [ $? -ne 0 ]; then
+    warn "if the column was deleted and recreated, re-run scrumia-project-setup to refresh the ids"
+    die "item-edit failed: $out"
+  fi
+  jq -n --argjson issue "$issue" --arg col "$column" --arg item "$item_id" \
+    '{ok:true, issue:$issue, moved_to:$col, item_id:$item}'
+}
+
+cmd_read() {
+  need_project
+  local query="-status:Done" limit="$DEFAULT_LIMIT" explicit_query=false
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --query) query="${2:-}"; explicit_query=true; shift 2 ;;
+      --limit) limit="${2:-}"; shift 2 ;;
+      --all) query=""; shift ;;
+      *) usage ;;
+    esac
+  done
+
+  local out
+  if [ -n "$query" ]; then
+    out=$(gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --query "$query" --format json 2>&1)
+  else
+    out=$(gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --format json 2>&1)
+  fi
+  [ $? -eq 0 ] || die "item-list failed: $out"
+
+  local count matching
+  count=$(jq '.items | length' <<<"$out")
+  # totalCount is the count *after* filtering, so it dates truncation exactly.
+  matching=$(jq '.totalCount // 0' <<<"$out")
+
+  # An invalid filter and one that matches nothing both return 0 here, so the
+  # only way to tell them apart is to ask again without the filter.
+  local suspect=false
+  if [ "$count" -eq 0 ] && [ -n "$query" ]; then
+    local board_total
+    board_total=$(gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit 1 --format json 2>/dev/null | jq '.totalCount // 0')
+    if [ "${board_total:-0}" -gt 0 ]; then
+      suspect=true
+      warn "query '$query' matched 0 of $board_total items — a typo, an unknown column or milestone, and a genuinely empty result all look like this; verify before reporting nothing to do"
+    fi
+  fi
+
+  local truncated=false
+  [ "$count" -lt "$matching" ] && { truncated=true; warn "showing $count of $matching matching items — raise --limit or narrow --query"; }
+
+  jq --arg q "$query" --argjson trunc "$truncated" --argjson suspect "$suspect" \
+     --argjson explicit "$explicit_query" --argjson matching "$matching" '
+    {ok: true, query: (if $q == "" then null else $q end),
+     query_was_explicit: $explicit, count: (.items|length),
+     total_matching: $matching,
+     truncated: $trunc, filter_suspect: $suspect,
+     columns: (.items | group_by(.status) | map({
+       status: (.[0].status // "(no status)"),
+       count: length,
+       items: map({number: .content.number, title: .title,
+                   type: .content.type, labels: [.labels[]?]})
+     }))}' <<<"$out"
+}
+
+cmd_ready() {
+  need_project
+  local milestone=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --milestone) milestone="${2:-}"; shift 2 ;;
+      *) usage ;;
+    esac
+  done
+  local column; column=$(resolve_column "ready")
+  [ "$column" = "ready" ] && column="Ready for dev"
+  local q="status:\"$column\""
+  [ -n "$milestone" ] && q="$q milestone:\"$milestone\""
+  cmd_read --query "$q"
+}
+
+cmd_epic() {
+  local issue="${1:-}"; [ -n "$issue" ] || usage
+  local out kids
+  out=$(gh issue view "$issue" --repo "$REPO" \
+        --json number,title,state,milestone,labels,subIssuesSummary,parent 2>&1) \
+    || die "issue #$issue unreadable: $out"
+  # subIssuesSummary is GitHub's own count; recounting children invents a second truth.
+  kids=$(gh api graphql -f query='
+    query($owner:String!,$repo:String!,$number:Int!){
+      repository(owner:$owner,name:$repo){
+        issue(number:$number){
+          subIssues(first:100){ nodes{ number title state labels(first:20){nodes{name}} } }
+        }
+      }
+    }' -F owner="$REPO_OWNER" -F repo="$REPO_NAME" -F number="$issue" 2>/dev/null \
+    | jq '[.data.repository.issue.subIssues.nodes[]? | {number, title, state, labels: [.labels.nodes[].name]}]' 2>/dev/null) \
+    || kids="[]"
+  jq --argjson kids "${kids:-[]}" '
+    {ok:true, epic: {number, title, state,
+      milestone: (.milestone.title // null),
+      labels: [.labels[].name],
+      parent: (.parent.number // null),
+      progress: (.subIssuesSummary // {total:0,completed:0,percentCompleted:0})},
+     sub_issues: $kids}' <<<"$out"
+}
+
+command -v gh >/dev/null 2>&1 || die "gh not found — install the GitHub CLI"
+command -v jq >/dev/null 2>&1 || die "jq not found"
+
+cmd="${1:-}"; shift 2>/dev/null || true
+case "$cmd" in
+  doctor)  load_config; cmd_doctor ;;
+  columns) load_config; cmd_columns ;;
+  find)    load_config; cmd_find "$@" ;;
+  move)    load_config; cmd_move "$@" ;;
+  read)    load_config; cmd_read "$@" ;;
+  ready)   load_config; cmd_ready "$@" ;;
+  epic)    load_config; cmd_epic "$@" ;;
+  *)       usage ;;
+esac

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+{{>head}}
+</head>
+<body>
+
+{{>header}}
+
+<main id="main">
+
+<h1>{{page_title}}</h1>
+<p class="section-intro">{{page_intro}}</p>
+
+<section id="modules">
+  <h2>{{mods_title}}</h2>
+
+  <h3><code>scrumia-core</code> — {{h_kernel}}</h3>
+  <p>{{core_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-init</code></td><td>{{core_row1}}</td></tr>
+        <tr><td><code>scrumia-compose</code></td><td>{{core_row2}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-rules</code> — {{h_no_slot}}</h3>
+  <p>{{rules_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-rules</code></td><td>{{rules_row1}}</td></tr>
+        <tr><td><code>scrumia-rules-setup</code></td><td>{{rules_row2}}</td></tr>
+        <tr><td><code>scrumia-rules-update</code></td><td>{{rules_row3}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-specs</code> — {{h_slot_specs}}</h3>
+  <p>{{specs_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-specs-setup</code></td><td>{{specs_row1}}</td></tr>
+        <tr><td><code>scrumia-feature</code></td><td>{{specs_row2}}</td></tr>
+        <tr><td><code>scrumia-specs-find</code></td><td>{{specs_row3}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-github-project</code> — {{h_slot_tracker}}</h3>
+  <p>{{ghp_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-project-setup</code></td><td>{{ghp_row1}}</td></tr>
+        <tr><td><code>scrumia-refine</code></td><td>{{ghp_row2}}</td></tr>
+        <tr><td><code>scrumia-ticket</code></td><td>{{ghp_row3}}</td></tr>
+        <tr><td><code>scrumia-review</code></td><td>{{ghp_row4}}</td></tr>
+        <tr><td><code>scrumia-status</code></td><td>{{ghp_row5}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-teams</code> — {{h_slot_team}}</h3>
+  <div class="grid grid-3">
+    <div class="card card-manager">
+      <span class="tag">{{teams_tag_manager}}</span>
+      <h3>manager</h3>
+      <p>{{teams_manager_p}}</p>
+    </div>
+    <div class="card card-business">
+      <span class="tag">{{teams_tag_role}}</span>
+      <h3>business</h3>
+      <p>{{teams_business_p}}</p>
+    </div>
+    <div class="card card-tech">
+      <span class="tag">{{teams_tag_role}}</span>
+      <h3>tech</h3>
+      <p>{{teams_tech_p}}</p>
+    </div>
+  </div>
+  <p>{{teams_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-team-setup</code></td><td>{{teams_row1}}</td></tr>
+        <tr><td><code>scrumia-sprint</code></td><td>{{teams_row2}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-discovery</code> — {{h_slot_discovery}}</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-brainstorm</code></td><td>{{disc_row1}}</td></tr>
+        <tr><td><code>scrumia-split</code></td><td>{{disc_row2}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-impl-rust</code> — {{h_slot_impl}}</h3>
+  <p>{{rust_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-rust</code></td><td>{{rust_row1}}</td></tr>
+        <tr><td><code>scrumia-rust-audit</code></td><td>{{rust_row2}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-impl-solidjs</code> — {{h_slot_impl}}</h3>
+  <p>{{solidjs_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-solidjs</code></td><td>{{solidjs_row1}}</td></tr>
+        <tr><td><code>scrumia-solidjs-audit</code></td><td>{{solidjs_row2}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-practice-tdd</code> — {{h_slot_practices}}</h3>
+  <p>{{tdd_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-tdd</code></td><td>{{tdd_row1}}</td></tr>
+        <tr><td><code>scrumia-tdd-audit</code></td><td>{{tdd_row2}}</td></tr>
+        <tr><td><code>scrumia-tdd-refactor</code></td><td>{{tdd_row3}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><code>scrumia-practice-solid</code> — {{h_slot_practices}}</h3>
+  <p>{{solid_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-solid-principles</code></td><td>{{solid_row1}}</td></tr>
+        <tr><td><code>scrumia-solid-audit</code></td><td>{{solid_row2}}</td></tr>
+        <tr><td><code>scrumia-solid-refactor</code></td><td>{{solid_row3}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3><code>scrumia-practice-tanstack-query</code> — {{h_slot_practices}}</h3>
+  <p>{{tanstack_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-tanstack-query</code></td><td>{{tanstack_row1}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="config">
+  <h2>{{config_title}}</h2>
+  <p>{{config_intro}}</p>
+
+<pre><code>project:
+  name: <span class="k">"my-project"</span>
+  repo: <span class="k">"tibs245/my-project"</span>
+
+composition:
+  specs:     scrumia-specs
+  tracker:   scrumia-github-project
+  team:      scrumia-teams
+  discovery: scrumia-discovery
+  design:    null
+
+apps:
+  - name: web
+    path: apps/web
+    type: frontend
+    implementation: scrumia-impl-solidjs
+    practices: [scrumia-practice-tdd]
+  - name: api
+    path: apps/api
+    type: backend
+    implementation: scrumia-impl-rust
+    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+
+settings:
+  autonomy:
+    level: guided
+    auto_merge: []
+  specs:
+    root: <span class="k">"features"</span>
+  tracker:
+    columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
+  team:
+    roles: [manager, business, tech]
+    sprint:
+      max_tickets: 5</code></pre>
+
+  <p>{{config_note}}</p>
+</section>
+
+<section id="impl">
+  <h2>{{impl_title}}</h2>
+  <p>{{impl_intro}}</p>
+
+  <h3>{{impl_contract_h}}</h3>
+  <p>{{impl_contract_p}}</p>
+  <ol>
+    <li>{{impl_li1}}</li>
+    <li>{{impl_li2}}</li>
+    <li>{{impl_li3}}</li>
+    <li>{{impl_li4}}</li>
+  </ol>
+
+  <h3>{{impl_compose_h}}</h3>
+  <p>{{impl_compose_p}}</p>
+
+  <h3>{{impl_override_h}}</h3>
+  <p>{{impl_override_p}}</p>
+
+  <div class="note">
+    <span class="note-title">{{impl_note_title}}</span>
+    <p>{{impl_note_p}}</p>
+  </div>
+
+  <h3>{{rules_hier_h}}</h3>
+  <p>{{rules_hier_p}}</p>
+</section>
+
+<section id="write">
+  <h2>{{write_title}}</h2>
+  <p>{{write_intro}}</p>
+  <ol>
+    <li>{{write_li1}}</li>
+    <li>{{write_li2}}</li>
+    <li>{{write_li3}}</li>
+  </ol>
+  <p>{{write_prohibition}}</p>
+
+<pre><code><span class="c">{{write_c1}}</span>
+claude plugin validate ./plugins/scrumia-core
+claude plugin validate .
+
+<span class="c">{{write_c2}}</span>
+claude --plugin-dir ./plugins/scrumia-core</code></pre>
+
+  <p>{{write_newslot}}</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">{{write_cta_decisions}}</a>
+    <a class="btn btn-ghost" href="workflow.html">{{nav_workflow}}</a>
+  </div>
+</section>
+
+</main>
+
+{{>footer}}
+
+</body>
+</html>

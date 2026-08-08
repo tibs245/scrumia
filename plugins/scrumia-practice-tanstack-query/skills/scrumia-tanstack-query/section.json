@@ -1,0 +1,14 @@
+{
+  "globs": ["src/data/**"],
+  "guideGlobs": {
+    "01-query-keys": ["src/data/**/queryKeys.ts"],
+    "02-query-options": ["src/data/**/*.queries.ts"],
+    "03-use-query": ["src/data/**/*.queries.ts", "src/data/**/*.ts"],
+    "04-select": ["src/data/**/*.selectors.ts"],
+    "05-use-suspense-query": ["src/data/**/*.queries.ts"],
+    "06-use-queries": ["src/data/**/*.queries.ts"],
+    "07-dependent-queries": ["src/data/**/*.queries.ts", "src/data/**/hook/**"],
+    "08-mutations": ["src/data/**/hook/**", "src/data/**/*.mutations.ts"],
+    "09-testing": ["src/data/**/*.test.ts", "src/data/**/*.test.tsx"]
+  }
+}

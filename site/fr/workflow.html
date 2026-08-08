@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workflow — ScrumIA</title>
+<meta name="description" content="Comment un projet se déroule de bout en bout avec la composition de référence : demande, cadrage, affinement, sprint, revue. Chaque étape nomme le module qui la porte.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/workflow.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/workflow.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/workflow.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Workflow — ScrumIA">
+<meta property="og:description" content="Comment un projet se déroule de bout en bout avec la composition de référence : demande, cadrage, affinement, sprint, revue. Chaque étape nomme le module qui la porte.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/workflow.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html">Aperçu</a>
+      <a href="index.html#composer">Composer</a>
+      <a href="workflow.html" aria-current="page">Déroulé</a>
+      <a href="reference.html">Référence</a>
+      <a href="about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="../workflow.html" lang="en">EN</a>
+        <a href="workflow.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<h1>Une exécution complète, de bout en bout</h1>
+<p class="section-intro">La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.</p>
+
+<section id="overview">
+  <h2>La forme de celui-ci</h2>
+
+<pre><code>Human     │ demande, défi, brainstorm
+          ▼
+discovery │ cadrage → issues + branche portant les specs
+          ▼
+tracker   │ affinement → Ready for dev, ou sous-issues par contexte
+   ↕      │   ↳ mobilise les rôles quand leur réponse change le ticket
+team      │
+          ▼
+Human     │ valide les designs qui sont douteux, critiques ou risqués
+          ▼
+team      │ manager construit le sprint avec l'équipe → To dev
+          ▼
+team      │ workflows dynamiques : implémentation, revue, QA
+   ↕      │   ↳ l'implémentation suit le module d'implémentation de l'app
+impl      │     et les pratiques intégrées dans l'app
+          ▼
+Human     │ revue PR, test → Done</code></pre>
+</section>
+
+<section id="steps">
+  <h2>Étape par étape</h2>
+
+  <div class="flow">
+    <div class="flow-step flow-human">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <h3>Un humain apporte une demande <span class="badge badge-human">humain</span></h3>
+        <p>Une idée, un problème, une intuition. Le cadrage met en question : le problème existe-t-il ? cela le résout-il ? qu'est-ce qui devient impossible ? où sont les cas limites ? qu'est-ce qui est supposé mais non dit ?</p>
+        <p>Le point unique où l'attention humaine soutenue paie — et où elle coûte le moins.</p>
+<pre><code>/scrumia-discovery:scrumia-brainstorm</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <h3>Le cadrage produit des issues et une branche de specs</h3>
+        <p>Les features business d'abord, puis les features app — une par app, jamais deux. Puis les issues.</p>
+        <p>Les specs sont expédiées sur une branche <code>specs/&lt;slug&gt;</code> dans une PR ouverte : le design est examiné dans le même outil que le code, et l'affinement commence à partir de quelque chose de fixe plutôt qu'une conversation mémorisée.</p>
+<pre><code>/scrumia-discovery:scrumia-split</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <h3>L'affinement rend le ticket exécutable</h3>
+        <p>Quatre conditions, toutes vérifiables :</p>
+        <ul>
+          <li>Une feature de rattachement existe et est à jour</li>
+          <li>Les critères d'acceptation sont écrits, identifiés <code>AC-n</code>, et peuvent échouer</li>
+          <li>Le périmètre d'impact est connu : quelles apps, quels fichiers</li>
+          <li>Aucune question ouverte ne bloque le début</li>
+        </ul>
+        <p>Les rôles avec la vue plus large sont mobilisés <strong>quand leur réponse change le ticket</strong> — pas pour le valider simplement. Le ticket peut se diviser en sous-issues par contexte : un par app, puisque le contexte d'implémentation diffère.</p>
+<pre><code>/scrumia-github-project:scrumia-refine 42</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <h3>Un humain valide où cela compte <span class="badge badge-human">humain</span></h3>
+        <p>Escaladé : une règle métier a dû être inventée, le découpage a changé la demande, le ticket a une large portée, ou un rôle a soulevé une réserve. Tout le reste passe à Ready for dev.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-body">
+        <h3>Le manager construit le sprint</h3>
+        <p>Un lot de tickets qui <strong>ne se heurtent pas</strong> — deux tickets sur les mêmes fichiers soit se sérialisent soit fusionnent. L'humain approuve le lot explicitement.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-body">
+        <h3>Les workflows dynamiques consomment le sprint</h3>
+        <p>Un workflow par ticket, en parallèle, chacun dans son propre worktree. Chaque obtient un numéro de ticket et rien d'autre — il charge son propre contexte.</p>
+        <ol>
+          <li>Charger le contexte par le module de specs</li>
+          <li><strong>Mettez à jour la spec avant le code</strong>, si le comportement change</li>
+          <li>Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique surpasse générique</li>
+          <li>Couvrir chaque <code>AC-n</code> avec un test qui peut échouer</li>
+          <li>Auto-review, puis review par les rôles selon le périmètre d'impact</li>
+          <li>Ouvrir la PR</li>
+        </ol>
+<pre><code>/scrumia-teams:scrumia-sprint</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">7</div>
+      <div class="flow-body">
+        <h3>L'humain revoit et fusionne <span class="badge badge-human">humain</span></h3>
+        <p>La PR porte la correspondance critère par critère, les specs qu'elle a changées, les verdicts de review, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="note-title">Pourquoi la spec en premier</span>
+    <p>Écrire la spec d'abord fait remonter les contradictions avant qu'elles ne soient codées — où les corriger coûte le moins. Si une surgit contre une autre feature, l'exécution s'arrête et demande au rôle métier. Elle ne résout jamais une règle d'elle-même : une règle inventée en vol devient la référence de tout le monde sans que personne ne l'ait décidée.</p>
+  </div>
+</section>
+
+<section id="gates">
+  <h2>Trois portes</h2>
+  <p>Le coût de validation suit le risque, plutôt que d'être uniforme.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Porte</th><th>Qui</th><th>Quand</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 — Automatique</strong></td><td>CI, linter, tests</td><td>Toujours. Bloquant, aucun humain.</td></tr>
+        <tr><td><strong>2 — Agent</strong></td><td>Les rôles</td><td>Acheminé par le diff réel, pas le label déclaré.</td></tr>
+        <tr><td><strong>3 — Humain</strong></td><td>Vous</td><td>La fusion, sauf délégation explicite.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="note-title">Quand deux rôles ne sont pas d'accord</span>
+    <p>Le désaccord est transmis tel quel, non mélangé dans une moyenne. C'est précisément le cas qui a besoin d'un appel humain — le lisser détruit le signal.</p>
+  </div>
+</section>
+
+<section id="autonomy">
+  <h2>Composer l'autonomie</h2>
+  <p>Un réglage explicite dans <code>.scrumia/config.yaml</code>, pas une propriété implicite.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Niveau</th><th>L'humain approuve</th><th>Quand l'utiliser</th></tr></thead>
+      <tbody>
+        <tr><td><code>guided</code></td><td>Le cadrage de chaque ticket <em>et</em> chaque PR</td><td>Au démarrage, pendant l'étalonnage</td></tr>
+        <tr><td><code>assisted</code></td><td>Les PRs seulement</td><td>Le mode de croisière prévu</td></tr>
+        <tr><td><code>autonomous</code></td><td>Les PRs, moins les catégories autorisées</td><td>Une fois la confiance établie</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<pre><code>autonomy:
+  level: autonomous
+  auto_merge:
+    - docs-only          <span class="c"># rien en dehors de docs/ et *.md</span>
+    - dependency-patch   <span class="c"># patch bump, CI vert</span></code></pre>
+
+  <div class="note note-warn">
+    <span class="note-title">La refactorisation est désactivée par défaut</span>
+    <p>"Refactoriser sans changement de comportement" ne peut pas être décidé automatiquement — c'est exactement quand un agent croit qu'il n'a rien changé qu'il a changé quelque chose. Rien ne vous empêche de l'ajouter sur un projet donné ; c'est juste un choix délibéré, écrit dans un fichier versionné.</p>
+  </div>
+</section>
+
+<section id="human">
+  <h2>Ce que fait l'humain</h2>
+
+  <div class="grid grid-2">
+    <div class="card card-accent"><h3>1 — Cadrer et arbitrer</h3><p>L'IA conteste et propose ; l'humain résout les points bloquants.</p></div>
+    <div class="card card-accent"><h3>2 — Valider les designs risqués</h3><p>Où le doute, la criticalité ou le risque le justifient.</p></div>
+    <div class="card card-accent"><h3>3 — Approuver le lot du sprint</h3><p>Lancer un sprint est une décision, pas une conséquence.</p></div>
+    <div class="card card-accent"><h3>4 — Revue et fusion</h3><p>L'appel final, sauf si une catégorie est explicitement déléguée.</p></div>
+  </div>
+
+  <p>Partout ailleurs, les agents progressent d'eux-mêmes. Si vous vous trouvez à faire autre chose, c'est un signal sur la composition — pas sur votre discipline.</p>
+
+  <div class="note note-warn">
+    <span class="note-title">Sur « préparer le prochain sprint tandis que celui-ci s'exécute »</span>
+    <p>Non automatisable en une session : un subagent ne peut pas faire naître des subagents, et les équipes d'agents sont expérimentales avec une équipe par session. Deux sessions Claude Code sur le même dépôt vous y arrivent — l'une consomme le sprint actuel, l'autre affine le prochain. Puisque l'état réside dans le suivi plutôt que dans la mémoire de session, ils restent cohérents sans coordonner.</p>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="reference.html">Référence</a>
+    <a class="btn btn-ghost" href="index.html#install">Installer</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

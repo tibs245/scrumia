@@ -1,0 +1,16 @@
+{
+  "name": "scrumia-discovery",
+  "description": "The discovery slot — brainstorming and design, produces issues and a specs branch.",
+  "version": "0.3.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "discovery",
+    "brainstorming"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "scrumia-impl-rust",
+  "description": "The implementation slot — how we code in Rust: invalid states made unrepresentable, typed errors per layer, one test per invariant. Plugs in app by app.",
+  "version": "0.3.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "implementation",
+    "rust",
+    "backend"
+  ]
+}

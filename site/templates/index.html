@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+{{>head}}
+</head>
+<body>
+
+{{>header}}
+
+<main id="main">
+
+<div class="hero">
+  <span class="eyebrow">{{hero_eyebrow}}</span>
+  <h1>{{hero_title}}</h1>
+  <p class="lead">{{hero_lead}}</p>
+
+  <div class="stats" role="group" aria-label="{{stats_aria}}">
+    <div class="stat"><b>11</b><span>{{stat_modules}}</span></div>
+    <div class="stat"><b>29</b><span>{{stat_skills}}</span></div>
+    <div class="stat"><b>3</b><span>{{stat_roles}}</span></div>
+    <div class="stat"><b>12</b><span>{{stat_decisions}}</span></div>
+    <div class="stat"><b>3</b><span>{{stat_touchpoints}}</span></div>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#composer">{{hero_cta_compose}}</a>
+    <a class="btn btn-ghost" href="workflow.html">{{hero_cta_run}}</a>
+  </div>
+</div>
+
+<section id="flow">
+  <h2>{{flow_title}}</h2>
+  <p class="section-intro">{{flow_intro}}</p>
+
+  <div class="flowmap">
+    <div class="fm fm-human">
+      <span class="fm-who">{{who_human}}</span>
+      <span class="fm-title">{{flow1_title}}</span>
+      <span class="fm-out">{{flow1_out}}</span>
+      <span class="fm-mod">—</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">{{who_ai}}</span>
+      <span class="fm-title">{{flow2_title}}</span>
+      <span class="fm-out">{{flow2_out}}</span>
+      <span class="fm-mod">discovery</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">{{who_ai}}</span>
+      <span class="fm-title">{{flow3_title}}</span>
+      <span class="fm-out">{{flow3_out}}</span>
+      <span class="fm-mod">tracker + team</span>
+    </div>
+    <div class="fm fm-human">
+      <span class="fm-who">{{who_human}}</span>
+      <span class="fm-title">{{flow4_title}}</span>
+      <span class="fm-out">{{flow4_out}}</span>
+      <span class="fm-mod">—</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">{{who_ai}}</span>
+      <span class="fm-title">{{flow5_title}}</span>
+      <span class="fm-out">{{flow5_out}}</span>
+      <span class="fm-mod">team</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">{{who_ai}}</span>
+      <span class="fm-title">{{flow6_title}}</span>
+      <span class="fm-out">{{flow6_out}}</span>
+      <span class="fm-mod">team + impl + practices</span>
+    </div>
+    <div class="fm fm-human">
+      <span class="fm-who">{{who_human}}</span>
+      <span class="fm-title">{{flow7_title}}</span>
+      <span class="fm-out">{{flow7_out}}</span>
+      <span class="fm-mod">—</span>
+    </div>
+  </div>
+
+  <div class="flow-legend">
+    <span><span class="dot dot-human"></span>{{legend_human}}</span>
+    <span><span class="dot dot-ai"></span>{{legend_ai}}</span>
+    <span>{{legend_swap}}</span>
+  </div>
+
+  <div class="you-strip">
+    <div class="you-item"><b>{{you1_title}}</b><span>{{you1_desc}}</span></div>
+    <div class="you-item"><b>{{you2_title}}</b><span>{{you2_desc}}</span></div>
+    <div class="you-item"><b>{{you3_title}}</b><span>{{you3_desc}}</span></div>
+  </div>
+</section>
+
+<section id="slots">
+  <h2>{{slots_title}}</h2>
+  <p class="section-intro">{{slots_intro}}</p>
+
+  <div class="slot">
+    <span class="slot-name">specs</span>
+    <span class="slot-q">{{slot_specs_q}}</span>
+    <span class="slot-a">{{slot_specs_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">tracker</span>
+    <span class="slot-q">{{slot_tracker_q}}</span>
+    <span class="slot-a">{{slot_tracker_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">team</span>
+    <span class="slot-q">{{slot_team_q}}</span>
+    <span class="slot-a">{{slot_team_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">discovery</span>
+    <span class="slot-q">{{slot_discovery_q}}</span>
+    <span class="slot-a">{{slot_discovery_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">implementation</span>
+    <span class="slot-q">{{slot_impl_q}}</span>
+    <span class="slot-a">{{slot_impl_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">practices</span>
+    <span class="slot-q">{{slot_practices_q}}</span>
+    <span class="slot-a">{{slot_practices_a}}</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">design</span>
+    <span class="slot-q">{{slot_design_q}}</span>
+    <span class="slot-a">{{slot_design_a}}</span>
+  </div>
+</section>
+
+<section id="composer">
+  <h2>{{comp_title}}</h2>
+  <p class="section-intro">{{comp_intro}}</p>
+
+  <form id="composer-form">
+    <div class="composer">
+      <fieldset>
+        <legend><span class="step-num">1</span>{{comp_q1}}</legend>
+        <label class="choice"><input type="radio" name="situation" value="solo">
+          <b>{{comp_q1_solo}}</b><span>{{comp_q1_solo_d}}</span></label>
+        <label class="choice"><input type="radio" name="situation" value="exploring">
+          <b>{{comp_q1_exploring}}</b><span>{{comp_q1_exploring_d}}</span></label>
+        <label class="choice"><input type="radio" name="situation" value="production" checked>
+          <b>{{comp_q1_production}}</b><span>{{comp_q1_production_d}}</span></label>
+        <label class="choice"><input type="radio" name="situation" value="othertracker">
+          <b>{{comp_q1_other}}</b><span>{{comp_q1_other_d}}</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step-num">2</span>{{comp_q2}}</legend>
+        <label class="choice"><input type="checkbox" name="stack" value="rust" checked>
+          <b>Rust</b><span>{{comp_q2_rust_d}}</span></label>
+        <label class="choice"><input type="checkbox" name="stack" value="solidjs" checked>
+          <b>SolidJS</b><span>{{comp_q2_solid_d}}</span></label>
+        <label class="choice"><input type="checkbox" name="stack" value="other">
+          <b>{{comp_q2_other}}</b><span>{{comp_q2_other_d}}</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step-num">3</span>{{comp_q3}}</legend>
+        <label class="choice"><input type="checkbox" name="practice" value="tdd" checked>
+          <b>TDD</b><span>{{comp_q3_tdd_d}}</span></label>
+        <label class="choice"><input type="checkbox" name="practice" value="solid">
+          <b>SOLID</b><span>{{comp_q3_solid_d}}</span></label>
+        <label class="choice"><input type="checkbox" name="practice" value="tanstack">
+          <b>TanStack Query</b><span>{{comp_q3_tanstack_d}}</span></label>
+      </fieldset>
+    </div>
+  </form>
+
+  <div class="composer-out" aria-live="polite">
+    <div class="chips" id="composer-modules"></div>
+    <div class="composer-cols">
+      <div>
+        <h3>{{comp_out_install}}</h3>
+        <pre id="composer-install"></pre>
+        <button class="copy-btn" id="composer-copy" data-done="{{comp_copied}}">{{comp_copy}}</button>
+      </div>
+      <div>
+        <h3>.scrumia/config.yaml</h3>
+        <pre id="composer-config"></pre>
+      </div>
+    </div>
+    <p class="composer-note" id="composer-note"></p>
+  </div>
+</section>
+
+<section id="modules">
+  <h2>{{mods_title}}</h2>
+  <p class="section-intro">{{mods_intro}}</p>
+
+  <div class="modules">
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🧩</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-core</span>
+          <span class="mod-slot">{{mod_slot_kernel}}</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_core_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">{{pill_required}}</span><span class="pill">2 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-core@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">⚖️</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-rules</span>
+          <span class="mod-slot">{{mod_slot_rules}}</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_rules_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">4 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-rules@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">📐</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-specs</span>
+          <span class="mod-slot">specs</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_specs_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-specs@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">📋</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-github-project</span>
+          <span class="mod-slot">tracker</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_ghp_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">5 {{pill_skills}}</span><span class="pill">1 hook</span></div>
+      <code class="mod-cmd">/plugin install scrumia-github-project@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">👥</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-teams</span>
+          <span class="mod-slot">team</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_teams_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_agents}}</span><span class="pill">2 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-teams@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">💡</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-discovery</span>
+          <span class="mod-slot">discovery</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_disc_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">2 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-discovery@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🦀</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-impl-rust</span>
+          <span class="mod-slot">implementation</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_rust_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">2 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-impl-rust@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">⚛️</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-impl-solidjs</span>
+          <span class="mod-slot">implementation</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_solidjs_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">2 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-impl-solidjs@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🔴</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-tdd</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_tdd_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-tdd@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🧭</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-solid</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_solid_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-solid@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🔄</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-tanstack-query</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_tanstack_d}}</p>
+      <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">1 {{pill_skills}}</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-tanstack-query@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🎨</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-design</span>
+          <span class="mod-slot">design</span>
+        </span>
+      </div>
+      <p class="mod-desc">{{mod_design_d}}</p>
+      <div class="mod-foot"><span class="pill pill-soon">{{pill_sketched}}</span></div>
+      <code class="mod-cmd">{{mod_design_cmd}}</code>
+    </div>
+
+  </div>
+</section>
+
+<section id="install">
+  <h2>{{install_title}}</h2>
+
+  <p>{{install_prereq}}</p>
+
+<pre><code><span class="c">{{install_c1}}</span>
+/plugin marketplace add tibs245/scrumia
+/plugin install scrumia-core@scrumia
+
+<span class="c">{{install_c2}}</span>
+/scrumia-core:scrumia-init</code></pre>
+
+  <p>{{install_after}}</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="workflow.html">{{nav_workflow}}</a>
+    <a class="btn btn-ghost" href="reference.html">{{nav_reference}}</a>
+  </div>
+</section>
+
+</main>
+
+{{>footer}}
+
+<script>window.SCRUMIA_COMPOSER_STRINGS = {{composer_js_strings}};</script>
+<script src="{{@root}}assets/composer.js"></script>
+
+</body>
+</html>

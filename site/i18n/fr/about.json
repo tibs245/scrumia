@@ -1,0 +1,52 @@
+{
+  "title": "À propos — ScrumIA",
+  "meta_description": "D'où vient ScrumIA, ce qu'il emprunte à BMAD, et ce qu'il ne prétend volontairement pas faire.",
+  "og_title": "À propos de ScrumIA",
+
+  "heading": "À propos",
+
+  "origin_title": "Origine",
+  "origin_p1": "ScrumIA est issu de six mois de travail avec Claude Code et BMAD, sur des projets personnels. Il est maintenu par <a href=\"https://github.com/tibs245\">tibs245</a>.",
+  "origin_p2": "BMAD a fourni les fondations qui sont toujours là : une base modulaire, des installations versionnées, et des outils tenus à l'écart des projets qui les consomment.",
+
+  "premise_title": "Prémisse de base",
+  "premise_p1": "Il n'y a pas une seule bonne manière de mener un projet avec une IA. Ce qui fonctionne sur un monorepo à cinq applications ne fonctionne pas sur un script personnel ; ce qui convient à une équipe régulée ne convient pas à un prototype du week-end.",
+  "premise_p2": "Une méthode qui répond à toutes les questions à la fois doit être prise en bloc ou laissée. En pratique, elle est prise, adaptée, dérive, et finit comme une bifurcation qui cesse de recevoir des mises à jour.",
+  "premise_p3": "ScrumIA sépare les questions et en donne à chacune un module remplaçable. <strong>La partie réutilisable est la composition, pas les réponses qu'on y met.</strong>",
+
+  "claims_title": "Ce que ceci ne prétend pas",
+  "claims_li1": "Que ces limites entre les slots sont les bonnes pour tout le monde",
+  "claims_li2": "Qu'un catalogue de fichiers par feature est meilleur que d'autres formats de spécification",
+  "claims_li3": "Que trois rôles est le bon nombre",
+  "claims_li4": "Que l'état doit vivre en dehors du dépôt",
+  "claims_note": "Chacun de ceux-ci est un choix fait pour un contexte, documenté avec ses alternatives dans les <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr\">enregistrements de décisions architecturales</a>. Une décision au niveau du module est contestée en écrivant un autre module, pas en argumentant sur celui-ci.",
+
+  "status_title": "État",
+  "status_th_item": "Élément",
+  "status_th_state": "État",
+  "status_r1_item": "Architecture et décisions",
+  "status_r1_state": "Établi — 12 ADRs",
+  "status_r2_item": "Onze modules, 29 compétences",
+  "status_r2_state": "Fonctionnels, validés, chargés",
+  "status_r3_item": "Modules d'implémentation (Rust, SolidJS)",
+  "status_r3_state": "Construits, avec des compétences d'audit",
+  "status_r4_item": "Modules de pratique (TDD, SOLID)",
+  "status_r4_state": "Construits — référence, audit, refactorisation",
+  "status_r5_item": "Module de conception",
+  "status_r5_state": "Spécifié, non construit",
+  "status_r6_item": "Utilisation sur projet réel",
+  "status_r6_state": "Pas encore — un pilote est la prochaine étape",
+  "status_r7_item": "Hiérarchie des règles (ADR-0011)",
+  "status_r7_state": "Adoptée — modules restructurés",
+  "status_note_title": "Le vrai test de l'architecture",
+  "status_note_p": "Tant qu'un seul module remplit un slot, rien ne prouve que ce slot est vraiment remplaçable. Écrire un second module <code>tracker</code> — même minimal basé sur des fichiers — nous apprendrait plus que d'ajouter un autre module d'implémentation.",
+
+  "related_title": "Ressources connexes",
+  "related_rex_title": "Claude Code REX",
+  "related_rex_p": "Un diaporama sur les leçons apprises avec Claude Code et la famille de modèles — diviser et conquérir, sous-agents, dimensionnement approprié des modèles. Même auteur.",
+  "related_bmad_title": "Méthode BMAD",
+  "related_bmad_p": "Le cadre de cycle de vie complet dont ScrumIA emprunte sa base modulaire. Plus large en portée et supporte plusieurs outils.",
+
+  "license_title": "Licence",
+  "license_p": "MIT. Bifurquez-le, épurez-le, remplacez les modules qui ne vous conviennent pas."
+}

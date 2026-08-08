@@ -1,0 +1,8 @@
+# BMAD reference clone, kept out of version control
+.reference/
+
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.worktrees/

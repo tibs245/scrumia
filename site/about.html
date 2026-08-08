@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — ScrumIA</title>
+<meta name="description" content="Where ScrumIA comes from, what it borrows from BMAD, and what it deliberately does not claim.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/about.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/about.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/about.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/about.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About ScrumIA">
+<meta property="og:description" content="Where ScrumIA comes from, what it borrows from BMAD, and what it deliberately does not claim.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/about.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Main">
+      <a href="index.html">Overview</a>
+      <a href="index.html#composer">Compose</a>
+      <a href="workflow.html">Workflow</a>
+      <a href="reference.html">Reference</a>
+      <a href="about.html" aria-current="page">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="about.html" aria-current="true" lang="en">EN</a>
+        <a href="fr/about.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<h1>About</h1>
+
+<section id="origin" style="padding-top:24px;">
+  <h2>Origin</h2>
+  <p>ScrumIA comes out of six months building with Claude Code and BMAD, on personal projects. It is maintained by <a href="https://github.com/tibs245">tibs245</a>.</p>
+  <p>BMAD supplied the foundations that are still here: a modular base, versioned installs, and tooling kept separate from the projects that consume it.</p>
+</section>
+
+<section id="premise">
+  <h2>Starting premise</h2>
+  <p>There is no single right way to run a project with an AI. What works on a five-app monorepo doesn't work on a personal script; what suits a regulated team doesn't suit a weekend prototype.</p>
+  <p>A method that answers every question at once has to be taken whole or left. In practice it gets taken, adapted, drifts, and ends as a fork that stops receiving updates.</p>
+  <p>ScrumIA separates the questions and gives each one a replaceable module. <strong>The reusable part is the composition, not the answers put into it.</strong></p>
+</section>
+
+<section id="claims">
+  <h2>What this does not claim</h2>
+  <ul>
+    <li>That these boundaries between slots are the right ones for everyone</li>
+    <li>That a per-feature file catalogue beats other spec formats</li>
+    <li>That three roles is the right number</li>
+    <li>That state must live outside the repository</li>
+  </ul>
+  <p>Each of those is a choice made for a context, documented with its alternatives in the <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">architecture decision records</a>. A module-level decision is contested by writing another module, not by arguing about this one.</p>
+</section>
+
+<section id="status">
+  <h2>Status</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>Architecture and decisions</td><td>Settled — 12 ADRs</td></tr>
+        <tr><td>Eleven modules, 29 skills</td><td>Functional, validated, loaded</td></tr>
+        <tr><td>Implementation modules (Rust, SolidJS)</td><td>Built, with audit skills</td></tr>
+        <tr><td>Practice modules (TDD, SOLID)</td><td>Built — reference, audit, refactor</td></tr>
+        <tr><td>Design module</td><td>Specified, not built</td></tr>
+        <tr><td>Real-project use</td><td>Not yet — a pilot is next</td></tr>
+        <tr><td>Rules hierarchy (ADR-0011)</td><td>Adopted — modules restructured</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <span class="note-title">The real test of the architecture</span>
+    <p>As long as a single module fills a slot, nothing proves that slot is genuinely replaceable. Writing a second <code>tracker</code> module — even a minimal file-based one — would tell us more than adding another implementation module.</p>
+  </div>
+</section>
+
+<section id="related">
+  <h2>Related</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="tag">github.com/tibs245/claude-code-rex</span>
+      <h3>Claude Code REX</h3>
+      <p>A slide deck on lessons learned with Claude Code and the model family — divide and conquer, sub-agents, right-sizing models. Same author.</p>
+    </div>
+    <div class="card">
+      <span class="tag">github.com/bmad-code-org/BMAD-METHOD</span>
+      <h3>BMAD Method</h3>
+      <p>The full-lifecycle framework ScrumIA borrows its modular base from. Broader in scope and supports several tools.</p>
+    </div>
+  </div>
+</section>
+
+<section id="license">
+  <h2>Licence</h2>
+  <p>MIT. Fork it, strip it down, replace the modules that don't suit you.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="index.html">Overview</a>
+    <a class="btn btn-ghost" href="https://github.com/tibs245/scrumia">Repo</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+---
+name: scrumia-refine
+description: Refines a backlog ticket until it is ready for development — calls on the roles with the global view, splits into sub-issues when necessary, updates the specs. Use it to move a ticket from Backlog to Ready for dev.
+---
+
+# Refine a ticket
+
+A backlog ticket carries an intent. Refinement turns it into something executable — or reveals that it must be split, or that a human decision is missing.
+
+Usage: `/scrumia-github-project:scrumia-refine 42`
+
+## What "ready for development" means
+
+Four conditions, all verifiable:
+
+1. A parent feature exists and is up to date
+2. The acceptance criteria are written, identified in the format named by `ac_id_format`, and can fail
+3. The scope is known: which apps, which anticipated files
+4. No open question blocks the start
+
+A ticket that doesn't meet all four stays in the backlog. Moving it forward anyway shifts the problem to execution, where it costs more.
+
+## Step 1 — Read the intent
+
+`gh issue view <n>`. Look for what the ticket wants to achieve, not how to do it. If the intent itself is vague, the ticket belongs to scoping: send it back to the scoping module rather than guessing.
+
+**If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. Refinement starts by reading the ticket — without it there's nothing to refine, so stop here rather than guess the intent from memory.
+
+## Step 2 — Check against the specs
+
+**Read `CLAUDE.md`'s `## Specs contract` section first** — it names the specs module's own vocabulary (`specs_root`, `feature_index`, `acceptance_file`, `ac_id_format`, `changelog`, `catalog`; `docs/adr/0012-specs-contract.md`). Never assume `scrumia-specs`'s own file names directly: a different module can occupy the `specs` slot with a different layout.
+
+**If the section is absent** — no specs module documented, or `scrumia-init` not yet run — say so: *"no specs module documented — ask the human or proceed without spec updates"*, and skip to Step 3.
+
+Through the plugged-in specs module: does the relevant feature exist? Does what the ticket asks contradict a rule already written? Is a rule missing to settle the question?
+
+Three possible outcomes:
+
+- **The spec already covers the need** → the ticket cites the existing identifier in `ac_id_format`
+- **The spec must evolve** → refinement produces the spec update, not just the ticket
+- **The spec contradicts the ticket** → escalate, don't settle it
+
+## Step 3 — Call on the roles when it's useful
+
+If the team module is plugged in, bring in a role **when its answer changes the ticket's content** — not to cover the decision.
+
+| Situation | Role |
+|---|---|
+| A business rule is ambiguous or missing | Business |
+| The ticket touches several apps, or an interface contract | Tech |
+| Feasibility drives the splitting | Tech |
+
+Without a team module plugged in, ask the human. It's slower and perfectly viable.
+
+## Step 4 — Split if necessary
+
+A ticket splits into sub-issues when:
+
+- It touches several apps — one sub-issue per app, because the implementation context differs
+- It mixes a spec change and an implementation
+- Its parts can be delivered separately without breaking each other
+
+It does **not** split because it looks big. A splitting that produces pieces that can't be delivered independently adds coordination without reducing risk.
+
+Each sub-issue gets its feature, its identifier in `ac_id_format`, its scope and its label. The parent becomes the tracking point and carries the `epic` label.
+
+Link them as **native sub-issues**, not as a checklist in the parent's body:
+
+```bash
+gh issue edit <parent> --add-sub-issue <child>,<child>
+```
+
+GitHub then computes the parent's progress itself (`subIssuesSummary`), which is what `board.sh epic <n>` reports. A checklist typed into the body is a second count that stops matching the moment a child is closed without someone ticking the box.
+
+## Step 5 — Set the scope and the risk
+
+Two labels, two independent questions. Getting this wrong is not cosmetic: `pick-model.sh` reads both to decide which model executes the ticket, and `scrumia-ticket` reads the scope to decide who reviews it.
+
+One `scope/*` label, based on three objective questions: how many apps are touched, does a spec file change, and which one.
+
+| Label | Condition |
+|---|---|
+| `scope/S` | 1 app, no spec modified, rule already written |
+| `scope/M` | 1 app, but a spec changes or the scope remains unclear |
+| `scope/L` | ≥2 apps, or a business spec, or an interface contract |
+| `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
+
+When hesitating between two levels, take the higher one: one review too many costs a few minutes, a missing review costs a revert.
+
+Then one `risk/*` label, answering a different question: **what does it cost if this is wrong in production?** Not how hard it is — how expensive the mistake is.
+
+| Label | Condition |
+|---|---|
+| `risk/low` | Reversible in a commit, no data touched, no user-visible behaviour |
+| `risk/medium` | Visible to users, but a revert restores the previous state |
+| `risk/high` | Money, personal data, authentication, or a contract other apps consume |
+| `risk/critical` | Irreversible: a migration that drops data, a payment, an outbound notification |
+
+Size and risk are independent, and their independence is the point. A one-line change to a VAT rate is `scope/S risk/critical`; a thousand-line mechanical rename is `scope/L risk/low`. A ticket small enough to look harmless is exactly the one that gets executed casually — the risk label is what stops that.
+
+If the ticket carries no risk label, execution assumes `execution.unrated_risk` and says so; the assumption is visible, not silent. Setting it here is still better than having it guessed.
+
+## Step 6 — Decide whether the human must validate
+
+Escalate to the human when:
+
+- A business rule had to be invented to move forward
+- The splitting changes the scope of what was asked
+- The ticket is `scope/L` or touches a contract consumed by other apps
+- A role gave an opinion with reservations
+
+Otherwise, move the ticket to `Ready for dev` directly. The configured autonomy level (`settings.autonomy.level`) widens or narrows what you can decide alone: in `guided`, the human validates every transition; in `assisted` and above, only the cases above get escalated.
+
+## Step 7 — Report back
+
+On the issue: what was clarified, the specs updated, the sub-issues created, the scope chosen and why, the questions left open.
+
+Then move the card to the `ready` step — or leave it in `Backlog` and say what's missing:
+
+```bash
+${CLAUDE_SKILL_DIR}/../../scripts/board.sh move <n> ready
+```
+
+`ready` is a flow step, not a column name; the mapping to this board's actual column lives in the config ([`projects-v2.md`](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md)). If the move fails, continue and report it — a dead column is not a blocked ticket.
+
+## What you don't do
+
+- You don't implement anything.
+- You don't decide a missing business rule: you escalate it.
+- You don't close the parent ticket when you split it — it tracks its children.

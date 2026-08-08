@@ -1,0 +1,40 @@
+name: Epic
+description: A unit of value to scope — splits into tickets once refined.
+title: "[Epic] "
+labels:
+  - scrumia
+  - epic
+  - scope/XL
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem this epic addresses, and for whom.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-value
+    attributes:
+      label: Expected value
+      description: What changes once this ships — the outcome, not the implementation.
+    validations:
+      required: true
+
+  - type: input
+    id: anticipated-apps
+    attributes:
+      label: Anticipated apps
+      description: Which apps this epic is expected to touch, as far as known at this stage.
+      placeholder: web, api
+    validations:
+      required: false
+
+  - type: textarea
+    id: open-questions
+    attributes:
+      label: Open questions
+      description: What's still unresolved — feasibility, business rules, scope. Refinement is where these get answered.
+    validations:
+      required: false

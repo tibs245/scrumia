@@ -1,0 +1,17 @@
+{
+  "name": "scrumia-specs",
+  "description": "The specs slot — per-feature, TDD-oriented specs as a contextual file catalog.",
+  "version": "0.3.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "specs",
+    "features",
+    "tdd"
+  ]
+}

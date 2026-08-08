@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+{{>head}}
+</head>
+<body>
+
+{{>header}}
+
+<main id="main">
+
+<h1>{{hero_title}}</h1>
+<p class="section-intro">{{hero_intro}}</p>
+
+<section id="overview">
+  <h2>{{shape_title}}</h2>
+
+<pre><code>{{shape_diagram}}</code></pre>
+</section>
+
+<section id="steps">
+  <h2>{{steps_title}}</h2>
+
+  <div class="flow">
+    <div class="flow-step flow-human">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <h3>{{step1_title}} <span class="badge badge-human">{{badge_human}}</span></h3>
+        <p>{{step1_p1}}</p>
+        <p>{{step1_p2}}</p>
+<pre><code>/scrumia-discovery:scrumia-brainstorm</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <h3>{{step2_title}}</h3>
+        <p>{{step2_p1}}</p>
+        <p>{{step2_p2}}</p>
+<pre><code>/scrumia-discovery:scrumia-split</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <h3>{{step3_title}}</h3>
+        <p>{{step3_p1}}</p>
+        <ul>
+          <li>{{step3_li1}}</li>
+          <li>{{step3_li2}}</li>
+          <li>{{step3_li3}}</li>
+          <li>{{step3_li4}}</li>
+        </ul>
+        <p>{{step3_p2}}</p>
+<pre><code>/scrumia-github-project:scrumia-refine 42</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <h3>{{step4_title}} <span class="badge badge-human">{{badge_human}}</span></h3>
+        <p>{{step4_p1}}</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-body">
+        <h3>{{step5_title}}</h3>
+        <p>{{step5_p1}}</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-body">
+        <h3>{{step6_title}}</h3>
+        <p>{{step6_p1}}</p>
+        <ol>
+          <li>{{step6_li1}}</li>
+          <li>{{step6_li2}}</li>
+          <li>{{step6_li3}}</li>
+          <li>{{step6_li4}}</li>
+          <li>{{step6_li5}}</li>
+          <li>{{step6_li6}}</li>
+        </ol>
+<pre><code>/scrumia-teams:scrumia-sprint</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">7</div>
+      <div class="flow-body">
+        <h3>{{step7_title}} <span class="badge badge-human">{{badge_human}}</span></h3>
+        <p>{{step7_p1}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="note-title">{{spec_note_title}}</span>
+    <p>{{spec_note_p}}</p>
+  </div>
+</section>
+
+<section id="gates">
+  <h2>{{gates_title}}</h2>
+  <p>{{gates_intro}}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{gates_th_gate}}</th><th>{{gates_th_who}}</th><th>{{gates_th_when}}</th></tr></thead>
+      <tbody>
+        <tr><td>{{gates_r1_gate}}</td><td>{{gates_r1_who}}</td><td>{{gates_r1_when}}</td></tr>
+        <tr><td>{{gates_r2_gate}}</td><td>{{gates_r2_who}}</td><td>{{gates_r2_when}}</td></tr>
+        <tr><td>{{gates_r3_gate}}</td><td>{{gates_r3_who}}</td><td>{{gates_r3_when}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="note-title">{{gates_note_title}}</span>
+    <p>{{gates_note_p}}</p>
+  </div>
+</section>
+
+<section id="autonomy">
+  <h2>{{auto_title}}</h2>
+  <p>{{auto_intro}}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{auto_th_level}}</th><th>{{auto_th_approves}}</th><th>{{auto_th_use}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>guided</code></td><td>{{auto_r1_approves}}</td><td>{{auto_r1_use}}</td></tr>
+        <tr><td><code>assisted</code></td><td>{{auto_r2_approves}}</td><td>{{auto_r2_use}}</td></tr>
+        <tr><td><code>autonomous</code></td><td>{{auto_r3_approves}}</td><td>{{auto_r3_use}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<pre><code>autonomy:
+  level: autonomous
+  auto_merge:
+    - docs-only          <span class="c">{{auto_c1}}</span>
+    - dependency-patch   <span class="c">{{auto_c2}}</span></code></pre>
+
+  <div class="note note-warn">
+    <span class="note-title">{{auto_note_title}}</span>
+    <p>{{auto_note_p}}</p>
+  </div>
+</section>
+
+<section id="human">
+  <h2>{{human_title}}</h2>
+
+  <div class="grid grid-2">
+    <div class="card card-accent"><h3>{{human1_title}}</h3><p>{{human1_desc}}</p></div>
+    <div class="card card-accent"><h3>{{human2_title}}</h3><p>{{human2_desc}}</p></div>
+    <div class="card card-accent"><h3>{{human3_title}}</h3><p>{{human3_desc}}</p></div>
+    <div class="card card-accent"><h3>{{human4_title}}</h3><p>{{human4_desc}}</p></div>
+  </div>
+
+  <p>{{human_p}}</p>
+
+  <div class="note note-warn">
+    <span class="note-title">{{human_note_title}}</span>
+    <p>{{human_note_p}}</p>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="reference.html">{{nav_reference}}</a>
+    <a class="btn btn-ghost" href="index.html#install">{{cta_install}}</a>
+  </div>
+</section>
+
+</main>
+
+{{>footer}}
+
+</body>
+</html>

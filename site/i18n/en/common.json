@@ -1,0 +1,13 @@
+{
+  "skip_to_content": "Skip to content",
+  "nav_aria": "Main",
+  "nav_overview": "Overview",
+  "nav_compose": "Compose",
+  "nav_workflow": "Workflow",
+  "nav_reference": "Reference",
+  "nav_about": "About",
+  "theme_toggle": "Toggle dark mode",
+  "footer_tagline": "ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.",
+  "footer_repo": "Repo",
+  "footer_decisions": "Decisions"
+}

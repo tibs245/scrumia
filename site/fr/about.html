@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>À propos — ScrumIA</title>
+<meta name="description" content="D'où vient ScrumIA, ce qu'il emprunte à BMAD, et ce qu'il ne prétend volontairement pas faire.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/about.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/about.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/about.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/about.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="À propos de ScrumIA">
+<meta property="og:description" content="D'où vient ScrumIA, ce qu'il emprunte à BMAD, et ce qu'il ne prétend volontairement pas faire.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/about.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html">Aperçu</a>
+      <a href="index.html#composer">Composer</a>
+      <a href="workflow.html">Déroulé</a>
+      <a href="reference.html">Référence</a>
+      <a href="about.html" aria-current="page">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="../about.html" lang="en">EN</a>
+        <a href="about.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<h1>À propos</h1>
+
+<section id="origin" style="padding-top:24px;">
+  <h2>Origine</h2>
+  <p>ScrumIA est issu de six mois de travail avec Claude Code et BMAD, sur des projets personnels. Il est maintenu par <a href="https://github.com/tibs245">tibs245</a>.</p>
+  <p>BMAD a fourni les fondations qui sont toujours là : une base modulaire, des installations versionnées, et des outils tenus à l'écart des projets qui les consomment.</p>
+</section>
+
+<section id="premise">
+  <h2>Prémisse de base</h2>
+  <p>Il n'y a pas une seule bonne manière de mener un projet avec une IA. Ce qui fonctionne sur un monorepo à cinq applications ne fonctionne pas sur un script personnel ; ce qui convient à une équipe régulée ne convient pas à un prototype du week-end.</p>
+  <p>Une méthode qui répond à toutes les questions à la fois doit être prise en bloc ou laissée. En pratique, elle est prise, adaptée, dérive, et finit comme une bifurcation qui cesse de recevoir des mises à jour.</p>
+  <p>ScrumIA sépare les questions et en donne à chacune un module remplaçable. <strong>La partie réutilisable est la composition, pas les réponses qu'on y met.</strong></p>
+</section>
+
+<section id="claims">
+  <h2>Ce que ceci ne prétend pas</h2>
+  <ul>
+    <li>Que ces limites entre les slots sont les bonnes pour tout le monde</li>
+    <li>Qu'un catalogue de fichiers par feature est meilleur que d'autres formats de spécification</li>
+    <li>Que trois rôles est le bon nombre</li>
+    <li>Que l'état doit vivre en dehors du dépôt</li>
+  </ul>
+  <p>Chacun de ceux-ci est un choix fait pour un contexte, documenté avec ses alternatives dans les <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">enregistrements de décisions architecturales</a>. Une décision au niveau du module est contestée en écrivant un autre module, pas en argumentant sur celui-ci.</p>
+</section>
+
+<section id="status">
+  <h2>État</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Élément</th><th>État</th></tr></thead>
+      <tbody>
+        <tr><td>Architecture et décisions</td><td>Établi — 12 ADRs</td></tr>
+        <tr><td>Onze modules, 29 compétences</td><td>Fonctionnels, validés, chargés</td></tr>
+        <tr><td>Modules d'implémentation (Rust, SolidJS)</td><td>Construits, avec des compétences d'audit</td></tr>
+        <tr><td>Modules de pratique (TDD, SOLID)</td><td>Construits — référence, audit, refactorisation</td></tr>
+        <tr><td>Module de conception</td><td>Spécifié, non construit</td></tr>
+        <tr><td>Utilisation sur projet réel</td><td>Pas encore — un pilote est la prochaine étape</td></tr>
+        <tr><td>Hiérarchie des règles (ADR-0011)</td><td>Adoptée — modules restructurés</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <span class="note-title">Le vrai test de l'architecture</span>
+    <p>Tant qu'un seul module remplit un slot, rien ne prouve que ce slot est vraiment remplaçable. Écrire un second module <code>tracker</code> — même minimal basé sur des fichiers — nous apprendrait plus que d'ajouter un autre module d'implémentation.</p>
+  </div>
+</section>
+
+<section id="related">
+  <h2>Ressources connexes</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="tag">github.com/tibs245/claude-code-rex</span>
+      <h3>Claude Code REX</h3>
+      <p>Un diaporama sur les leçons apprises avec Claude Code et la famille de modèles — diviser et conquérir, sous-agents, dimensionnement approprié des modèles. Même auteur.</p>
+    </div>
+    <div class="card">
+      <span class="tag">github.com/bmad-code-org/BMAD-METHOD</span>
+      <h3>Méthode BMAD</h3>
+      <p>Le cadre de cycle de vie complet dont ScrumIA emprunte sa base modulaire. Plus large en portée et supporte plusieurs outils.</p>
+    </div>
+  </div>
+</section>
+
+<section id="license">
+  <h2>Licence</h2>
+  <p>MIT. Bifurquez-le, épurez-le, remplacez les modules qui ne vous conviennent pas.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="index.html">Aperçu</a>
+    <a class="btn btn-ghost" href="https://github.com/tibs245/scrumia">Dépôt</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

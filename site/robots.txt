@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tibs245.github.io/scrumia/sitemap.xml

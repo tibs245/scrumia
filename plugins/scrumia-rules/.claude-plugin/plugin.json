@@ -1,0 +1,18 @@
+{
+  "name": "scrumia-rules",
+  "description": "Fills no slot: the rules-hierarchy format itself — index, guides, decisions. Teaches a project to consume, create and evolve rule sections, module-shipped or project-local.",
+  "version": "0.3.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "rules",
+    "decisions",
+    "guides",
+    "format"
+  ]
+}

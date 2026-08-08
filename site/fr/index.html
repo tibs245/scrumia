@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScrumIA — composez votre équipe de développement IA avec des modules Claude Code interchangeables</title>
+<meta name="description" content="Une méthode et une place de marché de plugins Claude Code pour exécuter un projet avec des agents IA : specs, tickets, rôles établis, pratiques de codage. Chaque module peut être échangé.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ScrumIA — composez votre équipe de développement IA">
+<meta property="og:description" content="Une méthode et une place de marché de plugins Claude Code pour exécuter un projet avec des agents IA : specs, tickets, rôles établis, pratiques de codage. Chaque module peut être échangé.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html" aria-current="page">Aperçu</a>
+      <a href="index.html#composer">Composer</a>
+      <a href="workflow.html">Déroulé</a>
+      <a href="reference.html">Référence</a>
+      <a href="about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="../index.html" lang="en">EN</a>
+        <a href="index.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<div class="hero">
+  <span class="eyebrow">Place de marché de plugins Claude Code</span>
+  <h1>Composez votre équipe de développement IA.</h1>
+  <p class="lead">ScrumIA exécute un projet logiciel avec des agents IA — cadrage, specs, tickets, code, revues, PRs — comme un ensemble de <strong>modules Claude Code que vous pouvez échanger</strong>. Prenez les réponses qui conviennent à votre projet, remplacez le reste.</p>
+
+  <div class="stats" role="group" aria-label="Statistiques du projet">
+    <div class="stat"><b>11</b><span>modules</span></div>
+    <div class="stat"><b>29</b><span>compétences</span></div>
+    <div class="stat"><b>3</b><span>rôles agents</span></div>
+    <div class="stat"><b>12</b><span>décisions documentées</span></div>
+    <div class="stat"><b>3</b><span>points de contact humains</span></div>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#composer">Composez votre équipe</a>
+    <a class="btn btn-ghost" href="workflow.html">Voir une exécution complète</a>
+  </div>
+</div>
+
+<section id="flow">
+  <h2>Une exécution, de bout en bout</h2>
+  <p class="section-intro">La composition de référence. Les étapes orange ont besoin d'un humain ; les étapes bleues non.</p>
+
+  <div class="flowmap">
+    <div class="fm fm-human">
+      <span class="fm-who">Humain</span>
+      <span class="fm-title">Brief</span>
+      <span class="fm-out">Une idée, un problème. Rien de formaté.</span>
+      <span class="fm-mod">—</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">IA</span>
+      <span class="fm-title">Cadrage</span>
+      <span class="fm-out">Challenge, découpage en features.<br><b>→ issues + branche specs</b></span>
+      <span class="fm-mod">discovery</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">IA</span>
+      <span class="fm-title">Affinement</span>
+      <span class="fm-out">Les rôles interviennent, sous-issues par contexte.<br><b>→ Ready for dev</b></span>
+      <span class="fm-mod">tracker + team</span>
+    </div>
+    <div class="fm fm-human">
+      <span class="fm-who">Humain</span>
+      <span class="fm-title">Approbation</span>
+      <span class="fm-out">Seulement où le doute, la criticité ou le risque le justifient.</span>
+      <span class="fm-mod">—</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">IA</span>
+      <span class="fm-title">Sprint</span>
+      <span class="fm-out">Le manager regroupe les tickets non conflictuels.<br><b>→ To dev</b></span>
+      <span class="fm-mod">team</span>
+    </div>
+    <div class="fm fm-ai">
+      <span class="fm-who">IA</span>
+      <span class="fm-title">Construction</span>
+      <span class="fm-out">Un worktree par ticket. Spec, code, tests, revue.<br><b>→ PRs</b></span>
+      <span class="fm-mod">team + impl + practices</span>
+    </div>
+    <div class="fm fm-human">
+      <span class="fm-who">Humain</span>
+      <span class="fm-title">Merge</span>
+      <span class="fm-out">Revoyez la PR, testez.<br><b>→ Done</b></span>
+      <span class="fm-mod">—</span>
+    </div>
+  </div>
+
+  <div class="flow-legend">
+    <span><span class="dot dot-human"></span><b>Humain</b> — 3 points de contact</span>
+    <span><span class="dot dot-ai"></span><b>Agents</b> — tout le reste</span>
+    <span>Échangez un module, le flux change.</span>
+  </div>
+
+  <div class="you-strip">
+    <div class="you-item"><b>Cadrage</b><span>L'IA conteste ; vous résolvez les points bloquants.</span></div>
+    <div class="you-item"><b>Approbation</b><span>Uniquement les conceptions douteuses, critiques ou risquées.</span></div>
+    <div class="you-item"><b>Fusion</b><span>L'appel final reste le vôtre, sauf s'il est explicitement délégué.</span></div>
+  </div>
+</section>
+
+<section id="slots">
+  <h2>Slots</h2>
+  <p class="section-intro">Un slot est une question. Un module est une réponse. Un slot vide est une capacité que le projet n'a pas — les agents s'ajustent en conséquence.</p>
+
+  <div class="slot">
+    <span class="slot-name">specs</span>
+    <span class="slot-q">Où vivent les specs, sous quelle forme ?</span>
+    <span class="slot-a">Un répertoire par feature, fichiers créés seulement quand ils ont du contenu, critères d'acceptation écrits d'abord et transformés en tests.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">tracker</span>
+    <span class="slot-q">Où vit l'état — tickets, colonnes, PRs ?</span>
+    <span class="slot-a">GitHub Issues et Projects. Rien de stateful dans le repo ; un hook le garantit.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">team</span>
+    <span class="slot-q">Quels rôles établis, avec quel périmètre ?</span>
+    <span class="slot-a">Manager, business, tech. Chaque limite est une ligne de refus. Les rôles se basculent par config.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">discovery</span>
+    <span class="slot-q">Comment une idée devient un travail cadré ?</span>
+    <span class="slot-a">Challenge, découpage en features, livrez les specs sur une branche aux côtés des issues.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">implementation</span>
+    <span class="slot-q">Comment le code est écrit — par app</span>
+    <span class="slot-a">Un module par stack : Rust, SolidJS. Chacun couvre les tests, les principes, la mise en page, et ce qu'il refuse.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">practices</span>
+    <span class="slot-q">Quelles pratiques transversales — par app</span>
+    <span class="slot-a">TDD, SOLID — chacune avec des compétences de référence, d'audit et de refactorisation. Le module d'implémentation les situe pour son stack.</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">design</span>
+    <span class="slot-q">Où vit le système de conception ?</span>
+    <span class="slot-a">S'appuierait sur Claude Design, accessible depuis Claude Code via <code>DesignSync</code>. Esquissé.</span>
+  </div>
+</section>
+
+<section id="composer">
+  <h2>Composez votre équipe</h2>
+  <p class="section-intro">Trois questions. Le compositeur sélectionne vos modules, écrit vos commandes d'installation et rédige votre <code>.scrumia/config.yaml</code> — le même fichier que <code>scrumia-init</code> vérifiera.</p>
+
+  <form id="composer-form">
+    <div class="composer">
+      <fieldset>
+        <legend><span class="step-num">1</span>Votre situation</legend>
+        <label class="choice"><input type="radio" name="situation" value="solo">
+          <b>Script solo</b><span>Une app, sans cérémonie — les specs payent toujours.</span></label>
+        <label class="choice"><input type="radio" name="situation" value="exploring">
+          <b>Explorer une idée</b><span>Cadrage et specs d'abord, tickets plus tard.</span></label>
+        <label class="choice"><input type="radio" name="situation" value="production" checked>
+          <b>Backlog de production</b><span>La boucle complète : tickets, rôles, sprints, PRs.</span></label>
+        <label class="choice"><input type="radio" name="situation" value="othertracker">
+          <b>Équipe sur Jira / autre</b><span>Specs + cadrage ; un module de suivi à écrire.</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step-num">2</span>Vos stacks</legend>
+        <label class="choice"><input type="checkbox" name="stack" value="rust" checked>
+          <b>Rust</b><span>Erreurs typées, invariants, un test par invariant.</span></label>
+        <label class="choice"><input type="checkbox" name="stack" value="solidjs" checked>
+          <b>SolidJS</b><span>Réactivité granulaire, tests axés sur le comportement.</span></label>
+        <label class="choice"><input type="checkbox" name="stack" value="other">
+          <b>Quelque chose d'autre</b><span>Suit le code voisin — ou écrivez votre module.</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step-num">3</span>Vos pratiques</legend>
+        <label class="choice"><input type="checkbox" name="practice" value="tdd" checked>
+          <b>TDD</b><span>Red-green-refactor, compétences d'audit et de refactorisation incluses.</span></label>
+        <label class="choice"><input type="checkbox" name="practice" value="solid">
+          <b>SOLID</b><span>Principes situés — la sur-application est aussi auditée.</span></label>
+        <label class="choice"><input type="checkbox" name="practice" value="tanstack">
+          <b>TanStack Query</b><span>Query keys, invalidation, optimistic updates — la limite serveur/client.</span></label>
+      </fieldset>
+    </div>
+  </form>
+
+  <div class="composer-out" aria-live="polite">
+    <div class="chips" id="composer-modules"></div>
+    <div class="composer-cols">
+      <div>
+        <h3>Installer</h3>
+        <pre id="composer-install"></pre>
+        <button class="copy-btn" id="composer-copy" data-done="Copié ✓">Copier les commandes</button>
+      </div>
+      <div>
+        <h3>.scrumia/config.yaml</h3>
+        <pre id="composer-config"></pre>
+      </div>
+    </div>
+    <p class="composer-note" id="composer-note"></p>
+  </div>
+</section>
+
+<section id="modules">
+  <h2>Modules</h2>
+  <p class="section-intro">Onze livrés, un esquissé. Chacun est un plugin Claude Code standard — installez ce dont vous avez besoin.</p>
+
+  <div class="modules">
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🧩</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-core</span>
+          <span class="mod-slot">kernel</span>
+        </span>
+      </div>
+      <p class="mod-desc">Décrit la composition active et l'écrit dans <code>CLAUDE.md</code>. Ne remplit pas de slot.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">requis</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-core@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">⚖️</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-rules</span>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Sections de règles qu'un projet peut posséder : index, guides, decisions — pas de règle sans sa justification.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">4 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-rules@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">📐</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-specs</span>
+          <span class="mod-slot">specs</span>
+        </span>
+      </div>
+      <p class="mod-desc">Specs par feature, orientées TDD. Un catalogue de fichiers au lieu d'un seul document.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">3 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-specs@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">📋</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-github-project</span>
+          <span class="mod-slot">tracker</span>
+        </span>
+      </div>
+      <p class="mod-desc">Issues, sous-issues, colonnes Projects, branches et PRs. Nécessite <code>gh</code>.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">5 compétences</span><span class="pill">1 hook</span></div>
+      <code class="mod-cmd">/plugin install scrumia-github-project@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">👥</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-teams</span>
+          <span class="mod-slot">team</span>
+        </span>
+      </div>
+      <p class="mod-desc">Rôles établis et exécution des sprints dans des flux de travail dynamiques. Les rôles sont configurables.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">3 agents</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-teams@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">💡</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-discovery</span>
+          <span class="mod-slot">discovery</span>
+        </span>
+      </div>
+      <p class="mod-desc">Conteste une idée jusqu'à ce qu'elle puisse être divisée, puis livrez les specs sur une branche.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-discovery@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🦀</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-impl-rust</span>
+          <span class="mod-slot">implementation</span>
+        </span>
+      </div>
+      <p class="mod-desc">Les états invalides sont irreprésentables, erreurs typées par couche, un test par invariant — plus une compétence d'audit pour le code existant.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-impl-rust@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">⚛️</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-impl-solidjs</span>
+          <span class="mod-slot">implementation</span>
+        </span>
+      </div>
+      <p class="mod-desc">Réactivité granulaire sans réflexes React, tests de composants axés sur le comportement — plus une compétence d'audit.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-impl-solidjs@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🔴</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-tdd</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">Le cycle opérationnalisé pour un agent, la limite des mocks, la correspondance AC → test. Référence, audit, refactorisation.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">3 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-tdd@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🧭</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-solid</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">Les cinq principes, chacun avec sa limite. Audite les violations et les sur-applications. Référence, audit, refactorisation.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">3 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-solid@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🔄</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-practice-tanstack-query</span>
+          <span class="mod-slot">practices</span>
+        </span>
+      </div>
+      <p class="mod-desc">Query keys, options, mutations, testing — 9 guides, 13 decisions, portés d'une utilisation réelle monorepo.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-practice-tanstack-query@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🎨</span>
+        <span class="mod-id">
+          <span class="mod-name">scrumia-design</span>
+          <span class="mod-slot">design</span>
+        </span>
+      </div>
+      <p class="mod-desc">Maintient une bibliothèque de composants locale synchronisée avec un projet Claude Design, un composant à la fois.</p>
+      <div class="mod-foot"><span class="pill pill-soon">esquissé</span></div>
+      <code class="mod-cmd">construit sur DesignSync</code>
+    </div>
+
+  </div>
+</section>
+
+<section id="install">
+  <h2>Installation</h2>
+
+  <p>Prérequis : <strong>git</strong>, une CLI <strong><code>gh</code></strong> authentifiée (pour le suivi GitHub), et <strong><code>jq</code></strong> (pour le hook de garde). <code>scrumia-init</code> vérifie tous les trois et indique ce qui se dégrade si l'un manque.</p>
+
+<pre><code><span class="c"># ajouter la place de marché, installer le kernel</span>
+/plugin marketplace add tibs245/scrumia
+/plugin install scrumia-core@scrumia
+
+<span class="c"># puis, dans le repo à configurer</span>
+/scrumia-core:scrumia-init</code></pre>
+
+  <p><code>scrumia-init</code> cartographie vos apps, propose une composition, offre la commande d'installation pour chaque module dont il a besoin, et écrit la composition dans <code>CLAUDE.md</code>. Le relancer vérifie au lieu de réécrire.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="workflow.html">Déroulé</a>
+    <a class="btn btn-ghost" href="reference.html">Référence</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+  </div>
+</footer>
+
+<script>window.SCRUMIA_COMPOSER_STRINGS = {"marketplace": "# ajouter la place de marché une seule fois", "install": "# installer votre composition", "thenInit": "# puis, à l'intérieur du repo à configurer", "configComment": "# Généré par le compositeur - examinez, puis validez", "trackerToWrite": "tracker : le vôtre à écrire", "implNeighbor": "implementation: code voisin", "noteSolo": "Pas de suivi, pas d'équipe : de la bonne taille pour un script solo. Les specs restent actuelles dans le repo; l'historique vit dans git.", "noteExploring": "Pas de suivi encore: le cadrage produit les specs sur une branche. Branchez le suivi quand les idées deviennent un backlog.", "noteProduction": "La boucle complète. Vous conservez trois points de contact : décisions de cadrage, validations risquées, et la fusion. Les agents font le reste.", "noteOtherTracker": "Le slot de suivi a un contrat défini - écrire un module Jira ou Linear est un travail borné (voir les docs). Jusqu'à alors, les compétences de tickets se dégradent en sortie texte.", "noteOtherStack": "Aucun module d'implémentation pour ce stack encore: l'app suit les conventions du code voisin - comportement normal, pas une lacune. Le contrat pour écrire le vôtre tient une page.", "notePractices": "Les pratiques s'appliquent app par app ; où l'une est en désaccord avec le module d'implémentation, le module d'implémentation gagne."};</script>
+<script src="../assets/composer.js"></script>
+
+</body>
+</html>

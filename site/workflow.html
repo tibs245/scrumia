@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workflow — ScrumIA</title>
+<meta name="description" content="How a project runs end to end with the reference composition: brief, scoping, refinement, sprint, review. Each step names the module that carries it.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/workflow.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/workflow.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/workflow.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Workflow — ScrumIA">
+<meta property="og:description" content="How a project runs end to end with the reference composition: brief, scoping, refinement, sprint, review. Each step names the module that carries it.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/workflow.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Main">
+      <a href="index.html">Overview</a>
+      <a href="index.html#composer">Compose</a>
+      <a href="workflow.html" aria-current="page">Workflow</a>
+      <a href="reference.html">Reference</a>
+      <a href="about.html">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="workflow.html" aria-current="true" lang="en">EN</a>
+        <a href="fr/workflow.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<h1>A full run, end to end</h1>
+<p class="section-intro">The reference composition, step by step. Each step names the module behind it.</p>
+
+<section id="overview">
+  <h2>The shape of it</h2>
+
+<pre><code>Human     │ brief, challenge, brainstorm
+          ▼
+discovery │ scoping → issues + branch carrying the specs
+          ▼
+tracker   │ refinement → Ready for dev, or sub-issues per context
+   ↕      │   ↳ pulls in roles when their answer changes the ticket
+team      │
+          ▼
+Human     │ signs off on designs that are doubtful, critical or risky
+          ▼
+team      │ manager builds the sprint with the team → To dev
+          ▼
+team      │ dynamic workflows: implementation, review, QA
+   ↕      │   ↳ implementation follows the app's own module
+impl      │     and the practices plugged into the app
+          ▼
+Human     │ review PR, test → Done</code></pre>
+</section>
+
+<section id="steps">
+  <h2>Step by step</h2>
+
+  <div class="flow">
+    <div class="flow-step flow-human">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <h3>A human brings a brief <span class="badge badge-human">human</span></h3>
+        <p>An idea, a problem, a hunch. Scoping pushes back: does the problem exist? does this solve it? what becomes impossible? where are the edge cases? what is assumed but unsaid?</p>
+        <p>The one point where sustained human attention pays — and where it costs least.</p>
+<pre><code>/scrumia-discovery:scrumia-brainstorm</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <h3>Scoping produces issues and a specs branch</h3>
+        <p>Business features first, then app features — one per app, never two. Then the issues.</p>
+        <p>Specs ship on a <code>specs/&lt;slug&gt;</code> branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
+<pre><code>/scrumia-discovery:scrumia-split</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <h3>Refinement makes the ticket executable</h3>
+        <p>Four conditions, all checkable:</p>
+        <ul>
+          <li>A feature it belongs to exists and is current</li>
+          <li>Acceptance criteria are written, identified <code>AC-n</code>, and can fail</li>
+          <li>The blast radius is known: which apps, which files</li>
+          <li>No open question blocks the start</li>
+        </ul>
+        <p>Roles with the wider view get pulled in <strong>when their answer changes the ticket</strong> — not to rubber-stamp it. The ticket may split into sub-issues by context: one per app, since the implementation context differs.</p>
+<pre><code>/scrumia-github-project:scrumia-refine 42</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <h3>A human signs off where it matters <span class="badge badge-human">human</span></h3>
+        <p>Escalated: a business rule had to be invented, the split changed the ask, the ticket is wide-reaching, or a role raised a reservation. Everything else moves to Ready for dev on its own.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-body">
+        <h3>The manager builds the sprint</h3>
+        <p>A batch of tickets that <strong>don't collide</strong> — two tickets on the same files either serialise or merge. The human approves the batch explicitly.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-body">
+        <h3>Dynamic workflows consume the sprint</h3>
+        <p>One workflow per ticket, in parallel, each in its own worktree. Each gets a ticket number and nothing else — it loads its own context.</p>
+        <ol>
+          <li>Load context through the specs module</li>
+          <li><strong>Update the spec before the code</strong>, if behaviour changes</li>
+          <li>Implement <strong>following the app's implementation module and its practices</strong> — specific beats generic</li>
+          <li>Cover each <code>AC-n</code> with a test that can fail</li>
+          <li>Self-review, then role review based on blast radius</li>
+          <li>Open the PR</li>
+        </ol>
+<pre><code>/scrumia-teams:scrumia-sprint</code></pre>
+      </div>
+    </div>
+
+    <div class="flow-step flow-human">
+      <div class="flow-num">7</div>
+      <div class="flow-body">
+        <h3>Human reviews and merges <span class="badge badge-human">human</span></h3>
+        <p>The PR carries the criterion-by-criterion mapping, the specs it changed, review verdicts, and open reservations with their issues. <strong>Agents don't merge</strong>, except for categories explicitly listed in config.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="note-title">Why the spec goes first</span>
+    <p>Writing the spec first surfaces contradictions before they get encoded — where fixing them is cheapest. If one shows up against another feature, execution stops and asks the business role. It never settles a rule on its own: a rule invented mid-flight becomes everyone's reference without anyone having decided it.</p>
+  </div>
+</section>
+
+<section id="gates">
+  <h2>Three gates</h2>
+  <p>Validation cost tracks risk, rather than being uniform.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Gate</th><th>Who</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 — Automatic</strong></td><td>CI, linter, tests</td><td>Always. Blocking, no human.</td></tr>
+        <tr><td><strong>2 — Agent</strong></td><td>The roles</td><td>Routed by the actual diff, not the declared label.</td></tr>
+        <tr><td><strong>3 — Human</strong></td><td>You</td><td>The merge, unless explicitly delegated.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="note-title">When two roles disagree</span>
+    <p>The disagreement is passed through as-is, not blended into an average. It's precisely the case that needs a human call — smoothing it destroys the signal.</p>
+  </div>
+</section>
+
+<section id="autonomy">
+  <h2>Dialling autonomy</h2>
+  <p>An explicit setting in <code>.scrumia/config.yaml</code>, not an implicit property.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>Human approves</th><th>When to use it</th></tr></thead>
+      <tbody>
+        <tr><td><code>guided</code></td><td>Each ticket's scoping <em>and</em> each PR</td><td>Starting out, while calibrating</td></tr>
+        <tr><td><code>assisted</code></td><td>PRs only</td><td>The intended cruising mode</td></tr>
+        <tr><td><code>autonomous</code></td><td>PRs, minus allow-listed categories</td><td>Once trust is established</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<pre><code>autonomy:
+  level: autonomous
+  auto_merge:
+    - docs-only          <span class="c"># nothing outside docs/ and *.md</span>
+    - dependency-patch   <span class="c"># patch bump, green CI</span></code></pre>
+
+  <div class="note note-warn">
+    <span class="note-title">Refactoring is left off by default</span>
+    <p>"Refactor with no behaviour change" can't be decided automatically — it's exactly when an agent believes it changed nothing that it changed something. Nothing stops you adding it on a given project; it just becomes a deliberate choice, written in a versioned file.</p>
+  </div>
+</section>
+
+<section id="human">
+  <h2>What the human does</h2>
+
+  <div class="grid grid-2">
+    <div class="card card-accent"><h3>1 — Scope and arbitrate</h3><p>The AI challenges and proposes; the human settles the blocking points.</p></div>
+    <div class="card card-accent"><h3>2 — Sign off on risky designs</h3><p>Where doubt, criticality or risk warrant it.</p></div>
+    <div class="card card-accent"><h3>3 — Approve the sprint batch</h3><p>Launching a sprint is a decision, not a consequence.</p></div>
+    <div class="card card-accent"><h3>4 — Review and merge</h3><p>The final call, unless a category is explicitly delegated.</p></div>
+  </div>
+
+  <p>Everywhere else, agents move on their own. If you find yourself doing something else, that's a signal about the composition — not about your discipline.</p>
+
+  <div class="note note-warn">
+    <span class="note-title">On "prepare the next sprint while this one runs"</span>
+    <p>Not automatable within one session: a subagent can't spawn subagents, and agent teams are experimental with one team per session. Two Claude Code sessions on the same repo get you there — one consuming the current sprint, one refining the next. Since state lives in the tracker rather than in session memory, they stay consistent without coordinating.</p>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="reference.html">Reference</a>
+    <a class="btn btn-ghost" href="index.html#install">Install</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

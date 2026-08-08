@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+{{>head}}
+</head>
+<body>
+
+{{>header}}
+
+<main id="main">
+
+<h1>{{heading}}</h1>
+
+<section id="origin" style="padding-top:24px;">
+  <h2>{{origin_title}}</h2>
+  <p>{{origin_p1}}</p>
+  <p>{{origin_p2}}</p>
+</section>
+
+<section id="premise">
+  <h2>{{premise_title}}</h2>
+  <p>{{premise_p1}}</p>
+  <p>{{premise_p2}}</p>
+  <p>{{premise_p3}}</p>
+</section>
+
+<section id="claims">
+  <h2>{{claims_title}}</h2>
+  <ul>
+    <li>{{claims_li1}}</li>
+    <li>{{claims_li2}}</li>
+    <li>{{claims_li3}}</li>
+    <li>{{claims_li4}}</li>
+  </ul>
+  <p>{{claims_note}}</p>
+</section>
+
+<section id="status">
+  <h2>{{status_title}}</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{status_th_item}}</th><th>{{status_th_state}}</th></tr></thead>
+      <tbody>
+        <tr><td>{{status_r1_item}}</td><td>{{status_r1_state}}</td></tr>
+        <tr><td>{{status_r2_item}}</td><td>{{status_r2_state}}</td></tr>
+        <tr><td>{{status_r3_item}}</td><td>{{status_r3_state}}</td></tr>
+        <tr><td>{{status_r4_item}}</td><td>{{status_r4_state}}</td></tr>
+        <tr><td>{{status_r5_item}}</td><td>{{status_r5_state}}</td></tr>
+        <tr><td>{{status_r6_item}}</td><td>{{status_r6_state}}</td></tr>
+        <tr><td>{{status_r7_item}}</td><td>{{status_r7_state}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <span class="note-title">{{status_note_title}}</span>
+    <p>{{status_note_p}}</p>
+  </div>
+</section>
+
+<section id="related">
+  <h2>{{related_title}}</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="tag">github.com/tibs245/claude-code-rex</span>
+      <h3>{{related_rex_title}}</h3>
+      <p>{{related_rex_p}}</p>
+    </div>
+    <div class="card">
+      <span class="tag">github.com/bmad-code-org/BMAD-METHOD</span>
+      <h3>{{related_bmad_title}}</h3>
+      <p>{{related_bmad_p}}</p>
+    </div>
+  </div>
+</section>
+
+<section id="license">
+  <h2>{{license_title}}</h2>
+  <p>{{license_p}}</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="index.html">{{nav_overview}}</a>
+    <a class="btn btn-ghost" href="https://github.com/tibs245/scrumia">{{footer_repo}}</a>
+  </div>
+</section>
+
+</main>
+
+{{>footer}}
+
+</body>
+</html>
