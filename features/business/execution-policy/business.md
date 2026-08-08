@@ -70,11 +70,22 @@ spec: a second statement would go stale on a cadence this spec does not follow, 
 would be exactly the duplicate the next section refuses.
 
 **A cell preferring a split is not a placement on that order.** `split_or_<model>` names
-the model taken *if* the split is refused; it is a fallback, not a rating. A cell
-carrying one therefore does not participate in the climb the way a bare model does, and
-comparing it against a bare model in a neighbouring row is comparing two different kinds
-of statement. An invariant check that treats them as comparable reports a correct grid
-as broken — which is worse than not checking, because it trains its reader to ignore it.
+the model taken *if* the split is refused; it is a fallback, not a rating. Comparing one
+against a bare model in a neighbouring row is comparing two different kinds of statement,
+and an invariant check that treats them as comparable reports a correct grid as broken —
+which is worse than not checking, because it trains its reader to ignore it.
+
+What that carve-out does **not** license is exempting those cells from the invariant.
+Fallbacks are compared against fallbacks, along the same order: a row of split-preferring
+cells whose fallback descends as risk climbs is inverted exactly the way a row of bare
+models would be, and it is the more dangerous inversion because it is the one taken when
+a split has already been refused. The rule is that the invariant compares like with like
+— not that one kind is unchecked.
+
+A grid whose configuration declares no capability order at all is not a grid with nothing
+to violate: it is a grid the invariant cannot be checked against, and that is reported.
+A check that silently does not run misleads its reader as surely as one that cries wolf,
+and this is the state a project is in until it declares the order beside its grid.
 
 ## One reader, one decision
 
@@ -153,9 +164,12 @@ complete later.
 
 Two moments, one mechanism:
 
-- **At decision time**, the reason travels in the policy's own answer, the same way a
-  missing label's assumption does, so it is contradictable while the decision is still
-  being made.
+- **At decision time**, the reason is stated by whoever decides the deviation, in the
+  answer that announces it — the same pattern as a missing label's assumption, one step
+  later in the chain. The policy's own answer cannot carry it: a deviation happens after
+  the policy has spoken, which is why the policy's answer carries the *obligation* to
+  state a reason rather than the reason itself. Stated there, it is contradictable while
+  the decision is still being made.
 - **Durably**, it lives wherever an override lives; split refusals are a second *kind*
   recorded there, not a second mechanism. Which venue that is — a label, a field, a
   structured comment — is chosen in #32, not here.
