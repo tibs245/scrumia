@@ -83,6 +83,15 @@ Any command can fail for reasons unrelated to the ticket: missing `project` scop
 
 Stale ids survive a column being renamed in place, but not one deleted and recreated. If a move fails with "field/option not found", re-run `scrumia-project-setup` to refresh them before assuming the board is broken.
 
-## What remains unverified
+## Verification status
 
-Everything above was exercised in **read** against a live board. The write path — `item-edit` actually moving a card — has not been run end to end here; its syntax comes from `gh item-edit --help` on 2.96, and `--project-id` and the item id it consumes are both produced by verified calls. Confirm it on the first real move, and correct this file if it drifts.
+Everything above was exercised against live boards on `gh` 2.96 — reads against a 95-item board, writes against a throwaway project since deleted.
+
+The write path is confirmed end to end: `board.sh move` changed a card's Status and the board reflected it, the reverse move restored it, and a second board carrying the **same issue** was left untouched — which is what proves `find`'s project filter actually discriminates rather than returning the first card it sees. A column name absent from the config fails with the known columns listed, instead of silently doing nothing.
+
+Two behaviours worth keeping in mind, both observed rather than assumed:
+
+- A freshly created project ships `Todo` / `In Progress` / `Done` — note the capital P, which is exactly why the case-insensitive fallback exists.
+- `totalCount` tracks the filtered count, so `truncated` is exact rather than inferred from whether the page came back full.
+
+What is still unverified: nothing in this file. What is untested elsewhere is board **creation** with custom columns — `updateProjectV2Field` exists and can redefine the Status options, but `scrumia-project-setup` has not been run against a real board yet.

@@ -16,6 +16,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0010](0010-cross-cutting-practices.md) | Cross-cutting practices as composable modules | accepted |
 | [0011](0011-rules-hierarchy.md) | A rules hierarchy for knowledge skills | accepted |
 | [0012](0012-specs-contract.md) | The specs contract: documented, not hard-coded | accepted |
+| [0013](0013-tracker-stays-one-slot.md) | The `tracker` slot stays one slot, for now | accepted |
 
 ## Scope of the decisions
 
@@ -26,7 +27,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The project** | 0001 (distribution), 0007 (single repo), 0009 (composition) |
 | **The `team` module** | 0002 (standing roles), 0005 (gates), 0006 (routing) |
 | **The `specs` module** | 0003 (cross-cutting architecture), 0004 (splitting) |
-| **The `tracker` module** | 0008 (state outside the repo) |
+| **The `tracker` module** | 0008 (state outside the repo), 0013 (one slot, for now) |
 | **The `practices` slot** | 0010 (cross-cutting practices) |
 | **The `implementation` and `practices` slots, plus `scrumia-core`** | 0011 (rules hierarchy) |
 | **The `specs` module, plus its consumers (`tracker`, `discovery`, `team`) and `scrumia-core`** | 0012 (specs contract) |
@@ -40,6 +41,7 @@ A module decision is contested by writing another module, not by debating this o
 - **0009** — if a project changes modules frequently on the same slot
 - **0011** — if the three-concern floor for staying single-file proves wrong once real modules have gone through the migration
 - **0012** — if a specs module ships with a fundamentally different shape (no per-feature catalog) than the six-key vocabulary assumes
+- **0013** — as soon as a project needs its issues in one tool and its PRs in GitHub; that case is blocked until the slot splits
 
 ## Format
 
