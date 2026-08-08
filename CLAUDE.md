@@ -6,7 +6,7 @@ Before acting, check which module covers what you are about to do.
 
 ScrumIA is the composition it ships: this repo runs on its own plugins.
 
-| Area | Plugged module | What to know |
+| Slot | Plugged module | What to know |
 |---|---|---|
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |

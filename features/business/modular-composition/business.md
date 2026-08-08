@@ -88,3 +88,13 @@ minutes of grep, done rarely, not a per-call cost.
 - **BR-5** — ScrumIA's own modules ship from a single repo, which is also the
   marketplace. A third-party module is not required to: it declares its own source
   in `marketplace.json`, at the adopting project's discretion.
+
+## Vocabulary
+
+The word for a question is **slot**, never "area". "Slot" carries BR-1 in its name —
+a question that exists whether or not anything currently answers it. "Area" reads as
+a section heading and loses that: it suggests a fixed region of the project rather
+than a question a project can leave open. Every table that names slots — including
+the composition table `scrumia-init` writes into `CLAUDE.md` — uses "Slot" as its
+header, not "Area", and "area" appears nowhere in this composition's vocabulary as a
+synonym.

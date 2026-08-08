@@ -41,7 +41,7 @@ Two slots are multiple, and both map app by app:
 <!-- scrumia:start -->
 ## ScrumIA composition
 
-| Area | Plugged module | What to know |
+| Slot | Plugged module | What to know |
 |---|---|---|
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
