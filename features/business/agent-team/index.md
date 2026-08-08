@@ -16,7 +16,8 @@ live process (`docs/adr/0002-standing-roles.md`).
 - Owner: `plugins/scrumia-teams` — the three roles are subagent definitions in
   `plugins/scrumia-teams/agents/` (`scrumia-manager.md`, `scrumia-business.md`,
   `scrumia-tech.md`), consumed by `scrumia-github-project`'s `scrumia-ticket` skill
-  (Step 0 for routing, Step 6 for review).
+  at Step 6, which routes the review by scope. Step 0 invokes no role — it runs the
+  refusal gate and calls `pick-model.sh`, the execution policy specified in #13.
 - No App feature implements this. `plugins/` is ScrumIA's own product and carries
   no implementation module (`CLAUDE.md`); the roles are not code under `site` or
   `tools`, they are the agent definitions themselves.

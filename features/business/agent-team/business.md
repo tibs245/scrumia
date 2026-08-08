@@ -2,8 +2,9 @@
 
 Vocabulary: **role** (manager, business, tech), **activation trigger** (what
 brings a role into a ticket), **escalation** (what always reaches the human,
-independent of configuration), **arbitration** (the manager resolving a
-disagreement between the other two), **verdict** (a role's explicit answer:
+independent of configuration), **arbitration** (the manager surfacing a
+disagreement between the other two to the human, with its own recommendation,
+without settling it itself), **verdict** (a role's explicit answer:
 approved / blocked, compliant / non-compliant, or their "with reservations"
 variants).
 
@@ -39,9 +40,15 @@ unattended, never whether these three reach the human:
 - A missing business rule — a case nothing written settles.
 - A contract change consumed by another app.
 
-If a role is disabled in `.scrumia/config.yaml`'s `team.roles`, the question
-that would have gone to it goes straight to the human instead: the manager does
-not settle it on the grounds that no one else is available.
+If business or tech is disabled in `.scrumia/config.yaml`'s `team.roles`, the
+question that would have gone to it goes straight to the human instead: the
+manager does not settle it on the grounds that no one else is available.
+
+The manager is not symmetrical with the other two here, because this rule is
+carried out by the manager. Disabling it does not silently disable escalation:
+the skill that would have routed to it escalates to the human directly, and says
+the manager is off. What a project cannot get is a composition where a question
+reaches nobody.
 
 ## Arbitration does not average
 
