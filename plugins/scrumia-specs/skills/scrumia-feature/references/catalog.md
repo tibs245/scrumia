@@ -16,7 +16,11 @@ Contains:
 - Its status: `draft`, `active`, `deprecated`
 - Its links: parent Business feature (for an App), App features that implement it (for a Business), consumed App features
 - The list of files present **with one line saying why**
-- The open GitHub issues that concern it
+- The open GitHub issues that concern it — issues that survive the PR that touches this
+  feature, not the issue that created it. A feature's founding issue is closed by the very
+  merge that writes the file, so it never belongs under `## Open issues`: listing it there
+  reads as outstanding work that is already done. Its provenance goes in the `CHANGELOG.md`
+  entry for that merge instead, where history already lives.
 
 Read by: everyone, first.
 

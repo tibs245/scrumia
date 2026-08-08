@@ -69,6 +69,5 @@ documentation convention with no interface or exposed library of its own.
 ## Open issues
 
 - #2 — [EPIC] Spec the data organisation: the feature format and the monorepo layout (parent)
-- #8 — Write the feature-format spec
 - #22 — `validate.py`'s link gate doesn't cover `features/`
 - #25 — Reconcile `catalog.md` / `format-feature.md` wording with this feature's mandatory-file rule

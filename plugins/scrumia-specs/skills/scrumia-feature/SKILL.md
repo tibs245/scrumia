@@ -126,6 +126,6 @@ Systematically cover the nominal case, then: zero, boundary, duplicate, concurre
 
 ## Auditing a feature
 
-Look for, in this order: inline history (the most frequent defect), files that are empty or full of "N/A", unverifiable acceptance criteria, an `index.md` that no longer matches the files present, an App feature with no Business parent and no justification, an `api-contract.md` that has drifted from the code.
+Look for, in this order: inline history (the most frequent defect), files that are empty or full of "N/A", unverifiable acceptance criteria, an `index.md` that no longer matches the files present, an `## Open issues` entry that is closed, an App feature with no Business parent and no justification, an `api-contract.md` that has drifted from the code.
 
 Return one finding per point, with the file path. Rewrite nothing without the user's agreement.
