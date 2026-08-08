@@ -9,7 +9,7 @@
 
 <main id="main">
 
-<div class="hero">
+<div class="hero summon">
   <span class="eyebrow">{{hero_eyebrow}}</span>
   <h1>{{hero_title}}</h1>
   <p class="lead">{{hero_lead}}</p>
@@ -32,7 +32,7 @@
   <h2>{{flow_title}}</h2>
   <p class="section-intro">{{flow_intro}}</p>
 
-  <div class="flowmap">
+  <div class="flowmap summon">
     <div class="fm fm-human">
       <span class="fm-who">{{who_human}}</span>
       <span class="fm-title">{{flow1_title}}</span>
@@ -94,40 +94,57 @@
   <h2>{{slots_title}}</h2>
   <p class="section-intro">{{slots_intro}}</p>
 
-  <div class="slot">
-    <span class="slot-name">specs</span>
-    <span class="slot-q">{{slot_specs_q}}</span>
-    <span class="slot-a">{{slot_specs_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">tracker</span>
-    <span class="slot-q">{{slot_tracker_q}}</span>
-    <span class="slot-a">{{slot_tracker_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">team</span>
-    <span class="slot-q">{{slot_team_q}}</span>
-    <span class="slot-a">{{slot_team_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">discovery</span>
-    <span class="slot-q">{{slot_discovery_q}}</span>
-    <span class="slot-a">{{slot_discovery_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">implementation</span>
-    <span class="slot-q">{{slot_impl_q}}</span>
-    <span class="slot-a">{{slot_impl_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">practices</span>
-    <span class="slot-q">{{slot_practices_q}}</span>
-    <span class="slot-a">{{slot_practices_a}}</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">design</span>
-    <span class="slot-q">{{slot_design_q}}</span>
-    <span class="slot-a">{{slot_design_a}}</span>
+  <div class="slots summon">
+    <div class="slot">
+      <span class="slot-name">specs</span>
+      <span class="slot-q">{{slot_specs_q}}</span>
+      <span class="slot-a">{{slot_specs_a}}</span>
+      <span class="slot-fill">scrumia-specs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">tracker</span>
+      <span class="slot-q">{{slot_tracker_q}}</span>
+      <span class="slot-a">{{slot_tracker_a}}</span>
+      <span class="slot-fill">scrumia-github-project</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">team</span>
+      <span class="slot-q">{{slot_team_q}}</span>
+      <span class="slot-a">{{slot_team_a}}</span>
+      <span class="slot-fill">scrumia-teams</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">discovery</span>
+      <span class="slot-q">{{slot_discovery_q}}</span>
+      <span class="slot-a">{{slot_discovery_a}}</span>
+      <span class="slot-fill">scrumia-discovery</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">implementation</span>
+      <span class="slot-q">{{slot_impl_q}}</span>
+      <span class="slot-a">{{slot_impl_a}}</span>
+      <span class="slot-fill">scrumia-impl-rust · scrumia-impl-solidjs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">practices</span>
+      <span class="slot-q">{{slot_practices_q}}</span>
+      <span class="slot-a">{{slot_practices_a}}</span>
+      <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">design</span>
+      <span class="slot-q">{{slot_design_q}}</span>
+      <span class="slot-a">{{slot_design_a}}</span>
+      <span class="slot-fill">scrumia-design</span>
+    </div>
+    <!-- The eighth card is not a slot ScrumIA ships: it is the empty state,
+         drawn rather than omitted, because "deliberately empty" is the idea. -->
+    <div class="slot slot-empty">
+      <span class="slot-name">{{slot_none_name}}</span>
+      <span class="slot-q">{{slot_none_q}}</span>
+      <span class="slot-a">{{slot_none_a}}</span>
+      <span class="slot-fill">{{slot_none_fill}}</span>
+    </div>
   </div>
 </section>
 

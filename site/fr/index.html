@@ -14,9 +14,15 @@
 <meta property="og:description" content="Une méthode et une place de marché de plugins Claude Code pour exécuter un projet avec des agents IA : specs, tickets, rôles établis, pratiques de codage. Chaque module peut être échangé.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/fr/">
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/style.css">
 <script src="../assets/theme.js"></script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<script defer src="../assets/motion.js"></script>
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -24,7 +30,10 @@
 
 <header class="top">
   <div class="top-inner">
-    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="../assets/mark.svg" alt="" width="18" height="18">
+      Scrum<span>IA</span>
+    </a>
     <nav aria-label="Navigation principale">
       <a href="index.html" aria-current="page">Aperçu</a>
       <a href="index.html#composer">Composer</a>
@@ -43,10 +52,10 @@
 
 <main id="main">
 
-<div class="hero">
+<div class="hero summon">
   <span class="eyebrow">Place de marché de plugins Claude Code</span>
-  <h1>Composez votre équipe de développement IA.</h1>
-  <p class="lead">ScrumIA exécute un projet logiciel avec des agents IA — cadrage, specs, tickets, code, revues, PRs — comme un ensemble de <strong>modules Claude Code que vous pouvez échanger</strong>. Prenez les réponses qui conviennent à votre projet, remplacez le reste.</p>
+  <h1>Composez votre équipe de dev IA avec des <em>modules interchangeables</em>.</h1>
+  <p class="lead">Cadrage, specs, tickets, code, revues, PRs : chaque capacité est un slot. Vous y branchez un plugin Claude Code, vous le remplacez quand le projet change.</p>
 
   <div class="stats" role="group" aria-label="Statistiques du projet">
     <div class="stat"><b>11</b><span>modules</span></div>
@@ -66,7 +75,7 @@
   <h2>Une exécution, de bout en bout</h2>
   <p class="section-intro">La composition de référence. Les étapes orange ont besoin d'un humain ; les étapes bleues non.</p>
 
-  <div class="flowmap">
+  <div class="flowmap summon">
     <div class="fm fm-human">
       <span class="fm-who">Humain</span>
       <span class="fm-title">Brief</span>
@@ -128,40 +137,57 @@
   <h2>Slots</h2>
   <p class="section-intro">Un slot est une question. Un module est une réponse. Un slot vide est une capacité que le projet n'a pas — les agents s'ajustent en conséquence.</p>
 
-  <div class="slot">
-    <span class="slot-name">specs</span>
-    <span class="slot-q">Où vivent les specs, sous quelle forme ?</span>
-    <span class="slot-a">Un répertoire par feature, fichiers créés seulement quand ils ont du contenu, critères d'acceptation écrits d'abord et transformés en tests.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">tracker</span>
-    <span class="slot-q">Où vit l'état — tickets, colonnes, PRs ?</span>
-    <span class="slot-a">GitHub Issues et Projects. Rien de stateful dans le repo ; un hook le garantit.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">team</span>
-    <span class="slot-q">Quels rôles établis, avec quel périmètre ?</span>
-    <span class="slot-a">Manager, business, tech. Chaque limite est une ligne de refus. Les rôles se basculent par config.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">discovery</span>
-    <span class="slot-q">Comment une idée devient un travail cadré ?</span>
-    <span class="slot-a">Challenge, découpage en features, livrez les specs sur une branche aux côtés des issues.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">implementation</span>
-    <span class="slot-q">Comment le code est écrit — par app</span>
-    <span class="slot-a">Un module par stack : Rust, SolidJS. Chacun couvre les tests, les principes, la mise en page, et ce qu'il refuse.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">practices</span>
-    <span class="slot-q">Quelles pratiques transversales — par app</span>
-    <span class="slot-a">TDD, SOLID — chacune avec des compétences de référence, d'audit et de refactorisation. Le module d'implémentation les situe pour son stack.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">design</span>
-    <span class="slot-q">Où vit le système de conception ?</span>
-    <span class="slot-a">Identité, tokens et composants sous forme de fichiers dans le dépôt ; un projet Claude Design comme surface de revue. Une valeur que les tokens ne portent pas est un constat, pas une exception.</span>
+  <div class="slots summon">
+    <div class="slot">
+      <span class="slot-name">specs</span>
+      <span class="slot-q">Où vivent les specs, sous quelle forme ?</span>
+      <span class="slot-a">Un répertoire par feature, fichiers créés seulement quand ils ont du contenu, critères d'acceptation écrits d'abord et transformés en tests.</span>
+      <span class="slot-fill">scrumia-specs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">tracker</span>
+      <span class="slot-q">Où vit l'état — tickets, colonnes, PRs ?</span>
+      <span class="slot-a">GitHub Issues et Projects. Rien de stateful dans le repo ; un hook le garantit.</span>
+      <span class="slot-fill">scrumia-github-project</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">team</span>
+      <span class="slot-q">Quels rôles établis, avec quel périmètre ?</span>
+      <span class="slot-a">Manager, business, tech. Chaque limite est une ligne de refus. Les rôles se basculent par config.</span>
+      <span class="slot-fill">scrumia-teams</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">discovery</span>
+      <span class="slot-q">Comment une idée devient un travail cadré ?</span>
+      <span class="slot-a">Challenge, découpage en features, livrez les specs sur une branche aux côtés des issues.</span>
+      <span class="slot-fill">scrumia-discovery</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">implementation</span>
+      <span class="slot-q">Comment le code est écrit — par app</span>
+      <span class="slot-a">Un module par stack : Rust, SolidJS. Chacun couvre les tests, les principes, la mise en page, et ce qu'il refuse.</span>
+      <span class="slot-fill">scrumia-impl-rust · scrumia-impl-solidjs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">practices</span>
+      <span class="slot-q">Quelles pratiques transversales — par app</span>
+      <span class="slot-a">TDD, SOLID — chacune avec des compétences de référence, d'audit et de refactorisation. Le module d'implémentation les situe pour son stack.</span>
+      <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">design</span>
+      <span class="slot-q">Où vit le système de conception ?</span>
+      <span class="slot-a">Identité, tokens et composants sous forme de fichiers dans le dépôt ; un projet Claude Design comme surface de revue. Une valeur que les tokens ne portent pas est un constat, pas une exception.</span>
+      <span class="slot-fill">scrumia-design</span>
+    </div>
+    <!-- The eighth card is not a slot ScrumIA ships: it is the empty state,
+         drawn rather than omitted, because "deliberately empty" is the idea. -->
+    <div class="slot slot-empty">
+      <span class="slot-name">— aucun —</span>
+      <span class="slot-q">Et si vous laissez un slot vide ?</span>
+      <span class="slot-a">Rien n'est simulé. Les agents savent que la capacité est absente et le disent au lieu de l'improviser — ce dépôt lui-même tourne avec discovery vide, volontairement.</span>
+      <span class="slot-fill">rien d'installé</span>
+    </div>
   </div>
 </section>
 
