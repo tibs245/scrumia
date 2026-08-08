@@ -2,6 +2,13 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-08 — The composition is printed by a script, not retyped by an agent
+- Issue: #63
+- PR: #73
+- Breaking: no
+- BR-6 added; `scrumia-init` and `scrumia-compose` end by running
+  `scrumia-core/scripts/compose-status.sh`. AC-8 covers it.
+
 ## 2026-08-08 — One word for a question: "slot", never "area"
 - Issue: #36
 - PR: #81

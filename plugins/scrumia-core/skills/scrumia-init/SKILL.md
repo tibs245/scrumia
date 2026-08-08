@@ -273,9 +273,17 @@ This file being committed, the composition is versioned with the project. Tell t
 
 ## Step 8 — Report back
 
-Summarize: the chosen composition, what was created, the slots left empty and what that implies, what remains to be done by hand.
+Summarize what this run *did*: what was created, what drifted, what remains to be done by hand. Then point the way based on the project's actual state: no spec → scoping; specs but no ticket → the tracker module; tickets ready → the team.
 
-Then point the way based on the project's actual state: no spec → scoping; specs but no ticket → the tracker module; tickets ready → the team.
+**Close by printing the composition instead of retyping it:**
+
+```bash
+${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
+```
+
+Its output *is* the closing summary — the slot table, the slots left empty on purpose, the apps carrying no implementation module. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
+
+If the script reports a slot as `not declared`, that is this skill's own output to fix: Step 3 writes every slot key explicitly, `null` included.
 
 ## What you don't do
 

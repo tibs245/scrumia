@@ -59,3 +59,15 @@ A new slot is justified when a real project would want to fill it **differently*
 It is not a resolution system: no module queries a registry to find out who calls whom. Modules refer to each other by name, and `CLAUDE.md` says which one is plugged in.
 
 This is a deliberate choice. An extra layer of indirection would cost reliability — the agent would have to keep it in mind on every call — for flexibility we don't need, since a slot rarely changes.
+
+## End every pass by printing the composition
+
+Whatever you did above — viewed, plugged in, replaced, diagnosed — close on the composition as it now stands, and let the script say it rather than saying it yourself:
+
+```bash
+${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
+```
+
+On a view, that output is most of the answer already: the slots, their modules, the ones empty on purpose, and the per-app implementation and practices columns.
+
+What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — so it cannot tell you whether a named module is actually enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. Those gaps are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.
