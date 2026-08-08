@@ -1,0 +1,96 @@
+# Acceptance criteria — Modular composition
+
+One scenario per rule in `business.md`. Each scenario must be able to fail.
+
+## Nominal
+
+### AC-1 — A slot exists independently of any module filling it
+
+```gherkin
+Given the seven slots named in `index.md` (`specs`, `tracker`, `team`,
+  `discovery`, `implementation`, `practices`, `design`)
+When a project has not chosen a module for one of them
+Then the slot itself is still a valid question the project could answer later —
+  it is not removed from the composition for lack of an answer today
+```
+
+### AC-2 — A module fills a slot through configuration, not convention
+
+```gherkin
+Given a module's `.claude-plugin/plugin.json` and its own `SKILL.md`
+When a project sets `composition.<slot>: <module-name>` in `.scrumia/config.yaml`
+  and enables the plugin in `.claude/settings.json`
+Then `scrumia-init` names that module for that slot in `CLAUDE.md`'s composition
+  table, and agents read the table rather than inferring the slot from which
+  plugins happen to be installed
+```
+
+## Edge cases
+
+### AC-3 — An empty slot is a declared absence, not an oversight
+
+```gherkin
+Given a project that has not adopted a module for a given slot
+When `.scrumia/config.yaml` is written or regenerated
+Then the slot's key is present with value `null` — never omitted — so a reader
+  can tell "not chosen yet" apart from "no key defined for this at all", and
+  `CLAUDE.md` names the absence in prose beneath its composition table, which
+  lists only the modules actually plugged in
+```
+
+The table carries no row for an empty slot on purpose: a row naming an absent
+module sends an agent to a skill that does not exist. The declaration BR-2
+requires lives in `.scrumia/config.yaml`'s explicit `null`; `CLAUDE.md` states
+the same absence in the register a reader acts on — a sentence, not a dead row.
+
+### AC-4 — A skill degrades by a named message when the module it needs is absent
+
+```gherkin
+Given a slot's module is absent at runtime — `CLAUDE.md`'s `## Specs contract`
+  section (or the equivalent section for another slot) is missing because no
+  module is plugged into that slot
+When a skill that would consume that slot's capability runs — for example
+  `scrumia-ticket` reaching its Step 1, needing the specs contract to load the
+  parent feature
+Then it states the gap with a specific, named message — "no specs module
+  documented — ask the human or proceed without spec updates" — and continues
+  the rest of its work in that degraded mode; it does not raise an error, and it
+  does not silently guess a file layout that happens to work for one specs
+  module
+```
+
+### AC-5 — A module is cited by name in prose, never resolved dynamically
+
+```gherkin
+Given two modules plugged into different slots that need to interoperate —
+  for example the tracker slot's `scrumia-ticket` reading the specs slot's
+  acceptance-file vocabulary
+When one module's skill needs to reach a capability the other slot owns
+Then it names the slot (or the specific module, where the sentence needs it) in
+  its own prose, and reads whatever that slot's module documented in `CLAUDE.md`
+  — there is no runtime call, verb, or registry that resolves the slot to a
+  module on the agent's behalf
+```
+
+### AC-6 — A third-party module plugs in without joining the base repo
+
+```gherkin
+Given a slot with no ScrumIA-authored module answering a project's need — for
+  example a tracker module for a system other than GitHub
+When a project or a third party writes that module
+Then it ships from its own repository, declared in `marketplace.json` through a
+  `github`, `git-subdir`, `npm` or `archive` source instead of a relative path,
+  and it still only needs to satisfy the three things any module owes (`SKILL.md`,
+  scope, never assume another module is present) to be composable
+```
+
+## Out of scope
+
+- **Module versioning and migration on a breaking change** — what a major, minor
+  or patch bump means for a project already using a module, and how that project
+  finds out about a breaking change. Left to #7; this feature only establishes
+  that a module exists and can be composed, not how it evolves once adopted.
+- **Any single module's own settings or file layout** — each module documents
+  what it reads under `settings.<slot>` in its own `SKILL.md`; this feature does
+  not duplicate any module's contract, only the shared rule that a contract must
+  exist.
