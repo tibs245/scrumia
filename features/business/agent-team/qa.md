@@ -112,6 +112,7 @@ Then they do not resolve — a hot reload refreshes skills but not agent types �
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —
-  that is the execution policy, specified separately in #13. This feature only
-  establishes that a role's own model lives in its agent frontmatter.
+  that is the execution policy, specified separately in
+  `features/business/execution-policy/`. This feature only establishes that a
+  role's own model lives in its agent frontmatter.
 - The mechanics and matrix of `scrumia-teams/scripts/pick-model.sh`.

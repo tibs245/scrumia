@@ -23,14 +23,18 @@ the label is a signal, not the source of truth.
 | Label | Read by | For |
 |---|---|---|
 | `scope/*` | `scrumia-teams/scripts/pick-model.sh` | the scope × risk cell of the execution matrix |
-| `scope/*` | `scrumia-ticket` Step 6 | which role reviews (`S` none, `M` tech, `L` tech + business if a business spec is touched) |
+| `scope/*` | `scrumia-ticket` Step 6 | which role reviews (`S` none, `M` tech, `L` tech + business if a business rule changes) |
 | `risk/*` | `scrumia-teams/scripts/pick-model.sh` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
-A ticket with no `scope/*` label gets `execution.unlabeled`'s model rather than a
-guessed size; a ticket with no `risk/*` label gets `execution.unrated_risk`'s default
-rather than a guessed cost. Both are stated as assumptions in the model decision's
-`instruction`, not silently applied.
+`scope/*` has two readers, and they read one axis, not two: what counts as "a business
+rule changes" is specified once, in `features/business/execution-policy/`, and neither
+consumer restates it. A label read two ways is two labels, and the second one drifts
+without anyone naming it.
+
+What happens when either label is absent — which default applies, and that the
+assumption is stated rather than silently applied — belongs to the policy that reads
+them, and is specified there for the same reason.
 
 ## Reading discipline: a board is read through a filter, never whole
 
