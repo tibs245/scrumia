@@ -34,9 +34,14 @@ Given a project that has not adopted a module for a given slot
 When `.scrumia/config.yaml` is written or regenerated
 Then the slot's key is present with value `null` — never omitted — so a reader
   can tell "not chosen yet" apart from "no key defined for this at all", and
-  `CLAUDE.md`'s composition table shows the slot with no module rather than
-  silently dropping the row
+  `CLAUDE.md` names the absence in prose beneath its composition table, which
+  lists only the modules actually plugged in
 ```
+
+The table carries no row for an empty slot on purpose: a row naming an absent
+module sends an agent to a skill that does not exist. The declaration BR-2
+requires lives in `.scrumia/config.yaml`'s explicit `null`; `CLAUDE.md` states
+the same absence in the register a reader acts on — a sentence, not a dead row.
 
 ### AC-4 — A skill degrades by a named message when the module it needs is absent
 
