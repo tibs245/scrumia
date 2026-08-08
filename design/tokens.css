@@ -22,7 +22,6 @@
    * a second design. light-dark() takes light first: an argument order fixed by
    * CSS, not a statement of which one the site is really written in. */
   --ground: light-dark(#F8F5F0, #000B1C);
-  --ground-deep: light-dark(#F1ECE4, #00060F);   /* sections that recede below the page */
   --surface: light-dark(#FFFFFF, #08192E);
   --surface-raised: light-dark(#FFFFFF, #0D2540);
   --surface-sunken: light-dark(#F1ECE4, #02101F); /* code, inputs — things you type into */
@@ -65,11 +64,16 @@
 
   /* The sky. The ground is never a flat fill: two washes stand for one cold light
    * source behind the page, near and far. Both are mixes of a themed colour, so
-   * one definition serves both themes and neither can drift from the accent it
-   * is supposed to be made of. The far wash is --agent rather than --accent —
-   * the more distant light is the one that labels, not the one that points. */
+   * they cannot drift from the colour they are supposed to be made of. The far
+   * wash is --agent rather than --accent — the more distant light is the one
+   * that labels, not the one that points.
+   * The far wash is the one place a single strength does not serve both themes:
+   * on cream, 14% of the agent blue is a lavender field that eats the contrast
+   * of anything faint laid on it. Two strengths, still no literal colour. */
   --halo-near: color-mix(in srgb, var(--accent) 11%, transparent);
-  --halo-far: color-mix(in srgb, var(--agent) 14%, transparent);
+  --halo-far: light-dark(
+    color-mix(in srgb, var(--agent) 7%, transparent),
+    color-mix(in srgb, var(--agent) 14%, transparent));
   /* The grid belongs to peripheral vision: it is a hairline, so it is made of the
    * hairline colour and stays neutral on cream instead of tinting the page. */
   --grid-line: color-mix(in srgb, var(--border) 32%, transparent);
