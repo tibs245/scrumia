@@ -200,10 +200,15 @@
   --dur-2: 220ms;   /* state change */
   --dur-3: 420ms;   /* an element arriving */
   --dur-4: 700ms;   /* a sequence completing */
+  --dur-5: 1400ms;  /* a full summon-and-resolve cycle — Hop's whole life */
   --ease-summon: cubic-bezier(0.2, 0.9, 0.3, 1.18);
   --ease-resolve: cubic-bezier(0.45, 0, 1, 1);
   --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
+  /* A harder spring, for the one thing per screen that is allowed to overshoot
+   * visibly: Hop landing. Everything else uses --ease-summon and stays polite. */
+  --ease-hop: cubic-bezier(0.16, 1.36, 0.3, 1);
   --stagger: 80ms;  /* delay between successive columns of one diagram */
+  --stagger-hop: 55ms; /* between Hop's own segments — tighter: it is one body */
 
   /* Layout */
   --page-max: 1080px;

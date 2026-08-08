@@ -1,0 +1,307 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>site-header — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  /* Three candidate treatments, side by side, so the choice is made by looking.
+     None is implemented on the site yet — the winner moves into style.css whole.
+     Scroll inside each frame: two of the three only exist once you do. */
+
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-md); margin: var(--space-12) 0 var(--space-2);
+       font-family: var(--font-display); letter-spacing: var(--tracking-tight); }
+  h2::before { content: none; }
+  h2 .tag { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent);
+       letter-spacing: var(--tracking-label); text-transform: uppercase;
+       display: block; margin-bottom: var(--space-1); }
+  .note-line { color: var(--text-soft); font-size: var(--text-base);
+       max-width: 60ch; margin: 0 0 var(--space-4); }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+
+  /* A window onto a page, so a sticky header has something to stick to. */
+  .frame {
+    height: 300px; overflow-y: auto; overflow-x: hidden;
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--ground); position: relative;
+  }
+  .frame-body { padding: var(--space-6) var(--space-6) var(--space-20); }
+  .frame-body p { max-width: 54ch; }
+  .frame-body h3 { margin-top: 0; }
+
+  /* ── Shared header chrome ─────────────────────────────────────────────── */
+  .hdr {
+    position: sticky; top: 0; z-index: 5;
+    background: color-mix(in srgb, var(--ground) 78%, transparent);
+    backdrop-filter: saturate(150%) blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .hdr-in {
+    display: flex; align-items: center; gap: var(--space-5);
+    padding: 0 var(--space-5); height: var(--header-h);
+    transition: height var(--dur-2) var(--ease-move);
+  }
+  .hdr-brand {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-display); font-weight: var(--weight-display);
+    letter-spacing: var(--tracking-tight); color: var(--text);
+    text-decoration: none; white-space: nowrap;
+  }
+  .hdr-brand em { font-style: normal; color: var(--accent); }
+  .hdr-nav { display: flex; gap: var(--space-4); margin-left: auto; align-items: center; position: relative; }
+  .hdr-nav a {
+    color: var(--text-soft); text-decoration: none; font-size: var(--text-base);
+    white-space: nowrap; padding: var(--space-1) 0;
+    transition: color var(--dur-1) var(--ease-move);
+  }
+  .hdr-nav a:hover, .hdr-nav a[aria-current="page"] { color: var(--text); }
+
+  /* ── Hop, at header size ──────────────────────────────────────────────── */
+  .hop { display: block; width: 26px; height: 26px; flex-shrink: 0; }
+  .hop-seg {
+    fill: var(--surface-raised); stroke: var(--border-strong); stroke-width: 1.5;
+    transform-box: fill-box; transform-origin: 50% 100%;
+  }
+  .hop-head { fill: var(--accent-surface); }
+  .hop-eye {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent));
+    transform-box: fill-box; transform-origin: 50% 50%;
+  }
+  .hop-s1 { --dx: -9px; --sy: 2.29; }
+  .hop-s2 { --dx: -3px; --sy: 1.39; }
+  .hop-s3 { --dx:  1px; --sy: 1.23; }
+  .hop-s4 { --dx:  5px; --sy: 1.88; }
+  @keyframes hop-in { from { transform: translateX(var(--dx)) scaleY(var(--sy)); } to { transform: none; } }
+  @keyframes hop-eye-on { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: none; } }
+  @keyframes hop-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
+  .hop-arrive .hop-seg {
+    animation: hop-in var(--dur-3) var(--ease-hop) both;
+    animation-delay: calc(var(--i) * var(--stagger-hop));
+  }
+  .hop-arrive .hop-eye {
+    animation: hop-eye-on var(--dur-2) var(--ease-move) both;
+    animation-delay: var(--dur-3);
+  }
+  .hop-idle .hop-eye { animation: hop-blink 5.5s var(--ease-move) infinite; }
+
+  /* ── A — Assembly ─────────────────────────────────────────────────────── *
+   * Hop builds itself on arrival, then the header earns its keep on scroll:
+   * it compacts, its ground goes solid, and a cyan rule reports how far down
+   * the page you are. Every change stands for a state, which is the rule.
+   */
+  .hdr-a .hdr-progress {
+    position: absolute; left: 0; bottom: -1px; height: 2px;
+    background: var(--accent); width: var(--p, 0%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+    transition: width 80ms linear;
+  }
+  .hdr-a.is-stuck .hdr-in { height: calc(var(--header-h) - var(--space-3)); }
+  .hdr-a.is-stuck { background: color-mix(in srgb, var(--ground) 94%, transparent); }
+
+  /* ── B — Scanline ─────────────────────────────────────────────────────── *
+   * A cyan sweep crosses the header on a slow loop, the way a process polls.
+   * Quieter than A and always on — which is also its risk: it moves when
+   * nothing has happened.
+   */
+  .hdr-b { overflow: hidden; }
+  .hdr-b::after {
+    content: ""; position: absolute; inset: auto 0 -1px 0; height: 1px;
+    background: linear-gradient(90deg,
+      transparent, var(--accent) 42%, var(--accent) 58%, transparent);
+    opacity: 0.9;
+    animation: scan 4.5s var(--ease-move) infinite;
+  }
+  @keyframes scan {
+    0%   { transform: translateX(-100%); }
+    55%, 100% { transform: translateX(100%); }
+  }
+
+  /* ── C — Rail ─────────────────────────────────────────────────────────── *
+   * The accent is a single rail that slides to whatever you point at, and
+   * returns to the current page when you stop. One accent, one position,
+   * moving only in response to you.
+   */
+  .hdr-c .hdr-rail {
+    position: absolute; bottom: -1px; height: 2px; background: var(--accent);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+    width: 0; transform: translateX(0);
+  }
+  /* The rail takes its first position without a transition, and only then earns
+     one. Animating in from zero width would say something arrived, and nothing
+     did — the current page was already the current page. */
+  .hdr-c .hdr-rail.is-ready {
+    transition: transform var(--dur-2) var(--ease-summon),
+                width var(--dur-2) var(--ease-summon);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The header still reports; it just stops travelling. A's rule jumps to its
+       value, B's sweep is removed outright — a loop with no state behind it is
+       the first thing to cut — and C's rail moves without easing. */
+    .hdr-a .hdr-progress, .hdr-c .hdr-rail { transition: none; }
+    .hdr-b::after { animation: none; opacity: 0.35; transform: none; }
+    .hop-seg, .hop-eye { animation: none !important; transform: none !important; opacity: 1 !important; }
+    .hdr-in { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>site-header</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+  <button class="copy-btn" type="button" id="r">replay the arrivals</button>
+</div>
+
+<p class="note-line">Three treatments of the same header. Scroll inside each frame — A and C only
+exist once you do something.</p>
+
+<h2><span class="tag">Variant A</span>Assembly — the header reports where you are</h2>
+<p class="note-line">Hop builds itself from its segments on load. On scroll the bar compacts, its
+ground goes solid, and a cyan rule fills to your position. Nothing moves that is not a state change.</p>
+<div class="frame" data-variant="a">
+  <header class="hdr hdr-a">
+    <div class="hdr-in">
+      <a class="hdr-brand" href="#">
+        <svg class="hop hop-arrive" viewBox="0 0 96 96" role="img" aria-label="Hop">
+          <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+          <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+          <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+          <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+        </svg>
+        Scrum<em>IA</em>
+      </a>
+      <nav class="hdr-nav">
+        <a href="#" aria-current="page">Overview</a><a href="#">Workflow</a><a href="#">Reference</a><a href="#">About</a>
+      </nav>
+    </div>
+    <div class="hdr-progress"></div>
+  </header>
+  <div class="frame-body">
+    <h3>One run, end to end</h3>
+    <p>The reference composition. Orange steps need a human; blue steps don't.</p>
+    <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
+    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
+    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
+  </div>
+</div>
+
+<h2><span class="tag">Variant B</span>Scanline — the header is always working</h2>
+<p class="note-line">A cyan sweep crosses on a slow loop, the way a process polls. Quieter and
+present from the first frame — and its own risk: it moves when nothing has happened.</p>
+<div class="frame" data-variant="b">
+  <header class="hdr hdr-b">
+    <div class="hdr-in">
+      <a class="hdr-brand" href="#">
+        <svg class="hop hop-idle" viewBox="0 0 96 96" role="img" aria-label="Hop">
+          <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+          <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+          <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+          <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+        </svg>
+        Scrum<em>IA</em>
+      </a>
+      <nav class="hdr-nav">
+        <a href="#" aria-current="page">Overview</a><a href="#">Workflow</a><a href="#">Reference</a><a href="#">About</a>
+      </nav>
+    </div>
+  </header>
+  <div class="frame-body">
+    <h3>One run, end to end</h3>
+    <p>The reference composition. Orange steps need a human; blue steps don't.</p>
+    <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
+    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
+    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
+  </div>
+</div>
+
+<h2><span class="tag">Variant C</span>Rail — the accent follows your attention</h2>
+<p class="note-line">One cyan rail, sliding to whatever you point at and returning to the current
+page when you stop. Hover the navigation. The accent has exactly one position, and it only moves because you did.</p>
+<div class="frame" data-variant="c">
+  <header class="hdr hdr-c">
+    <div class="hdr-in">
+      <a class="hdr-brand" href="#">
+        <svg class="hop hop-arrive" viewBox="0 0 96 96" role="img" aria-label="Hop">
+          <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+          <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+          <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+          <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+        </svg>
+        Scrum<em>IA</em>
+      </a>
+      <nav class="hdr-nav">
+        <a href="#" aria-current="page">Overview</a><a href="#">Workflow</a><a href="#">Reference</a><a href="#">About</a>
+        <span class="hdr-rail" aria-hidden="true"></span>
+      </nav>
+    </div>
+  </header>
+  <div class="frame-body">
+    <h3>One run, end to end</h3>
+    <p>The reference composition. Orange steps need a human; blue steps don't.</p>
+    <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
+    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
+    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
+  </div>
+</div>
+
+<script>
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+
+  // A — compact on scroll, and report the position.
+  var frameA = document.querySelector('[data-variant="a"]');
+  var hdrA = frameA.querySelector('.hdr-a');
+  frameA.addEventListener('scroll', function () {
+    var max = frameA.scrollHeight - frameA.clientHeight;
+    hdrA.style.setProperty('--p', (max > 0 ? (frameA.scrollTop / max) * 100 : 0) + '%');
+    hdrA.classList.toggle('is-stuck', frameA.scrollTop > 8);
+  });
+
+  // C — the rail follows the pointer, and goes home when it leaves.
+  var navC = document.querySelector('.hdr-c .hdr-nav');
+  var railC = navC.querySelector('.hdr-rail');
+  function railTo(el) {
+    railC.style.width = el.offsetWidth + 'px';
+    railC.style.transform = 'translateX(' + el.offsetLeft + 'px)';
+  }
+  var homeC = navC.querySelector('[aria-current="page"]');
+  navC.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('mouseenter', function () { railTo(a); });
+    a.addEventListener('focus', function () { railTo(a); });
+  });
+  navC.addEventListener('mouseleave', function () { railTo(homeC); });
+  // Fonts change the measurements, so place the rail once they have loaded.
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
+    railTo(homeC);
+    // A synchronous reflow, not requestAnimationFrame: rAF never fires in a
+    // background tab, and the rail would stay stuck at zero until you looked.
+    void railC.offsetWidth;
+    railC.classList.add('is-ready');
+  });
+
+  document.getElementById('r').addEventListener('click', function () {
+    document.querySelectorAll('.hop-arrive').forEach(function (svg) {
+      svg.replaceWith(svg.cloneNode(true));
+    });
+  });
+</script>
+
+</body>
+</html>
