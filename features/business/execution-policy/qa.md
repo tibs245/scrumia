@@ -141,6 +141,26 @@ Then the pair is not reported as a descent — split_or_<model> is the fallback 
   not reported as broken
 ```
 
+### AC-14 — Fallbacks are still compared against fallbacks
+
+```gherkin
+Given a row of split-preferring cells whose fallback descends along the declared order
+  as risk climbs
+When the climbing invariant is checked
+Then the row is reported as inverted, exactly as a row of bare models would be — the
+  carve-out compares like with like, it does not exempt split-preferring cells from
+  the invariant
+```
+
+### AC-15 — A grid with no declared capability order is reported, not assumed sound
+
+```gherkin
+Given a configuration carrying a matrix beside which no capability order is declared
+When the policy is read
+Then the missing declaration is reported — the invariant cannot be checked against
+  nothing, and a check that silently does not run is not a grid that passed
+```
+
 ## Out of scope
 
 - The grid's cells, and the capability order they climb: project data, declared in
