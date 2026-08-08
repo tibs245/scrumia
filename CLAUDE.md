@@ -69,9 +69,11 @@ card_marker: @dsCard
 remote: claude-design
 ```
 
-`site/` is the only app this contract applies to. `tokens.css` is not yet populated —
-the redesign ticket produces it; until then, `site/assets/style.css` holds the tokens
-in use and is what an interface change must stay consistent with.
+`site/` is the only app this contract applies to. `design/tokens.css` is the vocabulary;
+`tools/build_site.py` mirrors it into `site/assets/tokens.css`, which is generated and
+must never be edited. `site/assets/style.css` consumes those tokens and holds no literal
+colour, spacing or duration of its own — a value it needs and the tokens do not carry is
+a finding, not an exception.
 
 ### Shared rules
 

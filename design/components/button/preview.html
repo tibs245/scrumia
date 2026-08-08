@@ -1,0 +1,55 @@
+<!-- @dsCard group="Actions" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>button — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<h1>button</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>The pair — one primary, one ghost</h2>
+<div class="cta-row">
+  <a class="btn btn-primary" href="#">Compose your team</a>
+  <a class="btn btn-ghost" href="#">See a full run</a>
+</div>
+
+<h2>Ghost alone, when nothing on the screen is the next step</h2>
+<div class="cta-row">
+  <a class="btn btn-ghost" href="#">Reference</a>
+  <a class="btn btn-ghost" href="#">Repo</a>
+</div>
+
+<h2>The copy button — a control, not a call to action</h2>
+<button class="copy-btn" type="button">copy</button>
+
+</body>
+</html>
