@@ -58,7 +58,7 @@ A spec holds only its current version. No "formerly", no "since v2", no
 struck-through section left for context.
 
 The consequence: `CHANGELOG.md` stays short — one entry per notable change,
-reverse-chronological, pointing to the commit and the issue that carry the
+reverse-chronological, pointing to the PR and the issue that carry the
 change and its reasoning. It never explains *why*; the issue does that. A
 changelog entry that explains is a spec that has started growing again — that
 is exactly how the monolithic PRD this format replaces re-forms.

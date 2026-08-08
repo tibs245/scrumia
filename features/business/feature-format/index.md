@@ -15,7 +15,10 @@ implementation of what this feature specifies.
 
 ## Links
 
-- Parent EPIC: #2
+- Implemented by: no App feature. The format this feature specifies is enacted by
+  `plugins/scrumia-specs` (`scrumia-feature` scaffolds a feature, `scrumia-specs-find`
+  walks them), which fills the `specs` slot. The operational catalogue it reads lives
+  at `plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md`.
 
 ## The catalogue
 
@@ -65,4 +68,7 @@ documentation convention with no interface or exposed library of its own.
 
 ## Open issues
 
+- #2 — [EPIC] Spec the data organisation: the feature format and the monorepo layout (parent)
 - #8 — Write the feature-format spec
+- #22 — `validate.py`'s link gate doesn't cover `features/`
+- #25 — Reconcile `catalog.md` / `format-feature.md` wording with this feature's mandatory-file rule
