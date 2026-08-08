@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-impl-solidjs — ScrumIA",
+  "meta_description": "scrumia-impl-solidjs: the ScrumIA implementation slot for SolidJS — fine-grained reactivity, behaviour-first tests.",
+  "og_title": "scrumia-impl-solidjs — ScrumIA",
+  "tagline": "Fine-grained reactivity, without the React reflexes.",
+  "responsibilities": "<p>Owns the <em>how</em> for a SolidJS app: reactivity treated as a contract rather than a convention, components tested through behaviour instead of internals, and a structure organised by feature. Ships an audit skill for the drift that creeps in.</p>",
+  "refusals": "<p>No destructured props, no effect standing in for a derivation, no component that fetches its own data.</p>",
+  "philosophy": "<p>Assumes the reactive graph is worth understanding rather than working around. Costs the unlearning of React habits that look identical and behave differently.</p>"
+}

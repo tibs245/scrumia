@@ -1,0 +1,16 @@
+{
+  "_comment": "The language-neutral module facts marketplace.json has no field for. Claude Code's schema ignores an unknown key and `claude plugin validate --strict` rejects it, so the manifest is not a home for these. Keyed by plugin name; the builder fails on an unknown name, a missing one, or a reused emoji.",
+
+  "scrumia-core": { "emoji": "🧩", "slot": null },
+  "scrumia-rules": { "emoji": "⚖️", "slot": null },
+  "scrumia-specs": { "emoji": "📐", "slot": "specs" },
+  "scrumia-github-project": { "emoji": "📋", "slot": "tracker" },
+  "scrumia-teams": { "emoji": "👥", "slot": "team" },
+  "scrumia-discovery": { "emoji": "💡", "slot": "discovery" },
+  "scrumia-impl-rust": { "emoji": "🦀", "slot": "implementation" },
+  "scrumia-impl-solidjs": { "emoji": "⚛️", "slot": "implementation" },
+  "scrumia-practice-tdd": { "emoji": "🔴", "slot": "practices" },
+  "scrumia-practice-solid": { "emoji": "🧭", "slot": "practices" },
+  "scrumia-practice-tanstack-query": { "emoji": "🔄", "slot": "practices" },
+  "scrumia-design": { "emoji": "🎨", "slot": "design" }
+}

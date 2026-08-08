@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-specs — ScrumIA",
+  "meta_description": "scrumia-specs: the ScrumIA specs slot — per-feature specs as a contextual file catalogue.",
+  "og_title": "scrumia-specs — ScrumIA",
+  "tagline": "Per-feature specs, as a catalogue of targeted files rather than one document.",
+  "responsibilities": "<p>Owns where a specification lives and what shape it takes: one directory per feature, each file with a defined reader — the business rules, the acceptance criteria, the technical choices, the interface. Creates a feature, updates it, audits it, and finds the one that owns a rule without reading the whole tree.</p>",
+  "refusals": "<p>No fixed template, and no history inside a spec: a file exists only when it has content, and what changed belongs to git and the tickets.</p>",
+  "philosophy": "<p>Assumes specs live in the repo, next to the code they describe. Costs more judgement when writing than a template would — the catalogue tells you which file <em>may</em> exist, never which one you owe.</p>"
+}

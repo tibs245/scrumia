@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-design — ScrumIA",
+  "meta_description": "scrumia-design: the ScrumIA design slot — identity, tokens and components in the repo, plus the designer role.",
+  "og_title": "scrumia-design — ScrumIA",
+  "tagline": "Identity, tokens and components in the repo — and the role that guards them.",
+  "responsibilities": "<p>Owns what a user actually sees: the written identity, the token vocabulary, one directory per component, an audit that reports drift and mutedness on equal footing, and a sync that publishes a component to a Claude Design project one at a time. Ships the <code>designer</code> standing role — the only role contributed from outside the <code>team</code> slot.</p>",
+  "refusals": "<p>A value the tokens do not carry is a finding, never an inlined exception. The remote project is a review surface, never the source of truth, and a wholesale replace is refused.</p>",
+  "philosophy": "<p>Assumes the design system belongs in the repo, where it is versioned alongside what consumes it. Costs discipline on every single value — and a role with no design system to guard would only be judging on taste.</p>"
+}

@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-github-project — ScrumIA",
+  "meta_description": "scrumia-github-project: the ScrumIA tracker slot — issues, board columns, worktrees and pull requests.",
+  "og_title": "scrumia-github-project — ScrumIA",
+  "tagline": "Tickets, columns, branches and PRs — the state of the work, outside the repo.",
+  "responsibilities": "<p>Owns the ticket's whole life: refining it until it carries a verifiable criterion, executing it in its own worktree, routing its review, and reporting where the project stands. Per ADR-0013 it also owns the code cycle — branches, worktrees, pull requests — a scope wider than its name suggests.</p>",
+  "refusals": "<p>Project state never lands in the repo: a <code>PreToolUse</code> hook blocks stateful files outright. It also refuses to merge for you — final validation is the human's.</p>",
+  "philosophy": "<p>Assumes an authenticated <code>gh</code> and a GitHub Project board. Costs a hard dependency on GitHub and nothing at all offline.</p>"
+}

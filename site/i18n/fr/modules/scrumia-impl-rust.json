@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-impl-rust — ScrumIA",
+  "meta_description": "scrumia-impl-rust : le slot implémentation de ScrumIA pour Rust — états invalides impossibles, erreurs typées.",
+  "og_title": "scrumia-impl-rust — ScrumIA",
+  "tagline": "Comment le Rust s'écrit ici — une application à la fois.",
+  "responsibilities": "<p>Possède le <em>comment</em> d'une application Rust : états invalides rendus impossibles, <code>Result</code> à chaque frontière, erreurs typées par couche, un test par invariant, et une structure de fichiers que l'agent suit au lieu de l'inventer. Livre une compétence d'audit qui mesure l'écart plutôt que de l'affirmer.</p>",
+  "refusals": "<p>Pas d'<code>unwrap()</code> en production, pas de clone qui n'existe que pour calmer l'analyseur d'emprunt, pas de trait à implémenteur unique.</p>",
+  "philosophy": "<p>Présume que le système de types est l'endroit où la justesse coûte le moins cher. Coûte de la friction à la compilation, et une passe de conception avant la première ligne qu'un langage plus permissif laisserait remettre à plus tard.</p>"
+}

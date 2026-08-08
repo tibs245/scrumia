@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-impl-rust — ScrumIA",
+  "meta_description": "scrumia-impl-rust: the ScrumIA implementation slot for Rust — unrepresentable invalid states, typed errors.",
+  "og_title": "scrumia-impl-rust — ScrumIA",
+  "tagline": "How Rust gets written here — one app at a time.",
+  "responsibilities": "<p>Owns the <em>how</em> for a Rust app: invalid states made unrepresentable, <code>Result</code> at every boundary, errors typed per layer, one test per invariant, and a file structure the agent follows instead of inventing. Ships an audit skill that measures the gap rather than asserting it.</p>",
+  "refusals": "<p>No <code>unwrap()</code> in production code, no clone that exists only to appease the borrow checker, no trait with a single implementer.</p>",
+  "philosophy": "<p>Assumes the type system is where correctness is cheapest to buy. Costs friction at compile time, and a design pass before the first line that a looser language would let you defer.</p>"
+}

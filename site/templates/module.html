@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+{{>head}}
+</head>
+<body>
+
+{{>header}}
+
+<main id="main">
+
+<p><a href="{{@lroot}}reference.html">{{mod_back}}</a></p>
+
+<h1><span class="mod-ico">{{@mod_emoji}}</span> <code>{{@mod_name}}</code></h1>
+<p class="section-intro">{{tagline}}</p>
+
+<p class="mod-foot">
+  <span class="pill">{{mod_h_slot}} · {{@mod_slot}}</span>
+  <span class="pill">{{mod_h_version}} · {{@mod_version}}</span>
+</p>
+
+<section id="responsibilities">
+  <h2>{{mod_h_responsibilities}}</h2>
+  {{responsibilities}}
+</section>
+
+<section id="refusals">
+  <h2>{{mod_h_refusals}}</h2>
+  {{refusals}}
+</section>
+
+<section id="philosophy">
+  <h2>{{mod_h_philosophy}}</h2>
+  {{philosophy}}
+</section>
+
+<section id="skills">
+  <h2>{{mod_h_skills}}</h2>
+  <ul class="mod-skills">{{@mod_skills}}</ul>
+</section>
+
+<section id="tags">
+  <h2>{{mod_h_tags}}</h2>
+  <ul class="mod-tags">{{@mod_tags}}</ul>
+</section>
+
+<section id="install">
+  <h2>{{mod_h_install}}</h2>
+  <code class="mod-cmd">{{@mod_install}}</code>
+  <p><a href="{{@mod_source}}">{{mod_h_source}}</a></p>
+</section>
+
+</main>
+
+{{>footer}}
+
+</body>
+</html>

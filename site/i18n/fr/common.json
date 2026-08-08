@@ -9,5 +9,16 @@
   "theme_toggle": "Basculer le thème sombre",
   "footer_tagline": "ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.",
   "footer_repo": "Dépôt",
-  "footer_decisions": "Décisions"
+  "footer_decisions": "Décisions",
+  "mod_back": "← Tous les modules",
+  "mod_h_slot": "slot",
+  "mod_no_slot": "aucun",
+  "mod_h_version": "version",
+  "mod_h_responsibilities": "Ce dont il est responsable",
+  "mod_h_refusals": "Ce qu'il refuse",
+  "mod_h_philosophy": "L'hypothèse qu'il fait",
+  "mod_h_skills": "Ses compétences",
+  "mod_h_install": "L'installer",
+  "mod_h_source": "Lire le source sur GitHub",
+  "mod_h_tags": "Étiquettes"
 }

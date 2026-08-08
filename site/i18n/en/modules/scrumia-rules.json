@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-rules — ScrumIA",
+  "meta_description": "scrumia-rules: the rules-hierarchy format for ScrumIA — index, guides, decisions, loaded on demand.",
+  "og_title": "scrumia-rules — ScrumIA",
+  "tagline": "The rules-hierarchy format itself: index, guides, decisions.",
+  "responsibilities": "<p>Defines how a body of rules is laid out so an agent loads only the guide a task routes to: an index read first and always, guides opened on demand, decisions opened only when a rule is challenged. Scaffolds a project's own section and evolves a rule without losing why it existed.</p>",
+  "refusals": "<p>It is not a place to store rules. It owns the shape, never the content, and it declines to arbitrate a rule that belongs to an implementation module.</p>",
+  "philosophy": "<p>Assumes a body of rules grows past what one file can carry. Costs one more layer to author correctly — below three distinct concerns, a section is pure overhead.</p>"
+}
