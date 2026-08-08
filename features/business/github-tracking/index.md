@@ -50,6 +50,21 @@ Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
 and the post-merge move to `Done` currently have no skill that performs them —
 selecting a ticket into a sprint or merging its PR does not by itself move its card.
 
+### Closed without a PR
+
+A ticket can also leave the flow sideways instead of reaching `Done`: closed as
+won't-fix from `Backlog`, or abandoned in `Ready for dev` or `In progress` with no PR
+ever opened. No transition performs this — closing an issue does not move its card.
+The card **keeps whatever Status it last had**; this is post-close residue, not a
+seventh column, and not `Done` either — `Done` keeps its single meaning, "merged",
+and routing a won't-fix ticket there would make the column answer two different
+questions.
+
+A reader trusts the issue's own `state` (open/closed), not the card's Status, to know
+whether it still represents live work — the same rule this feature's `business.md`
+already applies to an epic's progress, read from its children's `state` rather than
+from where their cards sit. `qa.md` specifies the board-reading scenario this implies.
+
 ## Links
 
 - Implemented by: `plugins/scrumia-github-project/` (the `tracker` slot). Not an App
@@ -73,3 +88,6 @@ selecting a ticket into a sprint or merging its PR does not by itself move its c
   automated move yet, found while writing this feature
 - #26 — the suspect-filter rule in `qa.md` (AC-3) doesn't catch a short, stale read
   right after a write; specified as a known gap in AC-4, not fixed
+- #79 — `board.sh read` never surfaces the issue's own `state`, so a ticket closed
+  without a PR reads as live work; specified as a known gap in `qa.md`'s AC-8, not
+  fixed

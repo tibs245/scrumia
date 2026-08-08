@@ -78,6 +78,25 @@ Then only the card belonging to that project resolves — not the first card fou
   and not the other board's card
 ```
 
+### AC-8 — A ticket closed without a PR is not reported as work in progress
+
+```gherkin
+Given a ticket closed as won't-fix from `Ready for dev`, its card still carrying that
+  Status because closing an issue does not move it — see index.md's lifecycle
+When the board is read
+Then it is not reported as work in progress
+```
+
+The rule that makes this pass: a board read filters on the issue's own `state`
+(open/closed) before reporting live work, not on the card's Status alone — the same
+field this feature already trusts for an epic's progress (`business.md`).
+
+**Not yet enforced — currently fails.** `board.sh read`'s items carry the card's Status
+and labels, but never the issue's own `state`; a closed ticket sitting in `Ready for
+dev` or `In progress` reads identically to an open one, and nothing in the response
+lets a consumer tell them apart. Tracked in #79 — not fixed here, this feature only
+specifies the requirement.
+
 ## Out of scope
 
 - Creating the board's columns and the project itself (`scrumia-project-setup`) —
