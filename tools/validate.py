@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the ScrumIA marketplace: manifests, skills, agents, hooks, doc links.
+"""Validate the ScrumIA marketplace: manifests, skills, agents, commands, hooks, doc links.
 
 Run from the repo root: python3 tools/validate.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies.
@@ -126,6 +126,25 @@ def check_agents() -> None:
                 error(f"{rel}: frontmatter has no {key}")
 
 
+def check_commands() -> None:
+    """Every commands/<name>.md needs a description, and the names it cites must resolve."""
+    known = {p.name for p in (ROOT / "plugins").iterdir() if p.is_dir()}
+    known |= {s.parent.name for s in (ROOT / "plugins").glob("*/skills/*/SKILL.md")}
+    for cmd_md in sorted((ROOT / "plugins").glob("*/commands/*.md")):
+        rel = cmd_md.relative_to(ROOT)
+        fields = frontmatter(cmd_md)
+        if fields is None:
+            error(f"{rel}: missing frontmatter")
+            continue
+        if not fields.get("description"):
+            error(f"{rel}: frontmatter has no description")
+        # A command's whole job is handing off to a skill it names. A typo there sends
+        # the agent to something that doesn't exist, and no other check would see it.
+        for match in re.finditer(r"`(scrumia-[\w-]+)`", cmd_md.read_text(encoding="utf-8")):
+            if match.group(1) not in known:
+                error(f"{rel}: references '{match.group(1)}', which is no plugin or skill")
+
+
 def check_hooks() -> None:
     for hooks_json in sorted((ROOT / "plugins").glob("*/hooks/hooks.json")):
         data = load_json(hooks_json)
@@ -210,6 +229,7 @@ def main() -> int:
     check_marketplace()
     check_skills()
     check_agents()
+    check_commands()
     check_hooks()
     check_doc_links()
     check_skill_scripts()

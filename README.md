@@ -81,32 +81,37 @@ The project versions only its selection, in a committed file:
 
 ## Usage
 
+Each step of the workflow has a command, carried by the module that owns that step:
+
 ```
-# Frame an idea until it can be split
-/scrumia-discovery:scrumia-brainstorm
-/scrumia-discovery:scrumia-split
+/scrumia-core:next                  # where the project stands, and the step it calls for
+/scrumia-teams:standup              # convene the roles
+/scrumia-github-project:status      # state of the board
+/scrumia-specs:feature <name>       # specify a feature
+/scrumia-github-project:refine 42   # take a ticket to Ready for dev
+/scrumia-github-project:ticket 42   # execute it end to end, up to the PR
+/scrumia-teams:sprint               # run a batch, one isolated worktree per ticket
+/scrumia-github-project:review 49   # review an open PR
+```
 
-# Make a ticket executable, then execute it
-/scrumia-github-project:scrumia-refine 42
-/scrumia-github-project:scrumia-ticket 42
+Start with `next` when you don't know which applies: it reads the composition and the board, then names one step instead of listing them all. None of these merge — that stays with you.
 
-# Run a batch in parallel, one worktree per ticket
-/scrumia-teams:scrumia-sprint
+The remaining skills are reached by name. They run once, or on demand, and don't belong in a flow:
 
-# Where the project stands, what the composition is
-/scrumia-github-project:scrumia-status
-/scrumia-core:scrumia-compose
-
-# Audit an existing app before plugging in a module
-/scrumia-impl-rust:scrumia-rust-audit
+```
+/scrumia-discovery:scrumia-brainstorm   # frame an idea until it can be split
+/scrumia-core:scrumia-compose           # what the composition is
+/scrumia-impl-rust:scrumia-rust-audit   # audit an app before plugging a module in
 /scrumia-practice-tdd:scrumia-tdd-audit
 ```
 
-Roles are invoked in natural language — "ask the tech lead to review PR 17" — or as the session's main agent:
+Roles are convened by `standup`, or run as a session's main agent:
 
 ```bash
 claude --agent scrumia-teams:scrumia-manager
 ```
+
+They are **not** reachable as delegated subagents today, whatever their definition suggests — `docs/agents.md` records what was measured and what stays open.
 
 ## Composing differently
 
