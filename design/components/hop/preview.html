@@ -1,0 +1,226 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hop — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  /* Hop is specified, not yet implemented. Until the design is approved its CSS
+     lives here; on implementation it moves into site/assets/style.css whole. */
+
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-10) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+  .row { display: flex; align-items: flex-end; gap: var(--space-10); flex-wrap: wrap; }
+  .case { display: flex; flex-direction: column; gap: var(--space-3); }
+  .case figcaption { font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); max-width: 26ch; line-height: var(--leading-snug); }
+  .stage { background: var(--surface); border: 1px solid var(--border);
+       border-radius: var(--radius-md); padding: var(--space-4); width: max-content; }
+
+  /* ── Hop ────────────────────────────────────────────────────────────────
+   * Four segments and one eye. The segments are the columns of a flow diagram:
+   * summoning gathers them into a body, resolving lets them fall back into the
+   * diagram they came from. One animation, played in two directions.
+   *
+   * Each segment carries its own --dx / --sy: where it sits when it is a column,
+   * and how tall it is there. The rest is shared.
+   */
+  .hop { display: block; width: 96px; height: 96px; }
+  .hop-sm { width: 28px; height: 28px; }
+  .hop-lg { width: 160px; height: 160px; }
+
+  .hop-seg {
+    fill: var(--surface-raised);
+    stroke: var(--border-strong);
+    stroke-width: 1.5;
+    /* Segments sit two pixels apart: close enough to read as one body, far
+       enough that you can still count them. That count is the point. */
+    transform-box: fill-box;
+    transform-origin: 50% 100%;   /* segments grow and shrink from their baseline */
+  }
+  /* The eye is the site's one accent, doing its one job: pointing. It is the
+     only lit thing on the mascot, and the reason the mascot is a layout device
+     rather than a sticker. */
+  .hop-eye {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent));
+    transform-box: fill-box; transform-origin: 50% 50%;
+  }
+  .hop-head { fill: var(--accent-surface); }
+
+  .hop-s1 { --dx: -9px; --sy: 2.29; }
+  .hop-s2 { --dx: -3px; --sy: 1.39; }
+  .hop-s3 { --dx:  1px; --sy: 1.23; }
+  .hop-s4 { --dx:  5px; --sy: 1.88; }
+
+  /* Resting state: assembled, eye lit. Everything below is a departure from it. */
+  @keyframes hop-cycle {
+    0%   { transform: translateX(var(--dx)) scaleY(var(--sy));
+           animation-timing-function: var(--ease-hop); }
+    32%  { transform: none; }
+    72%  { transform: none;
+           animation-timing-function: var(--ease-resolve); }
+    92%, 100% { transform: translateX(var(--dx)) scaleY(var(--sy)); }
+  }
+  @keyframes hop-eye-cycle {
+    0%, 24%   { opacity: 0; transform: scale(0.3); }
+    38%, 66%  { opacity: 1; transform: scale(1); }
+    76%, 100% { opacity: 0; transform: scale(0.3); }
+  }
+  @keyframes hop-blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96%           { transform: scaleY(0.12); }
+  }
+  @keyframes hop-in {
+    from { transform: translateX(var(--dx)) scaleY(var(--sy)); }
+    to   { transform: none; }
+  }
+  @keyframes hop-out {
+    from { transform: none; }
+    to   { transform: translateX(var(--dx)) scaleY(var(--sy)); }
+  }
+
+  /* 1 — the full cycle, looping: summoned, present, resolved */
+  .hop-loop .hop-seg {
+    animation: hop-cycle var(--dur-5) infinite;
+    animation-delay: calc(var(--i) * var(--stagger-hop));
+  }
+  .hop-loop .hop-eye { animation: hop-eye-cycle var(--dur-5) infinite; }
+
+  /* 2 — arriving once, the way it behaves on a real page load */
+  .hop-arrive .hop-seg {
+    animation: hop-in var(--dur-3) var(--ease-hop) both;
+    animation-delay: calc(var(--i) * var(--stagger-hop));
+  }
+  .hop-arrive .hop-eye {
+    animation: hop-eye-cycle var(--dur-3) var(--ease-move) forwards;
+    animation-delay: calc(var(--dur-3) * 0.5);
+  }
+
+  /* 3 — at rest, blinking. The eye is the only thing that moves. */
+  .hop-idle .hop-eye {
+    transform-origin: 50% 50%;
+    animation: hop-blink 5.5s var(--ease-move) infinite;
+  }
+
+  /* 4 — resolving: flat, no overshoot. Finished things just stop. */
+  .hop-resolve .hop-seg {
+    animation: hop-out var(--dur-3) var(--ease-resolve) both;
+    animation-delay: calc((3 - var(--i)) * var(--stagger-hop));
+  }
+  .hop-resolve .hop-eye { opacity: 0; transition: opacity var(--dur-1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No travelling, no looping — Hop is simply there, assembled, eye lit.
+       The mascot is a shape before it is an animation. */
+    .hop-seg, .hop-eye { animation: none !important; transform: none !important; opacity: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Hop</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+  <button class="copy-btn" type="button" id="r">replay the arrivals</button>
+</div>
+
+<h2>The cycle — what Hop is</h2>
+<div class="row">
+  <figure class="case" style="margin:0">
+    <div class="stage">
+      <svg class="hop hop-lg hop-loop" viewBox="0 0 96 96" role="img" aria-label="Hop, the ScrumIA mascot, assembling and dissolving">
+        <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+    </div>
+    <figcaption>Four columns gather into a body, the eye lights, the work happens, the columns fall back. Summon and resolve are one animation in two directions.</figcaption>
+  </figure>
+</div>
+
+<h2>The three states, separately</h2>
+<div class="row" id="cases">
+  <figure class="case" style="margin:0">
+    <div class="stage">
+      <svg class="hop hop-arrive" viewBox="0 0 96 96" role="img" aria-label="Hop arriving">
+        <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+    </div>
+    <figcaption>summoned — springs past its mark and settles</figcaption>
+  </figure>
+
+  <figure class="case" style="margin:0">
+    <div class="stage">
+      <svg class="hop hop-idle" viewBox="0 0 96 96" role="img" aria-label="Hop at rest">
+        <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+    </div>
+    <figcaption>present — only the eye moves, rarely</figcaption>
+  </figure>
+
+  <figure class="case" style="margin:0">
+    <div class="stage">
+      <svg class="hop hop-resolve" viewBox="0 0 96 96" role="img" aria-label="Hop resolving back into columns">
+        <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+    </div>
+    <figcaption>resolved — flat, no overshoot, back to being a diagram</figcaption>
+  </figure>
+</div>
+
+<h2>At header size, next to the wordmark</h2>
+<div class="stage" style="display:flex;align-items:center;gap:var(--space-2);width:max-content">
+  <svg class="hop hop-sm hop-idle" viewBox="0 0 96 96" role="img" aria-label="Hop">
+    <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+  </svg>
+  <span style="font-family:var(--font-display);font-weight:var(--weight-display);letter-spacing:var(--tracking-tight)">Scrum<span style="color:var(--accent)">IA</span></span>
+</div>
+
+<script>
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+  // Re-running a one-shot animation means taking the element out of the document
+  // and putting it back; there is no CSS way to rewind `both`.
+  document.getElementById('r').addEventListener('click', function () {
+    document.querySelectorAll('.hop-arrive, .hop-resolve').forEach(function (svg) {
+      var clone = svg.cloneNode(true);
+      svg.replaceWith(clone);
+    });
+  });
+</script>
+
+</body>
+</html>
