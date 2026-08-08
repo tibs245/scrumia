@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Référence — ScrumIA</title>
-<meta name="description" content="Référence ScrumIA : les onze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.">
+<meta name="description" content="Référence ScrumIA : les douze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.">
 <link rel="canonical" href="https://tibs245.github.io/scrumia/fr/reference.html">
 <link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/reference.html">
 <link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/reference.html">
 <link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/reference.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ScrumIA — Référence">
-<meta property="og:description" content="Référence ScrumIA : les onze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.">
+<meta property="og:description" content="Référence ScrumIA : les douze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/fr/reference.html">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="../assets/style.css">
@@ -201,6 +201,19 @@
       </tbody>
     </table>
   </div>
+  <h3><code>scrumia-design</code> — slot <code>design</code></h3>
+  <p>Identité, tokens et composants vivent dans le dépôt ; un projet Claude Design est la surface de revue, pas la source de vérité. Une règle en dessous : une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Fournit le rôle permanent <code>designer</code> — le seul module à le faire depuis l'extérieur du slot <code>team</code>, parce qu'un rôle sans design system à garder jugerait au goût.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-design-setup</code></td><td>Crée l'arborescence, écrit l'identité, enregistre le rôle</td></tr>
+        <tr><td><code>scrumia-design-system</code></td><td>La référence : ce qui vit où, les quatre questions avant d'écrire un composant</td></tr>
+        <tr><td><code>scrumia-design-sync</code></td><td>Pousse et récupère les composants via <code>DesignSync</code>, un à la fois</td></tr>
+        <tr><td><code>scrumia-design-audit</code></td><td>Audite une interface existante : dérive et fadeur, deux colonnes</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="config">
@@ -216,7 +229,7 @@ composition:
   tracker:   scrumia-github-project
   team:      scrumia-teams
   discovery: scrumia-discovery
-  design:    null
+  design:    scrumia-design
 
 apps:
   - name: web
@@ -266,8 +279,8 @@ settings:
   <p>Paramètres déclarés sous <code>settings.implementation.&lt;module&gt;</code> et <code>settings.practices.&lt;module&gt;</code>, plus fichiers de remplacement de projet optionnels (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) que le module lit et honore plutôt que ses propres règles. Un module n'offrant ni l'un ni l'autre est forké au premier désaccord — et ce fork ne voit jamais une mise à jour.</p>
 
   <div class="note">
-    <span class="note-title">Esquissé, pas construit</span>
-    <p><code>scrumia-design</code> est spécifié mais pas implémenté. Il s'appuierait sur Claude Design, accessible depuis Claude Code via <code>DesignSync</code> et la compétence <code>/design-sync</code>.</p>
+    <span class="note-title">Où le design rencontre ce contrat</span>
+    <p>Les deux contrats se touchent sans se recouvrir : le module d'implémentation possède <strong>comment un composant est écrit</strong>, <code>scrumia-design</code> possède <strong>à quoi il ressemble</strong>. Un composant SolidJS et un gabarit rendu côté serveur consomment les mêmes tokens.</p>
   </div>
 
   <h3>Hiérarchie des règles</h3>
@@ -294,7 +307,7 @@ claude --plugin-dir ./plugins/scrumia-core</code></pre>
   <p>Un nouveau slot est justifié quand un vrai projet le remplirait <em>différemment</em>. Sinon, c'est une compétence de plus dans un module existant.</p>
 
   <div class="cta-row">
-    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Les onze décisions</a>
+    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Les quatorze décisions</a>
     <a class="btn btn-ghost" href="workflow.html">Déroulé</a>
   </div>
 </section>

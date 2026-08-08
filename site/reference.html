@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reference — ScrumIA</title>
-<meta name="description" content="ScrumIA reference: the eleven modules and their skills, the roles, the config file, and how to write your own module.">
+<meta name="description" content="ScrumIA reference: the twelve modules and their skills, the roles, the config file, and how to write your own module.">
 <link rel="canonical" href="https://tibs245.github.io/scrumia/reference.html">
 <link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/reference.html">
 <link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/reference.html">
 <link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/reference.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ScrumIA — reference">
-<meta property="og:description" content="ScrumIA reference: the eleven modules and their skills, the roles, the config file, and how to write your own module.">
+<meta property="og:description" content="ScrumIA reference: the twelve modules and their skills, the roles, the config file, and how to write your own module.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/reference.html">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="assets/style.css">
@@ -201,6 +201,19 @@
       </tbody>
     </table>
   </div>
+  <h3><code>scrumia-design</code> — slot <code>design</code></h3>
+  <p>Identity, tokens and components live in the repo; a Claude Design project is the review surface, not the source of truth. One rule underneath: a value the tokens don't carry is a finding, never an inlined exception. Ships the <code>designer</code> standing role — the only module that does so from outside the <code>team</code> slot, because a role with no design system to guard would judge on taste.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-design-setup</code></td><td>Creates the tree, writes the identity, registers the role</td></tr>
+        <tr><td><code>scrumia-design-system</code></td><td>The reference: what lives where, the four questions before writing a component</td></tr>
+        <tr><td><code>scrumia-design-sync</code></td><td>Pushes and pulls components through <code>DesignSync</code>, one at a time</td></tr>
+        <tr><td><code>scrumia-design-audit</code></td><td>Audits an existing interface: drift and mutedness, two columns</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="config">
@@ -216,7 +229,7 @@ composition:
   tracker:   scrumia-github-project
   team:      scrumia-teams
   discovery: scrumia-discovery
-  design:    null
+  design:    scrumia-design
 
 apps:
   - name: web
@@ -266,8 +279,8 @@ settings:
   <p>Declared settings under <code>settings.implementation.&lt;module&gt;</code> and <code>settings.practices.&lt;module&gt;</code>, plus optional project override files (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) the module reads and honours over its own rules. A module offering neither gets forked at the first disagreement — and that fork never sees an update.</p>
 
   <div class="note">
-    <span class="note-title">Sketched, not built</span>
-    <p><code>scrumia-design</code> is specified but not implemented. It would build on Claude Design, reachable from Claude Code through <code>DesignSync</code> and the <code>/design-sync</code> skill.</p>
+    <span class="note-title">Where design meets this contract</span>
+    <p>The two contracts touch without overlapping: the implementation module owns <strong>how a component is written</strong>, <code>scrumia-design</code> owns <strong>what it looks like</strong>. A SolidJS component and a server-rendered template consume the same tokens.</p>
   </div>
 
   <h3>Rules hierarchy</h3>
@@ -294,7 +307,7 @@ claude --plugin-dir ./plugins/scrumia-core</code></pre>
   <p>A new slot is warranted when a real project would fill it <em>differently</em>. Otherwise it's one more skill in an existing module.</p>
 
   <div class="cta-row">
-    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">The eleven decisions</a>
+    <a class="btn btn-primary" href="https://github.com/tibs245/scrumia/tree/main/docs/adr">The fourteen decisions</a>
     <a class="btn btn-ghost" href="workflow.html">Workflow</a>
   </div>
 </section>

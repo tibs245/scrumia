@@ -84,6 +84,17 @@ Then it ships from its own repository, declared in `marketplace.json` through a
   scope, never assume another module is present) to be composable
 ```
 
+### AC-7 — A module ships the standing role that guards its slot
+
+```gherkin
+Given a module filling a slot and providing a standing role for that slot's
+  capability, whose definition lives in that module rather than in the team
+  module's agents/ directory
+When the composition is read to find out which roles are active
+Then the role appears in the single settings.team.roles list, carrying a `from:`
+  naming its provider, and routing needs no knowledge of where the definition lives
+```
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor

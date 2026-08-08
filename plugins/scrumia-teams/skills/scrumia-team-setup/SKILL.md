@@ -68,6 +68,8 @@ Ask the user what they want to change, presenting the consequences rather than t
 
 Adding a role is possible: it takes an agent file in `agents/`, a scope that overlaps no existing role, and an explicit line of refusal. A role without a line of refusal is a duplicate.
 
+**Entries carrying a `from:` key are not yours.** Another module can fill a slot and ship the standing role that guards it — `scrumia-design` does this with `designer` ([ADR-0014](../../../../docs/adr/0014-roles-ship-with-their-capability.md)). Its definition lives in that module, not in `agents/`, and removing the entry here silently unplugs it. Report such a role as active, leave it alone, and send any change to it back to its own module's setup skill.
+
 ## Step 3 — Set the execution policy
 
 Standing roles have fixed models. The **executor of a ticket** does not: `scrumia-sprint` picks one per ticket, and `execution.matrix` is where that choice is written down instead of being improvised.

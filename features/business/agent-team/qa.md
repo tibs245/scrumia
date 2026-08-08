@@ -73,6 +73,24 @@ Then it cannot in one session — a subagent cannot spawn subagents
   the board's externalized state rather than through direct coordination
 ```
 
+### AC-8 — A role provided by another module survives a team reconfiguration
+
+```gherkin
+Given .scrumia/config.yaml's team.roles carries an entry with from: scrumia-design
+When scrumia-team-setup is re-run to adjust the team
+Then the entry is reported as active and left untouched, not dropped as unknown
+  to the team module
+```
+
+### AC-9 — A role whose slot is empty is not offered
+
+```gherkin
+Given a project whose design slot is null
+When a question about visual identity arises
+Then no designer role is invoked, and the absence of the capability is stated
+  rather than answered on taste
+```
+
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —

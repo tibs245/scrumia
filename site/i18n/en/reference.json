@@ -1,6 +1,6 @@
 {
   "title": "Reference — ScrumIA",
-  "meta_description": "ScrumIA reference: the eleven modules and their skills, the roles, the config file, and how to write your own module.",
+  "meta_description": "ScrumIA reference: the twelve modules and their skills, the roles, the config file, and how to write your own module.",
   "og_title": "ScrumIA — reference",
 
   "page_title": "Reference",
@@ -17,6 +17,7 @@
   "h_slot_discovery": "slot <code>discovery</code>",
   "h_slot_impl": "slot <code>implementation</code>",
   "h_slot_practices": "slot <code>practices</code>",
+  "h_slot_design": "slot <code>design</code>",
 
   "core_p": "Fills no slot and does nothing on its own. It describes the composition and makes it legible to agents. The only non-optional module.",
   "core_row1": "Installs or checks the composition, generates the <code>CLAUDE.md</code> section",
@@ -88,8 +89,14 @@
   "impl_compose_p": "A practice module refines <strong>one named point</strong> of that contract — TDD refines \"how you test\", SOLID refines \"which design principles\" — and ships three skills: the reference, the audit, the refactor. The implementation module <em>situates</em> each practice for its stack. One precedence rule: <strong>specific beats generic</strong> — implementation module over practice, project override over both.",
   "impl_override_h": "Overriding without forking",
   "impl_override_p": "Declared settings under <code>settings.implementation.&lt;module&gt;</code> and <code>settings.practices.&lt;module&gt;</code>, plus optional project override files (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) the module reads and honours over its own rules. A module offering neither gets forked at the first disagreement — and that fork never sees an update.",
-  "impl_note_title": "Sketched, not built",
-  "impl_note_p": "<code>scrumia-design</code> is specified but not implemented. It would build on Claude Design, reachable from Claude Code through <code>DesignSync</code> and the <code>/design-sync</code> skill.",
+  "design_p": "Identity, tokens and components live in the repo; a Claude Design project is the review surface, not the source of truth. One rule underneath: a value the tokens don't carry is a finding, never an inlined exception. Ships the <code>designer</code> standing role — the only module that does so from outside the <code>team</code> slot, because a role with no design system to guard would judge on taste.",
+  "design_row1": "Creates the tree, writes the identity, registers the role",
+  "design_row2": "The reference: what lives where, the four questions before writing a component",
+  "design_row3": "Pushes and pulls components through <code>DesignSync</code>, one at a time",
+  "design_row4": "Audits an existing interface: drift and mutedness, two columns",
+
+  "impl_note_title": "Where design meets this contract",
+  "impl_note_p": "The two contracts touch without overlapping: the implementation module owns <strong>how a component is written</strong>, <code>scrumia-design</code> owns <strong>what it looks like</strong>. A SolidJS component and a server-rendered template consume the same tokens.",
 
   "rules_hier_h": "Rules hierarchy",
   "rules_hier_p": "Each knowledge skill becomes a routing index instead of one fat file: <code>00-index.md</code> loaded first and always, <code>guides/NN-topic.md</code> loaded only on demand, <code>decisions/D-NN-slug.md</code> opened only when a rule is challenged. A <code>section.json</code> declares the globs a section governs. In a monorepo, an app's <code>path</code> in <code>apps[]</code> anchors which sections apply where — the same <strong>specific beats generic</strong> precedence, one level down. See <code>scrumia-rules</code> above and <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
@@ -103,5 +110,5 @@
   "write_c1": "# validate before publishing",
   "write_c2": "# try without installing",
   "write_newslot": "A new slot is warranted when a real project would fill it <em>differently</em>. Otherwise it's one more skill in an existing module.",
-  "write_cta_decisions": "The eleven decisions"
+  "write_cta_decisions": "The fourteen decisions"
 }

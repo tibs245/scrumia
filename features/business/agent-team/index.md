@@ -5,17 +5,25 @@
 
 ## In brief
 
-Three standing roles — manager, business, tech — carry ScrumIA's execution: what
-each owns, what it explicitly refuses, when it activates, and what escalates to
-the human regardless of how autonomous the project is configured to be. The roles
-are permanent through project memory and externalized board state, not through a
-live process (`docs/adr/0002-standing-roles.md`).
+Standing roles carry ScrumIA's execution: what each owns, what it explicitly
+refuses, when it activates, and what escalates to the human regardless of how
+autonomous the project is configured to be. Three come from the `team` slot —
+manager, business, tech — and a fourth, designer, from whichever module fills the
+`design` slot. The roles are permanent through project memory and externalized
+board state, not through a live process (`docs/adr/0002-standing-roles.md`).
+
+**Which roles exist is a property of the composition, not of one module.**
+`settings.team.roles` is the single list, and an entry names its provider with
+`from:` when that provider is not the team module
+(`docs/adr/0014-roles-ship-with-their-capability.md`). A role whose slot is empty
+does not exist: it would have nothing to guard but its own taste.
 
 ## Links
 
-- Owner: `plugins/scrumia-teams` — the three roles are subagent definitions in
+- Owner: `plugins/scrumia-teams` — three of the roles are subagent definitions in
   `plugins/scrumia-teams/agents/` (`scrumia-manager.md`, `scrumia-business.md`,
-  `scrumia-tech.md`), consumed by `scrumia-github-project`'s `scrumia-ticket` skill
+  `scrumia-tech.md`); `scrumia-designer.md` lives in `plugins/scrumia-design/agents/`
+  and is registered in the same list. All are consumed by `scrumia-github-project`'s `scrumia-ticket` skill
   at Step 6, which routes the review by scope. Step 0 invokes no role — it runs the
   refusal gate and calls `pick-model.sh`, the execution policy specified in #13.
 - No App feature implements this. `plugins/` is ScrumIA's own product and carries
@@ -35,6 +43,11 @@ indistinguishable from another and shouldn't exist as a separate role.
 | Manager | The board, splitting value into tickets, routing a ticket to the role it belongs to, sprint cadence, arbitration between business and tech | Deciding a business rule itself (routes to business); judging architecture or implementation quality itself (routes to tech); the final merge decision (belongs to the human alone) |
 | Business | Business rules and domain vocabulary, consistency across business specs, legal/compliance constraints, business acceptance criteria | The architecture, the stack, delivery planning and priorities — those belong to tech and to the manager |
 | Tech | Cross-cutting architecture, API contracts, technical debt, implementation quality | Business rules and delivery priorities — those belong to business and to the manager |
+| Designer | Visual identity, design-system consistency, legibility and visual hierarchy, accessibility as far as it is visual | The message itself (business), the architecture (tech), delivery priorities (manager); and inventing a value the design system already answers |
+
+Designer is present only where the `design` slot is filled — its definition lives in
+that module (`plugins/scrumia-design/agents/scrumia-designer.md`), not in
+`plugins/scrumia-teams/agents/`.
 
 ## Files present
 
