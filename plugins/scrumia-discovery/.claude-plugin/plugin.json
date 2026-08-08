@@ -1,7 +1,7 @@
 {
   "name": "scrumia-discovery",
   "description": "The discovery slot — brainstorming and design, produces issues and a specs branch.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },

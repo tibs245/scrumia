@@ -118,9 +118,20 @@ If a team module is plugged in, apply the label's grid:
 | `scope/M` | the tech role |
 | `scope/L` | the tech role, plus the business role if a business spec is touched |
 
+Name the role, and invoke it the way that resolves. From a standard session the Agent tool does not reach the plugin's role agents; convene each one as a subprocess instead, prompt on stdin:
+
+```bash
+claude -p --agent scrumia-teams:scrumia-tech \
+  --allowedTools "Read,Glob,Grep,Bash" < review-prompt.txt
+```
+
+The full constraint and why it is still open are in [the roles' doc](../../../../docs/agents.md).
+
 A **Blocked** review gets fixed before opening the PR. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 
 Without a team module plugged in, your self-review from step 5 is the only review before the human. Say so explicitly in the PR: the reviewer must know what was checked and by whom.
+
+The same holds when the role itself could not be reached. Handing your own general agent the role's `.md` file is not that role, and the difference is measured: on one sprint's five PRs, self-applied reviews returned five approvals and two reservations where the actual roles returned one blocker and nine. Report which one ran. A fallback that reads as the real thing is worse than a fallback that names itself.
 
 ## Step 7 — Open the PR
 

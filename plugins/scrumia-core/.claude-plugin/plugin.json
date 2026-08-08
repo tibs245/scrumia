@@ -1,7 +1,7 @@
 {
   "name": "scrumia-core",
   "description": "The kernel: describes the project's active composition, its configuration, and the shared conventions.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },

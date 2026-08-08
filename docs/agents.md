@@ -66,10 +66,10 @@ None of them writes ticket state there: it would become wrong within days, and a
 ## Three ways to invoke them
 
 ```bash
-# 1. Delegated subagent — the normal mode
+# 1. Delegated subagent — does NOT resolve from a standard session, see below
 > ask the Tech role to review PR 17
 
-# 2. Session's main agent
+# 2. Session's main agent — the verified way
 claude --agent scrumia-teams:scrumia-manager
 
 # 3. Teammate in an agent team — experimental
@@ -78,6 +78,19 @@ claude --agent scrumia-teams:scrumia-manager
 ```
 
 The same definition serves in all three cases. If agent teams stabilize, no file changes — only the way to launch them evolves.
+
+**Only mode 2 is verified.** Measured on 2026-08-08: from a standard session, the Agent tool resolves neither `scrumia-teams:scrumia-manager` nor `scrumia-manager` — it answers *agent type not found*, and no plugin agent appears in its list at all. The roles convened through mode 2 report the opposite from inside their own session: there, the plugin agent types do show up. So resolution depends on the spawn context, and mode 1 — the one this file used to call "the normal mode" — cannot be relied on. Which of the two contexts is wrong is still open: it is [#33](https://github.com/tibs245/scrumia/issues/33)'s AC-1.
+
+Until it closes, convene a role as a subprocess:
+
+```bash
+claude -p --agent scrumia-teams:scrumia-tech \
+  --allowedTools "Read,Glob,Grep,Bash" < prompt.txt
+```
+
+Pass the prompt on **stdin**: `--allowedTools` is variadic and swallows a positional prompt, leaving the CLI to complain that no input was given.
+
+This runs the role itself — its own system prompt, model and forbidden tools — which a general agent handed the role's `.md` file does not. Never let that substitution pass unannounced: a review that did not run as the role must say so wherever its verdict is reported.
 
 ## What is deliberately not a role
 

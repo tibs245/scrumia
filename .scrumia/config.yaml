@@ -52,11 +52,14 @@ settings:
       labels:
         scope_prefix: "scope/"
         risk_prefix: "risk/"
+      # Capability order, weakest to strongest: sonnet < opus < fable. The matrix
+      # below climbs it; read it before editing a cell, because the names carry no
+      # ordering of their own and a grid can ship inverted without failing anything.
       matrix:                # scope × risk → model, or split_or_<model> when oversized
-        S:  { low: fable,          medium: fable,          high: sonnet,        critical: opus }
-        M:  { low: sonnet,         medium: sonnet,         high: opus,          critical: opus }
-        L:  { low: sonnet,         medium: opus,           high: opus,          critical: opus }
-        XL: { low: split_or_fable, medium: split_or_fable, high: split_or_opus, critical: split_or_opus }
+        S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
+        M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
+        L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
     escalation:
       to_human:              # read by scrumia-team-setup on re-run to check drift
         - disagreement between roles
