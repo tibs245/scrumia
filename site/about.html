@@ -20,7 +20,24 @@
 <link rel="preload" href="assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/tokens.css">
 <link rel="stylesheet" href="assets/style.css">
-<script src="assets/theme.js"></script>
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
+      only while something is running that can also un-hide, and never when the
+      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="assets/theme.js"></script>
 <script defer src="assets/motion.js"></script>
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 </head>
@@ -28,10 +45,14 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
 <header class="top">
   <div class="top-inner">
     <a class="brand" href="index.html">
-      <img class="brand-mark" src="assets/mark.svg" alt="" width="18" height="18">
+      <img class="brand-mark" src="assets/mark.svg" alt="" width="22" height="22">
       Scrum<span>IA</span>
     </a>
     <nav aria-label="Main">

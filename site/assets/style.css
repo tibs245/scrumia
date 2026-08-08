@@ -51,6 +51,56 @@ body {
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* The limb below is wider than the viewport on purpose. `clip` rather than
+     `hidden`: hidden would make the body a scroll container and the sticky
+     header would stop sticking to the viewport. */
+  overflow-x: clip;
+}
+
+/* ---------- The sky ---------- *
+ * The ground is never a flat fill. Two washes stand for one cold light source
+ * sitting behind the page, near and far; fixed, so scrolling moves the content
+ * past the light instead of dragging the light along with it.
+ */
+
+.sky {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(58% 44% at 74% 4%, var(--halo-near), transparent 68%),
+    radial-gradient(96% 60% at 12% -6%, var(--halo-far), transparent 64%);
+}
+
+/* The grid belongs to peripheral vision, so the mask erases it wherever the eye
+   settles to read. A mask reads alpha and nothing else, so the opaque end is
+   written `currentColor` — whatever colour that is, it means "keep this", and
+   naming a colour there would be inventing a value that is never seen. */
+.sky::after {
+  content: ""; position: absolute; inset: -2px;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(72% 58% at 50% 34%, transparent 0%, currentColor 88%);
+  mask-image: radial-gradient(72% 58% at 50% 34%, transparent 0%, currentColor 88%);
+}
+
+/* Everything the reader can touch sits above the light. */
+header.top, main, footer { position: relative; z-index: 1; }
+
+/* ---------- Switching theme ---------- *
+ * A theme change is not a state change anything travelled to, so nothing
+ * animates across it: the page is one thing before and another thing after.
+ *
+ * It is also load-bearing. A theme here flips `color-scheme`, and every colour
+ * resolves from it through light-dark(); a transition already running on such a
+ * property never re-resolves it and holds the previous theme's colour for good.
+ * Freezing every transition for the frame the scheme flips is what makes the
+ * toggle correct, not just calm.
+ */
+:root[data-theme-switching] *,
+:root[data-theme-switching] *::before,
+:root[data-theme-switching] *::after {
+  transition: none !important;
 }
 
 /* ---------- Accessibility ---------- */
@@ -71,11 +121,17 @@ body {
 
 /* ---------- Header ---------- */
 
+/* Translucent over the ground rather than a solid band, so the page visibly runs
+   underneath it. The bottom edge is lit from the wordmark outwards, because that
+   is where the page's light comes from: a flat rule would read as the edge of a
+   container, and there is no container. */
 header.top {
   position: sticky; top: 0; z-index: 50;
   background: color-mix(in srgb, var(--ground) 82%, transparent);
   backdrop-filter: saturate(150%) blur(14px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 55%, transparent), var(--border) 34%, transparent) 1;
 }
 .top-inner {
   max-width: var(--page-max); margin: 0 auto;
@@ -85,12 +141,12 @@ header.top {
 }
 .brand {
   font-family: var(--font-display);
-  font-weight: var(--weight-display); font-size: var(--text-md);
+  font-weight: var(--weight-display); font-size: var(--text-lg);
   letter-spacing: var(--tracking-tight);
   color: var(--text); text-decoration: none; white-space: nowrap;
-  display: flex; align-items: center; gap: var(--space-2);
+  display: flex; align-items: center; gap: var(--space-3);
 }
-.brand-mark { width: 18px; height: 18px; flex-shrink: 0; display: block; }
+.brand-mark { width: 22px; height: 22px; flex-shrink: 0; display: block; }
 .brand span { color: var(--accent); }
 
 .top nav {
@@ -98,13 +154,15 @@ header.top {
   overflow-x: auto; scrollbar-width: none;
 }
 .top nav::-webkit-scrollbar { display: none; }
+/* Mono at label size: the navigation names things, it does not talk. */
 .top nav a {
-  color: var(--text-soft); text-decoration: none; font-size: var(--text-base);
+  color: var(--text-faint); text-decoration: none;
+  font-family: var(--font-mono); font-size: var(--text-sm);
   white-space: nowrap; padding: var(--space-1) 0;
   border-bottom: 2px solid transparent;
-  transition: color var(--dur-1) var(--ease-move);
+  transition: color var(--dur-1) var(--ease-move), border-color var(--dur-1) var(--ease-move);
 }
-.top nav a:hover { color: var(--text); }
+.top nav a:hover { color: var(--text); border-bottom-color: var(--accent); }
 .top nav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
 
 .lang { display: flex; gap: var(--space-tight); flex-shrink: 0; }
@@ -118,8 +176,8 @@ header.top {
 .lang a[aria-current="true"] { color: var(--accent); }
 
 .theme-btn {
-  background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  width: 30px; height: 30px; cursor: pointer; color: var(--text-soft);
+  background: none; border: 1px solid var(--border); border-radius: var(--radius-pill);
+  width: 30px; height: 30px; cursor: pointer; color: var(--text-faint);
   font-size: var(--text-base); line-height: 1;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; padding: 0;
@@ -181,7 +239,21 @@ section > h2::before {
 
 /* ---------- Hero ---------- */
 
-.hero { padding: var(--space-16) 0 var(--space-2); }
+.hero { position: relative; padding: var(--space-16) 0 var(--space-24); }
+
+/* The limb: a planet's edge, lit from behind. It is what closes the hero — a rim
+   light instead of a border, so the page ends on a horizon rather than on a line
+   somebody drew. Wider than the viewport by design; body clips it.
+   Drawn as ::after rather than as an element: it is decoration with no content,
+   and a sixth child would shift the stagger indices the hero's arrival counts on. */
+.hero::after {
+  content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 210vw; aspect-ratio: 2.4 / 1;
+  border-radius: 50%;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 90px -28px var(--limb-glow);
+  pointer-events: none;
+}
 .hero h1 { margin-top: 0; max-width: 18ch; }
 .hero h1 em {
   font-style: normal; color: var(--accent);
@@ -568,11 +640,12 @@ tbody tr:last-child td { border-bottom: 0; }
 
 /* ---------- Footer ---------- */
 
+/* No fill: the footer is separated from the page by emptiness, like every other
+   boundary here, and the sky carries on underneath it. */
 footer {
-  border-top: 1px solid var(--border); margin-top: var(--space-16);
-  padding: var(--space-6) var(--space-5) var(--space-12);
+  border-top: 1px solid var(--border); margin-top: var(--space-section);
+  padding: var(--space-12) var(--space-5) var(--space-16);
   color: var(--text-faint); font-size: var(--text-base);
-  background: var(--ground-deep);
 }
 .footer-inner {
   max-width: var(--page-max); margin: 0 auto; display: flex;
@@ -582,9 +655,17 @@ footer a { color: var(--text-soft); text-decoration: none; }
 footer a:hover { color: var(--accent); }
 
 /* ---------- Motion ---------- *
- * Nothing is hidden until motion.js says it can be: without JavaScript the page
- * is fully visible, which is the only acceptable failure mode for an animation
- * whose whole job is to say "this arrived".
+ * Every rule that hides something is gated on `.js`, a class set by the inline
+ * script in <head> before the first paint — and set only when a script is
+ * running that can also do the un-hiding, and when the reader has not asked for
+ * reduced motion. No JavaScript, a script that failed, an old browser, or
+ * prefers-reduced-motion: the class is absent and nothing here matches, so the
+ * page renders complete. That is the only acceptable failure mode for an
+ * animation whose whole job is to say "this arrived".
+ *
+ * The gate is inline rather than in motion.js on purpose: an external file that
+ * hides content arrives after the first paint, so the reader sees the content,
+ * then sees it vanish, then sees it come back.
  */
 
 @keyframes summon {
@@ -592,39 +673,39 @@ footer a:hover { color: var(--accent); }
   to   { opacity: 1; transform: none; }
 }
 
-[data-motion="on"] .summon > * { opacity: 0; }
-[data-motion="on"] .summon.is-in > * {
+.js .summon > * { opacity: 0; }
+.js .summon.is-in > * {
   animation: summon var(--dur-3) var(--ease-summon) both;
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
 
 /* The page itself is a summoned thing: eyebrow, claim, lead, numbers, next step. */
-[data-motion="on"] .hero.is-in > *:nth-child(2) { --i: 1; }
-[data-motion="on"] .hero.is-in > *:nth-child(3) { --i: 2; }
-[data-motion="on"] .hero.is-in > *:nth-child(4) { --i: 3; }
-[data-motion="on"] .hero.is-in > *:nth-child(5) { --i: 4; }
+.js .hero.is-in > *:nth-child(2) { --i: 1; }
+.js .hero.is-in > *:nth-child(3) { --i: 2; }
+.js .hero.is-in > *:nth-child(4) { --i: 3; }
+.js .hero.is-in > *:nth-child(5) { --i: 4; }
 
 /* The columns of a diagram arrive left to right: the sequence is the content. */
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(1) { --i: 0; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(2) { --i: 1; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(3) { --i: 2; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(4) { --i: 3; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(5) { --i: 4; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(6) { --i: 5; }
-[data-motion="on"] .flowmap.is-in > .fm:nth-child(7) { --i: 6; }
+.js .flowmap.is-in > .fm:nth-child(1) { --i: 0; }
+.js .flowmap.is-in > .fm:nth-child(2) { --i: 1; }
+.js .flowmap.is-in > .fm:nth-child(3) { --i: 2; }
+.js .flowmap.is-in > .fm:nth-child(4) { --i: 3; }
+.js .flowmap.is-in > .fm:nth-child(5) { --i: 4; }
+.js .flowmap.is-in > .fm:nth-child(6) { --i: 5; }
+.js .flowmap.is-in > .fm:nth-child(7) { --i: 6; }
 
-[data-motion="on"] .slots.is-in > .slot:nth-child(2) { --i: 1; }
-[data-motion="on"] .slots.is-in > .slot:nth-child(3) { --i: 2; }
-[data-motion="on"] .slots.is-in > .slot:nth-child(4) { --i: 3; }
-[data-motion="on"] .slots.is-in > .slot:nth-child(5) { --i: 4; }
-[data-motion="on"] .slots.is-in > .slot:nth-child(6) { --i: 5; }
-[data-motion="on"] .slots.is-in > .slot:nth-child(7) { --i: 6; }
+.js .slots.is-in > .slot:nth-child(2) { --i: 1; }
+.js .slots.is-in > .slot:nth-child(3) { --i: 2; }
+.js .slots.is-in > .slot:nth-child(4) { --i: 3; }
+.js .slots.is-in > .slot:nth-child(5) { --i: 4; }
+.js .slots.is-in > .slot:nth-child(6) { --i: 5; }
+.js .slots.is-in > .slot:nth-child(7) { --i: 6; }
 
 @media (prefers-reduced-motion: reduce) {
   /* Reveal without movement, and drop every transition to a single frame —
      the state change still reads, it just stops travelling. */
-  [data-motion="on"] .summon > *,
-  [data-motion="on"] .summon.is-in > * { opacity: 1; animation: none; }
+  .js .summon > *,
+  .js .summon.is-in > * { opacity: 1; animation: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
