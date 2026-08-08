@@ -44,13 +44,19 @@ When a ticket finishes scoping
 Then the human validates the transition to execution before an agent starts it
 ```
 
-### AC-5 — An explicitly delegated category lets gate 3 go unattended
+### AC-5 — Only an explicitly widened `auto_merge` lets gate 3 go unattended
 
 ```gherkin
-Given `settings.autonomy.level` is `autonomous` and the ticket's category is listed
-  in `settings.autonomy.auto_merge`
-When CI is green and gate 2 raised no blocker
+Given `settings.autonomy.level` is `autonomous` and `settings.autonomy.auto_merge`
+  is `docs-only`
+When CI is green, gate 2 raised no blocker, and the PR touches documentation only
 Then the PR merges without an additional human step
+```
+
+```gherkin
+Given `settings.autonomy.auto_merge` is `none` — its default
+When CI is green and gate 2 raised no blocker
+Then nothing merges without the human, whatever `settings.autonomy.level` says
 ```
 
 ## Out of scope

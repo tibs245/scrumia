@@ -28,7 +28,9 @@ for the bootstrap case, is what it produces — see #18).
 - Neither role settles a business rule found missing mid-execution: that stops the
   run and escalates instead, per `settings.team.escalation.to_human` in
   `.scrumia/config.yaml`.
-- The human decides only the merge, per the gate below.
+- The human's unconditional decision point is the merge, per gate 3 below. Under
+  `guided` autonomy the human also validates each ticket's transition into
+  execution — a second decision, before any agent starts.
 
 ## Where the human gate sits (ADR-0005)
 
@@ -39,11 +41,16 @@ of its own, because the human is already the decision-maker throughout it.
 |---|---|---|---|
 | 1 — Automatic | Execution | CI, linter, tests | A red check |
 | 2 — Agent | Execution | The roles, routed by the diff's actual scope | A **Blocked** verdict |
-| 3 — Human | Execution | The human | The merge — always, except a category explicitly listed in `settings.autonomy.auto_merge` |
+| 3 — Human | Execution | The human | The merge — always, unless `settings.autonomy.auto_merge` is set past `none` and the PR falls within what it covers |
 
 `settings.autonomy.level` (`.scrumia/config.yaml`) widens or narrows how far into
 execution the human reaches, without ever removing gate 3: `guided` adds a human
 check on each ticket's scoping before execution starts; `assisted` and `autonomous`
-don't. Only `autonomous`, and only for the categories named in `auto_merge`, lets
-gate 3 itself go unattended — the conditions for that are ADR-0005's, not
-re-decided here.
+don't. Only `autonomous`, and only where `auto_merge` reaches past its `none`
+default, lets gate 3 itself go unattended — the conditions for that are ADR-0005's,
+not re-decided here.
+
+`auto_merge` is one scalar for the whole project, not a per-ticket category:
+`none` (nothing merges unattended), `docs-only` (a PR touching documentation and
+nothing else), or `all`. What exactly counts as docs-only, and what happens to a
+PR mixing docs and code, is #17's to pin down.
