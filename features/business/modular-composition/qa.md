@@ -95,6 +95,29 @@ Then the role appears in the single settings.team.roles list, carrying a `from:`
   naming its provider, and routing needs no knowledge of where the definition lives
 ```
 
+### AC-8 — The composition is reported from the file, and the two kinds of absence read differently
+
+Sharpens AC-3: the declaration lives in `.scrumia/config.yaml`, and this is what
+a human actually sees of it.
+
+```gherkin
+Given a project whose `.scrumia/config.yaml` names a module for some slots, sets
+  one slot to `null`, and — as the defect BR-2 describes — omits another slot's
+  key entirely
+When `scrumia-core/scripts/compose-status.sh` runs, on its own or as the closing
+  step of `scrumia-init` or `scrumia-compose`
+Then it prints each slot with the module filling it; calls the `null` slot empty
+  on purpose and names the module that would fill it; reports the omitted key as
+  *not declared* instead, so an oversight never reads as a choice; drops colour
+  when stdout is not a terminal or `NO_COLOR` is set to a non-empty value; keeps
+  its columns readable in a narrow terminal; takes no argument in a configured
+  repo; and writes nothing anywhere
+```
+
+The script reports `.scrumia/config.yaml` and stops there. Whether a module named
+in it is actually enabled, and whether `CLAUDE.md` still matches, are AC-2's
+territory and `scrumia-compose`'s job to diagnose around this output.
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor

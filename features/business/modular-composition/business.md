@@ -71,6 +71,28 @@ module's own name when the sentence needs it — never through a runtime lookup.
 Replacing a module means checking the others that name it; that check is a few
 minutes of grep, done rarely, not a per-call cost.
 
+## How the composition is reported
+
+A composition an agent retypes is a composition that drifts, and the drift is
+invisible because the prose still reads plausibly. So the skills that present the
+composition — `scrumia-init` and `scrumia-compose` — end by running
+`scrumia-core`'s `scripts/compose-status.sh`, which reads `.scrumia/config.yaml`
+and prints the slot table itself: the module in each slot, and, worded
+differently from one another, the slots left empty on purpose and the keys
+missing altogether. What a human reads is the file, every time, rather than what
+one session remembered of it.
+
+This is reporting, not resolution. Nothing calls the script to find out who fills
+a slot; it resolves nothing on any agent's behalf, and BR-4 stands untouched. It
+makes the answer BR-4 already documents legible in a terminal, which is a
+different job from looking that answer up at runtime.
+
+It stops there deliberately. It reads the config and only the config, so it
+cannot tell whether a module named there is actually enabled, or whether
+`CLAUDE.md` has gone stale against it. Those are diagnoses `scrumia-compose`
+runs and reports around the script's output — a status printer that guessed at
+them would be the least trustworthy output in the composition.
+
 ## Business rules
 
 - **BR-1** — A slot is a question, not a module. The slot exists independently of
@@ -88,6 +110,11 @@ minutes of grep, done rarely, not a per-call cost.
 - **BR-5** — ScrumIA's own modules ship from a single repo, which is also the
   marketplace. A third-party module is not required to: it declares its own source
   in `marketplace.json`, at the adopting project's discretion.
+- **BR-6** — The composition is reported by reading `.scrumia/config.yaml`, never
+  from memory. A skill that presents the composition closes by running the
+  kernel's status script and does not paraphrase the table it prints. Reporting
+  the composition is not resolving it: BR-4 still forbids resolving a slot to a
+  module at runtime.
 
 ## Vocabulary
 

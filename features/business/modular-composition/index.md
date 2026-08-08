@@ -46,8 +46,10 @@ that isn't there.
 
 - Implemented by: no App feature. The mechanism this feature describes lives in
   `scrumia-core` (`plugins/scrumia-core/`), which fills no slot itself — it reads
-  `.scrumia/config.yaml` and writes the composition table into `CLAUDE.md`. Each
-  module named in the table owns its own slot's implementation.
+  `.scrumia/config.yaml`, writes the composition table into `CLAUDE.md`, and
+  prints that same composition to a terminal through
+  `plugins/scrumia-core/scripts/compose-status.sh`, which both its skills end by
+  running. Each module named in the table owns its own slot's implementation.
 
 ## Files present
 
