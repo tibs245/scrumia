@@ -59,11 +59,22 @@ Work in a dedicated worktree, never in the main working tree:
 git worktree add .worktrees/<type>/<n>-<slug> -b <type>/<n>-<slug>
 ```
 
+During a sprint, several siblings run this same command concurrently against the same
+`.git` — by design. It is safe because `<type>/<n>-<slug>` makes each branch, path and
+worktree registration unique; the only shared state is transient lock files.
+
+If the command fails with a `.lock: File exists` error, a sibling holds it briefly: retry,
+up to three times, a few seconds apart. If it still fails after that, the lock is stale —
+its owner died holding it. Report the lock file's path and stop; never delete a lock file
+in a shared `.git` yourself: four siblings may be live inside it.
+
 `<type>`: `feat`, `fix`, `refactor`, `docs`, `chore`.
 
 Inside the project directory, not `../<repo>-<n>`: Claude Code's permissions are scoped to the project directory, and a worktree created outside it triggers extra prompts or fails outright in restricted modes. The cost is a folder to keep out of the diff — `.worktrees/` is gitignored by `scrumia-project-setup`.
 
-This isolation is what makes several tickets parallelizable without conflict.
+This isolation is what makes several tickets parallelizable without conflict. The number
+of siblings is `sprint.max_tickets`, a human-review cap — git is not the limiting factor.
+Raising it is a review-bandwidth decision, never a git one.
 
 Move the card to the `in_progress` step:
 
