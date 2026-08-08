@@ -40,7 +40,18 @@ Present what you found in one pass, and ask for confirmation.
 
 ## Step 2 — Establish the composition
 
-List the installed modules by reading the `enabledPlugins` array — a flat list of `"<plugin>@<marketplace>"` strings, not a map of plugin name to a per-plugin object — in `.claude/settings.json` and `.claude/settings.local.json` (an agent cannot run the interactive `/plugin list`). Then propose a composition. A slot without a module is acceptable — the project runs in degraded mode, it just has to be said.
+List the installed modules by reading `enabledPlugins` in `.claude/settings.json` and `.claude/settings.local.json` (an agent cannot run the interactive `/plugin list`). It is an **object**, keyed by `"<plugin>@<marketplace>"`, whose value is a boolean:
+
+```json
+"enabledPlugins": {
+  "scrumia-core@scrumia": true,
+  "github@claude-plugins-official": false
+}
+```
+
+Read the keys whose value is `true`, and split each on `@` to get the module name. **A key set to `false` is installed but disabled** — treating it as plugged in would promise a capability the session doesn't have. Check both files: a module enabled in `settings.local.json` is real but not shared with whoever clones the repo.
+
+Then propose a composition. A slot without a module is acceptable — the project runs in degraded mode, it just has to be said.
 
 | Slot | Role | Reference module |
 |---|---|---|
@@ -214,21 +225,28 @@ An app with no module plugged in gets no stub — nothing to point to. On re-run
 
 ## Step 7 — Enable the plugins for the project
 
-Merge into `.claude/settings.json`, without overwriting: `enabledPlugins` is an array of `"<plugin>@<marketplace>"` strings — append the composition's plugins to whatever is already there, don't replace the array.
+The simplest path is to let the CLI write this file rather than editing it by hand — it produces exactly the shape below, and it also fetches the marketplace:
+
+```bash
+claude plugin marketplace add tibs245/scrumia --scope project
+claude plugin install scrumia-core@scrumia --scope project    # one per module
+```
+
+If you do merge it by hand, **merge — don't overwrite**. `enabledPlugins` is an **object** keyed by `"<plugin>@<marketplace>"` with boolean values; add your keys to whatever is already there, and never rewrite the object wholesale (another marketplace's plugins live in the same one).
 
 ```json
 {
   "extraKnownMarketplaces": {
     "scrumia": { "source": { "source": "github", "repo": "tibs245/scrumia" } }
   },
-  "enabledPlugins": [
-    "scrumia-core@scrumia",
-    "scrumia-specs@scrumia"
-  ]
+  "enabledPlugins": {
+    "scrumia-core@scrumia": true,
+    "scrumia-specs@scrumia": true
+  }
 }
 ```
 
-This file being committed, the composition is versioned with the project. Tell the user: plugins enabled here load **at the next Claude Code session** — finish the setup, then restart.
+This file being committed, the composition is versioned with the project. Tell the user: plugins enabled here load **at the next Claude Code session** — finish the setup, then restart. Their `scripts/` keep their executable bit through the install, so nothing needs `chmod` afterwards.
 
 ## Step 8 — Report back
 

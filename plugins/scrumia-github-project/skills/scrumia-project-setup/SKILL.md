@@ -82,7 +82,15 @@ While here, make sure `.gitignore` lists `.worktrees/` — append the line if it
 
 ## Step 5 — Create the board
 
-Check that the project exists (`gh project list --owner <owner> --format json`). If it's missing, offer to create it with the configured columns.
+Check that the project exists (`gh project list --owner <owner> --format json`). If it's missing, offer to create it:
+
+```bash
+gh project create --owner <owner> --title "<tracker.project>"
+```
+
+**The columns then have to be set separately.** A new board ships `Todo` / `In Progress` / `Done`, and no `gh` subcommand can change them — it takes an `updateProjectV2Field` mutation, whose exact form (required fields, the enum colours, and the fact that the option list *replaces* rather than extends) is in [`projects-v2.md`](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md#creating-the-boards-columns). Run it while the board is still empty: replacing an option deletes the status of every card in it.
+
+If the user would rather keep an existing board with its own column names, don't rename anything — record the mapping in `board.flow` at the end of this step instead.
 
 The Projects v2 API requires specific scopes. If `gh` doesn't have them, give the command `gh auth refresh -s project` and let the user decide — it's a privilege elevation on their account, and it belongs to them.
 

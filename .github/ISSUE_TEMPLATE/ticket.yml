@@ -1,0 +1,45 @@
+name: Ticket
+description: A piece of work to execute — cites the feature it belongs to and the acceptance criteria it satisfies.
+title: "[Ticket] "
+labels:
+  - scrumia
+body:
+  - type: input
+    id: parent-feature
+    attributes:
+      label: Parent feature
+      description: Path to the feature this ticket belongs to.
+      placeholder: e.g. features/app/web/checkout (see the Specs contract in CLAUDE.md)
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What this ticket is about and why. Link the discussion or the parent epic if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: The acceptance criteria identifiers (e.g. AC-1, AC-2 — see the Specs contract in CLAUDE.md) from the parent feature's acceptance file that this ticket satisfies. New criteria belong in the spec first, not only here.
+      placeholder: |
+        e.g. (following the project's Specs contract)
+        AC-1: ...
+        AC-2: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Anticipated apps and files touched. Keeps the ticket sizeable and the diff reviewable.
+      placeholder: |
+        Apps: web
+        Files: src/auth/login.ts
+    validations:
+      required: true

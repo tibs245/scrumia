@@ -66,6 +66,31 @@ Against `gh` 2.96, live board:
 
 `item-edit` requires `--project-id` for non-draft items and updates **one field per invocation**. Omitting `--project-id` is the most common failure.
 
+## Creating the board's columns
+
+`gh project create` makes a board with `Todo` / `In Progress` / `Done` and offers **no** way to change them — no `gh` subcommand edits a single-select field's options. This is the one place `board.sh` doesn't cover, because it happens once at setup; do it in GraphQL:
+
+```bash
+gh api graphql -f query='
+mutation {
+  updateProjectV2Field(input: {
+    fieldId: "<status-field-id>"
+    singleSelectOptions: [
+      {name: "Backlog",       color: GRAY,   description: "Raw intent, not yet refined"}
+      {name: "Ready for dev", color: BLUE,   description: "Refined: criteria written, scope and risk set"}
+      {name: "To dev",        color: PURPLE, description: "Selected into the current sprint"}
+      {name: "In progress",   color: YELLOW, description: "Being executed in its own worktree"}
+      {name: "In review",     color: ORANGE, description: "PR open, awaiting review"}
+      {name: "Done",          color: GREEN,  description: "Merged"}
+    ]
+  }) { projectV2Field { ... on ProjectV2SingleSelectField { options { id name } } } }
+}'
+```
+
+Three things to know. `name`, `color` and `description` are all **required** per option — omitting `description` fails the mutation. `color` is an enum, unquoted: `GRAY`, `BLUE`, `GREEN`, `YELLOW`, `ORANGE`, `RED`, `PINK`, `PURPLE`. And **the list replaces the field's options wholesale**: an option whose `id` you don't pass back is deleted, along with the status of every card sitting in it. Safe on a board you just created; on a populated board, pass the existing `id` for every option you intend to keep.
+
+The mutation returns the new option ids — that is the moment to persist them, rather than re-reading them later.
+
 ## Milestones, epics, labels
 
 The board stays readable through filing, not through pagination.

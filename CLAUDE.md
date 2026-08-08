@@ -1,0 +1,72 @@
+<!-- scrumia:start -->
+## ScrumIA composition
+
+This project is driven by a composition of modules. Each module has a scope.
+Before acting, check which module covers what you are about to do.
+
+ScrumIA is the composition it ships: this repo runs on its own plugins.
+
+| Area | Plugged module | What to know |
+|---|---|---|
+| Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
+| Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
+| Team | `scrumia-teams` | Standing roles: manager, business, tech. |
+
+The `discovery` slot is empty: `scrumia-discovery` is not installed. An idea therefore
+goes straight to a ticket without a scoping pass — say so rather than improvising one.
+Install it with `claude plugin install scrumia-discovery@scrumia --scope project`.
+
+### Implementation and practices, per app
+
+| App | Path | Implementation | Practices |
+|---|---|---|---|
+| `site` | `site` | none | none |
+| `tools` | `tools` | none | none |
+
+Both apps carry no implementation module, so follow the conventions of the neighboring
+code. `plugins/` is the product itself — markdown, not code — and is deliberately absent
+from this table: no implementation module speaks for it.
+
+When an implementation module does get plugged in, resolve the app from the path of the
+file you're about to edit, open that module's `SKILL.md`, and load only the guides its
+routing table points to. The implementation module wins over a generic practice; a
+project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both.
+
+### Specs contract
+
+`scrumia-specs` — this project's specs module — describes itself with the block below.
+Read the file named by `acceptance_file` for its acceptance criteria, identifiers in
+`ac_id_format`; the other per-feature files it may carry are listed under `catalog`.
+
+```
+specs_root: features/
+feature_index: index.md
+acceptance_file: qa.md
+ac_id_format: AC-<n>
+changelog: CHANGELOG.md
+catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.md, devx.md
+```
+
+### Shared rules
+
+- Project state lives in the tracker, not in the repo.
+- A spec contains only its current version; history lives in git and the tickets.
+- The composition's configuration is in `.scrumia/config.yaml`.
+- Talk to the board through `scrumia-github-project/scripts/board.sh`, never by composing
+  `gh project` calls: a board read without a filter is silently truncated at 30 items.
+- Before executing a ticket, ask `scrumia-teams/scripts/pick-model.sh <n>` which model it
+  runs on, and act on its `instruction` rather than re-reading the matrix.
+<!-- scrumia:end -->
+
+## Working on this repo
+
+The deliverable is prose that an agent executes. A skill that reads well but sends an
+agent to a file that doesn't exist is broken, so `python3 tools/validate.py` gates the
+marketplace, the frontmatter, every relative link, and the scripts skills invoke. Run it
+before pushing; CI runs it too.
+
+Files are in English — including comments, commit messages and workflow names. Only
+`site/fr/` is French.
+
+Comments earn their place by explaining a non-obvious **why**, roughly one line in ten.
+Module narration and multi-paragraph docblocks belong in the PR body or in `docs/`.
