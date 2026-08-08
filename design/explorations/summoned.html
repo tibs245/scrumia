@@ -1,0 +1,1239 @@
+<!-- @dsCard group="Explorations" -->
+<!doctype html>
+<!--
+  Direction "summoned" — the page is not a description of a run, it is a run
+  happening: a session opens, the composition assembles under the reader's eyes,
+  and the seven steps are the spine you scroll through. Monospace is the voice,
+  not an accent, because this product is used from a terminal by people who live
+  in one.
+
+  Kept from the identity: the navy ground with raised blue surfaces, the single
+  cyan accent that points and nothing else, coral reserved strictly for the three
+  moments a human decides, Hop as four columns that gather and fall back, and the
+  rule that motion only ever stands for a state change.
+
+  Deliberately broken: the display face. identity.md makes Sora the display type;
+  here JetBrains Mono carries the headlines and Sora is demoted to a single
+  statement, because a terminal voice argues the product better than a geometric
+  sans does. Also broken: the type scale in tokens.css stops at 3.25rem, and this
+  page needs 5.4 — the extension is declared in the token block below.
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>summoned — ScrumIA landing exploration</title>
+<meta name="description" content="ScrumIA — compose your AI dev team from replaceable Claude Code modules.">
+<script>
+  // Applied before first paint so a stored light preference never flashes navy.
+  try {
+    var t = localStorage.getItem('scrumia-theme');
+    if (t) document.documentElement.dataset.theme = t;
+  } catch (e) {}
+</script>
+<style>
+/* ═══ Faces ══════════════════════════════════════════════════════════════ */
+@font-face { font-family: "Sora"; src: url("../../site/assets/fonts/sora-latin.woff2") format("woff2");
+             font-weight: 100 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Sans 3"; src: url("../../site/assets/fonts/source-sans-3-latin.woff2") format("woff2");
+             font-weight: 200 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../site/assets/fonts/jetbrains-mono-latin.woff2") format("woff2");
+             font-weight: 100 800; font-style: normal; font-display: swap; }
+
+/* ═══ Tokens ═════════════════════════════════════════════════════════════
+ * Palette, space and motion are taken verbatim from design/tokens.css. Four
+ * additions, each because the vocabulary had no word for something this page
+ * needs:
+ *   --t-hero / --t-h2 / --t-h3 — tokens.css stops at 3.25rem; a headline that
+ *     commits starts where that scale ends.
+ *   --hole-shadow, --hatch — an empty slot is drawn as a void, not as a card
+ *     with reduced opacity, and no existing token describes a void.
+ *   --grid — the dotted ground.
+ *   --agent-ink — text laid on the agent wash; --agent-surface shipped without
+ *     its ink pair.
+ * Dark is :root. Light is the redefinition, in both directions.
+ */
+:root {
+  color-scheme: dark;
+  --ground: #000B1C;
+  --ground-deep: #00060F;
+  --surface: #08192E;
+  --surface-raised: #0D2540;
+  --surface-sunken: #02101F;
+  --border: #153453;
+  --border-strong: #3B7CAD;
+  --text: #EAF2FA;
+  --text-soft: #A9C2D6;
+  --text-faint: #7C95AB;
+  --accent: #73E3FF;
+  --accent-surface: #07293C;
+  --accent-ink: #00121E;
+  --human: #F0996F;
+  --human-surface: #2B1811;
+  --human-ink: #1A0B04;
+  --agent: #6BB8E4;
+  --agent-surface: #07243A;
+  --agent-ink: #00121E;
+  --ok: #54CE94;
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
+  --hole-shadow: inset 0 3px 18px rgb(0 0 0 / 0.6);
+  --hatch: #10293F;
+  --grid: #0E2841;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --ground: #F8F5F0; --ground-deep: #F1ECE4; --surface: #FFFFFF;
+    --surface-raised: #FFFFFF; --surface-sunken: #F1ECE4;
+    --border: #E1D9CD; --border-strong: #8C7F6D;
+    --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
+    --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
+    --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
+    --agent: #175B7A; --agent-surface: #E4EFF6; --agent-ink: #FFFFFF;
+    --ok: #16704F;
+    --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
+    --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
+    --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
+    --hole-shadow: inset 0 2px 12px rgb(10 22 38 / 0.14);
+    --hatch: #DED4C4;
+    --grid: #E4DACA;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #F8F5F0; --ground-deep: #F1ECE4; --surface: #FFFFFF;
+  --surface-raised: #FFFFFF; --surface-sunken: #F1ECE4;
+  --border: #E1D9CD; --border-strong: #8C7F6D;
+  --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
+  --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
+  --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
+  --agent: #175B7A; --agent-surface: #E4EFF6; --agent-ink: #FFFFFF;
+  --ok: #16704F;
+  --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
+  --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
+  --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
+  --hole-shadow: inset 0 2px 12px rgb(10 22 38 / 0.14);
+  --hatch: #DED4C4;
+  --grid: #E4DACA;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #000B1C; --ground-deep: #00060F; --surface: #08192E;
+  --surface-raised: #0D2540; --surface-sunken: #02101F;
+  --border: #153453; --border-strong: #3B7CAD;
+  --text: #EAF2FA; --text-soft: #A9C2D6; --text-faint: #7C95AB;
+  --accent: #73E3FF; --accent-surface: #07293C; --accent-ink: #00121E;
+  --human: #F0996F; --human-surface: #2B1811; --human-ink: #1A0B04;
+  --agent: #6BB8E4; --agent-surface: #07243A; --agent-ink: #00121E;
+  --ok: #54CE94;
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
+  --hole-shadow: inset 0 3px 18px rgb(0 0 0 / 0.6);
+  --hatch: #10293F;
+  --grid: #0E2841;
+}
+
+:root {
+  --font-display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --t-hero: clamp(2.15rem, 7.2vw, 5.4rem);
+  --t-h2:   clamp(1.85rem, 4.6vw, 3.4rem);
+  --t-h3:   clamp(1.4rem, 3.1vw, 2.2rem);
+  --t-lead: clamp(1.05rem, 1.45vw, 1.3rem);
+  --t-xl: 1.375rem; --t-lg: 1.1875rem; --t-md: 1.0625rem;
+  --t-base: 0.9375rem; --t-sm: 0.8125rem; --t-xs: 0.75rem;
+
+  --leading-tight: 1.08;
+  --leading-snug: 1.35;
+  --leading-body: 1.62;
+  --tracking-display: -0.035em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.13em;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px;
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 100px;
+
+  --dur-1: 120ms; --dur-2: 220ms; --dur-3: 420ms; --dur-4: 700ms; --dur-5: 1400ms;
+  --ease-summon: cubic-bezier(0.2, 0.9, 0.3, 1.18);
+  --ease-resolve: cubic-bezier(0.45, 0, 1, 1);
+  --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-hop: cubic-bezier(0.16, 1.36, 0.3, 1);
+  --stagger: 70ms;
+  --stagger-hop: 55ms;
+
+  --shell: 1180px;
+  --pad: clamp(20px, 4vw, 48px);
+  --header-h: 60px;
+}
+
+/* ═══ Reset and ground ═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--t-md);
+  line-height: var(--leading-body);
+  overflow-x: hidden;
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* The ground is not flat: a cyan halo where the session starts, a coral one
+   where the human steps are, and a dot grid that fades out as the run goes on. */
+.bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.bg::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(58rem 40rem at 14% -12%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 62%),
+    radial-gradient(44rem 32rem at 96% 6%, color-mix(in srgb, var(--human) 9%, transparent), transparent 58%);
+}
+.bg::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--grid) 1px, transparent 0);
+  background-size: 30px 30px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, transparent 62%);
+  mask-image: linear-gradient(to bottom, #000 0, transparent 62%);
+}
+.page { position: relative; z-index: 1; }
+.shell { max-width: var(--shell); margin-inline: auto; padding-inline: var(--pad); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+.skip {
+  position: absolute; left: var(--space-4); top: -4rem; z-index: 40;
+  background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-mono); font-size: var(--t-sm);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+  transition: top var(--dur-2) var(--ease-move);
+}
+.skip:focus { top: var(--space-3); }
+.vh {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ═══ Header — a session bar, not a nav bar ══════════════════════════════ */
+.hdr {
+  position: sticky; top: 0; z-index: 30;
+  background: color-mix(in srgb, var(--ground) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid var(--border);
+}
+.hdr-in {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--pad);
+  height: var(--header-h);
+  display: flex; align-items: center; gap: var(--space-6);
+}
+.mark { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--text); }
+.wordmark {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: var(--t-lg); letter-spacing: var(--tracking-tight);
+}
+.wordmark i { font-style: normal; color: var(--accent); }
+.hdr-path {
+  font-family: var(--font-mono); font-size: var(--t-xs); color: var(--text-faint);
+  border-left: 1px solid var(--border); padding-left: var(--space-4);
+}
+.hdr-nav { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); }
+.hdr-nav a {
+  font-family: var(--font-mono); font-size: var(--t-sm); color: var(--text-soft);
+  text-decoration: none; padding: var(--space-1) 0;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-1) var(--ease-move), border-color var(--dur-1) var(--ease-move);
+}
+.hdr-nav a:hover { color: var(--text); border-bottom-color: var(--border-strong); }
+.tgl {
+  font-family: var(--font-mono); font-size: var(--t-xs); letter-spacing: 0.06em;
+  color: var(--text-soft); background: transparent;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3); cursor: pointer;
+  transition: color var(--dur-1), border-color var(--dur-1), background var(--dur-1);
+}
+.tgl:hover { color: var(--text); background: var(--surface); }
+/* The run's progress, as a rail on the header. Positional state, not decoration. */
+.rail {
+  position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
+  background: var(--accent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+@media (max-width: 720px) {
+  .hdr-path, .hdr-nav a[data-opt] { display: none; }
+  .hdr-in { gap: var(--space-4); }
+}
+
+/* ═══ Hero — the session starts ══════════════════════════════════════════ */
+.hero { padding-block: clamp(56px, 11vh, 120px) clamp(48px, 8vh, 88px); }
+.hero-grid {
+  display: grid; gap: var(--space-10);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 940px) { .hero-grid { grid-template-columns: minmax(0, 1fr) 210px; gap: var(--space-16); } }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--accent); margin: 0 0 var(--space-6);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.eyebrow::before {
+  content: ""; width: 22px; height: 1px; background: currentColor; flex: none;
+}
+h1 {
+  font-family: var(--font-mono);
+  font-size: var(--t-hero); font-weight: 700;
+  line-height: var(--leading-tight); letter-spacing: var(--tracking-display);
+  margin: 0; color: var(--text);
+}
+h1 .prompt { color: var(--accent); font-weight: 400; }
+h1 .l2 { display: block; padding-left: 2ch; }
+.caret {
+  display: inline-block; width: 0.58em; height: 0.86em;
+  background: var(--accent); vertical-align: -0.06em; margin-left: 0.12em;
+}
+/* The cursor blinks because the session is live and waiting on you — the one
+   state the hero has left to express once everything else has landed. */
+@media (prefers-reduced-motion: no-preference) {
+  .caret { animation: blink 1.1s steps(1, end) infinite; }
+}
+@keyframes blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+
+.lead {
+  font-size: var(--t-lead); color: var(--text-soft);
+  max-width: 52ch; margin: var(--space-8) 0 0;
+}
+.tally {
+  font-family: var(--font-mono); font-size: var(--t-sm); color: var(--text-faint);
+  margin: var(--space-6) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
+}
+.tally b { color: var(--text); font-weight: 700; }
+.tally span:not(:last-child)::after { content: " ·"; color: var(--border-strong); }
+
+.ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+.btn {
+  font-family: var(--font-mono); font-size: var(--t-base); font-weight: 500;
+  text-decoration: none; border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-6); border: 1px solid transparent;
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  transition: transform var(--dur-1) var(--ease-move), box-shadow var(--dur-2) var(--ease-move),
+              background var(--dur-1), color var(--dur-1), border-color var(--dur-1);
+}
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow-accent); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-ghost { border-color: var(--border-strong); color: var(--text); }
+.btn-ghost:hover { background: var(--surface); transform: translateY(-2px); }
+
+.hop-slot { display: none; }
+@media (min-width: 940px) {
+  .hop-slot { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding-top: var(--space-6); }
+}
+.hop-cap {
+  font-family: var(--font-mono); font-size: var(--t-xs); color: var(--text-faint);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+}
+
+/* ═══ The composition, assembling ════════════════════════════════════════ */
+.term {
+  margin-top: clamp(40px, 6vh, 72px);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+}
+.term-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono); font-size: var(--t-xs); color: var(--text-faint);
+}
+.term-bar b { color: var(--text-soft); font-weight: 500; }
+.term-bar .right { margin-left: auto; }
+.term-body {
+  padding: var(--space-6) var(--space-5);
+  font-family: var(--font-mono); font-size: clamp(0.72rem, 1.35vw, 0.9375rem);
+  line-height: 1.85; color: var(--text-soft);
+  overflow-x: auto;
+}
+.term-body > * { margin: 0; }
+.ln { display: block; white-space: pre; }
+.ln .dim { color: var(--text-faint); }
+.ln .cy { color: var(--accent); }
+.ln .ok { color: var(--ok); }
+.ln .ag { color: var(--agent); }
+.ln .hu { color: var(--human); }
+.ln .txt { color: var(--text); }
+/* A grid, not padded text: the three columns have to stay aligned at every
+   clamp step of the font size, which spaces inside a <pre> cannot promise. */
+.slotline {
+  display: grid; grid-template-columns: 15ch minmax(24ch, auto) 8ch;
+  gap: 0 var(--space-4); white-space: nowrap; padding-left: 2ch;
+}
+.slotline .nm { color: var(--text); }
+.slotline .fill { color: var(--agent); }
+.slotline .st { color: var(--ok); }
+.slotline[data-state="empty"] .fill { color: var(--text-faint); }
+.slotline[data-state="empty"] .st { color: var(--human); }
+.term-sep { height: var(--space-4); }
+
+/* Each line lands in the order the run produces it. Pure CSS, self-completing:
+   the reveal never depends on JavaScript to finish. */
+@media (prefers-reduced-motion: no-preference) {
+  .term-body .ln, .term-body .slotline {
+    animation: lineIn var(--dur-2) var(--ease-summon) both;
+    animation-delay: calc(180ms + var(--i, 0) * 65ms);
+  }
+}
+@keyframes lineIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+
+/* ═══ Sections ═══════════════════════════════════════════════════════════ */
+section { padding-block: clamp(72px, 11vh, 150px); scroll-margin-top: calc(var(--header-h) + 8px); }
+.sec-num {
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint); margin: 0 0 var(--space-5);
+  display: flex; align-items: baseline; gap: var(--space-3);
+}
+.sec-num b { color: var(--text); font-weight: 700; }
+h2 {
+  font-family: var(--font-mono); font-size: var(--t-h2); font-weight: 700;
+  line-height: 1.06; letter-spacing: var(--tracking-display);
+  margin: 0; max-width: 22ch;
+}
+.sec-intro {
+  font-size: var(--t-lead); color: var(--text-soft);
+  max-width: 58ch; margin: var(--space-6) 0 0;
+}
+
+/* ═══ 01 — the run ═══════════════════════════════════════════════════════ */
+.run { list-style: none; margin: clamp(48px, 7vh, 88px) 0 0; padding: 0; }
+.step { display: grid; grid-template-columns: 56px minmax(0, 1fr); }
+@media (min-width: 720px) { .step { grid-template-columns: 92px minmax(0, 1fr); } }
+
+.step-rail { position: relative; }
+.step-rail::before {
+  content: ""; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px;
+  background: var(--border);
+}
+.step:first-child .step-rail::before { top: 26px; }
+.step:last-child .step-rail::before { bottom: calc(100% - 26px); }
+.node {
+  position: absolute; left: 6px; top: 18px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--ground); border: 2px solid var(--agent);
+}
+.step[data-who="human"] .node {
+  background: var(--human); border-color: var(--human);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--human) 22%, transparent);
+  left: 4px; width: 20px; height: 20px; top: 16px;
+}
+.step[data-who="human"] .step-rail::before { background: var(--human); }
+
+.step-body { padding-block: var(--space-6) clamp(32px, 5vh, 56px); }
+.step-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+}
+.step-n { color: var(--text-faint); }
+.who {
+  border-radius: var(--radius-pill); padding: 2px var(--space-3);
+  background: var(--agent-surface); color: var(--agent);
+}
+.step[data-who="human"] .who { background: var(--human-surface); color: var(--human); }
+.step h3 {
+  font-family: var(--font-mono); font-size: var(--t-h3); font-weight: 700;
+  letter-spacing: var(--tracking-display); line-height: 1.1;
+  margin: 0 0 var(--space-3); color: var(--text);
+}
+.step[data-who="human"] h3 { color: var(--human); }
+.step-out { margin: 0; color: var(--text-soft); max-width: 46ch; }
+.step-foot {
+  margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
+  font-family: var(--font-mono); font-size: var(--t-sm);
+}
+.produces { color: var(--agent); }
+.step[data-who="human"] .produces { color: var(--human); }
+.uses { color: var(--text-faint); }
+.uses b { color: var(--text-soft); font-weight: 500; }
+
+/* A human step interrupts: it breaks out of the text column into a warm slab,
+   because a person had to stop the run to make it. */
+.step[data-who="human"] .step-body {
+  background: var(--human-surface);
+  border-left: 2px solid var(--human);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--space-6) var(--space-6) var(--space-6);
+  margin-block: var(--space-3) clamp(28px, 4vh, 44px);
+  margin-right: calc(var(--pad) * -0.5);
+}
+
+.run-legend {
+  display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-8);
+  margin-top: var(--space-10); padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: var(--t-sm); color: var(--text-faint);
+}
+.run-legend b { color: var(--text-soft); font-weight: 500; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: var(--space-2); }
+.dot-h { background: var(--human); }
+.dot-a { background: var(--agent); }
+
+/* ═══ 02 — the argument. The one place a display face earns its keep. ════ */
+.argument { border-top: 1px solid var(--border); background: var(--ground-deep); }
+.argument h2 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.75rem, 4.4vw, 3.3rem); letter-spacing: var(--tracking-display);
+  line-height: 1.12; max-width: 20ch;
+}
+.argument h2 em { font-style: normal; color: var(--human); }
+.arg-aside {
+  margin-top: clamp(40px, 6vh, 72px);
+  display: grid; gap: var(--space-4);
+  font-family: var(--font-mono); font-size: var(--t-base);
+  color: var(--text-faint); max-width: 62ch;
+}
+.arg-aside code {
+  font-family: inherit; color: var(--text-soft);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4);
+  display: block; white-space: pre-wrap;
+}
+.arg-aside code b { color: var(--human); font-weight: 400; }
+
+/* ═══ 03 — slots ═════════════════════════════════════════════════════════ */
+.slot-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-4);
+  margin-top: var(--space-8);
+  font-family: var(--font-mono); font-size: var(--t-sm); color: var(--text-faint);
+}
+.slot-head output { color: var(--text-soft); }
+.board {
+  display: grid; gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  margin-top: clamp(36px, 5vh, 56px);
+}
+.slot {
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface); padding: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  min-height: 226px;
+}
+.slot-name {
+  font-family: var(--font-mono); font-size: var(--t-base); font-weight: 700;
+  letter-spacing: var(--tracking-tight); color: var(--text); margin: 0;
+}
+.slot-q { margin: 0; font-size: var(--t-base); color: var(--text-soft); }
+.slot-a { margin: 0; font-size: var(--t-sm); color: var(--text-faint); line-height: var(--leading-snug); }
+.slot-fill {
+  margin-top: auto; padding-top: var(--space-3); border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: var(--t-xs); color: var(--agent);
+  display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;
+  word-break: break-word;
+}
+.slot-fill .tick { color: var(--ok); }
+
+/* An empty slot is a hole in the board, not a card that has been dimmed. */
+.slot[data-state="empty"] {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 8px, var(--hatch) 8px 9px),
+    var(--surface-sunken);
+  border-style: dashed; border-color: var(--border-strong);
+  box-shadow: var(--hole-shadow);
+}
+.slot[data-state="empty"] .slot-name { color: var(--text-soft); }
+.slot[data-state="empty"] .slot-fill { color: var(--human); border-top-color: var(--border-strong); }
+.slot[data-state="empty"] .slot-q { color: var(--text-soft); }
+
+.install-btn {
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  background: transparent; color: var(--accent);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3); cursor: pointer; margin-left: auto;
+  transition: background var(--dur-1), color var(--dur-1), border-color var(--dur-1);
+}
+.install-btn:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.slot[data-state="filled"] .install-btn { color: var(--text-faint); }
+.slot[data-state="filled"] .install-btn:hover { background: var(--surface-raised); color: var(--text); }
+
+/* The module name springs in when it is summoned into the hole — the same
+   overshoot Hop uses, because it is the same event. */
+@media (prefers-reduced-motion: no-preference) {
+  .summoning { animation: summonIn var(--dur-3) var(--ease-hop) both; }
+}
+@keyframes summonIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.9); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ═══ 04 — modules ═══════════════════════════════════════════════════════ */
+.mods {
+  list-style: none; margin: clamp(36px, 5vh, 56px) 0 0; padding: 0;
+  display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  border-top: 1px solid var(--border);
+}
+.mod {
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4) var(--space-5) 0;
+  transition: background var(--dur-1) var(--ease-move);
+}
+.mod:hover { background: var(--surface); }
+.mod-top { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+.mod-name {
+  font-family: var(--font-mono); font-size: var(--t-base); font-weight: 700;
+  color: var(--text); margin: 0; letter-spacing: var(--tracking-tight);
+}
+.mod-slot {
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--agent); background: var(--agent-surface);
+  border-radius: var(--radius-pill); padding: 2px var(--space-3);
+}
+.mod-slot[data-kind="none"] { color: var(--text-faint); background: transparent; border: 1px solid var(--border); }
+.mod-n { margin-left: auto; font-family: var(--font-mono); font-size: var(--t-xs); color: var(--text-faint); }
+.mod-d { margin: var(--space-2) 0 0; font-size: var(--t-base); color: var(--text-soft); max-width: 52ch; }
+.mod-d code { font-family: var(--font-mono); font-size: 0.92em; color: var(--text); }
+@media (min-width: 700px) { .mod { padding-right: var(--space-8); } }
+
+/* ═══ 05 — install ═══════════════════════════════════════════════════════ */
+.install { border-top: 1px solid var(--border); background: var(--ground-deep); }
+.pre-wrap { margin-top: clamp(36px, 5vh, 56px); position: relative; }
+pre.cmd {
+  margin: 0; overflow-x: auto;
+  background: var(--surface-sunken); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--space-6);
+  font-family: var(--font-mono); font-size: clamp(0.78rem, 1.4vw, 0.9375rem);
+  line-height: 1.9; color: var(--text);
+}
+pre.cmd .c { color: var(--text-faint); }
+pre.cmd .v { color: var(--agent); }
+.copy {
+  position: absolute; top: var(--space-4); right: var(--space-4);
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  background: var(--accent); color: var(--accent-ink);
+  border: 1px solid var(--accent); border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3); cursor: pointer;
+}
+.copy:hover { transform: translateY(-1px); }
+.note { color: var(--text-soft); max-width: 62ch; margin: var(--space-6) 0 0; }
+.note code, .prereq code {
+  font-family: var(--font-mono); font-size: 0.92em; color: var(--text);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 1px 5px;
+}
+.prereq { color: var(--text-soft); max-width: 62ch; margin: var(--space-6) 0 0; }
+
+/* ═══ Footer — the run resolves ══════════════════════════════════════════ */
+.ftr { border-top: 1px solid var(--border); padding-block: var(--space-16) var(--space-12); }
+.ftr-in { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-8); }
+.ftr-hop { display: flex; align-items: center; gap: var(--space-4); }
+.ftr-say { font-family: var(--font-mono); font-size: var(--t-sm); color: var(--text-faint); max-width: 30ch; }
+.ftr-links { margin-left: auto; display: flex; flex-wrap: wrap; gap: var(--space-5); }
+.ftr-links a {
+  font-family: var(--font-mono); font-size: var(--t-sm);
+  color: var(--text-soft); text-decoration: none;
+  border-bottom: 1px solid var(--border); padding-bottom: 2px;
+}
+.ftr-links a:hover { color: var(--text); border-bottom-color: var(--border-strong); }
+
+/* ═══ Hop ════════════════════════════════════════════════════════════════
+ * Four segments and one eye; the segments are the columns of a flow diagram.
+ * Geometry and easings come from design/components/hop/preview.html unchanged.
+ */
+.hop { display: block; width: 96px; height: 96px; }
+.hop-sm { width: 26px; height: 26px; }
+.hop-lg { width: 168px; height: 168px; }
+.hop-seg {
+  fill: var(--surface-raised); stroke: var(--border-strong); stroke-width: 1.5;
+  transform-box: fill-box; transform-origin: 50% 100%;
+}
+.hop-eye {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent));
+  transform-box: fill-box; transform-origin: 50% 50%;
+}
+.hop-head { fill: var(--accent-surface); }
+.hop-s1 { --dx: -9px; --sy: 2.29; }
+.hop-s2 { --dx: -3px; --sy: 1.39; }
+.hop-s3 { --dx:  1px; --sy: 1.23; }
+.hop-s4 { --dx:  5px; --sy: 1.88; }
+
+@keyframes hop-in  { from { transform: translateX(var(--dx)) scaleY(var(--sy)); } to { transform: none; } }
+@keyframes hop-out { from { transform: none; } to { transform: translateX(var(--dx)) scaleY(var(--sy)); } }
+@keyframes hop-eye-in { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes hop-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hop-arrive .hop-seg {
+    animation: hop-in var(--dur-3) var(--ease-hop) both;
+    animation-delay: calc(var(--i) * var(--stagger-hop));
+  }
+  .hop-arrive .hop-eye {
+    animation: hop-eye-in var(--dur-3) var(--ease-move) both,
+               hop-blink 5.5s var(--ease-move) infinite;
+    animation-delay: calc(var(--dur-3) * 0.5), 2s;
+  }
+  .hop-idle .hop-eye { animation: hop-blink 5.5s var(--ease-move) infinite; }
+  /* Resolving is flat and reversed: finished things just stop. */
+  .hop-resolve.done .hop-seg {
+    animation: hop-out var(--dur-3) var(--ease-resolve) both;
+    animation-delay: calc((3 - var(--i)) * var(--stagger-hop));
+  }
+  .hop-resolve.done .hop-eye { opacity: 0; transition: opacity var(--dur-2) var(--ease-resolve); }
+}
+
+/* ═══ Scroll reveal ══════════════════════════════════════════════════════
+ * Only ever applied when JavaScript has confirmed it can undo it (html.js is
+ * set by the observer's own setup) and motion is welcome. Nothing on this page
+ * is hidden by CSS that scripting is required to bring back.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal { opacity: 0; transform: translateY(16px); }
+  .js .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity var(--dur-3) var(--ease-move),
+                transform var(--dur-3) var(--ease-summon);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"></div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="page">
+
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="mark" href="#top">
+      <svg class="hop hop-sm hop-idle" viewBox="0 0 96 96" role="img" aria-label="Hop, the ScrumIA mascot">
+        <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+      <span class="wordmark">Scrum<i>IA</i></span>
+    </a>
+    <span class="hdr-path">~/marketplace · 12 modules</span>
+    <nav class="hdr-nav" aria-label="Sections">
+      <a href="#run">run</a>
+      <a href="#slots">slots</a>
+      <a href="#modules" data-opt>modules</a>
+      <a href="#install">install</a>
+      <button class="tgl" type="button" id="theme-toggle" aria-pressed="false">
+        <span aria-hidden="true">◐</span> theme
+      </button>
+    </nav>
+  </div>
+  <div class="rail" id="rail" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+
+<div id="top"></div>
+
+<!-- ── Hero: a session opens and the composition assembles ──────────────── -->
+<div class="hero">
+  <div class="shell">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">marketplace of Claude Code plugins</p>
+        <h1>
+          <span class="prompt" aria-hidden="true">$</span> compose the team.
+          <span class="l2">swap any part.<span class="caret" aria-hidden="true"></span></span>
+        </h1>
+        <p class="lead">
+          Scoping, specs, tickets, code, reviews, PRs — every capability is a slot.
+          You fill it with a plugin, and you replace the plugin when the project changes.
+        </p>
+        <p class="tally">
+          <span><b>7</b> slots</span>
+          <span><b>12</b> modules</span>
+          <span><b>3</b> human touchpoints</span>
+        </p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#slots">Compose your team</a>
+          <a class="btn btn-ghost" href="#run">Read a full run</a>
+        </div>
+      </div>
+
+      <div class="hop-slot">
+        <svg class="hop hop-lg hop-arrive" viewBox="0 0 96 96" role="img"
+             aria-label="Hop, the ScrumIA mascot, assembling from four columns">
+          <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+          <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+          <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+          <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+        </svg>
+        <span class="hop-cap">summoned</span>
+      </div>
+    </div>
+
+    <!-- The one artefact that demonstrates instead of claiming: this repo's own
+         composition, resolving. Four filled, three deliberately empty. -->
+    <div class="term">
+      <div class="term-bar">
+        <b>.scrumia/config.yaml</b>
+        <span>· resolving composition</span>
+        <span class="right">4 filled · 3 empty</span>
+      </div>
+      <div class="term-body">
+        <code class="ln" style="--i:0"><span class="cy">$</span> <span class="txt">claude</span></code>
+        <code class="ln" style="--i:1"><span class="cy">&gt;</span> <span class="txt">set this repo up to run itself</span></code>
+        <code class="ln" style="--i:2"><span class="dim"> </span></code>
+        <code class="ln" style="--i:3"><span class="ag">▸</span> <span class="dim">scrumia-init · apps found ……… </span><span class="txt">site, tools</span></code>
+        <code class="ln" style="--i:4"><span class="ag">▸</span> <span class="dim">resolving 7 slots</span></code>
+        <code class="slotline" style="--i:5"  data-state="filled"><span class="nm">specs</span><span class="fill">scrumia-specs</span><span class="st">filled</span></code>
+        <code class="slotline" style="--i:6"  data-state="filled"><span class="nm">tracker</span><span class="fill">scrumia-github-project</span><span class="st">filled</span></code>
+        <code class="slotline" style="--i:7"  data-state="filled"><span class="nm">team</span><span class="fill">scrumia-teams</span><span class="st">filled</span></code>
+        <code class="slotline" style="--i:8"  data-state="filled"><span class="nm">design</span><span class="fill">scrumia-design</span><span class="st">filled</span></code>
+        <code class="slotline" style="--i:9"  data-state="empty"><span class="nm">discovery</span><span class="fill">— none —</span><span class="st">empty</span></code>
+        <code class="slotline" style="--i:10" data-state="empty"><span class="nm">implementation</span><span class="fill">— none —</span><span class="st">empty</span></code>
+        <code class="slotline" style="--i:11" data-state="empty"><span class="nm">practices</span><span class="fill">— none —</span><span class="st">empty</span></code>
+        <code class="ln" style="--i:12"><span class="dim"> </span></code>
+        <code class="ln" style="--i:13"><span class="ag">▸</span> <span class="dim">writing CLAUDE.md</span></code>
+        <code class="ln" style="--i:14"><span class="ok">✓</span> <span class="txt">composition ready</span><span class="dim"> — the agents now know what this project cannot do</span></code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 01 — the run ─────────────────────────────────────────────────────── -->
+<section id="run" aria-labelledby="run-h">
+  <div class="shell">
+    <p class="sec-num"><b>01</b> — the run</p>
+    <h2 id="run-h">One run, end to end.</h2>
+    <p class="sec-intro">
+      The reference composition, executing. Coral is where the run stops and a person
+      decides — it happens three times, and never by accident.
+    </p>
+
+    <ol class="run">
+      <li class="step reveal" data-who="human">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">01</span><span class="who">human</span></p>
+          <h3>Brief</h3>
+          <p class="step-out">An idea, a problem. Nothing formatted, nothing estimated — the vague version, out loud.</p>
+          <p class="step-foot"><span class="uses">uses <b>— no module —</b></span></p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="ai">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">02</span><span class="who">agents</span></p>
+          <h3>Scoping</h3>
+          <p class="step-out">The brief is challenged until it can be split into features. A vague brief has nothing to converge on, and this is where that shows.</p>
+          <p class="step-foot">
+            <span class="produces">→ issues + specs branch</span>
+            <span class="uses">uses <b>discovery</b></span>
+          </p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="ai">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">03</span><span class="who">agents</span></p>
+          <h3>Refinement</h3>
+          <p class="step-out">Standing roles weigh in from their own scope, and the ticket splits into sub-issues, one per context.</p>
+          <p class="step-foot">
+            <span class="produces">→ Ready for dev</span>
+            <span class="uses">uses <b>tracker + team</b></span>
+          </p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="human">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">04</span><span class="who">human</span></p>
+          <h3>Sign-off</h3>
+          <p class="step-out">Only where doubt, criticality or risk warrant it. The run waits; it does not guess your answer.</p>
+          <p class="step-foot"><span class="uses">uses <b>— no module —</b></span></p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="ai">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">05</span><span class="who">agents</span></p>
+          <h3>Sprint</h3>
+          <p class="step-out">The manager batches tickets that will not collide, and sizes the model each one runs on.</p>
+          <p class="step-foot">
+            <span class="produces">→ To dev</span>
+            <span class="uses">uses <b>team</b></span>
+          </p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="ai">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">06</span><span class="who">agents</span></p>
+          <h3>Build</h3>
+          <p class="step-out">One worktree per ticket. Spec, code, tests, review — each agent summoned for its one job and resolved when it is done.</p>
+          <p class="step-foot">
+            <span class="produces">→ PRs</span>
+            <span class="uses">uses <b>team + implementation + practices</b></span>
+          </p>
+        </div>
+      </li>
+
+      <li class="step reveal" data-who="human">
+        <div class="step-rail" aria-hidden="true"><span class="node"></span></div>
+        <div class="step-body">
+          <p class="step-meta"><span class="step-n">07</span><span class="who">human</span></p>
+          <h3>Merge</h3>
+          <p class="step-out">Review the PR, test it, take the call. The final one stays yours, unless you explicitly delegate it.</p>
+          <p class="step-foot">
+            <span class="produces">→ Done</span>
+            <span class="uses">uses <b>— no module —</b></span>
+          </p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="run-legend">
+      <span><span class="dot dot-h" aria-hidden="true"></span><b>You</b> — 3 touchpoints</span>
+      <span><span class="dot dot-a" aria-hidden="true"></span><b>Agents</b> — everything else</span>
+      <span>Swap a module, and the run above changes shape.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ── 02 — the argument ────────────────────────────────────────────────── -->
+<section id="argument" class="argument" aria-labelledby="arg-h">
+  <div class="shell">
+    <p class="sec-num"><b>02</b> — the argument</p>
+    <h2 id="arg-h">An empty slot is not a missing feature. It is a capability the project does <em>not have</em> — and the agents are told so.</h2>
+    <div class="arg-aside">
+      <p style="margin:0">This repo runs with three slots empty. Here is what its agents read, in the file the composition writes:</p>
+      <code>The <b>discovery</b> slot is empty: scrumia-discovery is not installed. An idea
+therefore goes straight to a ticket without a scoping pass — <b>say so rather
+than improvising one.</b></code>
+      <p style="margin:0">Nothing gets faked. That is the whole difference between a composition and a checklist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 — slots ───────────────────────────────────────────────────────── -->
+<section id="slots" aria-labelledby="slots-h">
+  <div class="shell">
+    <p class="sec-num"><b>03</b> — slots</p>
+    <h2 id="slots-h">Seven questions. One module each.</h2>
+    <p class="sec-intro">
+      A slot is a question your project has to answer. A module is one answer to it.
+      The board below is this repo's actual composition — try filling the hole.
+    </p>
+
+    <p class="slot-head">
+      <span>board state</span>
+      <output id="board-state" aria-live="polite">4 filled · 3 deliberately empty</output>
+    </p>
+
+    <div class="board" id="board">
+      <article class="slot reveal" data-state="filled" style="--i:0">
+        <h3 class="slot-name">specs</h3>
+        <p class="slot-q">Where do specs live, in what shape?</p>
+        <p class="slot-a">One directory per feature, files created only when they have content, acceptance criteria written first and turned into tests.</p>
+        <p class="slot-fill"><span class="tick" aria-hidden="true">✓</span> scrumia-specs</p>
+      </article>
+
+      <article class="slot reveal" data-state="filled" style="--i:1">
+        <h3 class="slot-name">tracker</h3>
+        <p class="slot-q">Where does state live — tickets, columns, PRs?</p>
+        <p class="slot-a">GitHub Issues and Projects. Nothing stateful in the repo; a hook enforces it.</p>
+        <p class="slot-fill"><span class="tick" aria-hidden="true">✓</span> scrumia-github-project</p>
+      </article>
+
+      <article class="slot reveal" data-state="filled" style="--i:2">
+        <h3 class="slot-name">team</h3>
+        <p class="slot-q">Which standing roles, with what scope?</p>
+        <p class="slot-a">Manager, business, tech. Each boundary is a line of refusal. Roles toggle by config.</p>
+        <p class="slot-fill"><span class="tick" aria-hidden="true">✓</span> scrumia-teams</p>
+      </article>
+
+      <article class="slot reveal" data-state="filled" style="--i:3">
+        <h3 class="slot-name">design</h3>
+        <p class="slot-q">Where does the design system live?</p>
+        <p class="slot-a">Identity, tokens and components as files in the repo. A value the tokens don't carry is a finding, not an exception.</p>
+        <p class="slot-fill"><span class="tick" aria-hidden="true">✓</span> scrumia-design</p>
+      </article>
+
+      <!-- The interactive one: a hole you can fill, because installing a module is
+           the single gesture the whole product is about. -->
+      <article class="slot reveal" data-state="empty" style="--i:4" id="slot-discovery">
+        <h3 class="slot-name">discovery</h3>
+        <p class="slot-q">How does an idea become scoped work?</p>
+        <p class="slot-a">Empty here, on purpose. Agents send an idea straight to a ticket, and say that no scoping pass exists.</p>
+        <p class="slot-fill">
+          <span id="discovery-fill">nothing installed</span>
+          <button class="install-btn" type="button" id="discovery-btn"
+                  aria-describedby="board-state">install</button>
+        </p>
+      </article>
+
+      <article class="slot reveal" data-state="empty" style="--i:5">
+        <h3 class="slot-name">implementation</h3>
+        <p class="slot-q">How is code written, per app?</p>
+        <p class="slot-a">Empty here — this repo ships markdown, not code. Elsewhere: one module per stack, Rust or SolidJS.</p>
+        <p class="slot-fill">nothing installed</p>
+      </article>
+
+      <article class="slot reveal" data-state="empty" style="--i:6">
+        <h3 class="slot-name">practices</h3>
+        <p class="slot-q">Which cross-cutting practices, per app?</p>
+        <p class="slot-a">Empty here. Elsewhere: TDD, SOLID, TanStack Query — each with reference, audit and refactor skills.</p>
+        <p class="slot-fill">nothing installed</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 — modules ─────────────────────────────────────────────────────── -->
+<section id="modules" aria-labelledby="mods-h">
+  <div class="shell">
+    <p class="sec-num"><b>04</b> — modules</p>
+    <h2 id="mods-h">Twelve shipped.</h2>
+    <p class="sec-intro">
+      Each one is a standard Claude Code plugin. Install what you need, ignore the rest,
+      and write your own when none of them answers your question.
+    </p>
+
+    <ul class="mods">
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-core</h3><span class="mod-slot" data-kind="none">kernel</span><span class="mod-n">2 skills</span></div>
+        <p class="mod-d">Describes the active composition and writes it into <code>CLAUDE.md</code>. Fills no slot.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-rules</h3><span class="mod-slot" data-kind="none">no slot</span><span class="mod-n">4 skills</span></div>
+        <p class="mod-d">Rule sections a project can own: index, guides, decisions — no rule without its why.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-specs</h3><span class="mod-slot">specs</span><span class="mod-n">3 skills</span></div>
+        <p class="mod-d">Per-feature specs, TDD-oriented. A file catalog instead of one document.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-github-project</h3><span class="mod-slot">tracker</span><span class="mod-n">5 skills · 1 hook</span></div>
+        <p class="mod-d">Issues, sub-issues, Projects columns, branches and PRs. Requires <code>gh</code>.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-teams</h3><span class="mod-slot">team</span><span class="mod-n">3 agents · 2 skills</span></div>
+        <p class="mod-d">Standing roles and sprint execution in dynamic workflows. Roles are configurable.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-discovery</h3><span class="mod-slot">discovery</span><span class="mod-n">2 skills</span></div>
+        <p class="mod-d">Challenges an idea until it can be split, then ships specs on a branch.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-impl-rust</h3><span class="mod-slot">implementation</span><span class="mod-n">2 skills</span></div>
+        <p class="mod-d">Invalid states unrepresentable, typed errors per layer, one test per invariant — plus an audit skill for existing code.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-impl-solidjs</h3><span class="mod-slot">implementation</span><span class="mod-n">2 skills</span></div>
+        <p class="mod-d">Fine-grained reactivity without React reflexes, behaviour-first component tests — plus an audit skill.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-practice-tdd</h3><span class="mod-slot">practices</span><span class="mod-n">3 skills</span></div>
+        <p class="mod-d">The cycle operationalized for an agent, the mock boundary, AC-to-test mapping. Reference, audit, refactor.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-practice-solid</h3><span class="mod-slot">practices</span><span class="mod-n">3 skills</span></div>
+        <p class="mod-d">The five principles, each with its limit. Audits violations and over-applications alike.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-practice-tanstack-query</h3><span class="mod-slot">practices</span><span class="mod-n">1 skill</span></div>
+        <p class="mod-d">Query keys, options, mutations, testing — 9 guides, 13 decisions, ported from real monorepo use.</p>
+      </li>
+      <li class="mod">
+        <div class="mod-top"><h3 class="mod-name">scrumia-design</h3><span class="mod-slot">design</span><span class="mod-n">1 agent</span></div>
+        <p class="mod-d">Identity, tokens and components in the repo, synced one at a time. Ships the <code>designer</code> role and an audit that reports drift and mutedness alike.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 05 — install ─────────────────────────────────────────────────────── -->
+<section id="install" class="install" aria-labelledby="inst-h">
+  <div class="shell">
+    <p class="sec-num"><b>05</b> — install</p>
+    <h2 id="inst-h">Two commands, then a question.</h2>
+
+    <div class="pre-wrap">
+<pre class="cmd" id="install-cmd"><span class="c"># add the marketplace, install the kernel</span>
+<span class="v">/plugin</span> marketplace add tibs245/scrumia
+<span class="v">/plugin</span> install scrumia-core@scrumia
+
+<span class="c"># then, in the repo to set up</span>
+<span class="v">/scrumia-core:scrumia-init</span></pre>
+      <button class="copy" type="button" id="copy-btn" data-done="copied ✓">copy</button>
+    </div>
+
+    <p class="note">
+      <code>scrumia-init</code> maps your apps, proposes a composition, offers the install
+      command for each module it needs, and writes the result into <code>CLAUDE.md</code>.
+      Re-running it checks instead of overwriting.
+    </p>
+    <p class="prereq">
+      Prerequisites: <strong>git</strong>, an authenticated <code>gh</code> CLI for the GitHub
+      tracker, and <code>jq</code> for the guard hook. <code>scrumia-init</code> checks all three
+      and tells you what degrades if one is missing.
+    </p>
+
+    <div class="ctas">
+      <a class="btn btn-primary" href="#slots">Compose your team</a>
+      <a class="btn btn-ghost" href="#run">Read the run again</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="ftr">
+  <div class="shell ftr-in">
+    <div class="ftr-hop">
+      <!-- The bookend: Hop arrives at the top of the page and falls back into
+           columns here, because by now the run is over. -->
+      <svg class="hop hop-resolve" id="hop-out" viewBox="0 0 96 96" role="img"
+           aria-label="Hop resolving back into four columns">
+        <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+      <p class="ftr-say">the run is done. the columns fall back into the diagram they came from.</p>
+    </div>
+    <nav class="ftr-links" aria-label="Elsewhere">
+      <a href="https://github.com/tibs245/scrumia">github</a>
+      <a href="#run">workflow</a>
+      <a href="#modules">reference</a>
+    </nav>
+  </div>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ── Theme ──────────────────────────────────────────────────────────── */
+  var toggle = document.getElementById('theme-toggle');
+  function currentTheme() {
+    if (root.dataset.theme) return root.dataset.theme;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function sync() { toggle.setAttribute('aria-pressed', currentTheme() === 'light' ? 'true' : 'false'); }
+  toggle.addEventListener('click', function () {
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('scrumia-theme', next); } catch (e) {}
+    sync();
+  });
+  sync();
+
+  /* ── Progress rail: where you are in the run ─────────────────────────── */
+  var rail = document.getElementById('rail'), ticking = false;
+  function drawRail() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    rail.style.width = (max > 0 ? Math.min(1, window.scrollY / max) * 100 : 0) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(drawRail); }
+  }, { passive: true });
+  drawRail();
+
+  /* ── Reveal on scroll ────────────────────────────────────────────────
+   * html.js is only set once the observer exists, so the hiding rule and the
+   * thing that undoes it ship together — no content can end up stranded.
+   */
+  if ('IntersectionObserver' in window && !reduced.matches) {
+    root.classList.add('js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    // Hop resolves only when the reader actually reaches the end of the run.
+    var hopOut = document.getElementById('hop-out');
+    var endIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        hopOut.classList.add('done');
+        endIo.unobserve(e.target);
+      });
+    }, { threshold: 0.6 });
+    endIo.observe(hopOut);
+  }
+
+  /* ── Filling a slot ─────────────────────────────────────────────────── */
+  var slot = document.getElementById('slot-discovery');
+  var fill = document.getElementById('discovery-fill');
+  var btn = document.getElementById('discovery-btn');
+  var state = document.getElementById('board-state');
+  btn.addEventListener('click', function () {
+    var filling = slot.dataset.state === 'empty';
+    slot.dataset.state = filling ? 'filled' : 'empty';
+    fill.textContent = filling ? '✓ scrumia-discovery' : 'nothing installed';
+    btn.textContent = filling ? 'uninstall' : 'install';
+    state.textContent = filling
+      ? '5 filled · 2 deliberately empty — scoping now runs before every ticket'
+      : '4 filled · 3 deliberately empty';
+    if (!reduced.matches) {
+      fill.classList.remove('summoning');
+      void fill.offsetWidth;               // restart the spring; CSS cannot rewind it
+      fill.classList.add('summoning');
+    }
+  });
+
+  /* ── Copy the install commands ──────────────────────────────────────── */
+  var copyBtn = document.getElementById('copy-btn');
+  copyBtn.addEventListener('click', function () {
+    var text = document.getElementById('install-cmd').innerText;
+    var done = function () {
+      var label = copyBtn.textContent;
+      copyBtn.textContent = copyBtn.dataset.done;
+      setTimeout(function () { copyBtn.textContent = label; }, 1600);
+    };
+    if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done, function () {}); return; }
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  });
+})();
+</script>
+
+</body>
+</html>

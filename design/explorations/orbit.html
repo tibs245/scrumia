@@ -1,0 +1,1357 @@
+<!-- @dsCard group="Explorations" -->
+<!doctype html>
+<!--
+  ORBIT — a landing page that treats space as the material. The ground is
+  distance rather than a dark theme: one cold light source sits behind the
+  content, headlines are big enough to be architecture, and sections are
+  separated by emptiness instead of by borders and cards.
+
+  Kept from design/identity.md: cold navy ground and warm coral for every point
+  where a human decides; one cyan accent doing the pointing and nothing else;
+  Sora / Source Sans 3 / JetBrains Mono; motion only where it stands for a state
+  change (Hop is summoned, sections arrive, an answer opens); mechanism over
+  claim — the page shows this repo's real composition, empty slots included.
+
+  Deliberately broken: the card. The existing site explains itself with bordered
+  rectangles; here a composition is an index with dotted leaders and the run is a
+  horizon with steps standing on either side of it. Also broken: the neutral
+  scale — display type runs to 7.5rem, and section padding is measured in
+  viewport height, not in --space-20. Both are extensions to tokens.css, marked
+  below; nothing in tokens.css was edited.
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — ScrumIA</title>
+<meta name="description" content="ScrumIA is a Claude Code plugin marketplace. Every capability is a slot: fill it with a module, replace the module when the project changes, leave it empty and the agents are told so.">
+
+<script>
+/* Single script, loaded before first paint on purpose: it marks the document as
+   able to animate BEFORE the CSS can hide anything. Nothing on this page is
+   hidden by CSS alone — .js is what enables the hiding, and .js is only ever set
+   when this script is running and can also do the un-hiding. */
+(function () {
+  var doc = document.documentElement;
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canObserve = 'IntersectionObserver' in window;
+  if (!still && canObserve) doc.classList.add('js');
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    /* Theme. Both directions are spelled out so the toggle beats the media
+       query whichever way the system is set. */
+    var toggle = document.getElementById('theme-toggle');
+    var label = document.getElementById('theme-label');
+    function current() {
+      if (doc.dataset.theme) return doc.dataset.theme;
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    function paint() {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      label.textContent = next;
+      toggle.setAttribute('aria-label', 'Switch to the ' + next + ' theme');
+    }
+    paint();
+    toggle.addEventListener('click', function () {
+      doc.dataset.theme = current() === 'dark' ? 'light' : 'dark';
+      paint();
+    });
+
+    /* Arrival. Each revealed element stands for something being summoned; the
+       human steps of the run bloom coral as they land, which is the only place
+       coral is animated. */
+    var targets = [].slice.call(document.querySelectorAll('.reveal'));
+    function land(el) { el.classList.add('is-in'); }
+    if (doc.classList.contains('js')) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          land(e.target);
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.01 });
+      targets.forEach(function (el) { io.observe(el); });
+      /* Insurance: content must never stay hidden because an observer misfired. */
+      window.setTimeout(function () { targets.forEach(land); }, 4000);
+    }
+
+    /* The copy button is built here rather than in the markup: a control that
+       does nothing without JavaScript should not exist in the document. */
+    var pre = document.getElementById('install-commands');
+    if (pre && navigator.clipboard) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy';
+      btn.textContent = 'copy';
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(pre.textContent.trim()).then(function () {
+          btn.textContent = 'copied';
+          btn.classList.add('is-done');
+          window.setTimeout(function () {
+            btn.textContent = 'copy';
+            btn.classList.remove('is-done');
+          }, 1600);
+        });
+      });
+      pre.parentNode.appendChild(btn);
+    }
+  });
+})();
+</script>
+
+<style>
+/* ─────────────────────────────────────────────────────────────────────────
+   Fonts. Self-hosted variable woff2, already in the repo.
+   ───────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Sora";
+  src: url("../../site/assets/fonts/sora-latin.woff2") format("woff2-variations");
+  font-weight: 400 800; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("../../site/assets/fonts/source-sans-3-latin.woff2") format("woff2-variations");
+  font-weight: 200 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../../site/assets/fonts/jetbrains-mono-latin.woff2") format("woff2-variations");
+  font-weight: 400 800; font-style: normal; font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Tokens. Copied from design/tokens.css so the file stays self-contained;
+   the palette values are untouched. Additions carry an ORBIT comment.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --color-scheme: dark;
+
+  --ground: #000B1C;
+  --ground-deep: #00060F;
+  --surface: #08192E;
+  --surface-raised: #0D2540;
+  --surface-sunken: #02101F;
+  --border: #153453;
+  --border-strong: #3B7CAD;
+
+  --text: #EAF2FA;
+  --text-soft: #A9C2D6;
+  --text-faint: #7C95AB;
+
+  --accent: #73E3FF;
+  --accent-surface: #07293C;
+  --accent-ink: #00121E;
+
+  --human: #F0996F;
+  --human-surface: #2B1811;
+  --human-ink: #1A0B04;
+
+  --agent: #6BB8E4;
+  --agent-surface: #07243A;
+
+  --ok: #54CE94;
+
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
+
+  /* ORBIT — the ground is never a flat fill. Two washes stand for one cold
+     light source behind the page, and the grid is the faintest thing on it:
+     it belongs to peripheral vision, so a mask erases it wherever you read. */
+  --halo-near: rgb(115 227 255 / 0.13);
+  --halo-far: rgb(38 96 168 / 0.20);
+  --grid-line: rgb(115 227 255 / 0.055);
+  --limb-glow: rgb(115 227 255 / 0.30);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --color-scheme: light;
+    --ground: #F8F5F0;
+    --ground-deep: #F1ECE4;
+    --surface: #FFFFFF;
+    --surface-raised: #FFFFFF;
+    --surface-sunken: #F1ECE4;
+    --border: #E1D9CD;
+    --border-strong: #8C7F6D;
+    --text: #0A1626;
+    --text-soft: #3C4C5E;
+    --text-faint: #59687A;
+    --accent: #0A6076;
+    --accent-surface: #DFF1F7;
+    --accent-ink: #FFFFFF;
+    --human: #9E4517;
+    --human-surface: #FAEBE1;
+    --human-ink: #FFFFFF;
+    --agent: #175B7A;
+    --agent-surface: #E4EFF6;
+    --ok: #16704F;
+    --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
+    --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
+    --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
+    --halo-near: rgb(10 96 118 / 0.09);
+    --halo-far: rgb(10 96 118 / 0.05);
+    --grid-line: rgb(10 22 38 / 0.055);
+    --limb-glow: rgb(10 96 118 / 0.22);
+  }
+}
+
+:root[data-theme="light"] {
+  --color-scheme: light;
+  --ground: #F8F5F0;
+  --ground-deep: #F1ECE4;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #F1ECE4;
+  --border: #E1D9CD;
+  --border-strong: #8C7F6D;
+  --text: #0A1626;
+  --text-soft: #3C4C5E;
+  --text-faint: #59687A;
+  --accent: #0A6076;
+  --accent-surface: #DFF1F7;
+  --accent-ink: #FFFFFF;
+  --human: #9E4517;
+  --human-surface: #FAEBE1;
+  --human-ink: #FFFFFF;
+  --agent: #175B7A;
+  --agent-surface: #E4EFF6;
+  --ok: #16704F;
+  --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
+  --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
+  --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
+  --halo-near: rgb(10 96 118 / 0.09);
+  --halo-far: rgb(10 96 118 / 0.05);
+  --grid-line: rgb(10 22 38 / 0.055);
+  --limb-glow: rgb(10 96 118 / 0.22);
+}
+
+:root[data-theme="dark"] {
+  --color-scheme: dark;
+  --ground: #000B1C;
+  --ground-deep: #00060F;
+  --surface: #08192E;
+  --surface-raised: #0D2540;
+  --surface-sunken: #02101F;
+  --border: #153453;
+  --border-strong: #3B7CAD;
+  --text: #EAF2FA;
+  --text-soft: #A9C2D6;
+  --text-faint: #7C95AB;
+  --accent: #73E3FF;
+  --accent-surface: #07293C;
+  --accent-ink: #00121E;
+  --human: #F0996F;
+  --human-surface: #2B1811;
+  --human-ink: #1A0B04;
+  --agent: #6BB8E4;
+  --agent-surface: #07243A;
+  --ok: #54CE94;
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
+  --halo-near: rgb(115 227 255 / 0.13);
+  --halo-far: rgb(38 96 168 / 0.20);
+  --grid-line: rgb(115 227 255 / 0.055);
+  --limb-glow: rgb(115 227 255 / 0.30);
+}
+
+:root {
+  --font-display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.55rem, 2.6vw, 1.95rem);
+  --text-3xl: clamp(2.15rem, 5.2vw, 3.25rem);
+
+  /* ORBIT — three sizes above the token scale. The scale in tokens.css stops at
+     3.25rem, which is a documentation scale; a manifesto needs type that is
+     architecture. These belong in tokens.css if the direction is picked. */
+  --text-hero: clamp(2.9rem, 9.2vw, 7.5rem);
+  --text-display: clamp(2.05rem, 5.4vw, 4rem);
+  --text-statement: clamp(1.45rem, 3.2vw, 2.4rem);
+
+  --leading-tight: 1.12;
+  --leading-snug: 1.35;
+  --leading-body: 1.62;
+  /* ORBIT — at 7.5rem, 1.12 is still too airy. */
+  --leading-hero: 0.98;
+
+  --tracking-display: -0.03em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.09em;
+  /* ORBIT — Sora needs more negative tracking as it grows. */
+  --tracking-hero: -0.045em;
+
+  --weight-body: 400;
+  --weight-medium: 550;
+  --weight-strong: 650;
+  --weight-display: 700;
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px;
+  /* ORBIT — the 4px grid continues; the page needs the rungs above 80px that
+     tokens.css never had to name, because it never had to be this empty. */
+  --space-24: 96px; --space-32: 128px;
+  --space-section: clamp(96px, 15vh, 176px);
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 100px;
+
+  --dur-1: 120ms; --dur-2: 220ms; --dur-3: 420ms; --dur-4: 700ms; --dur-5: 1400ms;
+  --ease-summon: cubic-bezier(0.2, 0.9, 0.3, 1.18);
+  --ease-resolve: cubic-bezier(0.45, 0, 1, 1);
+  --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-hop: cubic-bezier(0.16, 1.36, 0.3, 1);
+  --stagger: 80ms;
+  --stagger-hop: 55ms;
+
+  /* ORBIT — wider than --page-max: the run is a horizon, and a horizon that
+     stops at 1080px is a diagram. */
+  --page-max: 1120px;
+  --page-wide: 1400px;
+  --measure: 62ch;
+  --focus-width: 2px;
+  --focus-offset: 3px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root { color-scheme: var(--color-scheme); }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* The light source. Fixed, so scrolling moves the content past it rather than
+   moving the sky with the page — the page travels, the light stays. */
+.sky {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(58% 44% at 74% 4%, var(--halo-near), transparent 68%),
+    radial-gradient(96% 60% at 12% -6%, var(--halo-far), transparent 64%);
+}
+.sky::after {
+  content: ""; position: absolute; inset: -2px;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(72% 58% at 50% 34%, transparent 0%, #000 88%);
+  mask-image: radial-gradient(72% 58% at 50% 34%, transparent 0%, #000 88%);
+}
+
+.page { position: relative; z-index: 1; }
+
+.wrap {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: clamp(var(--space-5), 5vw, var(--space-16));
+}
+.wrap-wide { max-width: var(--page-wide); }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--accent);
+  outline-offset: var(--focus-offset);
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute; left: var(--space-4); top: var(--space-2);
+  transform: translateY(-200%);
+  background: var(--accent); color: var(--accent-ink);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+  font-family: var(--font-mono); font-size: var(--text-sm); text-decoration: none;
+  z-index: 10;
+}
+.skip:focus { transform: none; }
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* ── Hop ───────────────────────────────────────────────────────────────────
+   Straight from design/components/hop: four segments and one eye, the segments
+   being the columns of a flow diagram. Nothing reinterpreted — on this page
+   Hop's only job is to arrive once, at the top, and then hold still. */
+.hop { display: block; }
+.hop-seg {
+  fill: var(--surface-raised); stroke: var(--border-strong); stroke-width: 1.5;
+  transform-box: fill-box; transform-origin: 50% 100%;
+}
+.hop-eye {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 65%, transparent));
+  transform-box: fill-box; transform-origin: 50% 50%;
+}
+.hop-head { fill: var(--accent-surface); }
+.hop-s1 { --dx: -9px; --sy: 2.29; }
+.hop-s2 { --dx: -3px; --sy: 1.39; }
+.hop-s3 { --dx:  1px; --sy: 1.23; }
+.hop-s4 { --dx:  5px; --sy: 1.88; }
+
+@keyframes hop-in {
+  from { transform: translateX(var(--dx)) scaleY(var(--sy)); }
+  to   { transform: none; }
+}
+@keyframes hop-eye-in {
+  0%, 45%  { opacity: 0; transform: scale(0.3); }
+  100%     { opacity: 1; transform: scale(1); }
+}
+@keyframes hop-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96%           { transform: scaleY(0.12); }
+}
+.js .hop-arrive .hop-seg {
+  animation: hop-in var(--dur-3) var(--ease-hop) both;
+  animation-delay: calc(var(--i) * var(--stagger-hop));
+}
+.js .hop-arrive .hop-eye {
+  animation: hop-eye-in var(--dur-4) var(--ease-move) both;
+  animation-delay: var(--dur-2);
+}
+.js .hop-idle .hop-eye { animation: hop-blink 6.5s var(--ease-move) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hop-seg, .hop-eye { animation: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* ── Arrival ───────────────────────────────────────────────────────────────
+   Guarded by .js, which only exists while the script that removes it is
+   running. Without JavaScript, or with reduced motion, nothing is ever hidden. */
+.js .reveal { opacity: 0; transform: translateY(18px); }
+.js .reveal.is-in {
+  opacity: 1; transform: none;
+  transition: opacity var(--dur-4) var(--ease-move),
+              transform var(--dur-4) var(--ease-summon);
+  transition-delay: calc(var(--d, 0) * var(--stagger));
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Header — not a sticky bar. It sits in the hero's space and is lit from the
+   wordmark outwards, because that is where the page's light comes from.
+   ───────────────────────────────────────────────────────────────────────── */
+.masthead {
+  display: flex; align-items: center; gap: var(--space-6);
+  padding-block: var(--space-6) var(--space-5);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 55%, transparent), var(--border) 34%, transparent) 1;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: var(--space-3);
+  font-family: var(--font-display); font-weight: var(--weight-display);
+  font-size: var(--text-lg); letter-spacing: var(--tracking-tight);
+  text-decoration: none; margin-right: auto;
+}
+.brand em { font-style: normal; color: var(--accent); }
+.nav { display: flex; align-items: center; gap: var(--space-6); }
+.nav a {
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  color: var(--text-faint); text-decoration: none;
+  padding-block: var(--space-1);
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-1) var(--ease-move), border-color var(--dur-1) var(--ease-move);
+}
+.nav a:hover { color: var(--text); border-bottom-color: var(--accent); }
+#theme-toggle {
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  background: none; color: var(--text-faint);
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4); cursor: pointer;
+  transition: color var(--dur-1), border-color var(--dur-1);
+}
+#theme-toggle:hover { color: var(--text); border-color: var(--border-strong); }
+@media (max-width: 720px) {
+  .nav a:not(.nav-keep) { display: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Hero
+   ───────────────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: min(84vh, 900px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: clamp(var(--space-16), 12vh, var(--space-32)) var(--space-24);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(var(--space-8), 6vw, var(--space-20));
+}
+.eyebrow {
+  color: var(--text-faint);
+  margin: 0 0 var(--space-8);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.eyebrow::before {
+  content: ""; width: 28px; height: 1px; background: var(--accent);
+  box-shadow: 0 0 10px var(--limb-glow);
+}
+h1 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--text-hero);
+  line-height: var(--leading-hero);
+  letter-spacing: var(--tracking-hero);
+  margin: 0;
+  /* Line breaks are authored, not balanced: at this size the break is a
+     compositional decision, and no line may be wider than its column. */
+}
+h1 em { font-style: normal; color: var(--accent); }
+.lead {
+  font-size: clamp(var(--text-lg), 1.7vw, var(--text-2xl));
+  color: var(--text-soft);
+  max-width: 40ch;
+  margin: var(--space-10) 0 0;
+  line-height: var(--leading-snug);
+}
+.cta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+  margin-top: var(--space-12);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-body); font-size: var(--text-md); font-weight: var(--weight-medium);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: transform var(--dur-1) var(--ease-move), box-shadow var(--dur-2) var(--ease-move),
+              border-color var(--dur-1), color var(--dur-1);
+}
+/* The only filled control on the page. One accent means one thing points. */
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow-accent); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: var(--glow-accent), 0 10px 30px -12px var(--limb-glow); }
+.btn-ghost { color: var(--text-soft); border-color: var(--border-strong); }
+.btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .btn:hover { transform: none; } }
+
+/* Hop stands in a lit sphere rather than on the page: the ring is the only
+   closed shape in the layout, and it is there so the mascot reads as a body at
+   a distance instead of as a sticker on a dark background. */
+.hero-figure {
+  justify-self: end; position: relative; isolation: isolate;
+  display: grid; place-items: center;
+  width: clamp(210px, 25vw, 300px); aspect-ratio: 1;
+}
+.hero-figure::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at 50% 42%, var(--halo-near), transparent 64%);
+}
+.hero-figure .hop { position: relative; z-index: 1; width: 54%; height: auto; }
+
+.counts {
+  display: flex; flex-wrap: wrap; gap: clamp(var(--space-8), 5vw, var(--space-16));
+  margin: clamp(var(--space-16), 9vh, var(--space-24)) 0 0;
+  padding-top: var(--space-6);
+}
+.count b {
+  display: block;
+  font-family: var(--font-display); font-weight: var(--weight-display);
+  font-size: var(--text-2xl); letter-spacing: var(--tracking-tight);
+  line-height: 1.1;
+}
+.count span { display: block; color: var(--text-faint); }
+
+/* The limb: a planet's edge, lit from behind. This is the horizon the whole
+   page is built on, and the reason the hero never ends on a flat fill. */
+.limb {
+  position: absolute; left: 50%; bottom: -6vw; transform: translateX(-50%);
+  width: 210vw; aspect-ratio: 2.4 / 1;
+  border-radius: 50%;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 90px -28px var(--limb-glow);
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-figure { justify-self: start; order: -1; }
+  .limb { bottom: -14vw; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Sections — separated by emptiness, announced by a numbered kicker.
+   ───────────────────────────────────────────────────────────────────────── */
+section { padding-block: var(--space-section); scroll-margin-top: var(--space-8); }
+
+.kicker {
+  color: var(--text-faint);
+  margin: 0 0 var(--space-8);
+  display: flex; align-items: baseline; gap: var(--space-4);
+}
+.kicker b { color: var(--accent); font-weight: var(--weight-medium); }
+
+h2 {
+  font-family: var(--font-display); font-weight: var(--weight-display);
+  font-size: var(--text-display);
+  line-height: 1.04; letter-spacing: var(--tracking-hero);
+  margin: 0; max-width: 20ch; text-wrap: balance;
+}
+.section-lead {
+  color: var(--text-soft); max-width: var(--measure);
+  font-size: var(--text-lg);
+  margin: var(--space-6) 0 0;
+}
+
+/* A statement screen: one sentence, nothing else on it. */
+.statement {
+  font-family: var(--font-display); font-weight: var(--weight-strong);
+  font-size: var(--text-statement);
+  line-height: 1.22; letter-spacing: var(--tracking-display);
+  max-width: 24ch; margin: 0;
+  text-wrap: balance;
+}
+.statement em { font-style: normal; color: var(--accent); }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Slots — the composition as an index, not as cards. Seven rows, a dotted
+   leader, and what fills each one. Three of the seven are empty here, and the
+   dashed leader is what makes that readable from across the room.
+   ───────────────────────────────────────────────────────────────────────── */
+.slots { margin-top: clamp(var(--space-16), 8vh, var(--space-24)); }
+
+.slot { border-top: 1px solid var(--border); }
+.slot:last-of-type { border-bottom: 1px solid var(--border); }
+.slot summary {
+  list-style: none; cursor: pointer;
+  padding-block: var(--space-5);
+  transition: background var(--dur-2) var(--ease-move);
+}
+.slot summary::-webkit-details-marker { display: none; }
+.slot summary:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.slot summary:focus-visible { outline-offset: -2px; }
+
+.slot-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  margin: 0; font-weight: var(--weight-body); font-size: inherit; font-family: inherit;
+}
+.slot-sign {
+  font-family: var(--font-mono); color: var(--text-faint);
+  width: 1.2em; flex: none; text-align: center;
+  transition: transform var(--dur-2) var(--ease-summon), color var(--dur-2);
+}
+.slot[open] .slot-sign { transform: rotate(45deg); color: var(--accent); }
+.slot-name {
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text); width: 9.5rem; flex: none;
+}
+.slot-q { color: var(--text-soft); }
+.slot-lead {
+  flex: 1 1 40px; min-width: 24px; height: 0;
+  border-bottom: 1px dotted var(--border-strong);
+  opacity: 0.7;
+}
+.slot-fill {
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  color: var(--text-soft); flex: none; text-align: right;
+}
+.slot[open] .slot-fill { color: var(--accent); }
+
+/* The empty state is drawn, never omitted: a dashed leader plus the words.
+   A dashed line alone is not perceivable to everyone, so .slot-fill spells it. */
+.slot-empty .slot-name { color: var(--text-faint); }
+.slot-empty .slot-lead { border-bottom-style: dashed; border-bottom-color: var(--border); opacity: 1; }
+.slot-empty .slot-fill { color: var(--text-faint); }
+.slot-empty[open] .slot-fill { color: var(--text-faint); }
+
+.slot-answer {
+  color: var(--text-soft);
+  max-width: var(--measure);
+  margin: 0 0 var(--space-6);
+  padding-left: calc(1.2em + var(--space-4));
+}
+.js .slot[open] .slot-answer { animation: answer-in var(--dur-3) var(--ease-summon) both; }
+@keyframes answer-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .js .slot[open] .slot-answer { animation: none; } }
+
+@media (max-width: 800px) {
+  .slot-row { flex-wrap: wrap; row-gap: var(--space-2); }
+  .slot-name { width: auto; }
+  .slot-lead { display: none; }
+  .slot-q { flex: 1 1 100%; padding-left: calc(1.2em + var(--space-4)); }
+  .slot-fill { text-align: left; }
+  .slot-answer { padding-left: 0; }
+}
+
+.config {
+  margin-top: clamp(var(--space-16), 8vh, var(--space-24));
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: clamp(var(--space-8), 5vw, var(--space-16));
+  align-items: center;
+}
+@media (max-width: 860px) { .config { grid-template-columns: minmax(0, 1fr); } }
+
+/* Code is the one place a container is earned: --surface-sunken is the token
+   for things you type into, and this is the file the agents actually read. */
+.code {
+  position: relative;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  overflow-x: auto;
+}
+.code pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.85;
+  color: var(--text-soft);
+}
+.code .k { color: var(--text); }
+.code .v { color: var(--accent); }
+.code .c { color: var(--text-faint); }
+.code .n { color: var(--human); }
+.code-cap {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  color: var(--text-faint); letter-spacing: var(--tracking-label);
+  margin: 0 0 var(--space-4);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   The run — one horizon. Human steps stand above the line in coral, agent
+   steps hang below it in the quieter blue. No boxes: the line is the diagram.
+   ───────────────────────────────────────────────────────────────────────── */
+.run { margin-top: clamp(var(--space-16), 9vh, var(--space-24)); }
+.run-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: auto var(--space-12) auto;
+  column-gap: var(--space-3);
+}
+/* display:contents lets one step own three cells in three different rows, so
+   every mark lands on exactly the same line however tall the copy is. */
+.step { display: contents; }
+
+.run-horizon {
+  grid-row: 2; grid-column: 1 / -1;
+  align-self: center;
+  height: 1px; width: calc(100% + 18vw); justify-self: center;
+  background: linear-gradient(90deg, transparent, var(--border) 9%, var(--border) 91%, transparent);
+}
+.step-mark {
+  grid-row: 2; grid-column: var(--c);
+  align-self: center; justify-self: start;
+  position: relative; width: 100%; height: var(--space-12);
+  display: flex; align-items: center;
+}
+.step-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--ground);
+  border: 2px solid var(--agent);
+  position: relative; z-index: 1;
+}
+.step-human .step-dot { border-color: var(--human); }
+.step-body {
+  grid-column: var(--c);
+  grid-row: 3; align-self: start;
+  padding-top: var(--space-5);
+  border-left: 1px solid var(--border);
+  padding-left: var(--space-3);
+  margin-left: 5px;
+}
+.step-human .step-body {
+  grid-row: 1; align-self: end;
+  padding-top: 0; padding-bottom: var(--space-5);
+  border-left-color: color-mix(in srgb, var(--human) 45%, transparent);
+}
+.step-no {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  color: var(--text-faint); letter-spacing: var(--tracking-label);
+  display: block; margin-bottom: var(--space-2);
+}
+.step-title {
+  font-family: var(--font-display); font-weight: var(--weight-strong);
+  font-size: var(--text-xl); letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-2); line-height: 1.15;
+}
+.step-human .step-title { color: var(--human); }
+.step-out { margin: 0; font-size: var(--text-base); color: var(--text-faint); line-height: var(--leading-snug); }
+.step-out b { color: var(--text-soft); font-weight: var(--weight-medium); }
+.step-who {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--human); display: block; margin-top: var(--space-3);
+}
+
+/* .step is display:contents and generates no box, so it cannot be faded itself.
+   Its two cells reveal independently and inherit the step's --d, which keeps the
+   stagger travelling left to right along the horizon. The mark only fades: a dot
+   that slides would leave the line it is supposed to sit on. */
+.js .step-mark.reveal { transform: none; }
+
+/* Coral blooms only when a human step arrives — the mark stands for "this one
+   needs you", so it is the one thing on the page allowed to flare. */
+@keyframes bloom {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--human) 55%, transparent); }
+  to   { box-shadow: 0 0 0 14px transparent; }
+}
+.js .step-human .step-mark.is-in .step-dot {
+  animation: bloom var(--dur-4) var(--ease-resolve) both;
+  animation-delay: calc(var(--d, 0) * var(--stagger) + var(--dur-2));
+}
+
+.legend {
+  display: flex; flex-wrap: wrap; gap: var(--space-8);
+  margin-top: clamp(var(--space-12), 6vh, var(--space-20));
+  font-size: var(--text-base); color: var(--text-faint);
+}
+.legend span { display: inline-flex; align-items: center; gap: var(--space-3); }
+.legend i {
+  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  border: 2px solid var(--agent);
+}
+.legend .is-human i { border-color: var(--human); }
+.legend b { color: var(--text-soft); font-weight: var(--weight-medium); }
+
+@media (max-width: 900px) {
+  .run-track { display: block; position: relative; padding-left: var(--space-8); }
+  .run-track::before {
+    content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px;
+    width: 1px; background: var(--border);
+  }
+  .run-horizon { display: none; }
+  .step { display: block; position: relative; padding-bottom: var(--space-10); }
+  .step-mark { position: absolute; left: calc(-1 * var(--space-8)); top: 4px; width: auto; height: auto; }
+  .step-body, .step-human .step-body {
+    border-left: none; padding-left: 0; margin-left: 0;
+    padding-top: 0; padding-bottom: 0;
+  }
+}
+
+/* ── The three human moments ──────────────────────────────────────────────── */
+.moments {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-8), 5vw, var(--space-16));
+  margin-top: clamp(var(--space-16), 8vh, var(--space-24));
+}
+.moment { border-left: 2px solid var(--human); padding-left: var(--space-5); }
+.moment h3 {
+  font-family: var(--font-display); font-weight: var(--weight-strong);
+  font-size: var(--text-xl); letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-3); color: var(--human);
+}
+.moment p { margin: 0; color: var(--text-soft); font-size: var(--text-base); }
+@media (max-width: 760px) { .moments { grid-template-columns: minmax(0, 1fr); } }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Modules — a catalogue read as a list of names, not a wall of cards.
+   ───────────────────────────────────────────────────────────────────────── */
+.mods { margin-top: clamp(var(--space-16), 8vh, var(--space-24)); list-style: none; padding: 0; }
+.mod {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 15rem) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: baseline;
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.mod:last-child { border-bottom: 1px solid var(--border); }
+.mod-slot {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint);
+}
+.mod-name { font-family: var(--font-mono); font-size: var(--text-base); color: var(--text); }
+.mod-d { color: var(--text-faint); font-size: var(--text-base); margin: 0; }
+.mod-d .tag {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-pill);
+  padding: 1px var(--space-3); margin-left: var(--space-3);
+  white-space: nowrap;
+}
+@media (max-width: 820px) {
+  .mod { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+  .mod-slot { order: -1; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Install
+   ───────────────────────────────────────────────────────────────────────── */
+.install-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(var(--space-10), 6vw, var(--space-20));
+  align-items: start;
+  margin-top: clamp(var(--space-12), 6vh, var(--space-20));
+}
+@media (max-width: 900px) { .install-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.copy {
+  position: absolute; top: var(--space-3); right: var(--space-3);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  background: var(--surface); color: var(--text-faint);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3); cursor: pointer;
+  transition: color var(--dur-1), border-color var(--dur-1);
+}
+.copy:hover { color: var(--text); border-color: var(--accent); }
+.copy.is-done { color: var(--ok); border-color: var(--ok); }
+
+.prereq { color: var(--text-faint); font-size: var(--text-base); margin: var(--space-6) 0 0; max-width: var(--measure); }
+.prereq code, .section-lead code, .slot-answer code, .mod-d code {
+  font-family: var(--font-mono); font-size: 0.92em; color: var(--text-soft);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────*/
+footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--space-12) var(--space-16);
+  margin-top: var(--space-section);
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);
+  color: var(--text-faint); font-size: var(--text-base);
+}
+footer .brand { font-size: var(--text-md); margin-right: 0; }
+footer nav { display: flex; gap: var(--space-6); margin-left: auto; }
+footer a { color: var(--text-faint); text-decoration: none; }
+footer a:hover { color: var(--text); }
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="sky" aria-hidden="true"></div>
+
+<div class="page">
+
+<header class="wrap masthead">
+  <a class="brand" href="#top">
+    <svg class="hop hop-idle" width="26" height="26" viewBox="0 0 96 96" aria-hidden="true">
+      <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+      <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+      <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+      <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+      <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+    </svg>
+    Scrum<em>IA</em>
+  </a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#slots">slots</a>
+    <a href="#run">the run</a>
+    <a href="#modules">modules</a>
+    <a class="nav-keep" href="#install">install</a>
+  </nav>
+  <button type="button" id="theme-toggle"><span id="theme-label">light</span></button>
+</header>
+
+<main id="main">
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<div class="hero wrap" id="top">
+  <div class="limb" aria-hidden="true"></div>
+
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow mono">Claude Code plugin marketplace</p>
+      <h1>Every<br>capability<br>is <em>a slot</em>.</h1>
+      <p class="lead">
+        Fill each one with a module, and replace the module the day the project
+        stops being the project you started.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#install">Compose your team</a>
+        <a class="btn btn-ghost" href="#run">See a full run</a>
+      </div>
+    </div>
+
+    <figure class="hero-figure" style="margin:0">
+      <svg class="hop hop-arrive" width="188" height="188" viewBox="0 0 96 96"
+           role="img" aria-label="Hop, the ScrumIA mascot: four flow-diagram columns gathered into a body, one eye lit.">
+        <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+        <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+        <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+        <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+        <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+      </svg>
+    </figure>
+  </div>
+
+  <p class="counts">
+    <span class="count"><b>7</b><span class="mono">slots</span></span>
+    <span class="count"><b>12</b><span class="mono">modules shipped</span></span>
+    <span class="count"><b>3</b><span class="mono">human touchpoints</span></span>
+  </p>
+</div>
+
+<!-- ── Slots ─────────────────────────────────────────────────────────────── -->
+<section id="slots" class="wrap">
+  <p class="kicker mono reveal"><b>01</b> the shape</p>
+  <h2 class="reveal" style="--d:1">A slot is a question. A module is one answer.</h2>
+  <p class="section-lead reveal" style="--d:2">
+    Below is not an illustration. It is the composition this page's own repository
+    runs on, read from its <code>.scrumia/config.yaml</code>, today.
+  </p>
+
+  <div class="slots reveal" style="--d:3">
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">specs</span>
+          <span class="slot-q">Where do specs live, in what shape?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-specs</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        One directory per feature, files created only when they have something to
+        say, acceptance criteria written first and turned into tests.
+      </p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">tracker</span>
+          <span class="slot-q">Where does state live — tickets, columns, PRs?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-github-project</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        GitHub Issues and Projects. Nothing stateful in the repository, and a hook
+        that refuses the commit which tries.
+      </p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">team</span>
+          <span class="slot-q">Which standing roles, with what scope?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-teams</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        Manager, business, tech — plus a designer contributed by the design module.
+        Each boundary is a line of refusal, and every role toggles by config.
+      </p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">discovery</span>
+          <span class="slot-q">How does an idea become scoped work?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">nothing installed</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        <code>scrumia-discovery</code> exists and is not installed here. So an idea
+        goes straight to a ticket without a scoping pass, and the agents are told to
+        say that rather than improvise one.
+      </p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">implementation</span>
+          <span class="slot-q">How is code written, per app?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">nothing installed</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        This product ships markdown. Its two code apps — a static site and a
+        validation script — carry no implementation module, so the instruction is
+        to follow the neighbouring code instead of inventing a doctrine.
+      </p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">practices</span>
+          <span class="slot-q">Which cross-cutting practices, per app?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">nothing installed</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        None here. TDD, SOLID and TanStack Query are on the shelf; a repository of
+        prose does not need them, and pretending otherwise would cost every agent
+        context it could spend on the work.
+      </p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">design</span>
+          <span class="slot-q">Where does the design system live?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-design</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">
+        Identity, tokens and components as files in the repository. A value the
+        tokens do not carry is a finding, not an exception — including on this page.
+      </p>
+    </details>
+
+  </div>
+
+  <div class="config">
+    <p class="statement reveal">
+      Three of the seven are empty. <em>Nothing is faked in their place.</em>
+    </p>
+    <div class="reveal" style="--d:1">
+      <p class="code-cap">.scrumia/config.yaml</p>
+      <div class="code">
+<pre><span class="c"># Which module fills which slot.
+# An empty slot = capability absent, owned.</span>
+<span class="k">composition:</span>
+  <span class="k">specs:</span>     <span class="v">scrumia-specs</span>
+  <span class="k">tracker:</span>   <span class="v">scrumia-github-project</span>
+  <span class="k">team:</span>      <span class="v">scrumia-teams</span>
+  <span class="k">discovery:</span> <span class="n">null</span>   <span class="c"># not installed: say so</span>
+  <span class="k">design:</span>    <span class="v">scrumia-design</span>
+<span class="k">apps:</span>
+  - <span class="k">name:</span> <span class="v">"site"</span>
+    <span class="k">implementation:</span> <span class="n">null</span>
+    <span class="k">practices:</span> <span class="n">[]</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── The run ───────────────────────────────────────────────────────────── -->
+<section id="run" class="wrap wrap-wide">
+  <p class="kicker mono reveal"><b>02</b> the run</p>
+  <h2 class="reveal" style="--d:1">Seven steps. Three of them are you.</h2>
+  <p class="section-lead reveal" style="--d:2">
+    One idea, from a sentence to a merged pull request. Coral marks a step that
+    waits for a person; everything below the line runs without one.
+  </p>
+
+  <div class="run reveal" style="--d:3">
+    <div class="run-track">
+      <div class="run-horizon" aria-hidden="true"></div>
+
+      <div class="step step-human" style="--c:1; --d:0">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">01</span>
+          <h3 class="step-title">Brief</h3>
+          <p class="step-out">An idea, a problem. Nothing formatted.</p>
+          <span class="step-who">human</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:2; --d:1">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">02</span>
+          <h3 class="step-title">Scoping</h3>
+          <p class="step-out">Challenged, then split into features. <b>→ issues + a specs branch</b></p>
+        </div>
+      </div>
+
+      <div class="step" style="--c:3; --d:2">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">03</span>
+          <h3 class="step-title">Refinement</h3>
+          <p class="step-out">Roles weigh in, sub-issues per context. <b>→ Ready for dev</b></p>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:4; --d:3">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">04</span>
+          <h3 class="step-title">Sign-off</h3>
+          <p class="step-out">Only where doubt, criticality or risk warrant it.</p>
+          <span class="step-who">human</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:5; --d:4">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">05</span>
+          <h3 class="step-title">Sprint</h3>
+          <p class="step-out">The manager batches non-colliding tickets. <b>→ To dev</b></p>
+        </div>
+      </div>
+
+      <div class="step" style="--c:6; --d:5">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">06</span>
+          <h3 class="step-title">Build</h3>
+          <p class="step-out">One worktree per ticket. Spec, code, tests, review. <b>→ PRs</b></p>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:7; --d:6">
+        <div class="step-mark reveal"><span class="step-dot"></span></div>
+        <div class="step-body reveal">
+          <span class="step-no">07</span>
+          <h3 class="step-title">Merge</h3>
+          <p class="step-out">You read the pull request and test it. <b>→ Done</b></p>
+          <span class="step-who">human</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="legend reveal">
+      <span class="is-human"><i></i><b>Human</b> — three touchpoints</span>
+      <span><i></i><b>Agents</b> — everything else</span>
+      <span>Swap a module and this line changes shape.</span>
+    </p>
+  </div>
+
+  <div class="moments">
+    <div class="moment reveal">
+      <h3>You scope</h3>
+      <p>The agents challenge the brief. You settle the points that block them.</p>
+    </div>
+    <div class="moment reveal" style="--d:1">
+      <h3>You sign off</h3>
+      <p>Only on designs that are doubtful, critical or risky. The rest just ships.</p>
+    </div>
+    <div class="moment reveal" style="--d:2">
+      <h3>You merge</h3>
+      <p>The final call stays yours, unless you delegate it in writing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Modules ───────────────────────────────────────────────────────────── -->
+<section id="modules" class="wrap">
+  <p class="kicker mono reveal"><b>03</b> the marketplace</p>
+  <h2 class="reveal" style="--d:1">Twelve answers on the shelf.</h2>
+  <p class="section-lead reveal" style="--d:2">
+    Each one is a standard Claude Code plugin: skills, agents, hooks. Install the
+    ones your project needs and leave the rest where they are.
+  </p>
+
+  <ul class="mods reveal" style="--d:3">
+    <li class="mod"><span class="mod-slot">kernel</span><span class="mod-name">scrumia-core</span><p class="mod-d">Reads the active composition and writes it into <code>CLAUDE.md</code>. Fills no slot.</p></li>
+    <li class="mod"><span class="mod-slot">no slot</span><span class="mod-name">scrumia-rules</span><p class="mod-d">Rule sections a project owns: index, guides, decisions. No rule without its why.</p></li>
+    <li class="mod"><span class="mod-slot">specs</span><span class="mod-name">scrumia-specs</span><p class="mod-d">Per-feature specs, acceptance-criteria first. A catalogue of files, not a template.</p></li>
+    <li class="mod"><span class="mod-slot">tracker</span><span class="mod-name">scrumia-github-project</span><p class="mod-d">Issues, sub-issues, board columns, branches and pull requests.</p></li>
+    <li class="mod"><span class="mod-slot">team</span><span class="mod-name">scrumia-teams</span><p class="mod-d">Standing roles and sprint execution, one isolated worktree per ticket.</p></li>
+    <li class="mod"><span class="mod-slot">discovery</span><span class="mod-name">scrumia-discovery</span><p class="mod-d">Challenges an idea until it can be split, then ships the specs on a branch.<span class="tag">not installed here</span></p></li>
+    <li class="mod"><span class="mod-slot">implementation</span><span class="mod-name">scrumia-rust</span><p class="mod-d">Invalid states unrepresentable, typed errors per layer, one test per invariant.</p></li>
+    <li class="mod"><span class="mod-slot">implementation</span><span class="mod-name">scrumia-solidjs</span><p class="mod-d">Fine-grained reactivity without React reflexes; behaviour-first component tests.</p></li>
+    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-tdd</span><p class="mod-d">The cycle operationalised for an agent: the mock boundary, AC-to-test mapping.</p></li>
+    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-solid</span><p class="mod-d">Five principles, each with its limit. Audits over-application as readily as violation.</p></li>
+    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-tanstack-query</span><p class="mod-d">Query keys, invalidation, optimistic updates — the server/client boundary.</p></li>
+    <li class="mod"><span class="mod-slot">design</span><span class="mod-name">scrumia-design</span><p class="mod-d">Identity, tokens and components in the repo, plus an audit that reports drift and mutedness alike.</p></li>
+  </ul>
+</section>
+
+<!-- ── Install ───────────────────────────────────────────────────────────── -->
+<section id="install" class="wrap">
+  <p class="kicker mono reveal"><b>04</b> install</p>
+
+  <div class="install-grid">
+    <div class="reveal">
+      <h2>Two commands, then a conversation.</h2>
+      <p class="section-lead">
+        <code>scrumia-init</code> maps your apps, proposes a composition, offers the
+        install command for each module it needs, and writes the result into your
+        <code>CLAUDE.md</code>. Run it again and it checks instead of overwriting.
+      </p>
+      <p class="prereq">
+        Needs <strong>git</strong>, an authenticated <code>gh</code> for the GitHub
+        tracker, and <code>jq</code> for the guard hook. Init checks all three and
+        tells you what degrades if one is missing.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/tibs245/scrumia">Read the source</a>
+      </div>
+    </div>
+
+    <div class="reveal" style="--d:1">
+      <p class="code-cap">terminal</p>
+      <div class="code">
+<pre id="install-commands"><span class="c"># add the marketplace, install the kernel</span>
+claude plugin marketplace add tibs245/scrumia
+claude plugin install scrumia-core@scrumia
+
+<span class="c"># then, inside the repo to set up</span>
+claude
+<span class="v">/scrumia-init</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <a class="brand" href="#top">
+    <svg class="hop hop-idle" width="22" height="22" viewBox="0 0 96 96" aria-hidden="true">
+      <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
+      <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
+      <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
+      <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
+      <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+    </svg>
+    Scrum<em>IA</em>
+  </a>
+  <span>Runs on the composition above.</span>
+  <nav aria-label="Elsewhere">
+    <a href="https://github.com/tibs245/scrumia">GitHub</a>
+    <a href="#slots">Slots</a>
+    <a href="#install">Install</a>
+  </nav>
+</footer>
+
+</div>
+</body>
+</html>
