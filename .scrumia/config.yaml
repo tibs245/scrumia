@@ -70,7 +70,7 @@ settings:
   design:                    # schema owned by scrumia-design-setup
     root: "design"           # setup-time choice; consumers read the Design contract in CLAUDE.md
     remote: claude-design    # claude-design | none — read by scrumia-design-sync
-    project_id: null         # the claude.ai/design project UUID, written once linked
+    project_id: "67f47e14-97d0-4e2b-8a10-abb2b2d5e51f"   # the claude.ai/design project UUID, written once linked
   tracker:                   # read by scrumia-github-project, via scripts/board.sh
     project: "ScrumIA"
     project_number: 6
