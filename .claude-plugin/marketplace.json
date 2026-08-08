@@ -104,6 +104,15 @@
       "category": "workflow",
       "tags": ["scrumia", "practice", "tanstack-query", "data-fetching"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-design",
+      "source": "./plugins/scrumia-design",
+      "description": "The design slot — a design system that lives in the repo and syncs with Claude Design, plus a designer role guarding identity and consistency.",
+      "version": "0.3.0",
+      "category": "workflow",
+      "tags": ["scrumia", "design", "design-system", "tokens"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

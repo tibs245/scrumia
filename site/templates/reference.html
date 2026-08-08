@@ -167,6 +167,19 @@
       </tbody>
     </table>
   </div>
+  <h3><code>scrumia-design</code> — {{h_slot_design}}</h3>
+  <p>{{design_p}}</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>{{th_skill}}</th><th>{{th_what}}</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-design-setup</code></td><td>{{design_row1}}</td></tr>
+        <tr><td><code>scrumia-design-system</code></td><td>{{design_row2}}</td></tr>
+        <tr><td><code>scrumia-design-sync</code></td><td>{{design_row3}}</td></tr>
+        <tr><td><code>scrumia-design-audit</code></td><td>{{design_row4}}</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="config">
@@ -182,7 +195,7 @@ composition:
   tracker:   scrumia-github-project
   team:      scrumia-teams
   discovery: scrumia-discovery
-  design:    null
+  design:    scrumia-design
 
 apps:
   - name: web

@@ -1,0 +1,10 @@
+/* ScrumIA design tokens — the vocabulary. Custom properties only, no selectors.
+ *
+ * Empty on purpose. The identity is written (identity.md) but the palette that
+ * expresses it is the redesign ticket's deliverable, and a token seeded here from
+ * a guess would be cited as a decision nobody made.
+ *
+ * Until this file is populated, site/assets/style.css holds the tokens in use.
+ * Interface work stays consistent with that file and does not fork a second
+ * vocabulary here — see the Design contract in CLAUDE.md.
+ */

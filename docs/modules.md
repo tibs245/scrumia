@@ -1,6 +1,6 @@
 # The modules
 
-Eleven modules exist. Each fills a slot, each can be replaced — except the two slotless ones, `scrumia-core` and `scrumia-rules`, which describe the composition instead of being part of it.
+Twelve modules exist. Each fills a slot, each can be replaced — except the two slotless ones, `scrumia-core` and `scrumia-rules`, which describe the composition instead of being part of it.
 
 ## `scrumia-core` — the kernel
 
@@ -135,6 +135,23 @@ TanStack Query as the answer to server state. Refines one point of the implement
 
 **What it assumes**: a stack TanStack Query ships an adapter for (React, Solid, Vue, Svelte, Angular).
 **What it costs**: a caching model to learn — this is not "just fetch"; the audit and refactor skills that would measure and close the gap on an existing codebase are not built yet, see [the roadmap](roadmap.md).
+
+## `scrumia-design` — `design` slot
+
+Identity, tokens and components as files in the repo; a `claude.ai/design` project as a review surface rather than the source of truth. The rule underneath it all: a value the tokens do not carry is a finding, never an inlined exception.
+
+| Component | Role |
+|---|---|
+| `agents/scrumia-designer.md` | Visual identity, system consistency, legibility, visual a11y — Fable |
+| `scrumia-design-setup` | Creates the tree, writes the identity, registers the role |
+| `scrumia-design-system` | The reference: what lives where, the four questions before writing a component |
+| `scrumia-design-sync` | Pushes and pulls components through `DesignSync`, one at a time |
+| `scrumia-design-audit` | Measures an existing interface: drift and mutedness, two columns |
+
+This is the one module that ships a standing role from outside the `team` slot — a role with no design system to guard would judge on taste, so it exists only where the slot is filled ([ADR-0014](adr/0014-roles-ship-with-their-capability.md)).
+
+**What it assumes**: an identity someone can state. Setup stops rather than inventing one.
+**What it costs**: the remote mirror can go stale, and syncing is deliberately component by component — a wholesale replace is a sync that skipped the review.
 
 ## How `implementation` and `practices` compose
 

@@ -11,6 +11,11 @@ ScrumIA is the composition it ships: this repo runs on its own plugins.
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 | Team | `scrumia-teams` | Standing roles: manager, business, tech. |
+| Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
+
+`scrumia-design` also ships the `designer` standing role, registered in
+`settings.team.roles` like the other three (`docs/adr/0014`). Route interface questions
+to it — it is the only role that judges what a user actually sees.
 
 The `discovery` slot is empty: `scrumia-discovery` is not installed. An idea therefore
 goes straight to a ticket without a scoping pass — say so rather than improvising one.
@@ -46,6 +51,27 @@ ac_id_format: AC-<n>
 changelog: CHANGELOG.md
 catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.md, devx.md
 ```
+
+### Design contract
+
+`scrumia-design` — this project's design module — describes itself with the block below.
+Read `identity_file` for the intent and `tokens_file` for the vocabulary before writing
+any interface; `components_dir` holds one directory per component.
+
+```
+design_root: design/
+identity_file: identity.md
+tokens_file: tokens.css
+components_dir: components/
+component_preview: preview.html
+component_spec: spec.md
+card_marker: @dsCard
+remote: claude-design
+```
+
+`site/` is the only app this contract applies to. `tokens.css` is not yet populated —
+the redesign ticket produces it; until then, `site/assets/style.css` holds the tokens
+in use and is what an interface change must stay consistent with.
 
 ### Shared rules
 

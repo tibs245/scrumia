@@ -22,7 +22,7 @@ A slot is a question. A module is one answer.
 | `discovery` | How does an idea become framed work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
 | `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
-| `design` | Where does the design system live? | to come |
+| `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a failure: it is a capability the project doesn't have, and agents adapt what they propose.
 

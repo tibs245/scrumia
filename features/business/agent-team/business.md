@@ -1,6 +1,7 @@
 # Business rules — agent team
 
-Vocabulary: **role** (manager, business, tech), **activation trigger** (what
+Vocabulary: **role** (manager, business, tech, and designer where the `design`
+slot is filled), **activation trigger** (what
 brings a role into a ticket), **escalation** (what always reaches the human,
 independent of configuration), **arbitration** (the manager surfacing a
 disagreement between the other two to the human, with its own recommendation,

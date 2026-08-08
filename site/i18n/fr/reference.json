@@ -1,6 +1,6 @@
 {
   "title": "Référence — ScrumIA",
-  "meta_description": "Référence ScrumIA : les onze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.",
+  "meta_description": "Référence ScrumIA : les douze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.",
   "og_title": "ScrumIA — Référence",
 
   "page_title": "Référence",
@@ -17,6 +17,7 @@
   "h_slot_discovery": "slot <code>discovery</code>",
   "h_slot_impl": "slot <code>implementation</code>",
   "h_slot_practices": "slot <code>practices</code>",
+  "h_slot_design": "slot <code>design</code>",
 
   "core_p": "Ne remplit aucun slot et ne fait rien par lui-même. Il décrit la composition et la rend lisible pour les agents. Le seul module obligatoire.",
   "core_row1": "Installe ou vérifie la composition, génère la section <code>CLAUDE.md</code>",
@@ -92,8 +93,14 @@
   "rules_hier_h": "Hiérarchie des règles",
   "rules_hier_p": "Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>specific beats generic</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
 
-  "impl_note_title": "Esquissé, pas construit",
-  "impl_note_p": "<code>scrumia-design</code> est spécifié mais pas implémenté. Il s'appuierait sur Claude Design, accessible depuis Claude Code via <code>DesignSync</code> et la compétence <code>/design-sync</code>.",
+  "design_p": "Identité, tokens et composants vivent dans le dépôt ; un projet Claude Design est la surface de revue, pas la source de vérité. Une règle en dessous : une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Fournit le rôle permanent <code>designer</code> — le seul module à le faire depuis l'extérieur du slot <code>team</code>, parce qu'un rôle sans design system à garder jugerait au goût.",
+  "design_row1": "Crée l'arborescence, écrit l'identité, enregistre le rôle",
+  "design_row2": "La référence : ce qui vit où, les quatre questions avant d'écrire un composant",
+  "design_row3": "Pousse et récupère les composants via <code>DesignSync</code>, un à la fois",
+  "design_row4": "Audite une interface existante : dérive et fadeur, deux colonnes",
+
+  "impl_note_title": "Où le design rencontre ce contrat",
+  "impl_note_p": "Les deux contrats se touchent sans se recouvrir : le module d'implémentation possède <strong>comment un composant est écrit</strong>, <code>scrumia-design</code> possède <strong>à quoi il ressemble</strong>. Un composant SolidJS et un gabarit rendu côté serveur consomment les mêmes tokens.",
 
   "write_title": "Écrire un module",
   "write_intro": "Trois règles, pas plus :",
@@ -104,5 +111,5 @@
   "write_c1": "# valider avant de publier",
   "write_c2": "# essayer sans installer",
   "write_newslot": "Un nouveau slot est justifié quand un vrai projet le remplirait <em>différemment</em>. Sinon, c'est une compétence de plus dans un module existant.",
-  "write_cta_decisions": "Les onze décisions"
+  "write_cta_decisions": "Les quatorze décisions"
 }

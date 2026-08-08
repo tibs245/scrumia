@@ -9,7 +9,7 @@ composition:
   tracker: scrumia-github-project
   team: scrumia-teams
   discovery: null            # scrumia-discovery exists but is not installed: install it to scope ideas before ticketing
-  design: null
+  design: scrumia-design
 
 # ScrumIA's product is markdown: plugins/ is the deliverable and carries no
 # implementation module. Only these two hold code an implementation module
@@ -43,6 +43,9 @@ settings:
         enabled: true
       - name: tech
         enabled: true
+      - name: designer
+        enabled: true
+        from: scrumia-design   # role defined outside the team slot — see docs/adr/0014
     execution:               # read by scrumia-teams/scripts/pick-model.sh
       unlabeled: sonnet
       unrated_risk: medium
@@ -61,6 +64,10 @@ settings:
         - contract change consumed by another app
     sprint:
       max_tickets: 5         # read by scrumia-sprint to cap the batch
+  design:                    # schema owned by scrumia-design-setup
+    root: "design"           # setup-time choice; consumers read the Design contract in CLAUDE.md
+    remote: claude-design    # claude-design | none — read by scrumia-design-sync
+    project_id: null         # the claude.ai/design project UUID, written once linked
   tracker:                   # read by scrumia-github-project, via scripts/board.sh
     project: "ScrumIA"
     project_number: 6

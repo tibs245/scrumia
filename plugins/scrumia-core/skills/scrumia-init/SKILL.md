@@ -61,7 +61,7 @@ Then propose a composition. A slot without a module is acceptable — the projec
 | `discovery` | Scoping an idea into framed work | `scrumia-discovery` |
 | `implementation` | How we code, **per app** | one module per stack (`scrumia-impl-rust`, `scrumia-impl-solidjs`) |
 | `practices` | Cross-cutting practices, **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
-| `design` | The design system | to come |
+| `design` | The design system | `scrumia-design` |
 
 Two slots take several modules at once, app by app: `implementation` (a SolidJS app and a Rust app don't share practices) and `practices` (TDD on the API, not on the prototype next door). Both mappings are explicit, per app.
 
@@ -81,7 +81,7 @@ composition:
   tracker: scrumia-github-project
   team: scrumia-teams
   discovery: scrumia-discovery
-  design: null
+  design: scrumia-design
 
 apps:
   - name: "<app>"
@@ -159,6 +159,7 @@ Before acting, check which module covers what you are about to do.
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 | Team | `scrumia-teams` | Standing roles: manager, business, tech. |
 | Discovery | `scrumia-discovery` | An idea goes through scoping before becoming a ticket. |
+| Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
 ### Implementation and practices, per app
 
@@ -193,6 +194,23 @@ changelog: CHANGELOG.md
 catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.md, devx.md
 ```
 
+### Design contract
+
+`scrumia-design` — this project's design module — describes itself with the block below.
+Read `identity_file` for the intent and `tokens_file` for the vocabulary before writing
+any interface; `components_dir` holds one directory per component.
+
+```
+design_root: design/
+identity_file: identity.md
+tokens_file: tokens.css
+components_dir: components/
+component_preview: preview.html
+component_spec: spec.md
+card_marker: @dsCard
+remote: claude-design
+```
+
 ### Shared rules
 
 - Project state lives in the tracker, not in the repo.
@@ -204,6 +222,8 @@ catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.
 Write only the lines of modules actually plugged in. A table naming an absent module sends agents to a skill that doesn't exist.
 
 **The `## Specs contract` block is copied, never composed.** If the `specs` slot is filled, open the plugged module's main `SKILL.md`, find its own `## Composition block` section, and copy that block verbatim under `## Specs contract` — do not write it from memory of `scrumia-specs`'s shape, another module may occupy the slot with different keys' values. This is ADR-0009's documented-composition rule applied to a module's internal vocabulary, formalized in `docs/adr/0012-specs-contract.md`: consumers (`scrumia-ticket`, `scrumia-split`, the team agents) read this block instead of hard-coding a specs module's file names.
+
+**The `## Design contract` block follows the same rule**, copied from the plugged design module's `## Composition block` (`scrumia-design`: `skills/scrumia-design-system/SKILL.md`). Same reason, same discipline — and same omission when the slot is empty.
 
 If the `specs` slot is empty (`composition.specs: null`), write no `## Specs contract` section at all, and note its absence in the Step 8 report — a section with nothing to copy would either be blank or invented, and both are worse than omitted. On re-run, compare the block on disk against the plugged module's current `## Composition block` and report drift instead of silently overwriting — same discipline as every other marker section.
 

@@ -93,13 +93,11 @@ A module that provides neither will be forked at the first disagreement, and the
 
 Both existing modules ship a second skill (`scrumia-rust-audit`, `scrumia-solidjs-audit`) that measures the gap between an existing app and the module's rules, finding by finding, without rewriting anything. It serves the moment that decides adoption: plugging the module into code that predates it. Ship one — a module that can only judge code born under its rules will never be plugged into anything real.
 
-## Sketch — `scrumia-design`
+## Where the design system meets this contract
 
-Not implemented. This module would fill the `design` slot and build on **Claude Design**, reachable from Claude Code through the `DesignSync` tool and the `/design-sync` skill.
+`scrumia-design` fills the `design` slot — see [modules.md](modules.md). It matters here because the two contracts touch and must not overlap: **the implementation module owns how a component is written** (file layout, props, tests), **the design module owns what it looks like**. A SolidJS component and a Rust-served template consume the same tokens.
 
-What it would bring: keeping a local component library in sync with a `claude.ai/design` design-system project, component by component. The frontend agent would consult the design system before writing a component, instead of inventing spacings and colors.
-
-Synchronization is incremental, never a global replacement — that is the tool's constraint, and it is a healthy one: a design system gets reviewed, not overwritten.
+So an implementation module does not answer "which blue", and the design module does not answer "where does this file go". Where they appear to disagree, they are answering different questions — re-read which one. A genuine conflict, such as an implementation module mandating a styling approach that cannot read the design tokens, is a composition problem to escalate, not a precedence call.
 
 ## Writing yours
 

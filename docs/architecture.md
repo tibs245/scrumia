@@ -20,7 +20,7 @@ So: separate the questions, provide a replaceable answer to each one, and docume
 | `discovery` | How does an idea become scoped work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
 | `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid`, `scrumia-practice-tanstack-query` |
-| `design` | Where does the design system live? | coming |
+| `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a breakdown: it is a capability the project does not have, and the agents adapt what they propose.
 
@@ -63,6 +63,12 @@ Three is not a magic number — roles are enabled, disabled and added through co
 ### `scrumia-discovery` — scoping produces a branch
 
 An idea is challenged, split into features, and delivered like any other change: on a branch, in a PR, with the associated issues. The human reviews the design in the same tool as the code.
+
+### `scrumia-design` — the design system lives in the repo
+
+Identity, tokens and components are files next to the code, and the `claude.ai/design` project is a review surface rather than the source of truth. The agent that writes a component reads the tokens at the commit it is working on — a design system that cannot be read at a given commit cannot be trusted by an agent.
+
+The price: the remote mirror can go stale, and syncing is deliberately component by component. Its audit reports drift and mutedness on equal footing, for the reason given in [D-01](../plugins/scrumia-design/skills/scrumia-design-system/decisions/D-01-two-columns.md).
 
 ## Distribution
 

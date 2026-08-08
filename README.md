@@ -28,7 +28,7 @@ A slot is a question. A module is one answer.
 | `discovery` | How does an idea become framed work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
 | `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid`, `scrumia-practice-tanstack-query` |
-| `design` | Where does the design system live? | sketched |
+| `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a failure: it is a capability the project doesn't have, and agents adapt what they propose.
 
@@ -123,8 +123,8 @@ claude --agent scrumia-teams:scrumia-manager
 
 - [Composition](docs/composition.md) — the slots, the config, how to write a module
 - [Architecture](docs/architecture.md) — the intent and the choices
-- [Modules](docs/modules.md) — the eleven modules and their scope
-- [Implementation modules](docs/modules-implementation.md) — the contract, practices composition, the design sketch
+- [Modules](docs/modules.md) — the twelve modules and their scope
+- [Implementation modules](docs/modules-implementation.md) — the contract and how practices compose
 - [The three roles](docs/agents.md)
 - [Feature format](docs/format-feature.md)
 - [The end-to-end flow](docs/dev-flow.md)
