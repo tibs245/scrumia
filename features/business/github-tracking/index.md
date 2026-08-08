@@ -1,0 +1,75 @@
+# GitHub tracking
+
+**Status**: active
+**Stratum**: business
+
+## In brief
+
+How ScrumIA tracks work when the `tracker` slot is filled by `scrumia-github-project`:
+the ticket's lifecycle across the board's six columns, what a milestone and an epic
+mean, which label is read by which consumer, and the reading discipline that keeps a
+partial board read from being reported as a complete one. Per ADR-0013, this slot also
+owns the code cycle (branches, worktrees, PRs) — a scope wider than its name suggests.
+
+## Ticket lifecycle
+
+A ticket crosses six columns, in order:
+
+| Column | Meaning |
+|---|---|
+| `Backlog` | Raw intent, not yet refined |
+| `Ready for dev` | Refined: criteria written, scope and risk set |
+| `To dev` | Selected into the current sprint |
+| `In progress` | Being executed, in its own worktree |
+| `In review` | PR open, awaiting review |
+| `Done` | Merged |
+
+A card just added to the board — `gh issue create --project` or `gh project item-add`
+— carries **no Status at all**, not `Backlog`: it sits in none of the six until someone
+places it. `board.sh read` reports that as its own `(no status)` group rather than
+folding it into `Backlog`, because a card nobody placed is worth seeing, not papering
+over.
+
+Skills never move a card by naming a column directly, except for that first placement.
+They name a **flow step**, and `settings.tracker.board.flow` in `.scrumia/config.yaml`
+maps each step to this board's actual column name. That indirection is what lets
+ScrumIA adopt a board that already exists — columns renamed, vocabulary already in use
+— without renaming anything or touching a skill.
+
+| Transition | Trigger | Flow step |
+|---|---|---|
+| (no status) → `Backlog` | a ticket is filed | none — the column name is used directly, once |
+| `Backlog` → `Ready for dev` | `scrumia-refine` judges its four readiness conditions met | `ready` |
+| `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — see #23 |
+| `To dev` → `In progress` | a worktree opens for the ticket | `in_progress` |
+| `In progress` → `In review` | the PR opens | `in_review` |
+| `In review` → `Done` | the PR merges | `done` — not automated today either, see #23 |
+
+Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
+`done`). `Backlog` is entered by its literal column name, once, at filing. `To dev`
+and the post-merge move to `Done` currently have no skill that performs them —
+selecting a ticket into a sprint or merging its PR does not by itself move its card.
+
+## Links
+
+- Implemented by: `plugins/scrumia-github-project/` (the `tracker` slot). Not an App
+  feature under `features/app/`: the plugin is the product ScrumIA ships, not one of
+  this project's own `site`/`tools` apps — see `.scrumia/config.yaml`'s `apps` table.
+
+## Files present
+
+| File | Why it exists |
+|---|---|
+| `business.md` | milestone/epic vocabulary, label consumers, the slot's scope per ADR-0013 |
+| `qa.md` | the board-reading discipline as falsifiable scenarios |
+| `CHANGELOG.md` | history of this feature's changes, one entry per notable change |
+
+## Open issues
+
+- #5 — parent epic, stays open until its other children merge
+- #18 — the bootstrap gate refuses a ticket whose deliverable is its own parent
+  feature; this ticket was executed by exception, tracked there
+- #23 — the `To dev` / `Done` transitions named in the lifecycle above have no
+  automated move yet, found while writing this feature
+- #26 — the suspect-filter rule in `qa.md` (AC-3) doesn't catch a short, stale read
+  right after a write; specified as a known gap in AC-4, not fixed
