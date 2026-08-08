@@ -88,8 +88,8 @@ in use and is what an interface change must stay consistent with.
 
 The deliverable is prose that an agent executes. A skill that reads well but sends an
 agent to a file that doesn't exist is broken, so `python3 tools/validate.py` gates the
-marketplace, the frontmatter, every relative link, and the scripts skills invoke. Run it
-before pushing; CI runs it too.
+marketplace, the frontmatter, every relative link, the scripts skills invoke, and the
+skills commands hand off to. Run it before pushing; CI runs it too.
 
 Files are in English — including comments, commit messages and workflow names. Only
 `site/fr/` is French.
