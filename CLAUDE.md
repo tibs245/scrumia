@@ -10,7 +10,7 @@ ScrumIA is the composition it ships: this repo runs on its own plugins.
 |---|---|---|
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
-| Team | `scrumia-teams` | Standing roles: manager, business, tech. |
+| Team | `scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
 | Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
 `scrumia-design` also ships the `designer` standing role, registered in

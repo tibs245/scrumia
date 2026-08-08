@@ -110,11 +110,14 @@ settings:
       labels:                # this project's own words for size and risk; the matrix below speaks S/M/L/XL and low..critical
         scope_prefix: "scope/"
         risk_prefix: "risk/"
+      # Capability order, weakest to strongest: sonnet < opus < fable. The matrix
+      # below climbs it; state it wherever the grid is seeded, because the model
+      # names carry no ordering and an inverted grid still parses and still runs.
       matrix:                # scope × risk → the model to run on, or split_or_<model> when the work is oversized
-        S:  { low: fable,          medium: fable,          high: sonnet,        critical: opus }
-        M:  { low: sonnet,         medium: sonnet,         high: opus,          critical: opus }
-        L:  { low: sonnet,         medium: opus,           high: opus,          critical: opus }
-        XL: { low: split_or_fable, medium: split_or_fable, high: split_or_opus, critical: split_or_opus }
+        S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
+        M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
+        L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
     escalation:
       to_human:               # read by scrumia-team-setup on re-run to check drift; the team agents' arbitration mirrors these defaults
         - disagreement between roles

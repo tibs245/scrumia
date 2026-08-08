@@ -56,6 +56,15 @@ Each execution follows the same outline:
 
 The modules carrying these steps are those declared in `CLAUDE.md`. If a slot is empty, the corresponding step is simplified, not silently skipped: say so in the PR.
 
+Step 5's role review needs the invocation that resolves, not just the role's name. An execution cannot spawn the role agents by type — see [the roles' doc](../../../../docs/agents.md) for what was measured and what is still open. It convenes each one as a subprocess, prompt on stdin:
+
+```bash
+claude -p --agent scrumia-teams:scrumia-business \
+  --allowedTools "Read,Glob,Grep,Bash" < review-prompt.txt
+```
+
+If a role cannot be reached, the PR says the review did not run as that role. It never substitutes a general agent for it in silence.
+
 ## Step 4 — Gather
 
 For each ticket: PR opened, blocked and why, or sent back to refinement and what was missing.

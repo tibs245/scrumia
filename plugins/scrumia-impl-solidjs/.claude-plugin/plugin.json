@@ -1,7 +1,7 @@
 {
   "name": "scrumia-impl-solidjs",
   "description": "Slot \"implementation\" — how we code in SolidJS: fine-grained reactivity without defensive memoisation, behaviour-first component tests, feature-based structure. Plugs in app by app.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": { "name": "tibs245" },
   "homepage": "https://github.com/tibs245/scrumia",
   "repository": "https://github.com/tibs245/scrumia",

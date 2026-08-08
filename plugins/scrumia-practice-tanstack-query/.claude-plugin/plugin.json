@@ -1,7 +1,7 @@
 {
   "name": "scrumia-practice-tanstack-query",
   "description": "The practices slot — TanStack Query situated for an agent: query keys, the queryOptions() factory, useQuery through testing, and a step-by-step scaffold skill. Applies app by app, stack-agnostic across TanStack Query adapters.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },

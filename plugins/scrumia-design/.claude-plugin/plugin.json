@@ -1,7 +1,7 @@
 {
   "name": "scrumia-design",
   "description": "The design slot — a design system that lives in the repo and syncs with Claude Design, plus a designer role that guards identity and consistency.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },

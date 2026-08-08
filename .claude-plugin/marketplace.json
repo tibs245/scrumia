@@ -4,13 +4,13 @@
     "name": "tibs245"
   },
   "description": "A composition of Claude Code modules to run a project: per-feature specs, tracking, an agent team, per-stack implementation practices. Every module is replaceable.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "plugins": [
     {
       "name": "scrumia-core",
       "source": "./plugins/scrumia-core",
       "description": "The kernel: describes the project's active composition, its configuration, and the shared conventions. Does nothing on its own.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "kernel", "composition", "configuration"],
       "author": { "name": "tibs245" }
@@ -19,7 +19,7 @@
       "name": "scrumia-rules",
       "source": "./plugins/scrumia-rules",
       "description": "Fills no slot, like the kernel — the rules-hierarchy format itself: index, guides, decisions. Teaches modules and projects to consume, scaffold and evolve rule sections.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "kernel", "rules", "decisions"],
       "author": { "name": "tibs245" }
@@ -28,7 +28,7 @@
       "name": "scrumia-specs",
       "source": "./plugins/scrumia-specs",
       "description": "The specs slot — per-feature, TDD-oriented specs. A contextual file catalog instead of a single document.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "specs", "features", "tdd"],
       "author": { "name": "tibs245" }
@@ -37,7 +37,7 @@
       "name": "scrumia-github-project",
       "source": "./plugins/scrumia-github-project",
       "description": "The tracker slot — issues, sub-issues, GitHub Projects columns, branches and PRs. Replaceable by an equivalent module for another tool.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "tracker", "github", "issues"],
       "author": { "name": "tibs245" }
@@ -46,7 +46,7 @@
       "name": "scrumia-teams",
       "source": "./plugins/scrumia-teams",
       "description": "The team slot — standing roles and sprint execution as dynamic workflows. Configurable: roles, models, escalation thresholds.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "agents", "team", "sprint"],
       "author": { "name": "tibs245" }
@@ -55,7 +55,7 @@
       "name": "scrumia-discovery",
       "source": "./plugins/scrumia-discovery",
       "description": "The discovery slot — brainstorming and design. Produces issues and a branch carrying up-to-date specs.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "discovery", "brainstorming", "scoping"],
       "author": { "name": "tibs245" }
@@ -64,7 +64,7 @@
       "name": "scrumia-impl-rust",
       "source": "./plugins/scrumia-impl-rust",
       "description": "The implementation slot, for Rust apps — invalid states made unrepresentable, typed errors per layer, one test per invariant. Plugs in app by app.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "implementation", "rust", "backend"],
       "author": { "name": "tibs245" }
@@ -73,7 +73,7 @@
       "name": "scrumia-impl-solidjs",
       "source": "./plugins/scrumia-impl-solidjs",
       "description": "The implementation slot, for SolidJS apps — fine-grained reactivity without React reflexes, behaviour-first component tests. Plugs in app by app.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "implementation", "solidjs", "frontend"],
       "author": { "name": "tibs245" }
@@ -82,7 +82,7 @@
       "name": "scrumia-practice-tdd",
       "source": "./plugins/scrumia-practice-tdd",
       "description": "The practices slot — test-driven development, situated for an agent: the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "practice", "tdd", "tests"],
       "author": { "name": "tibs245" }
@@ -91,7 +91,7 @@
       "name": "scrumia-practice-solid",
       "source": "./plugins/scrumia-practice-solid",
       "description": "The practices slot — SOLID principles, each with its application limit. Audits violations and over-applications alike. Reference, audit and refactor skills.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "practice", "solid", "design"],
       "author": { "name": "tibs245" }
@@ -100,7 +100,7 @@
       "name": "scrumia-practice-tanstack-query",
       "source": "./plugins/scrumia-practice-tanstack-query",
       "description": "The practices slot — TanStack Query situated for an agent: the queryOptions() factory, query keys, useQuery through testing. Reference skill now; audit and refactor land next.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "practice", "tanstack-query", "data-fetching"],
       "author": { "name": "tibs245" }
@@ -109,7 +109,7 @@
       "name": "scrumia-design",
       "source": "./plugins/scrumia-design",
       "description": "The design slot — a design system that lives in the repo and syncs with Claude Design, plus a designer role guarding identity and consistency.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "workflow",
       "tags": ["scrumia", "design", "design-system", "tokens"],
       "author": { "name": "tibs245" }

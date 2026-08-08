@@ -41,11 +41,12 @@ settings:
       labels:
         scope_prefix: "scope/"
         risk_prefix: "risk/"
+      # Capability order, weakest to strongest: sonnet < opus < fable — see Step 3.
       matrix:
-        S:  { low: fable,          medium: fable,          high: sonnet,        critical: opus }
-        M:  { low: sonnet,         medium: sonnet,         high: opus,          critical: opus }
-        L:  { low: sonnet,         medium: opus,           high: opus,          critical: opus }
-        XL: { low: split_or_fable, medium: split_or_fable, high: split_or_opus, critical: split_or_opus }
+        S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
+        M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
+        L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
     escalation:
       to_human:                    # what always escalates to the human
         - disagreement between roles
@@ -75,6 +76,8 @@ Adding a role is possible: it takes an agent file in `agents/`, a scope that ove
 Standing roles have fixed models. The **executor of a ticket** does not: `scrumia-sprint` picks one per ticket, and `execution.matrix` is where that choice is written down instead of being improvised.
 
 Two axes, both carried by the ticket's own labels: **scope** (how much work) and **risk** (what it costs to get wrong). They are independent — a one-line change to a payment rule is `scope/S` and `risk/critical`, and it deserves the strong model precisely because it is small enough to look harmless.
+
+Which model is the strong one is not something the names say. The cells climb a capability order — **`sonnet` < `opus` < `fable`** — and nothing enforces it: an inverted grid parses, validates and runs, spending the strong model on the cheap tickets while the critical ones get the weak one. It fails silently, in the direction nobody checks. Write the order beside every grid you seed, and read it before editing a cell.
 
 Nobody reads this matrix by hand, including you. `scripts/pick-model.sh <issue>` reads it and answers:
 
@@ -113,10 +116,10 @@ labels:
 ## Step 5 — Provide its composition line
 
 ```markdown
-| Team | `scrumia-teams` | Active roles: manager, business, tech. Call on a role when its answer changes the decision, not to cover a choice. |
+| Team | `scrumia-teams` | Active roles: manager, business, tech. Convene them with `scrumia-standup`. Call on a role when its answer changes the decision, not to cover a choice. |
 ```
 
-Adapt the list to the roles actually enabled.
+Adapt the list to the roles actually enabled. Keep the entry point in the line: a composition table that names the roles without saying how to reach them is how a request to start the team turns into a sprint.
 
 ## Step 6 — Report back
 

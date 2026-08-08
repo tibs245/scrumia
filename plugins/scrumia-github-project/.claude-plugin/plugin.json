@@ -1,7 +1,7 @@
 {
   "name": "scrumia-github-project",
   "description": "The tracker slot — issues, sub-issues, GitHub Projects columns, branches and PRs.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },

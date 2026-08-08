@@ -1,7 +1,7 @@
 {
   "name": "scrumia-rules",
   "description": "Fills no slot: the rules-hierarchy format itself — index, guides, decisions. Teaches a project to consume, create and evolve rule sections, module-shipped or project-local.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "tibs245"
   },
