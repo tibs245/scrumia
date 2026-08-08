@@ -62,6 +62,6 @@ Then nothing merges without the human, whatever `settings.autonomy.level` says
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
-  by #13, not here.
+  by `features/business/execution-policy/`, not here.
 - The ceremonies (retrospective, refactor session, debt audit): trigger, cadence,
   artefact — specified by #11, not here.

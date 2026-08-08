@@ -22,6 +22,9 @@ soft, light once it is a scoped ticket.
 - Implemented by: none — this business feature is enacted directly by the plugin
   composition (`scrumia-discovery`, `scrumia-github-project`, `scrumia-teams`), not
   by app code.
+- Defers to: `features/business/execution-policy/` for which model executes a scoped
+  ticket. This feature says the human validates at the end of execution, not which
+  model does the executing.
 
 ## Files present
 
@@ -33,6 +36,5 @@ soft, light once it is a scoped ticket.
 ## Open issues
 
 - #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
-- #13 — Spec the execution policy: scope x risk to model (this feature defers to it)
 - #11 — Spec the human ceremonies: triggers, artefacts, cadence (this feature defers to it)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0

@@ -18,8 +18,10 @@ into what it owns.
 `scope/*` label (`docs/adr/0006-ticket-routing.md`), prepares each sprint from
 the ready tickets, and arbitrates whenever business and tech disagree.
 
-**Business** — a ticket is labeled `scope/L` and touches `features/business/**`
-(`docs/adr/0006-ticket-routing.md`); or the manager escalates a business-rule
+**Business** — a ticket is labeled `scope/L` and changes a business rule
+(`docs/adr/0006-ticket-routing.md`; what counts as changing one is the
+blast-radius test in `features/business/execution-policy/`, not the fact that a
+file under `features/business/` moved); or the manager escalates a business-rule
 ambiguity, a functional edge case, or a compliance question directly, outside
 of a ticket's routing.
 
@@ -73,7 +75,7 @@ runs it.
 
 Which model executes a given *ticket* (as opposed to which model a *role*
 runs as) is a separate policy, keyed on the ticket's scope and risk labels —
-specified in #13, not here.
+specified by `features/business/execution-policy/`, not here.
 
 ## Reaching a role requires a restart after install
 

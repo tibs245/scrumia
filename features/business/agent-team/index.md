@@ -25,7 +25,8 @@ does not exist: it would have nothing to guard but its own taste.
   `scrumia-tech.md`); `scrumia-designer.md` lives in `plugins/scrumia-design/agents/`
   and is registered in the same list. All are consumed by `scrumia-github-project`'s `scrumia-ticket` skill
   at Step 6, which routes the review by scope. Step 0 invokes no role — it runs the
-  refusal gate and calls `pick-model.sh`, the execution policy specified in #13.
+  refusal gate and calls `pick-model.sh`, which enacts the execution policy specified
+  in `features/business/execution-policy/`.
 - No App feature implements this. `plugins/` is ScrumIA's own product and carries
   no implementation module (`CLAUDE.md`); the roles are not code under `site` or
   `tools`, they are the agent definitions themselves.
@@ -64,8 +65,5 @@ there is no cross-app dialogue to describe for this EPIC.
 ## Open issues
 
 - #4 — [EPIC] Spec the agent team: roles, triggers, routing, refusal lines (parent)
-- #13 — Spec the execution policy: scope x risk to model. Referenced, not
-  specified here: this feature documents that a role's model lives in its agent
-  frontmatter, not the policy that assigns a model per ticket.
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is
   refused at Step 0. This feature was itself created under that gap, by exception.
