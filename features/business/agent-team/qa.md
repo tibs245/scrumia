@@ -91,6 +91,24 @@ Then no designer role is invoked, and the absence of the capability is stated
   rather than answered on taste
 ```
 
+### AC-10 — A role review that could not run as the role says so
+
+```gherkin
+Given a sprint is executing a ticket and reaches its role review
+When the role's agent type does not resolve
+Then the verdict reports that the review did not run as that role, and a
+  general agent handed the role's definition is never reported as the role
+```
+
+### AC-11 — A module shipping agents is not usable before a restart
+
+```gherkin
+Given a module providing standing roles has just been installed or updated
+When the roles are addressed without restarting Claude Code
+Then they do not resolve — a hot reload refreshes skills but not agent types —
+  and the answer names the restart rather than falling back silently
+```
+
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —

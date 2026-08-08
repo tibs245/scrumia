@@ -25,14 +25,16 @@ A role declared `enabled: true` whose module is absent is the worst of the three
 
 The roles are not processes waiting to be attached to. Each convocation is a fresh one that rebuilds its context from the tracker, which is exactly why two sessions stay consistent without coordinating.
 
-Convene each enabled role as a subprocess, prompt on stdin:
+Spawn each enabled role by its agent type — `scrumia-teams:scrumia-manager` and its siblings.
+
+A type that does not resolve means the module shipping it was installed or updated without a restart since: say so, name the restart, and fall back to a subprocess with the prompt on stdin.
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-manager \
   --allowedTools "Read,Glob,Grep,Bash" < prompt-manager.txt
 ```
 
-`--allowedTools` is variadic: it swallows a positional prompt, so pass the prompt on stdin. The Agent tool does not resolve these agent types from a standard session — [the roles' doc](../../../../docs/agents.md) records what was measured and what is still open.
+`--allowedTools` is variadic: it swallows a positional prompt, hence stdin. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
 
 Convene them in parallel; they don't talk to each other, and a role that waits on another produces the averaged synthesis this team is built to avoid.
 

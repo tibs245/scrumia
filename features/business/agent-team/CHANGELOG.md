@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-08 — Reaching a role requires a restart after installing or updating its module; a review that could not run as the role says so
+- Issue: #33
+- PR: #68
+- Breaking: no
+
 ## 2026-08-08 — A fourth role, designer, provided by the `design` slot's module rather than by `scrumia-teams`
 - Issue: #44
 - PR: #45

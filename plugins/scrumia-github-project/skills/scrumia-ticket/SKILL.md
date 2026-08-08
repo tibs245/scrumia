@@ -118,14 +118,14 @@ If a team module is plugged in, apply the label's grid:
 | `scope/M` | the tech role |
 | `scope/L` | the tech role, plus the business role if a business spec is touched |
 
-Name the role, and invoke it the way that resolves. From a standard session the Agent tool does not reach the plugin's role agents; convene each one as a subprocess instead, prompt on stdin:
+Spawn the role by its agent type — `scrumia-teams:scrumia-tech`, `scrumia-teams:scrumia-business`. If the type does not resolve, the module that ships it was installed or updated without a restart since; say so rather than reviewing anyway, and fall back to a subprocess, prompt on stdin:
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-tech \
   --allowedTools "Read,Glob,Grep,Bash" < review-prompt.txt
 ```
 
-The full constraint and why it is still open are in [the roles' doc](../../../../docs/agents.md).
+Both run the actual role. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
 
 A **Blocked** review gets fixed before opening the PR. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 

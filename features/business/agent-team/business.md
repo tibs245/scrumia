@@ -75,6 +75,25 @@ Which model executes a given *ticket* (as opposed to which model a *role*
 runs as) is a separate policy, keyed on the ticket's scope and risk labels —
 specified in #13, not here.
 
+## Reaching a role requires a restart after install
+
+The same definition serves three ways — delegated subagent, session main agent,
+teammate in an agent team — and `docs/adr/0002-standing-roles.md` treats them as
+interchangeable. They are, with one operational condition that is not optional:
+**a module that ships agents is not usable until Claude Code restarts.** A hot
+reload refreshes skills and leaves the registry of spawnable agent types stale.
+
+This is specified rather than left to the tooling because of how it fails. The
+roles are not degraded, they are unaddressable, and a caller that cannot reach
+its reviewer falls back to a general agent whose verdict reads exactly like the
+role's. One sprint measured the difference on the same five diffs: the
+self-applied reviews returned five approvals and two reservations, the actual
+roles one blocker and nine.
+
+So a review that could not run as its role reports that it did not. A fallback
+that reads as the real thing is worse than no review, because nobody
+compensates for a gate they believe ran.
+
 ## The sprint loop's real constraint
 
 The target was a team preparing sprint N+1 while sprint N's tickets execute.
