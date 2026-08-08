@@ -105,13 +105,13 @@ The remaining skills are reached by name. They run once, or on demand, and don't
 /scrumia-practice-tdd:scrumia-tdd-audit
 ```
 
-Roles are convened by `standup`, or run as a session's main agent:
+Roles are convened by `standup`, asked for in natural language — "ask the tech lead to review PR 17" — or run as a session's main agent:
 
 ```bash
 claude --agent scrumia-teams:scrumia-manager
 ```
 
-They are **not** reachable as delegated subagents today, whatever their definition suggests — `docs/agents.md` records what was measured and what stays open.
+Installing or updating a module that ships agents requires a **restart**: `/reload-plugins` refreshes skills but not the roles, and the failure is silent — see `docs/agents.md`.
 
 ## Composing differently
 

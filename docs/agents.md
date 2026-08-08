@@ -66,10 +66,10 @@ None of them writes ticket state there: it would become wrong within days, and a
 ## Three ways to invoke them
 
 ```bash
-# 1. Delegated subagent — does NOT resolve from a standard session, see below
+# 1. Delegated subagent — the normal mode
 > ask the Tech role to review PR 17
 
-# 2. Session's main agent — the verified way
+# 2. Session's main agent
 claude --agent scrumia-teams:scrumia-manager
 
 # 3. Teammate in an agent team — experimental
@@ -79,9 +79,13 @@ claude --agent scrumia-teams:scrumia-manager
 
 The same definition serves in all three cases. If agent teams stabilize, no file changes — only the way to launch them evolves.
 
-**Only mode 2 is verified.** Measured on 2026-08-08: from a standard session, the Agent tool resolves neither `scrumia-teams:scrumia-manager` nor `scrumia-manager` — it answers *agent type not found*, and no plugin agent appears in its list at all. The roles convened through mode 2 report the opposite from inside their own session: there, the plugin agent types do show up. So resolution depends on the spawn context, and mode 1 — the one this file used to call "the normal mode" — cannot be relied on. Which of the two contexts is wrong is still open: it is [#33](https://github.com/tibs245/scrumia/issues/33)'s AC-1.
+**All three modes work — after a restart.** This is the operational rule the file was missing, and it costs a review when it is not known:
 
-Until it closes, convene a role as a subprocess:
+> Installing or updating a module that ships agents requires **restarting** Claude Code. `/reload-plugins` refreshes skills but not the Agent tool's registry of spawnable types.
+
+The failure is silent, and that is what makes it expensive. The roles are simply not addressable: the Agent tool answers *agent type not found*, a caller falls back to a general agent, and the review reads as though it ran. Measured on 2026-08-08 — before the restart, no plugin agent from any marketplace resolved; after it, all of them do, and the tech role answers as a delegated subagent on its own model. The roles convened as main agents during the outage saw the types perfectly, because each was a freshly started process.
+
+If a role does not resolve, restart first. Should it still not, convene it as a subprocess, which does not depend on the registry:
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-tech \
@@ -90,7 +94,7 @@ claude -p --agent scrumia-teams:scrumia-tech \
 
 Pass the prompt on **stdin**: `--allowedTools` is variadic and swallows a positional prompt, leaving the CLI to complain that no input was given.
 
-This runs the role itself — its own system prompt, model and forbidden tools — which a general agent handed the role's `.md` file does not. Never let that substitution pass unannounced: a review that did not run as the role must say so wherever its verdict is reported.
+Either way it is the role that runs — its own system prompt, model and forbidden tools — which a general agent handed the role's `.md` file is not. Never let that substitution pass unannounced: a review that did not run as the role must say so wherever its verdict is reported.
 
 ## What is deliberately not a role
 
