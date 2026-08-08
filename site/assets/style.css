@@ -672,8 +672,16 @@ footer a:hover { color: var(--accent); }
   from { opacity: 0; transform: translateY(10px) scale(0.985); }
   to   { opacity: 1; transform: none; }
 }
+@keyframes unhide { to { opacity: 1; } }
 
-.js .summon > * { opacity: 0; }
+/* The hiding carries its own expiry. The gate proves a script *can* un-hide, not
+   that it will ever arrive: the HTML can land and the connection drop before
+   motion.js is fetched, and then no timeout inside that file will ever run. So
+   the un-hiding of last resort is in the stylesheet that did the hiding. */
+.js .summon > * {
+  opacity: 0;
+  animation: unhide 0s linear 6s forwards;
+}
 .js .summon.is-in > * {
   animation: summon var(--dur-3) var(--ease-summon) both;
   animation-delay: calc(var(--i, 0) * var(--stagger));
