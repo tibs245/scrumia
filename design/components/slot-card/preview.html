@@ -1,0 +1,72 @@
+<!-- @dsCard group="Diagrams" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>slot-card — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<h1>slot-card</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>Filled and empty, side by side</h2>
+<div class="slots">
+  <div class="slot">
+    <span class="slot-name">tracker</span>
+    <span class="slot-q">Where does state live — tickets, columns, PRs?</span>
+    <span class="slot-a">GitHub Issues and Projects. Nothing stateful in the repo; a hook enforces it.</span>
+    <span class="slot-fill">scrumia-github-project</span>
+  </div>
+  <div class="slot">
+    <span class="slot-name">practices</span>
+    <span class="slot-q">Which cross-cutting practices — per app</span>
+    <span class="slot-a">TDD, SOLID — each with reference, audit and refactor skills.</span>
+    <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
+  </div>
+  <div class="slot slot-empty">
+    <span class="slot-name">— none —</span>
+    <span class="slot-q">And if you leave a slot empty?</span>
+    <span class="slot-a">Nothing gets faked. The agents are told the capability is absent and say so instead of improvising it.</span>
+    <span class="slot-fill">nothing installed</span>
+  </div>
+</div>
+
+<h2>Empty, alone — it still holds its space</h2>
+<div class="slots">
+  <div class="slot slot-empty">
+    <span class="slot-name">discovery</span>
+    <span class="slot-q">How does an idea become scoped work?</span>
+    <span class="slot-a">Not installed here. An idea goes straight to a ticket, without a scoping pass.</span>
+    <span class="slot-fill">nothing installed</span>
+  </div>
+</div>
+
+</body>
+</html>

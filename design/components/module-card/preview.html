@@ -1,0 +1,88 @@
+<!-- @dsCard group="Content" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>module-card — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<h1>module-card</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>A module that fills a slot</h2>
+<div class="modules">
+  <div class="mod">
+    <div class="mod-head">
+      <span class="mod-ico">📋</span>
+      <span class="mod-id">
+        <span class="mod-name">scrumia-github-project</span>
+        <span class="mod-slot">tracker</span>
+      </span>
+    </div>
+    <p class="mod-desc">Issues, sub-issues, Projects columns, branches and PRs. Requires <code>gh</code>.</p>
+    <div class="mod-foot">
+      <span class="pill pill-ok">available</span><span class="pill">5 skills</span><span class="pill">1 hook</span>
+    </div>
+    <code class="mod-cmd">/plugin install scrumia-github-project@scrumia</code>
+  </div>
+
+  <div class="mod">
+    <div class="mod-head">
+      <span class="mod-ico">🧩</span>
+      <span class="mod-id">
+        <span class="mod-name">scrumia-core</span>
+        <span class="mod-slot">kernel</span>
+      </span>
+    </div>
+    <p class="mod-desc">Describes the active composition and writes it into <code>CLAUDE.md</code>. Fills no slot.</p>
+    <div class="mod-foot">
+      <span class="pill pill-ok">available</span><span class="pill">required</span><span class="pill">2 skills</span>
+    </div>
+    <code class="mod-cmd">/plugin install scrumia-core@scrumia</code>
+  </div>
+
+  <div class="mod">
+    <div class="mod-head">
+      <span class="mod-ico">🎨</span>
+      <span class="mod-id">
+        <span class="mod-name">scrumia-design</span>
+        <span class="mod-slot">design</span>
+      </span>
+    </div>
+    <p class="mod-desc">Identity, tokens and components in the repo; a Claude Design project as the review surface.</p>
+    <div class="mod-foot">
+      <span class="pill pill-ok">available</span><span class="pill">4 skills</span><span class="pill">1 agent</span>
+    </div>
+    <code class="mod-cmd">/plugin install scrumia-design@scrumia</code>
+  </div>
+</div>
+
+</body>
+</html>

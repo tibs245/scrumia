@@ -1,0 +1,96 @@
+<!-- @dsCard group="Diagrams" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flow-column — ScrumIA design system</title>
+<!-- The site is the only implementation of these components; a preview that
+     restated their CSS would be a second implementation, and the two would drift. -->
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<h1>flow-column</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>Both variants, in sequence</h2>
+<div class="flowmap">
+  <div class="fm fm-human">
+    <span class="fm-who">HUMAN</span>
+    <span class="fm-title">Brief</span>
+    <span class="fm-out">An idea, a problem. Nothing formatted.</span>
+    <span class="fm-mod">—</span>
+  </div>
+  <div class="fm fm-ai">
+    <span class="fm-who">AI</span>
+    <span class="fm-title">Scoping</span>
+    <span class="fm-out">Challenge, split into features.<br><b>→ issues + specs branch</b></span>
+    <span class="fm-mod">discovery</span>
+  </div>
+  <div class="fm fm-ai">
+    <span class="fm-who">AI</span>
+    <span class="fm-title">Refinement</span>
+    <span class="fm-out">Roles weigh in, sub-issues per context.<br><b>→ Ready for dev</b></span>
+    <span class="fm-mod">tracker + team</span>
+  </div>
+  <div class="fm fm-human">
+    <span class="fm-who">HUMAN</span>
+    <span class="fm-title">Sign-off</span>
+    <span class="fm-out">Only where doubt, criticality or risk warrant it.</span>
+    <span class="fm-mod">—</span>
+  </div>
+</div>
+
+<h2>Human column, alone</h2>
+<div class="flowmap">
+  <div class="fm fm-human">
+    <span class="fm-who">HUMAN</span>
+    <span class="fm-title">Merge</span>
+    <span class="fm-out">Review the PR, test.<br><b>→ Done</b></span>
+    <span class="fm-mod">—</span>
+  </div>
+</div>
+
+<h2>Agent column, alone</h2>
+<div class="flowmap">
+  <div class="fm fm-ai">
+    <span class="fm-who">AI</span>
+    <span class="fm-title">Build</span>
+    <span class="fm-out">One worktree per ticket. Spec, code, tests, review.<br><b>→ PRs</b></span>
+    <span class="fm-mod">team + impl + practices</span>
+  </div>
+</div>
+
+<h2>Its legend</h2>
+<div class="flow-legend">
+  <span><span class="dot dot-human"></span><b>Human</b> — 3 touchpoints</span>
+  <span><span class="dot dot-ai"></span><b>Agents</b> — everything else</span>
+</div>
+
+</body>
+</html>

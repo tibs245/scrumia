@@ -14,9 +14,15 @@
 <meta property="og:description" content="A method and a marketplace of Claude Code plugins to run a project with AI agents: specs, tickets, standing roles, coding practices. Every module can be swapped.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/">
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/theme.js"></script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<script defer src="assets/motion.js"></script>
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -24,7 +30,10 @@
 
 <header class="top">
   <div class="top-inner">
-    <a class="brand" href="index.html">Scrum<span>IA</span></a>
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="assets/mark.svg" alt="" width="18" height="18">
+      Scrum<span>IA</span>
+    </a>
     <nav aria-label="Main">
       <a href="index.html" aria-current="page">Overview</a>
       <a href="index.html#composer">Compose</a>
@@ -43,10 +52,10 @@
 
 <main id="main">
 
-<div class="hero">
+<div class="hero summon">
   <span class="eyebrow">Claude Code plugin marketplace</span>
-  <h1>Compose your AI dev team.</h1>
-  <p class="lead">ScrumIA runs a software project with AI agents — scoping, specs, tickets, code, reviews, PRs — as a set of <strong>Claude Code modules you can swap</strong>. Take the answers that fit your project, replace the rest.</p>
+  <h1>Compose your AI dev team from <em>parts you can swap</em>.</h1>
+  <p class="lead">Scoping, specs, tickets, code, reviews, PRs — every capability is a slot. Fill it with a Claude Code plugin, replace it when the project changes.</p>
 
   <div class="stats" role="group" aria-label="Project numbers">
     <div class="stat"><b>11</b><span>modules</span></div>
@@ -66,7 +75,7 @@
   <h2>One run, end to end</h2>
   <p class="section-intro">The reference composition. Orange steps need a human; blue steps don't.</p>
 
-  <div class="flowmap">
+  <div class="flowmap summon">
     <div class="fm fm-human">
       <span class="fm-who">Human</span>
       <span class="fm-title">Brief</span>
@@ -128,40 +137,57 @@
   <h2>Slots</h2>
   <p class="section-intro">A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
 
-  <div class="slot">
-    <span class="slot-name">specs</span>
-    <span class="slot-q">Where do specs live, in what shape?</span>
-    <span class="slot-a">One directory per feature, files created only when they have content, acceptance criteria written first and turned into tests.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">tracker</span>
-    <span class="slot-q">Where does state live — tickets, columns, PRs?</span>
-    <span class="slot-a">GitHub Issues and Projects. Nothing stateful in the repo; a hook enforces it.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">team</span>
-    <span class="slot-q">Which standing roles, with what scope?</span>
-    <span class="slot-a">Manager, business, tech. Each boundary is a line of refusal. Roles toggle by config.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">discovery</span>
-    <span class="slot-q">How does an idea become scoped work?</span>
-    <span class="slot-a">Challenge, split into features, ship the specs on a branch alongside the issues.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">implementation</span>
-    <span class="slot-q">How is code written — per app</span>
-    <span class="slot-a">One module per stack: Rust, SolidJS. Each covers tests, principles, layout, and what it refuses.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">practices</span>
-    <span class="slot-q">Which cross-cutting practices — per app</span>
-    <span class="slot-a">TDD, SOLID — each with reference, audit and refactor skills. The implementation module situates them for its stack.</span>
-  </div>
-  <div class="slot">
-    <span class="slot-name">design</span>
-    <span class="slot-q">Where does the design system live?</span>
-    <span class="slot-a">Identity, tokens and components as files in the repo; a Claude Design project as the review surface. A value the tokens don't carry is a finding, not an exception.</span>
+  <div class="slots summon">
+    <div class="slot">
+      <span class="slot-name">specs</span>
+      <span class="slot-q">Where do specs live, in what shape?</span>
+      <span class="slot-a">One directory per feature, files created only when they have content, acceptance criteria written first and turned into tests.</span>
+      <span class="slot-fill">scrumia-specs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">tracker</span>
+      <span class="slot-q">Where does state live — tickets, columns, PRs?</span>
+      <span class="slot-a">GitHub Issues and Projects. Nothing stateful in the repo; a hook enforces it.</span>
+      <span class="slot-fill">scrumia-github-project</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">team</span>
+      <span class="slot-q">Which standing roles, with what scope?</span>
+      <span class="slot-a">Manager, business, tech. Each boundary is a line of refusal. Roles toggle by config.</span>
+      <span class="slot-fill">scrumia-teams</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">discovery</span>
+      <span class="slot-q">How does an idea become scoped work?</span>
+      <span class="slot-a">Challenge, split into features, ship the specs on a branch alongside the issues.</span>
+      <span class="slot-fill">scrumia-discovery</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">implementation</span>
+      <span class="slot-q">How is code written — per app</span>
+      <span class="slot-a">One module per stack: Rust, SolidJS. Each covers tests, principles, layout, and what it refuses.</span>
+      <span class="slot-fill">scrumia-impl-rust · scrumia-impl-solidjs</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">practices</span>
+      <span class="slot-q">Which cross-cutting practices — per app</span>
+      <span class="slot-a">TDD, SOLID — each with reference, audit and refactor skills. The implementation module situates them for its stack.</span>
+      <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
+    </div>
+    <div class="slot">
+      <span class="slot-name">design</span>
+      <span class="slot-q">Where does the design system live?</span>
+      <span class="slot-a">Identity, tokens and components as files in the repo; a Claude Design project as the review surface. A value the tokens don't carry is a finding, not an exception.</span>
+      <span class="slot-fill">scrumia-design</span>
+    </div>
+    <!-- The eighth card is not a slot ScrumIA ships: it is the empty state,
+         drawn rather than omitted, because "deliberately empty" is the idea. -->
+    <div class="slot slot-empty">
+      <span class="slot-name">— none —</span>
+      <span class="slot-q">And if you leave a slot empty?</span>
+      <span class="slot-a">Nothing gets faked. The agents are told the capability is absent and say so instead of improvising it — this repo itself runs with discovery empty, on purpose.</span>
+      <span class="slot-fill">nothing installed</span>
+    </div>
   </div>
 </section>
 
