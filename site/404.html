@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page not found — ScrumIA</title>
 <meta name="robots" content="noindex">
+<!-- This page is not built from a template, so it carries the shell by hand.
+     tokens.css was missing here: every var() below it resolved to nothing. -->
+<link rel="stylesheet" href="/scrumia/assets/tokens.css">
 <link rel="stylesheet" href="/scrumia/assets/style.css">
-<script src="/scrumia/assets/theme.js"></script>
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+})();
+</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
 </head>
 <body>
+
+<div class="sky" aria-hidden="true"></div>
 
 <main id="main" style="text-align:center; padding-top:96px;">
   <span class="eyebrow">404</span>
