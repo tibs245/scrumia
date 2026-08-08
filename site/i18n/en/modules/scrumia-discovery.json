@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-discovery — ScrumIA",
+  "meta_description": "scrumia-discovery: the ScrumIA discovery slot — brainstorming and splitting, before a ticket exists.",
+  "og_title": "scrumia-discovery — ScrumIA",
+  "tagline": "Where an idea is questioned until it becomes work someone can execute.",
+  "responsibilities": "<p>Owns the human-led half of the flow: an idea is challenged, scoped, and only then turned into issues carrying a verifiable criterion and a parent feature. Splits what is too large to execute as one ticket before anyone opens a branch.</p>",
+  "refusals": "<p>It does not decide for you while the idea is still soft, and it does not hand over a ticket whose intent it had to guess.</p>",
+  "philosophy": "<p>Assumes a vague brief is far cheaper to fix before ticketing than after. Costs a step an urgent idea will always want to skip — and a project that leaves the slot empty should say so rather than improvise it.</p>"
+}

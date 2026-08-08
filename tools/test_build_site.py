@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""Tests for the module-page family of tools/build_site.py.
+
+Run from anywhere: python3 tools/test_build_site.py
+Exit code 0 when everything passes, 1 otherwise. No dependencies.
+
+The failure modes run against a throwaway fixture tree, not the repo: a guard is
+only proven by a build that actually fails, and the repo's own build must pass.
+"""
+
+import json
+import shutil
+import sys
+import tempfile
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_site as bs  # noqa: E402
+
+REPO = Path(__file__).resolve().parent.parent
+FAILURES: list[str] = []
+
+
+def check(name: str, condition: bool, detail: str = "") -> None:
+    if condition:
+        print(f"  ok   {name}")
+    else:
+        FAILURES.append(f"{name}{': ' + detail if detail else ''}")
+        print(f"  FAIL {name}{': ' + detail if detail else ''}")
+
+
+# --- fixture -----------------------------------------------------------------
+
+STUB_TEMPLATE = """<!doctype html>
+<html lang="{{@lang}}"><head><title>{{title}}</title></head>
+<body><h1>{{@mod_emoji}} {{@mod_name}}</h1>
+<p>{{@mod_slot}} {{@mod_version}}</p>
+<ul>{{@mod_skills}}</ul>
+<code>{{@mod_install}}</code><a href="{{@mod_source}}">src</a>
+<div>{{responsibilities}}</div></body></html>
+"""
+
+
+def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None) -> None:
+    """A miniature site: two plugins, one stub template, one prose file per language."""
+    (root / ".claude-plugin").mkdir(parents=True)
+    (root / ".claude-plugin" / "marketplace.json").write_text(json.dumps({
+        "name": "fixture",
+        "plugins": [{"name": p, "version": "1.0.0", "tags": ["t"]} for p in plugins],
+    }), encoding="utf-8")
+
+    for p in plugins:
+        skill = root / "plugins" / p / "skills" / f"{p}-skill"
+        skill.mkdir(parents=True)
+        (skill / "SKILL.md").write_text("---\nname: x\n---\n", encoding="utf-8")
+
+    site = root / "site"
+    (site / "templates" / "partials").mkdir(parents=True)
+    (site / "templates" / "module.html").write_text(STUB_TEMPLATE, encoding="utf-8")
+    (site / "modules.json").write_text(json.dumps(
+        extra if extra is not None else {p: {"emoji": e, "slot": None} for p, e in zip(plugins, "🅰🅱🅲🅳")}
+    ), encoding="utf-8")
+
+    for lang in ("en", "fr"):
+        d = site / "i18n" / lang
+        (d / "modules").mkdir(parents=True)
+        (d / "common.json").write_text(json.dumps({"mod_no_slot": "none"}), encoding="utf-8")
+        for p in plugins:
+            body = prose if prose is not None else {"title": f"{p} [{lang}]", "responsibilities": "<p>r</p>"}
+            (d / "modules" / f"{p}.json").write_text(json.dumps(body), encoding="utf-8")
+
+
+def run_fixture(root: Path) -> tuple[int, list[str]]:
+    """Point the builder at the fixture and build only the module pages."""
+    bs.ROOT, bs.SITE = root, root / "site"
+    bs.TPL, bs.I18N = bs.SITE / "templates", bs.SITE / "i18n"
+    bs.MARKETPLACE = root / ".claude-plugin" / "marketplace.json"
+    bs.MODULES_DATA = bs.SITE / "modules.json"
+    bs.PAGES = []
+    bs.LANGS = {
+        "en": {"out": bs.SITE, "prefix": "", "root": ""},
+        "fr": {"out": bs.SITE / "fr", "prefix": "fr/", "root": "../"},
+    }
+    bs.ERRORS.clear()
+    code = bs.build()
+    return code, list(bs.ERRORS)
+
+
+def with_fixture(**kwargs) -> tuple[int, list[str], Path]:
+    tmp = Path(tempfile.mkdtemp())
+    make_fixture(tmp, **kwargs)
+    code, errors = run_fixture(tmp)
+    return code, errors, tmp
+
+
+# --- AC-1 --------------------------------------------------------------------
+
+
+def test_ac1_one_page_per_plugin_per_language() -> None:
+    print("AC-1 the pages generate from one template and one fact source")
+    market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+    names = [p["name"] for p in market["plugins"]]
+    check("one template, not one per module", (REPO / "site" / "templates" / "module.html").exists())
+    missing = [f"{lang}/{n}" for n in names
+               for lang, base in (("en", REPO / "site"), ("fr", REPO / "site" / "fr"))
+               if not (base / "modules" / f"{n}.html").exists()]
+    check(f"{len(names) * 2} committed module pages", not missing, f"missing {missing}")
+    for name in names:
+        page = (REPO / "site" / "modules" / f"{name}.html").read_text(encoding="utf-8")
+        check(f"{name} carries the manifest facts",
+              f"/plugin install {name}@scrumia" in page and f"/tree/main/plugins/{name}" in page)
+
+    code, errors, tmp = with_fixture()
+    check("a stub template is enough to build (AC-5)", code == 0, str(errors))
+    check("the stub pages land in both languages",
+          (tmp / "site" / "modules" / "alpha.html").exists() and (tmp / "site" / "fr" / "modules" / "beta.html").exists())
+    shutil.rmtree(tmp)
+
+
+# --- AC-2 --------------------------------------------------------------------
+
+
+def test_ac2_guards() -> None:
+    print("AC-2 a missing string, an orphan file or a plugin without prose fails the build")
+
+    code, errors, tmp = with_fixture()
+    (tmp / "site" / "i18n" / "fr" / "modules" / "beta.json").unlink()
+    bs.ERRORS.clear()
+    code = bs.build()
+    check("a plugin with no prose in one language fails",
+          code == 1 and any("fr/modules/beta.json" in e and "missing" in e for e in bs.ERRORS), str(bs.ERRORS))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture()
+    (tmp / "site" / "i18n" / "en" / "modules" / "ghost.json").write_text("{}", encoding="utf-8")
+    bs.ERRORS.clear()
+    code = bs.build()
+    check("an i18n file naming no plugin fails",
+          code == 1 and any("ghost.json" in e for e in bs.ERRORS), str(bs.ERRORS))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(prose={"title": "t"})  # responsibilities is missing
+    check("a string the template needs and a language lacks fails",
+          code == 1 and any("missing string 'responsibilities'" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+
+# --- AC-3 --------------------------------------------------------------------
+
+
+def test_ac3_one_file_owns_the_emoji() -> None:
+    print("AC-3 exactly one file declares the emoji, and the twelve are unique")
+
+    market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+    data = json.loads((REPO / "site" / "modules.json").read_text(encoding="utf-8"))
+    entries = {k: v for k, v in data.items() if not k.startswith("_")}
+    emojis = [v["emoji"] for v in entries.values()]
+    check("every module declares one", all(emojis) and len(emojis) == len(market["plugins"]), str(len(emojis)))
+    check("no emoji is reused", len(set(emojis)) == len(emojis))
+
+    # Generated HTML is not a source, and the favicon is the site's own mark.
+    sources = [REPO / ".claude-plugin" / "marketplace.json",
+               *(REPO / "site" / "templates").rglob("*.html"),
+               *(REPO / "site" / "i18n").rglob("*.json")]
+    restating = sorted({str(f.relative_to(REPO)) for f in sources
+                        for e in emojis
+                        if e in "\n".join(l for l in f.read_text(encoding="utf-8").splitlines()
+                                          if 'rel="icon"' not in l)})
+    check("no other source file restates one", not restating, str(restating))
+
+    code, errors, tmp = with_fixture(extra={"alpha": {"emoji": "🅰"}, "beta": {"emoji": "🅰"}})
+    check("a reused emoji fails the build",
+          code == 1 and any("reuses the emoji" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(extra={"alpha": {"emoji": "🅰"}})
+    check("a plugin with no entry fails the build",
+          code == 1 and any("no entry for plugin 'beta'" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(extra={"alpha": {"emoji": "🅰"}, "beta": {"emoji": "🅱"}, "ghost": {"emoji": "🅲"}})
+    check("an entry naming no plugin fails the build",
+          code == 1 and any("'ghost' is not a plugin" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+
+# --- AC-4 --------------------------------------------------------------------
+
+
+def test_ac4_sitemap() -> None:
+    print("AC-4 the sitemap covers the generated pages")
+    sitemap = (REPO / "site" / "sitemap.xml").read_text(encoding="utf-8")
+    names = [p["name"] for p in json.loads(
+        (REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))["plugins"]]
+    missing = [u for n in names
+               for u in (f"{bs.SITE_URL}modules/{n}.html", f"{bs.SITE_URL}fr/modules/{n}.html")
+               if u not in sitemap]
+    check("both language URLs per module are listed", not missing, str(missing))
+
+
+def main() -> int:
+    for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
+                 test_ac3_one_file_owns_the_emoji, test_ac4_sitemap):
+        test()
+    print()
+    if FAILURES:
+        print(f"{len(FAILURES)} failure(s)")
+        return 1
+    print("all checks passed")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

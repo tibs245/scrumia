@@ -9,5 +9,16 @@
   "theme_toggle": "Toggle dark mode",
   "footer_tagline": "ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.",
   "footer_repo": "Repo",
-  "footer_decisions": "Decisions"
+  "footer_decisions": "Decisions",
+  "mod_back": "← All modules",
+  "mod_h_slot": "slot",
+  "mod_no_slot": "none",
+  "mod_h_version": "version",
+  "mod_h_responsibilities": "What it is responsible for",
+  "mod_h_refusals": "What it refuses",
+  "mod_h_philosophy": "The assumption it makes",
+  "mod_h_skills": "Its skills",
+  "mod_h_install": "Install it",
+  "mod_h_source": "Read the source on GitHub",
+  "mod_h_tags": "Tags"
 }

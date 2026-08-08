@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-teams — ScrumIA",
+  "meta_description": "scrumia-teams: the ScrumIA team slot — standing roles, refusal lines, sprints, and the model policy.",
+  "og_title": "scrumia-teams — ScrumIA",
+  "tagline": "Standing roles, and the policy that decides which model runs a ticket.",
+  "responsibilities": "<p>Owns who is in the room: the manager, the business and the tech roles, each permanent through project memory and board state rather than a live process. Owns the sprint too — a batch of tickets consumed as dynamic workflows, one isolated worktree each — and the scope × risk matrix that answers which model a ticket runs on.</p>",
+  "refusals": "<p>Each role is defined by what it declines. The manager owns no business rule, the business role owns no architecture, the tech role owns no priority — without those lines the three collapse into one generalist and the split stops paying for itself.</p>",
+  "philosophy": "<p>Assumes a split that refuses is worth more than a generalist that agrees. Costs a configuration to keep honest: three is not a magic number, and turning a role off is a documented trade-off rather than a downgrade.</p>"
+}

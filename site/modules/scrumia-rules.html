@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-rules — ScrumIA</title>
+<meta name="description" content="scrumia-rules: the rules-hierarchy format for ScrumIA — index, guides, decisions, loaded on demand.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/modules/scrumia-rules.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-rules.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-rules.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-rules.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-rules — ScrumIA">
+<meta property="og:description" content="scrumia-rules: the rules-hierarchy format for ScrumIA — index, guides, decisions, loaded on demand.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/modules/scrumia-rules.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Main">
+      <a href="../index.html">Overview</a>
+      <a href="../index.html#composer">Compose</a>
+      <a href="../workflow.html">Workflow</a>
+      <a href="../reference.html">Reference</a>
+      <a href="../about.html">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="scrumia-rules.html" aria-current="true" lang="en">EN</a>
+        <a href="../fr/modules/scrumia-rules.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← All modules</a></p>
+
+<h1><span class="mod-ico">⚖️</span> <code>scrumia-rules</code></h1>
+<p class="section-intro">The rules-hierarchy format itself: index, guides, decisions.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · none</span>
+  <span class="pill">version · 0.4.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>What it is responsible for</h2>
+  <p>Defines how a body of rules is laid out so an agent loads only the guide a task routes to: an index read first and always, guides opened on demand, decisions opened only when a rule is challenged. Scaffolds a project's own section and evolves a rule without losing why it existed.</p>
+</section>
+
+<section id="refusals">
+  <h2>What it refuses</h2>
+  <p>It is not a place to store rules. It owns the shape, never the content, and it declines to arbitrate a rule that belongs to an implementation module.</p>
+</section>
+
+<section id="philosophy">
+  <h2>The assumption it makes</h2>
+  <p>Assumes a body of rules grows past what one file can carry. Costs one more layer to author correctly — below three distinct concerns, a section is pure overhead.</p>
+</section>
+
+<section id="skills">
+  <h2>Its skills</h2>
+  <ul class="mod-skills"><li><code>scrumia-rules</code></li><li><code>scrumia-rules-setup</code></li><li><code>scrumia-rules-update</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Tags</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>kernel</li> <li>rules</li> <li>decisions</li></ul>
+</section>
+
+<section id="install">
+  <h2>Install it</h2>
+  <code class="mod-cmd">/plugin install scrumia-rules@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-rules">Read the source on GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="../about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

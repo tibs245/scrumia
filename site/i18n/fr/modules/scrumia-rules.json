@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-rules — ScrumIA",
+  "meta_description": "scrumia-rules : le format de hiérarchie des règles de ScrumIA — index, guides, décisions, chargés à la demande.",
+  "og_title": "scrumia-rules — ScrumIA",
+  "tagline": "Le format de hiérarchie des règles lui-même : index, guides, décisions.",
+  "responsibilities": "<p>Définit la disposition d'un corpus de règles pour qu'un agent ne charge que le guide vers lequel une tâche est routée : un index lu en premier et toujours, des guides ouverts à la demande, des décisions ouvertes seulement quand une règle est contestée. Amorce la section propre d'un projet et fait évoluer une règle sans perdre sa raison d'être.</p>",
+  "refusals": "<p>Ce n'est pas un endroit où ranger des règles. Il possède la forme, jamais le contenu, et refuse d'arbitrer une règle qui appartient à un module d'implémentation.</p>",
+  "philosophy": "<p>Présume qu'un corpus de règles dépasse ce qu'un fichier unique peut porter. Coûte une couche de plus à bien concevoir — en dessous de trois préoccupations distinctes, une section est un surcoût pur.</p>"
+}

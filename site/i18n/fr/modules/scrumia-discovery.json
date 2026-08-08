@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-discovery — ScrumIA",
+  "meta_description": "scrumia-discovery : le slot discovery de ScrumIA — cadrage et découpage, avant qu'un ticket existe.",
+  "og_title": "scrumia-discovery — ScrumIA",
+  "tagline": "Là où une idée est questionnée jusqu'à devenir un travail exécutable.",
+  "responsibilities": "<p>Possède la moitié menée par l'humain : une idée est contestée, cadrée, et seulement ensuite transformée en issues portant un critère vérifiable et une feature parente. Découpe ce qui est trop gros pour un seul ticket avant que quiconque ouvre une branche.</p>",
+  "refusals": "<p>Il ne décide pas à votre place tant que l'idée est molle, et ne livre pas un ticket dont il aurait dû deviner l'intention.</p>",
+  "philosophy": "<p>Présume qu'un brief vague coûte bien moins cher à corriger avant le ticket qu'après. Coûte une étape qu'une idée urgente voudra toujours sauter — et un projet qui laisse le slot vide devrait le dire plutôt que l'improviser.</p>"
+}

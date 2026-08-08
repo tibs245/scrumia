@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-design — ScrumIA",
+  "meta_description": "scrumia-design : le slot design de ScrumIA — identité, tokens et composants dans le dépôt, plus le rôle designer.",
+  "og_title": "scrumia-design — ScrumIA",
+  "tagline": "Identité, tokens et composants dans le dépôt — et le rôle qui les garde.",
+  "responsibilities": "<p>Possède ce que l'utilisateur voit vraiment : l'identité écrite, le vocabulaire de tokens, un répertoire par composant, un audit qui signale la dérive et la fadeur au même niveau, et une synchronisation qui publie un composant vers un projet Claude Design un par un. Livre le rôle permanent <code>designer</code> — le seul rôle apporté depuis l'extérieur du slot <code>team</code>.</p>",
+  "refusals": "<p>Une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Le projet distant est une surface de revue, jamais la source de vérité, et un remplacement en bloc est refusé.</p>",
+  "philosophy": "<p>Présume que le design system appartient au dépôt, versionné aux côtés de ce qui le consomme. Coûte de la discipline sur chaque valeur — et un rôle sans design system à garder ne jugerait qu'au goût.</p>"
+}

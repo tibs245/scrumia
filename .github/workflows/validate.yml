@@ -19,6 +19,9 @@ jobs:
           python-version: "3.12"
       - name: Validate manifests, skills, hooks and links
         run: python3 tools/validate.py
+      - name: Test the site builder's guards
+        run: python3 tools/test_build_site.py
+
       - name: Rebuild the site and check the committed output is current
         run: |
           python3 tools/build_site.py

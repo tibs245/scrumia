@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-core — ScrumIA</title>
+<meta name="description" content="scrumia-core : le noyau de ScrumIA — il décrit la composition active et ne remplit aucun slot.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-core.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-core.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-core.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-core.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-core — ScrumIA">
+<meta property="og:description" content="scrumia-core : le noyau de ScrumIA — il décrit la composition active et ne remplit aucun slot.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-core.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="../../modules/scrumia-core.html" lang="en">EN</a>
+        <a href="scrumia-core.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">🧩</span> <code>scrumia-core</code></h1>
+<p class="section-intro">Le noyau. Il décrit la composition et ne fait rien d'autre.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · aucun</span>
+  <span class="pill">version · 0.4.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Porte la composition active du projet : quel module remplit quel slot, où vit la configuration, et les conventions que tous les autres modules supposent. <code>scrumia-init</code> l'installe ou la vérifie ; <code>scrumia-compose</code> l'inspecte, la modifie et la diagnostique.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Il ne décide rien qu'un module devrait décider. Il ne remplit aucun slot, ne livre aucun déroulé propre, et ne répond jamais à une question qu'un module branché est là pour traiter.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume qu'un projet n'est lisible pour un agent que si sa composition est écrite plutôt que devinée. Coûte un fichier de plus à tenir à jour — une composition périmée est pire qu'aucune.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>scrumia-compose</code></li><li><code>scrumia-init</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>kernel</li> <li>composition</li> <li>configuration</li></ul>
+</section>
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-core@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-core">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

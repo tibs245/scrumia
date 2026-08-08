@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-teams — ScrumIA",
+  "meta_description": "scrumia-teams : le slot team de ScrumIA — rôles permanents, lignes de refus, sprints et politique de modèle.",
+  "og_title": "scrumia-teams — ScrumIA",
+  "tagline": "Des rôles permanents, et la politique qui décide sur quel modèle tourne un ticket.",
+  "responsibilities": "<p>Possède qui est dans la pièce : les rôles manager, métier et technique, permanents par la mémoire du projet et l'état du tableau plutôt que par un processus vivant. Possède aussi le sprint — un lot de tickets consommés comme des déroulés dynamiques, un worktree isolé chacun — et la matrice portée × risque qui répond sur quel modèle tourne un ticket.</p>",
+  "refusals": "<p>Chaque rôle se définit par ce qu'il décline. Le manager ne possède aucune règle métier, le rôle métier aucune architecture, le rôle technique aucune priorité — sans ces lignes, les trois s'effondrent en un généraliste et la division cesse de s'auto-financer.</p>",
+  "philosophy": "<p>Présume qu'une division qui refuse vaut mieux qu'un généraliste qui acquiesce. Coûte une configuration à tenir honnête : trois n'est pas un nombre magique, et éteindre un rôle est un compromis documenté, pas une régression.</p>"
+}

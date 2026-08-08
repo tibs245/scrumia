@@ -6,7 +6,16 @@
     site/i18n/<lang>/common.json    chrome strings (nav, footer, theme)
     site/i18n/<lang>/<page>.json    page strings
 
-Output: site/<page>.html (en), site/fr/<page>.html (fr), plus sitemap.xml.
+One module page per marketplace plugin is generated on top of that:
+
+    .claude-plugin/marketplace.json     the enumerator and the fact source
+    plugins/<name>/skills/*/SKILL.md    the skill list, same
+    site/modules.json                   the language-neutral facts the manifest has no field for
+    site/templates/module.html          the structure, written once for all of them
+    site/i18n/<lang>/modules/<name>.json  the prose, one file per module per language
+
+Output: site/<page>.html (en), site/fr/<page>.html (fr), site/modules/<name>.html,
+site/fr/modules/<name>.html, plus sitemap.xml.
 A key missing in any language fails the build — that is the anti-divergence guard.
 
 Run from anywhere: python3 tools/build_site.py
@@ -22,6 +31,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 TPL = SITE / "templates"
 I18N = SITE / "i18n"
+MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
+MODULES_DATA = SITE / "modules.json"
+REPO_URL = "https://github.com/tibs245/scrumia"
 SITE_URL = "https://tibs245.github.io/scrumia/"
 PAGES = ["index", "workflow", "reference", "about"]
 LANGS = {
@@ -39,14 +51,19 @@ def url_for(lang: str, page: str) -> str:
 
 
 def specials(lang: str, page: str) -> dict[str, str]:
+    # `page` is a path relative to the language root, so a nested page has to
+    # climb back out of its directory before any relative link resolves.
+    up = "../" * page.count("/")
+    leaf = page.rsplit("/", 1)[-1]
     sp = {
         "@lang": lang,
-        "@root": LANGS[lang]["root"],
+        "@root": up + LANGS[lang]["root"],
+        "@lroot": up,
         "@canonical": url_for(lang, page),
         "@url_en": url_for("en", page),
         "@url_fr": url_for("fr", page),
-        "@to_en": (page + ".html") if lang == "en" else "../" + page + ".html",
-        "@to_fr": ("fr/" + page + ".html") if lang == "en" else page + ".html",
+        "@to_en": (leaf + ".html") if lang == "en" else up + "../" + page + ".html",
+        "@to_fr": (up + "fr/" + page + ".html") if lang == "en" else leaf + ".html",
         "@en_current": ' aria-current="true"' if lang == "en" else "",
         "@fr_current": ' aria-current="true"' if lang == "fr" else "",
     }
@@ -104,29 +121,146 @@ def render(template: str, strings: dict[str, str], sp: dict[str, str], origin: s
     return TOKEN.sub(substitute, template)
 
 
+def skill_names(plugin: str) -> list[str]:
+    return sorted(p.parent.name for p in (ROOT / "plugins" / plugin).glob("skills/*/SKILL.md"))
+
+
+def load_modules() -> list[dict]:
+    """Enumerate the marketplace's plugins and attach the facts a page needs.
+
+    The manifest is the enumerator: a plugin absent from it has no page, and a
+    page has no fact the manifest doesn't carry — except the two the schema has
+    no field for, which site/modules.json owns alone.
+    """
+    try:
+        market = json.loads(MARKETPLACE.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        ERRORS.append(f"{MARKETPLACE.relative_to(ROOT)}: unreadable — {e}")
+        return []
+    try:
+        extra = json.loads(MODULES_DATA.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        ERRORS.append(f"{MODULES_DATA.relative_to(ROOT)}: unreadable — {e}")
+        return []
+
+    # JSON has no comments: an underscore key is how the file documents itself.
+    extra = {k: v for k, v in extra.items() if not k.startswith("_")}
+    entries = [p for p in market.get("plugins", []) if p.get("name")]
+    named = {p["name"] for p in entries}
+    rel = MODULES_DATA.relative_to(ROOT)
+    for name in sorted(named - extra.keys()):
+        ERRORS.append(f"{rel}: no entry for plugin '{name}'")
+    for name in sorted(extra.keys() - named):
+        ERRORS.append(f"{rel}: entry '{name}' is not a plugin of the marketplace")
+
+    seen: dict[str, str] = {}
+    modules = []
+    for entry in entries:
+        name = entry["name"]
+        data = extra.get(name)
+        if not isinstance(data, dict):
+            if name in extra:
+                ERRORS.append(f"{rel}: '{name}' is not an object")
+            continue
+        emoji = data.get("emoji")
+        if not emoji:
+            ERRORS.append(f"{rel}: '{name}' declares no emoji")
+        elif emoji in seen:
+            ERRORS.append(f"{rel}: '{name}' reuses the emoji of '{seen[emoji]}'")
+        else:
+            seen[emoji] = name
+        skills = skill_names(name)
+        if not skills:
+            ERRORS.append(f"plugins/{name}: no skills/*/SKILL.md to list")
+        modules.append({
+            "name": name,
+            "emoji": emoji or "",
+            "slot": data.get("slot") or "",
+            "version": entry.get("version", ""),
+            "tags": entry.get("tags", []),
+            "skills": skills,
+        })
+    return modules
+
+
+def module_specials(module: dict, labels: dict[str, str]) -> dict[str, str]:
+    """Manifest facts, injected as specials so no page can restate them by hand.
+
+    An empty slot is a stated fact, not a blank — and the only one of these that
+    needs a word rather than a slug, hence the chrome string.
+    """
+    if module["slot"]:
+        slot = f"<code>{module['slot']}</code>"
+    else:
+        slot = labels.get("mod_no_slot", "")
+        if "mod_no_slot" not in labels:
+            ERRORS.append(f"common.json: 'mod_no_slot' is needed by '{module['name']}', which fills none")
+    return {
+        "@mod_name": module["name"],
+        "@mod_emoji": module["emoji"],
+        "@mod_slot": slot,
+        "@mod_version": module["version"],
+        "@mod_tags": " ".join(f"<li>{t}</li>" for t in module["tags"]),
+        "@mod_skills": "".join(f"<li><code>{s}</code></li>" for s in module["skills"]),
+        "@mod_install": f"/plugin install {module['name']}@scrumia",
+        "@mod_source": f"{REPO_URL}/tree/main/plugins/{module['name']}",
+    }
+
+
+def load_common(lang: str) -> dict[str, str]:
+    """Chrome strings, read outside the render path; load_strings reports a broken file."""
+    try:
+        return json.loads((I18N / lang / "common.json").read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def check_orphan_prose(names: set[str]) -> None:
+    """An i18n module file naming no plugin is a page nobody can reach."""
+    for lang in LANGS:
+        for path in sorted((I18N / lang / "modules").glob("*.json")):
+            if path.stem not in names:
+                ERRORS.append(f"{path.relative_to(ROOT)}: names no plugin of the marketplace")
+
+
+def render_page(lang: str, cfg: dict, page: str, tpl_path: Path, extra: dict[str, str] | None = None) -> None:
+    if not tpl_path.exists():
+        ERRORS.append(f"{tpl_path.relative_to(ROOT)}: missing template")
+        return
+    strings = load_strings(lang, page)
+    used: set[str] = set()
+    origin = f"{page}.html [{lang}]"
+    sp = specials(lang, page)
+    sp.update(extra or {})
+    html = render(tpl_path.read_text(encoding="utf-8"), strings, sp, origin, used)
+    if "{{" in html:
+        ERRORS.append(f"{origin}: unresolved '{{{{' left in output")
+    page_json = I18N / lang / f"{page}.json"
+    # Chrome keys are shared: only warn about unused page-level keys.
+    page_keys = set(json.loads(page_json.read_text(encoding="utf-8")).keys()) if page_json.exists() else set()
+    for key in sorted({k for k in strings if k not in used} & page_keys):
+        print(f"warning: {origin}: unused string '{key}'")
+    out = cfg["out"] / f"{page}.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+
+
 def build() -> int:
+    modules = load_modules()
+    check_orphan_prose({m["name"] for m in modules})
+    emoji_specials = {f"@emoji_{m['name']}": m["emoji"] for m in modules}
+    module_pages = [f"modules/{m['name']}" for m in modules]
+
     for lang, cfg in LANGS.items():
         cfg["out"].mkdir(parents=True, exist_ok=True)
+        labels = load_common(lang)
         for page in PAGES:
-            tpl_path = TPL / f"{page}.html"
-            if not tpl_path.exists():
-                ERRORS.append(f"{tpl_path.relative_to(ROOT)}: missing template")
-                continue
-            strings = load_strings(lang, page)
-            used: set[str] = set()
-            origin = f"{page}.html [{lang}]"
-            html = render(tpl_path.read_text(encoding="utf-8"), strings, specials(lang, page), origin, used)
-            if "{{" in html:
-                ERRORS.append(f"{origin}: unresolved '{{{{' left in output")
-            unused = {k for k in strings if k not in used}
-            # Chrome keys are shared: only warn about unused page-level keys.
-            page_keys = set(json.loads((I18N / lang / f"{page}.json").read_text(encoding="utf-8")).keys()) \
-                if (I18N / lang / f"{page}.json").exists() else set()
-            for key in sorted(unused & page_keys):
-                print(f"warning: {origin}: unused string '{key}'")
-            (cfg["out"] / f"{page}.html").write_text(html, encoding="utf-8")
+            render_page(lang, cfg, page, TPL / f"{page}.html", emoji_specials)
+        for module in modules:
+            render_page(lang, cfg, f"modules/{module['name']}", TPL / "module.html",
+                        module_specials(module, labels))
 
-    urls = [url_for(lang, page) for page in PAGES for lang in LANGS]
+    urls = [url_for(lang, page) for page in PAGES + module_pages for lang in LANGS]
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',
                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
@@ -139,8 +273,8 @@ def build() -> int:
             print(f"error: {e}")
         print(f"\nbuild failed: {len(ERRORS)} error(s)")
         return 1
-    pages = len(PAGES) * len(LANGS)
-    print(f"built {pages} pages + sitemap.xml")
+    pages = (len(PAGES) + len(modules)) * len(LANGS)
+    print(f"built {pages} pages ({len(modules) * len(LANGS)} module pages) + sitemap.xml")
     return 0
 
 

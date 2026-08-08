@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-impl-rust — ScrumIA</title>
+<meta name="description" content="scrumia-impl-rust: the ScrumIA implementation slot for Rust — unrepresentable invalid states, typed errors.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/modules/scrumia-impl-rust.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-impl-rust.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-impl-rust.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-impl-rust.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-impl-rust — ScrumIA">
+<meta property="og:description" content="scrumia-impl-rust: the ScrumIA implementation slot for Rust — unrepresentable invalid states, typed errors.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/modules/scrumia-impl-rust.html">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/theme.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">Scrum<span>IA</span></a>
+    <nav aria-label="Main">
+      <a href="../index.html">Overview</a>
+      <a href="../index.html#composer">Compose</a>
+      <a href="../workflow.html">Workflow</a>
+      <a href="../reference.html">Reference</a>
+      <a href="../about.html">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="lang">
+        <a href="scrumia-impl-rust.html" aria-current="true" lang="en">EN</a>
+        <a href="../fr/modules/scrumia-impl-rust.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← All modules</a></p>
+
+<h1><span class="mod-ico">🦀</span> <code>scrumia-impl-rust</code></h1>
+<p class="section-intro">How Rust gets written here — one app at a time.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · <code>implementation</code></span>
+  <span class="pill">version · 0.4.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>What it is responsible for</h2>
+  <p>Owns the <em>how</em> for a Rust app: invalid states made unrepresentable, <code>Result</code> at every boundary, errors typed per layer, one test per invariant, and a file structure the agent follows instead of inventing. Ships an audit skill that measures the gap rather than asserting it.</p>
+</section>
+
+<section id="refusals">
+  <h2>What it refuses</h2>
+  <p>No <code>unwrap()</code> in production code, no clone that exists only to appease the borrow checker, no trait with a single implementer.</p>
+</section>
+
+<section id="philosophy">
+  <h2>The assumption it makes</h2>
+  <p>Assumes the type system is where correctness is cheapest to buy. Costs friction at compile time, and a design pass before the first line that a looser language would let you defer.</p>
+</section>
+
+<section id="skills">
+  <h2>Its skills</h2>
+  <ul class="mod-skills"><li><code>scrumia-rust</code></li><li><code>scrumia-rust-audit</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Tags</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>implementation</li> <li>rust</li> <li>backend</li></ul>
+</section>
+
+<section id="install">
+  <h2>Install it</h2>
+  <code class="mod-cmd">/plugin install scrumia-impl-rust@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-impl-rust">Read the source on GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="../about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
