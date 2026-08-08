@@ -36,6 +36,14 @@ These are not hypotheticals. Each was found by running these commands against a 
 
 Filter *values*, by contrast, are case-insensitive: `-status:DONE` and `-status:Done` return the same 57 items. The asymmetry is real — the filter syntax forgives, the JSON does not.
 
+**4. A card added to a board has no Status at all.** `gh issue create --project "<title>"` and `gh project item-add` both put the card on the board and leave its Status empty — not `Backlog`, empty. It shows up in no column, and `read` groups it under `(no status)`. So the first column is not a default anything lands in: it has to be set, once, per card.
+
+```bash
+board.sh move <n> Backlog     # right after creating the issue
+```
+
+This is why `board.sh read` reports `(no status)` as its own group rather than folding those cards into the first column — a card nobody placed is a fact worth seeing, not one to paper over.
+
 ## Addressing beats enumerating
 
 To move a card you need its `item-id`, which is not the issue number. The obvious way to get it is to list the board and search for the issue — which reintroduces trap 1 for every single move, and fails on any ticket past the limit.

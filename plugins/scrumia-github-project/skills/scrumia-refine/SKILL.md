@@ -24,6 +24,8 @@ A ticket that doesn't meet all four stays in the backlog. Moving it forward anyw
 
 `gh issue view <n>`. Look for what the ticket wants to achieve, not how to do it. If the intent itself is vague, the ticket belongs to scoping: send it back to the scoping module rather than guessing.
 
+Don't assume the card starts in `Backlog`. A card added to a board arrives with **no Status** — `gh issue create --project` does not place it in the first column, it places it in none. If `board.sh find <n>` shows a card with no status, set it (`board.sh move <n> Backlog`) before refining, so the transition at Step 7 moves it from a real state rather than from nothing.
+
 **If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. Refinement starts by reading the ticket — without it there's nothing to refine, so stop here rather than guess the intent from memory.
 
 ## Step 2 — Check against the specs
