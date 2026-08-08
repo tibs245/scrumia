@@ -4,7 +4,7 @@ Reverse-chronological. Short. The reasoning is in the issues, not here.
 
 ## 2026-08-08 — One word for a question: "slot", never "area"
 - Issue: #36
-- PR: (this one)
+- PR: #81
 - Breaking: no
 
 ## 2026-08-08 — The `design` slot is filled, and a module may ship the role guarding its slot
