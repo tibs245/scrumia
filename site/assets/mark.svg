@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="ScrumIA">
   <!-- Three slots on the navy ground: two filled, one deliberately empty.
-       The outlined slot is the argument, not a gap in the drawing. -->
+       The outlined slot is the argument, not a gap in the drawing.
+       The three hexes below are the dark theme's token values, frozen on
+       purpose (#76): this mark is a lockup, not a themed graphic, and does
+       not repaint with light-dark(). Read design/components/mark/spec.md
+       before touching a colour here. -->
   <rect width="32" height="32" rx="7" fill="#000B1C"/>
   <rect x="6" y="9" width="5" height="14" rx="1.5" fill="#3B7CAD"/>
   <rect x="13.5" y="9" width="5" height="14" rx="1.5" fill="#73E3FF"/>
