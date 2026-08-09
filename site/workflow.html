@@ -222,20 +222,18 @@ Human     │ review PR, test → Done</code></pre>
       <tbody>
         <tr><td><code>guided</code></td><td>Each ticket's scoping <em>and</em> each PR</td><td>Starting out, while calibrating</td></tr>
         <tr><td><code>assisted</code></td><td>PRs only</td><td>The intended cruising mode</td></tr>
-        <tr><td><code>autonomous</code></td><td>PRs, minus allow-listed categories</td><td>Once trust is established</td></tr>
+        <tr><td><code>autonomous</code></td><td>PRs outside what <code>auto_merge</code> covers</td><td>Once trust is established</td></tr>
       </tbody>
     </table>
   </div>
 
 <pre><code>autonomy:
   level: autonomous
-  auto_merge:
-    - docs-only          <span class="c"># nothing outside docs/ and *.md</span>
-    - dependency-patch   <span class="c"># patch bump, green CI</span></code></pre>
+  auto_merge: docs-only   <span class="c"># a PR touching documentation and nothing else</span></code></pre>
 
   <div class="note note-human">
-    <span class="note-title">Refactoring is left off by default</span>
-    <p>"Refactor with no behaviour change" can't be decided automatically — it's exactly when an agent believes it changed nothing that it changed something. Nothing stops you adding it on a given project; it just becomes a deliberate choice, written in a versioned file.</p>
+    <span class="note-title">One scalar, not a whitelist</span>
+    <p><code>auto_merge</code> is a single setting for the whole project, not a per-category list: <code>none</code> (nothing merges unattended, the default), <code>docs-only</code> (a PR touching documentation and nothing else), or <code>all</code>.</p>
   </div>
 </section>
 
