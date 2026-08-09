@@ -217,6 +217,12 @@ def module_specials(module: dict, labels: dict[str, str]) -> dict[str, str]:
     }
 
 
+def module_link_specials(modules: list[dict]) -> dict[str, str]:
+    """One `@modlink_<name>` per module — the URL a card links to, computed once
+    per module name rather than hand-typed per card in the template (#70)."""
+    return {f"@modlink_{m['name']}": f"modules/{m['name']}.html" for m in modules}
+
+
 def load_common(lang: str) -> dict[str, str]:
     """Chrome strings, read outside the render path; load_strings reports a broken file."""
     try:
@@ -280,13 +286,14 @@ def build() -> int:
     modules = load_modules()
     check_orphan_prose({m["name"] for m in modules})
     emoji_specials = {f"@emoji_{m['name']}": m["emoji"] for m in modules}
+    link_specials = module_link_specials(modules)
     module_pages = [f"modules/{m['name']}" for m in modules]
 
     for lang, cfg in LANGS.items():
         cfg["out"].mkdir(parents=True, exist_ok=True)
         labels = load_common(lang)
         for page in PAGES:
-            render_page(lang, cfg, page, TPL / f"{page}.html", emoji_specials)
+            render_page(lang, cfg, page, TPL / f"{page}.html", {**emoji_specials, **link_specials})
         for module in modules:
             render_page(lang, cfg, f"modules/{module['name']}", TPL / "module.html",
                         module_specials(module, labels))

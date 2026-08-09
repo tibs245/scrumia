@@ -50,3 +50,15 @@ else, which is what makes this feature independent of the design work.
 `marketplace.json` and the skills tree. Every fact placed inside an HTML tag or
 attribute is HTML-escaped before interpolation, the same way a template engine would
 escape it by default — regardless of how trustworthy today's fixed set of entries is.
+
+## AC-8 — every module is reachable from the site's navigation
+
+Each of the twelve module cards in the index page's `#modules` section, in both
+languages, links to its own `modules/<name>.html`. A reader lands on a module page
+without typing a URL — the sitemap listing it (AC-4) is not, on its own, a way in.
+
+## AC-9 — the link is generated, not hand-written
+
+The href each card carries comes from a special the builder computes from the same
+enumeration as `@emoji_<name>` — one function producing a URL per module name, not
+twelve literal `href="modules/…"` strings typed into the template.

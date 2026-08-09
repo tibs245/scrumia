@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — The index's module cards link to their module pages
+- Issue: #70
+- PR: TBD
+- Breaking: no
+
 ## 2026-08-09 — Unreadable page JSON reported not raised, manifest facts escaped in markup
 - Issue: #71
 - PR: TBD

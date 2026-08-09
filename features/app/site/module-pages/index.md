@@ -42,3 +42,4 @@ not this feature's — the template here is deliberately a stub. No `api-contrac
 - #58 — French copy pass over the redesigned site
 - #70 — Nothing links to the module pages: they exist only in the sitemap
 - #71 — An unreadable page JSON tracebacks, and manifest facts reach the HTML unescaped
+- #171 — `reference.html`'s module sections don't link to their module pages
