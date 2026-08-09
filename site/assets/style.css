@@ -322,6 +322,11 @@ section > h2::before {
   display: grid; place-items: center; margin: 0;
   width: clamp(160px, 20vw, 240px); aspect-ratio: 1;
 }
+/* The ring is lit from load, exempted from the summon fade every other direct
+   child of `.hero` gets: an empty slot has to read as already there and
+   waiting, not as a gap that later fills in. Only Hop's own assembly inside it
+   — `.hop-arrive`, below — is the thing that arrives; the ring never does. */
+.js .hero-figure { opacity: 1 !important; animation: none !important; }
 /* The ring is the only closed shape in the hero, so Hop reads as a body at a
    distance instead of a sticker dropped on a dark background. */
 .hero-figure::before {
@@ -810,8 +815,11 @@ footer a:hover { color: var(--accent); }
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
 
-/* The page itself is a summoned thing: eyebrow, claim, lead, next step, Hop,
-   numbers — in DOM order, which is also arrival order. */
+/* The page itself is a summoned thing: eyebrow, claim, lead, next step,
+   numbers — in DOM order, which is also arrival order. nth-child(5) (the
+   figure) still gets an --i, but the figure itself is exempted from the fade
+   above (see .hero-figure): the ring is lit before anything is summoned, and
+   only Hop's own assembly plays inside it, on its own gate. */
 .js .hero.is-in > *:nth-child(2) { --i: 1; }
 .js .hero.is-in > *:nth-child(3) { --i: 2; }
 .js .hero.is-in > *:nth-child(4) { --i: 3; }
