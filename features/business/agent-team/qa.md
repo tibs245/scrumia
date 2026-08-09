@@ -20,6 +20,15 @@ When the manager routes it
 Then it delegates the question to the tech role rather than answering it itself
 ```
 
+### AC-15 — Convening the team brings the roles up without starting a sprint
+
+```gherkin
+Given a project whose team slot is filled and whose roles are enabled
+When a human asks to start the team
+Then the enabled roles are convened and each states what it owns
+And no sprint starts and no card moves
+```
+
 ## Edge cases
 
 ### AC-3 — Two roles disagree
@@ -107,6 +116,16 @@ Given a module providing standing roles has just been installed or updated
 When the roles are addressed without restarting Claude Code
 Then they do not resolve — a hot reload refreshes skills but not agent types —
   and the answer names the restart rather than falling back silently
+```
+
+### AC-16 — A role is declared but its module is not installed
+
+```gherkin
+Given the composition declares a role as enabled: true whose module is not
+  installed
+When the team is convened
+Then that role is reported as a gap rather than silently convened as part of
+  a smaller roster
 ```
 
 ## Out of scope

@@ -2,7 +2,9 @@
 
 Vocabulary: **role** (manager, business, tech, and designer where the `design`
 slot is filled), **activation trigger** (what
-brings a role into a ticket), **escalation** (what always reaches the human,
+brings a role into a ticket), **convening** (bringing the enabled roles up
+outside a ticket so each can state what it owns, distinct from starting a
+sprint), **escalation** (what always reaches the human,
 independent of configuration), **arbitration** (the manager surfacing a
 disagreement between the other two to the human, with its own recommendation,
 without settling it itself), **verdict** (a role's explicit answer:
@@ -31,6 +33,24 @@ implementation quality directly.
 
 The label conditions who is asked at entry; ADR-0006 also holds that the diff's
 actual scope conditions who reviews at exit, independent of the label.
+
+## Convening the team
+
+Being reached precedes being activated: a role can be brought up to state what
+it owns before any ticket assigns it a trigger. Convening and executing a
+sprint are distinct entry points. A request to start the team brings the
+enabled roles up, each reports what it owns and its read of the current
+state, and the floor returns to the human — it never starts a sprint, moves a
+card, or refines a ticket. Launching a sprint stays a separate, later, human
+decision, taken with a batch of tickets in front of them.
+
+Convening checks that each enabled role's module is **installed**, not merely
+declared. A role carrying `enabled: true` in `settings.team.roles` whose
+module is absent is the worst of the three states a role can be in: the
+composition claims the reviewer exists and nothing reaches it. Convening
+reports that gap rather than silently bringing up a smaller roster — a
+partial team convened in silence would let a project believe it has a
+reviewer it does not.
 
 ## Escalation to the human
 

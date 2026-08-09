@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — Convening the team is specified as its own entry point, distinct from a sprint, and checks module installation rather than declaration
+- Issue: #132
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — The roles reach the exit review through the diff, not the label; the entry triggers stop borrowing the exit gate's words
 - Issue: #130
 - PR: #NN (filled at merge)
