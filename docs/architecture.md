@@ -40,7 +40,7 @@ They are its author's, on his projects. Each one is a module, so each one can be
 
 ### `scrumia-specs` — per-feature specs, TDD-oriented
 
-A feature is a directory of targeted files, created only if they have content. The absence of a file then becomes an assertion: no `legal.md` means "nothing legal at stake".
+A feature is a directory of targeted files. The optional ones are created only if they have content, so an absence becomes an assertion: no `legal.md` means "nothing legal at stake". Three files sit outside that test because the module mandates them — `index.md`, `qa.md`, `CHANGELOG.md`: a feature has to stay followable over time and testable.
 
 `qa.md` is central rather than an appendix: acceptance criteria carry stable identifiers, are written before the implementation, and become the tests.
 

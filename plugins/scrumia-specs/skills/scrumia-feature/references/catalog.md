@@ -2,8 +2,10 @@
 
 Complete reference. Each file has a defined content, a reader, and a condition of existence.
 
-> **The rule that governs everything else**: a file is only created if it has content.
+> **The rule that governs the optional files**: a file is only created if it has content.
 > The absence of a file is an assertion ("nothing to say here"), not an oversight.
+
+**Three files this rule does not gate**: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory everywhere. A feature must be possible to follow over time and possible to test — an absent changelog or an absent set of criteria asserts nothing, it is simply missing. That is **this module's** declaration, not a property of the format as such: whichever module fills the `specs` slot declares its own mandatory set, and a consumer reads the one in force from `CLAUDE.md`'s `## Specs contract` block, where the mandatory files carry keys of their own (`feature_index`, `acceptance_file`, `changelog`) while the optional ones are listed together under `catalog` (`docs/adr/0012-specs-contract.md`).
 
 ---
 
@@ -40,9 +42,9 @@ Read by: business, QA, devs.
 
 ---
 
-## `qa.md` — acceptance criteria
+## `qa.md` — mandatory, everywhere
 
-Mandatory everywhere. Given/When/Then, one scenario per case.
+The acceptance criteria. Given/When/Then, one scenario per case.
 
 **Business feature**: the business criteria, independent of any interface.
 **App feature**: the criteria of this implementation, including technical cases (timeout, network error, concurrent state).

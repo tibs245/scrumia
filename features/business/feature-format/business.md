@@ -35,22 +35,37 @@ authoritative location: the Business feature that owns it.
 
 ## Absolute rule — absence is information
 
-A file is created only when it has content. There is no fixed template with
-sections filled with "N/A": that produces a document nobody can tell apart
-from one where the author simply hadn't gotten to that section yet. With the
+An optional file is created only when it has content. There is no fixed
+template with sections filled with "N/A": that produces a document nobody can
+tell apart from one where the author simply hadn't gotten to it yet. With the
 catalogue, the absence of a file is itself the assertion — "nothing to say on
 this subject" — and it is what lets an agent decide what to read without
 reading everything.
 
-`index.md` is the one file this rule does not gate: the format requires it
-unconditionally, because a feature needs a single entry point to be found and
-understood before anything else is opened. `qa.md` and `CHANGELOG.md` are not
-carved out from the content test the way `index.md` is — they follow it like
-every other file in the catalogue. In practice they are never actually absent
-from a shipped feature, but that is a *consequence* of what a feature is
-(ADR-0004: a feature must have at least one independently verifiable
-scenario, and shipping it is itself a changelog entry), not an exception
-written into this rule.
+**The rule gates the optional catalogue, not every file a feature holds.** A
+feature also carries files it must have whatever it is about, and for those
+the content test does not apply — their absence asserts nothing except that
+nobody wrote them. Two properties draw the line: a feature must be possible
+to **follow over time** and possible to **test**. A rubric that does not
+apply is information; a missing history or a missing set of criteria is a
+gap.
+
+**Which files those are is declared by whichever module fills the `specs`
+slot** — it is that module's rule, not a universal one. Another specs module
+may require a different set and remain a valid one. A consumer reads the set
+from `CLAUDE.md`'s `## Specs contract` block
+([ADR-0012](../../../docs/adr/0012-specs-contract.md)), whose shape already
+carries the distinction: the mandatory files are named by keys of their own
+(`feature_index`, `acceptance_file`, `changelog`), the optional ones are
+listed together under `catalog`.
+
+`scrumia-specs`, the module currently in the slot, requires three. `index.md`,
+because a feature needs a single entry point to be found and understood
+before anything else is opened. `qa.md`, because a feature nobody can test is
+not verifiable — and ADR-0004 already makes at least one independently
+verifiable scenario constitutive of a feature. `CHANGELOG.md`, because a
+feature nobody can follow over time is not maintainable. Every other file in
+the catalogue is subject to the content test.
 
 ## Absolute rule — no inline history
 

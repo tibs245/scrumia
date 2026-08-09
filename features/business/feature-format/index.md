@@ -9,9 +9,9 @@ The contextual file catalogue that replaces the monolithic PRD. A feature is a
 directory of targeted files, each with a defined reader — not a single
 document that grows without bound. Two strata carry it: Business (the *what*)
 and App (the *how*, one app each). Two rules keep it from decaying back into
-the thing it replaces: a file exists only when it has content, and a spec
-never carries its own history. `plugins/scrumia-specs` is the operational
-implementation of what this feature specifies.
+the thing it replaces: an optional file exists only when it has content, and
+a spec never carries its own history. `plugins/scrumia-specs` is the
+operational implementation of what this feature specifies.
 
 ## Links
 
@@ -22,21 +22,23 @@ implementation of what this feature specifies.
 
 ## The catalogue
 
-The rule that governs every row below: **a file is created only when it has
-content.** Its absence is an assertion — "nothing to say here" — not an
-oversight and not a placeholder. `index.md` is the sole file the format
-requires unconditionally: a feature needs one entry point so it can be found
-and understood before anything else is opened. Every other file, `qa.md` and
-`CHANGELOG.md` included, is subject to the same content test as the rest of
-the catalogue — see `business.md` for why the two of them are, in practice,
-never actually absent from a real feature.
+The rule that governs the optional rows below: **a file is created only when
+it has content.** Its absence is an assertion — "nothing to say here" — not
+an oversight and not a placeholder. It does not gate the mandatory rows: a
+feature must be possible to follow over time and possible to test, and a
+missing history or a missing set of criteria is a gap, not a statement.
+
+Which files are mandatory is declared by whichever module fills the `specs`
+slot, not universally — see `business.md`. `scrumia-specs`, the module
+currently in the slot, requires the three marked **mandatory** below; every
+other row is subject to the content test.
 
 | File | Business | App Backend | App Frontend |
 |---|---|---|---|
-| `index.md` | required | required | required |
+| `index.md` | **mandatory** | **mandatory** | **mandatory** |
 | `business.md` | the rules themselves | reference to the parent | reference to the parent |
-| `qa.md` | the business criteria | this implementation's criteria | this implementation's criteria |
-| `CHANGELOG.md` | one entry per notable change | one entry per notable change | one entry per notable change |
+| `qa.md` | **mandatory** — the business criteria | **mandatory** — this implementation's criteria | **mandatory** — this implementation's criteria |
+| `CHANGELOG.md` | **mandatory** — one entry per notable change | **mandatory** — one entry per notable change | **mandatory** — one entry per notable change |
 | `legal.md` | if personal data, payment, user content, or a regulated sector is at stake | same | same |
 | `archi.md` | if the EPIC's implementation touches two or more apps | never | never |
 | `api-contract.md` | never | often — the schema it exposes | if it consumes an API |
@@ -70,4 +72,3 @@ documentation convention with no interface or exposed library of its own.
 
 - #2 — [EPIC] Spec the data organisation: the feature format and the monorepo layout (parent)
 - #22 — `validate.py`'s link gate doesn't cover `features/`
-- #25 — Reconcile `catalog.md` / `format-feature.md` wording with this feature's mandatory-file rule
