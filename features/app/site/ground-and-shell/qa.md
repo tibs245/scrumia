@@ -34,6 +34,16 @@ Then the page shows the theme they asked for in all four combinations, the choic
   directions
 ```
 
+### AC-5 — The non-affiliation statement reaches every page, in both languages
+
+```gherkin
+Given `site/i18n/en/common.json` and `site/i18n/fr/common.json`
+When the site is built by `tools/build_site.py`
+Then both carry a `footer_non_affiliation` key — the build's anti-divergence
+  guard fails otherwise — and the footer partial renders it on every built page,
+  in the language of that page
+```
+
 ## Edge cases
 
 ### AC-4 — The page is complete without JavaScript
