@@ -103,64 +103,98 @@
 </div>
 
 <section id="flow">
-  <h2>Une exécution, de bout en bout</h2>
-  <p class="section-intro">La composition de référence. Les étapes bleues ont besoin d'un humain ; les étapes corail non.</p>
+  <h2>Sept étapes. Trois sont les vôtres.</h2>
+  <p class="section-intro">Une idée, d'une phrase à une pull request fusionnée. Trois de ses sept étapes attendent une personne ; les quatre autres tournent sans.</p>
 
-  <div class="flowmap summon">
-    <div class="fm fm-human">
-      <span class="fm-who">Humain</span>
-      <span class="fm-title">Brief</span>
-      <span class="fm-out">Une idée, un problème. Rien de formaté.</span>
-      <span class="fm-mod">—</span>
+  <!-- One hairline, seven marks on it. --c is the grid column and --i the
+       arrival order; they are the same index, written once, inline, because both
+       are facts about this step's place in the run rather than about its style. -->
+  <div class="run">
+    <div class="run-track summon">
+      <div class="run-horizon" aria-hidden="true"></div>
+
+      <div class="step step-human" style="--c:1; --i:0">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">01</span>
+          <h3 class="step-title">Brief</h3>
+          <p class="step-out">Une idée, un problème. Rien de formaté.</p>
+          <span class="step-who">Humain</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:2; --i:1">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">02</span>
+          <h3 class="step-title">Cadrage</h3>
+          <p class="step-out">Challengé et découpé.<b>→ issues + specs</b></p>
+          <span class="step-who">Agent</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:3; --i:2">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">03</span>
+          <h3 class="step-title">Affinement</h3>
+          <p class="step-out">Avis de chaque rôle.<b>→ Ready for dev</b></p>
+          <span class="step-who">Agent</span>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:4; --i:3">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">04</span>
+          <h3 class="step-title">Approbation</h3>
+          <p class="step-out">Sur le doute, le risque ou la criticité.</p>
+          <span class="step-who">Humain</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:5; --i:4">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">05</span>
+          <h3 class="step-title">Sprint</h3>
+          <p class="step-out">Aucun conflit.<b>→ To dev</b></p>
+          <span class="step-who">Agent</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:6; --i:5">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">06</span>
+          <h3 class="step-title">Construction</h3>
+          <p class="step-out">Un worktree chacun.<b>→ spec, code, PR</b></p>
+          <span class="step-who">Agent</span>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:7; --i:6">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">07</span>
+          <h3 class="step-title">Merge</h3>
+          <p class="step-out">Vous lisez et testez.<b>→ Done</b></p>
+          <span class="step-who">Humain</span>
+        </div>
+      </div>
     </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">IA</span>
-      <span class="fm-title">Cadrage</span>
-      <span class="fm-out">Challenge, découpage en features.<br><b>→ issues + branche specs</b></span>
-      <span class="fm-mod">discovery</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">IA</span>
-      <span class="fm-title">Affinement</span>
-      <span class="fm-out">Les rôles interviennent, sous-issues par contexte.<br><b>→ Ready for dev</b></span>
-      <span class="fm-mod">tracker + team</span>
-    </div>
-    <div class="fm fm-human">
-      <span class="fm-who">Humain</span>
-      <span class="fm-title">Approbation</span>
-      <span class="fm-out">Seulement où le doute, la criticité ou le risque le justifient.</span>
-      <span class="fm-mod">—</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">IA</span>
-      <span class="fm-title">Sprint</span>
-      <span class="fm-out">Le manager regroupe les tickets non conflictuels.<br><b>→ To dev</b></span>
-      <span class="fm-mod">team</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">IA</span>
-      <span class="fm-title">Construction</span>
-      <span class="fm-out">Un worktree par ticket. Spec, code, tests, revue.<br><b>→ PRs</b></span>
-      <span class="fm-mod">team + impl + practices</span>
-    </div>
-    <div class="fm fm-human">
-      <span class="fm-who">Humain</span>
-      <span class="fm-title">Merge</span>
-      <span class="fm-out">Revoyez la PR, testez.<br><b>→ Done</b></span>
-      <span class="fm-mod">—</span>
-    </div>
+
+    <p class="run-legend">
+      <span class="is-human"><i></i><b>Humain</b> — 3 sur 7</span>
+      <span><i></i><b>Agents</b> — 4 sur 7</span>
+      <span>Échangez un module, cette ligne change de forme.</span>
+    </p>
   </div>
 
-  <div class="flow-legend">
-    <span><span class="dot dot-human"></span><b>Humain</b> — 3 points de contact</span>
-    <span><span class="dot dot-ai"></span><b>Agents</b> — tout le reste</span>
-    <span>Échangez un module, le flux change.</span>
-  </div>
-
-  <div class="you-strip">
-    <div class="you-item"><b>Cadrage</b><span>L'IA conteste ; vous résolvez les points bloquants.</span></div>
-    <div class="you-item"><b>Approbation</b><span>Uniquement les conceptions douteuses, critiques ou risquées.</span></div>
-    <div class="you-item"><b>Fusion</b><span>L'appel final reste le vôtre, sauf s'il est explicitement délégué.</span></div>
+  <div class="moments">
+    <div class="moment"><h3>Vous briefez</h3><p>Vous posez le problème. Les agents le challengent ; vous tranchez ce qui les bloque.</p></div>
+    <div class="moment"><h3>Vous approuvez</h3><p>Uniquement les conceptions douteuses, critiques ou risquées. Le reste part tout seul.</p></div>
+    <div class="moment"><h3>Vous mergez</h3><p>La décision finale reste la vôtre, sauf délégation écrite.</p></div>
   </div>
 </section>
 

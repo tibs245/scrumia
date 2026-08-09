@@ -92,7 +92,10 @@
   /* The grid belongs to peripheral vision: it is a hairline, so it is made of the
    * hairline colour and stays neutral on cream instead of tinting the page. */
   --grid-line: color-mix(in srgb, var(--border) 32%, transparent);
-  /* The rim light along the planet's limb, and the only glow allowed below the fold. */
+  /* The rim light along the planet's limb, and the only *standing* glow below the
+   * fold. The run's bloom (#62) is the other light down there and is legal because
+   * it is transient and actor-coloured: it lasts one arrival and stands for a state
+   * change, where this one is permanent scenery in the accent. */
   --limb-glow: color-mix(in srgb, var(--accent) 26%, transparent);
 }
 
