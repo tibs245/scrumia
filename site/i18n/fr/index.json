@@ -104,6 +104,9 @@
   "install_prereq": "Prérequis : <strong>git</strong>, une CLI <strong><code>gh</code></strong> authentifiée (pour le suivi GitHub), et <strong><code>jq</code></strong> (pour le hook de garde). <code>scrumia-init</code> vérifie tous les trois et indique ce qui se dégrade si l'un manque.",
   "install_c1": "# ajouter la place de marché, installer le kernel",
   "install_c2": "# puis, dans le repo à configurer",
+  "install_composition_heading": "Votre composition",
+  "install_composition_intro": "Voici ce que ScrumIA voit dans ce dépôt, lu depuis <code>.scrumia/config.yaml</code>. Rien n'est deviné : chaque slot est réel, chaque module installé ou vide à dessein.",
+  "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ─────────────────────────────────\n  specs      scrumia-specs\n  tracker    scrumia-github-project\n  team       scrumia-teams\n  discovery  empty on purpose\n  design     scrumia-design\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  The discovery slot is empty on purpose.\n    claude plugin install scrumia-discovery@scrumia --scope project\n\n  Change any of this with /scrumia-core:scrumia-compose.",
   "install_after": "<code>scrumia-init</code> cartographie vos apps, propose une composition, offre la commande d'installation pour chaque module dont il a besoin, et écrit la composition dans <code>CLAUDE.md</code>. Le relancer vérifie au lieu de réécrire.",
   "composer_js_strings": {
     "marketplace": "# ajouter la place de marché une seule fois",
