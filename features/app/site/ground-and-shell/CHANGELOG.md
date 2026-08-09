@@ -2,6 +2,15 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — `check_contrast.py` gates CI, `qa.md` names who feeds it
+- Issue: #95
+- PR: (filled at merge)
+- Breaking: no. `python3 tools/check_contrast.py` now runs as its own step in
+  `.github/workflows/validate.yml`, so AC-6 is an enforced gate rather than a
+  criterion nothing runs. `qa.md` AC-6 gains the maintenance rule the tool
+  cannot enforce itself: whoever introduces a new token-on-token pair in
+  `site/assets/style.css` adds the matching row to `PAIRS`, in the same PR.
+
 ## 2026-08-09 — The rail ships
 - Issue: #112
 - PR: (filled at merge)
