@@ -3,7 +3,9 @@
   "meta_description": "D'où vient ScrumIA, ce qu'il emprunte à BMAD, et ce qu'il ne prétend volontairement pas faire.",
   "og_title": "À propos de ScrumIA",
 
+  "page_kicker": "la raison d'être",
   "heading": "À propos",
+  "page_lead": "D'où vient ScrumIA, la prémisse qui le porte, et ce qu'il vous laisse volontairement décider.",
 
   "origin_title": "Origine",
   "origin_p1": "ScrumIA est issu de six mois de travail avec Claude Code et BMAD, sur des projets personnels. Il est maintenu par <a href=\"https://github.com/tibs245\">tibs245</a>.",
@@ -33,7 +35,7 @@
   "status_r4_item": "Modules de pratique (TDD, SOLID)",
   "status_r4_state": "Construits — référence, audit, refactorisation",
   "status_r5_item": "Module de conception",
-  "status_r5_state": "Spécifié, non construit",
+  "status_r5_state": "Construit — porte le site refondu",
   "status_r6_item": "Utilisation sur projet réel",
   "status_r6_state": "Pas encore — un pilote est la prochaine étape",
   "status_r7_item": "Hiérarchie des règles (ADR-0011)",

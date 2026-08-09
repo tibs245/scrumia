@@ -3,6 +3,7 @@
   "meta_description": "Comment un projet se déroule de bout en bout avec la composition de référence : demande, cadrage, affinement, sprint, revue. Chaque étape nomme le module qui la porte.",
   "og_title": "Workflow — ScrumIA",
 
+  "page_kicker": "l'exécution, en détail",
   "hero_title": "Une exécution complète, de bout en bout",
   "hero_intro": "La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.",
 
@@ -11,6 +12,7 @@
 
   "steps_title": "Étape par étape",
   "badge_human": "humain",
+  "badge_agent": "agent",
 
   "step1_title": "Un humain apporte une demande",
   "step1_p1": "Une idée, un problème, une intuition. Le cadrage met en question : le problème existe-t-il ? cela le résout-il ? qu'est-ce qui devient impossible ? où sont les cas limites ? qu'est-ce qui est supposé mais non dit ?",

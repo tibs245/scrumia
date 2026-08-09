@@ -3,6 +3,7 @@
   "meta_description": "How a project runs end to end with the reference composition: brief, scoping, refinement, sprint, review. Each step names the module that carries it.",
   "og_title": "Workflow — ScrumIA",
 
+  "page_kicker": "the run, in detail",
   "hero_title": "A full run, end to end",
   "hero_intro": "The reference composition, step by step. Each step names the module behind it.",
 
@@ -11,6 +12,7 @@
 
   "steps_title": "Step by step",
   "badge_human": "human",
+  "badge_agent": "agent",
 
   "step1_title": "A human brings a brief",
   "step1_p1": "An idea, a problem, a hunch. Scoping pushes back: does the problem exist? does this solve it? what becomes impossible? where are the edge cases? what is assumed but unsaid?",
