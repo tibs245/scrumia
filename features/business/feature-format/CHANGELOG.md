@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — The mandatory file set is the specs module's declaration
+- Issue: #25
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — `archi.md` dying with its EPIC means deleted, not unmaintained
 - Issue: #38
 - PR: #NN (filled at merge)

@@ -18,11 +18,13 @@ The fourth defect is the worst: from the moment nobody verifies anymore, the doc
 
 ## The principle: absence is information
 
-A feature is a **directory of targeted files**, each with a role and a reader. A file is created only if it has content.
+A feature is a **directory of targeted files**, each with a role and a reader. An optional file is created only if it has content.
 
 This seemingly innocuous rule is the heart of the format. With a fixed template, `legal.md` always exists and contains "N/A" — and you don't know whether that means "not applicable" or "not thought through yet". With the catalog, the absence of `legal.md` is an **assertion**: nothing legal at stake.
 
 Direct consequence: an agent can decide what to read without reading everything. That is what keeps the context cost contained.
+
+The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature has to be findable, has to be possible to follow over time, and has to be possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, made in its own catalog, and another module may require a different set. A consumer does not resolve that set for itself — it delegates the writing to the specs module's own writing skill. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
 
 ## Two strata
 
@@ -38,10 +40,10 @@ An App feature without a Business parent is acceptable if it is purely technical
 
 | File | Business | App Backend | App Frontend |
 |---|---|---|---|
-| `index.md` | always | always | always |
-| `business.md` | always | reference to the parent | reference to the parent |
-| `qa.md` | always | always | always |
-| `CHANGELOG.md` | always | always | always |
+| `index.md` | **mandatory** | **mandatory** | **mandatory** |
+| `business.md` | the rules themselves | reference to the parent | reference to the parent |
+| `qa.md` | **mandatory** | **mandatory** | **mandatory** |
+| `CHANGELOG.md` | **mandatory** | **mandatory** | **mandatory** |
 | `legal.md` | if personal data, payment, user content, regulated | same | same |
 | `archi.md` | if the EPIC touches ≥2 apps | no | no |
 | `api-contract.md` | no | often | if it consumes an API |
@@ -49,6 +51,8 @@ An App feature without a Business parent is acceptable if it is purely technical
 | `ux.md` | no | no | often |
 | `a11y.md` | no | no | often |
 | `devx.md` | no | if it exposes a lib | if it exposes components |
+
+**mandatory** marks the files `scrumia-specs` requires of every feature, whatever it is about; every other row is subject to the content test.
 
 The catalog is open. Two rules so it does not sprawl: a new file must have a **distinct reader** (otherwise it is a section, not a file), and its addition must be documented in the catalog — otherwise the next feature will invent another name for the same thing, and the format will lose what makes it useful: its predictability.
 

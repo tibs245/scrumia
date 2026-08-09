@@ -5,13 +5,13 @@ description: Creates, updates or audits a ScrumIA feature in features/. Applies 
 
 # Writing a ScrumIA feature
 
-A feature is not a document, it's a **directory of targeted files**. Each file has a role and a reader. You only create one if it has something to say.
+A feature is not a document, it's a **directory of targeted files**. Each file has a role and a reader. Beyond the three this module mandates, you only create one if it has something to say.
 
 ## Why a catalog rather than a fixed template
 
 This is a preference, not a truth. It comes from a usage finding: a fixed template produces empty sections filled with "N/A", which nobody cleans up and everybody reloads. You then no longer know whether "N/A" means "not applicable" or "not thought through yet".
 
-The catalog moves the problem: **the absence of a file becomes information**. No `legal.md` means "nothing legal at stake", asserted rather than omitted.
+The catalog moves the problem: **the absence of an optional file becomes information**. No `legal.md` means "nothing legal at stake", asserted rather than omitted. It works because it is bounded: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory, so their absence stays a gap rather than a claim — a feature nobody can find, follow over time, or test is not a feature. That mandatory set is this module's own, declared in `references/catalog.md`; another module at the `specs` slot may require a different one.
 
 In exchange, it demands a bit more judgment at writing time — that's the price to pay, and it doesn't suit every team.
 
@@ -43,10 +43,10 @@ In short:
 
 | File | Business | App Backend | App Frontend |
 |---|---|---|---|
-| `index.md` | always | always | always |
-| `business.md` | always | reference to the parent | reference to the parent |
-| `qa.md` | always | always | always |
-| `CHANGELOG.md` | always | always | always |
+| `index.md` | **mandatory** | **mandatory** | **mandatory** |
+| `business.md` | the rules themselves | reference to the parent | reference to the parent |
+| `qa.md` | **mandatory** | **mandatory** | **mandatory** |
+| `CHANGELOG.md` | **mandatory** | **mandatory** | **mandatory** |
 | `legal.md` | if personal data, payment, user content, regulated sector | same | same |
 | `archi.md` | if the EPIC touches ≥2 apps | no | no |
 | `api-contract.md` | no | often | if it consumes an API |
@@ -54,6 +54,8 @@ In short:
 | `ux.md` | no | no | often |
 | `a11y.md` | no | no | often |
 | `devx.md` | no | if it exposes a lib or an SDK | if it exposes components |
+
+**mandatory** marks the files this module requires of every feature, whatever it is about; every other row is subject to the content test.
 
 The catalog is open: `perf.md`, `i18n.md`, `analytics.md` are legitimate if the feature justifies them. When you add one that's not in the catalog, document it in `references/catalog.md` — otherwise the next person will reinvent a different name for the same thing.
 
@@ -70,7 +72,9 @@ changelog: CHANGELOG.md
 catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.md, devx.md
 ```
 
-`catalog` lists the optional per-feature files — the ones a consumer only expects to find sometimes. `index.md`, `qa.md` and `CHANGELOG.md` are named by their own keys because every feature carries them; keep this block in sync with `references/catalog.md` when the catalog changes, or the contract starts lying.
+`catalog` lists the optional per-feature files — the ones a consumer only expects to find sometimes. `index.md`, `qa.md` and `CHANGELOG.md` get keys of their own because consumers need a stable name for each; keep this block in sync with `references/catalog.md` when the catalog changes, or the contract starts lying.
+
+**This block does not declare the mandatory set, and a consumer must not infer one from it.** A key names a file, it does not require it — a module that carries a changelog without mandating it still needs a `changelog:` key, or consumers have no name to use. That `scrumia-specs`'s three mandatory files are exactly the three named outside `catalog` is a fact about this module, stated in `references/catalog.md` where this module declares it, not a property of the contract.
 
 ## Splitting: when one feature is really two
 
@@ -122,10 +126,10 @@ Systematically cover the nominal case, then: zero, boundary, duplicate, concurre
 2. Modify only the files concerned.
 3. If a new topic appears (the feature becomes subject to GDPR), create the file — don't slip it into `business.md`.
 4. Add an entry to `CHANGELOG.md` with the linked issue.
-5. If a file becomes meaningless, delete it. An empty file is worse than an absent one.
+5. If an optional file becomes meaningless, delete it — an empty file is worse than an absent one. Never `index.md`, `qa.md` or `CHANGELOG.md`: a mandatory file that has gone thin is one to fill, not one to remove.
 
 ## Auditing a feature
 
-Look for, in this order: inline history (the most frequent defect), files that are empty or full of "N/A", unverifiable acceptance criteria, an `index.md` that no longer matches the files present, an `## Open issues` entry that is closed, an App feature with no Business parent and no justification, an `api-contract.md` that has drifted from the code.
+Look for, in this order: inline history (the most frequent defect), optional files that are empty or full of "N/A", a mandatory file that is missing or that exists without content, unverifiable acceptance criteria, an `index.md` that no longer matches the files present, an `## Open issues` entry that is closed, an App feature with no Business parent and no justification, an `api-contract.md` that has drifted from the code.
 
 Return one finding per point, with the file path. Rewrite nothing without the user's agreement.
