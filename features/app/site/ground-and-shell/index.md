@@ -83,8 +83,8 @@ this feature.
 
 ## Open issues
 
-- #60, #62 — the hero and the run. Each consumes the tokens this feature lands
-  and is out of its scope. #61, the slot index, has its own feature now:
-  `features/app/site/slot-index/`.
+- #62 — the run. It consumes the tokens this feature lands and is out of its
+  scope. The hero and the slot index shipped, each with its own feature:
+  `features/app/site/hero/` and `features/app/site/slot-index/`.
 - The `site-header` component still ships three candidates and no verdict; the
   shell renders none of the three scroll behaviours until that is settled.
