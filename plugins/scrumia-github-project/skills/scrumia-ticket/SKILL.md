@@ -123,7 +123,7 @@ git add -A && git commit -m "<type>: <what changed>"
 
 Then commit again before **every** later point where this run yields control — Step 6's role review, a human verdict, a hand-off to a sub-agent, a wait on a check. The rule and why it exists are in `features/business/dev-flow/business.md` § *Who decides, on each path* → **Execution**; it is stated there as the general case, so it also covers a pause this skill does not list yet. Read it there rather than inferring it from these two steps.
 
-The two named below are where it bites in practice, not the extent of it.
+Steps 5 and 6 below are where this bites in practice. They are not the extent of it.
 
 ## Step 5 — Self-review
 

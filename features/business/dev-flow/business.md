@@ -71,8 +71,8 @@ PR mixing docs and code, is #17's to pin down.
 **This feature owns the code cycle.** How a scoped ticket becomes a reviewable
 change — isolation per ticket, when work is committed, what must be reviewed and
 when, what may merge unattended — is specified here, and only here. Not all of it is
-written down yet: worktree ownership lands in this file through #20. Commit-before-
-pause is written, above, under § *Who decides, on each path* → **Execution**.
+written down yet: worktree ownership lands in this file through #20. When work is
+committed is written above, under § *Who decides, on each path* → **Execution**.
 Ownership is settled; the wording of what remains follows.
 
 **A tracker feature owns the tracing and relaying of that cycle.** It states which

@@ -23,10 +23,9 @@ The execution path's mechanics — one worktree per ticket, one branch per ticke
 committing before a pause, review before merge, the three gates, `auto_merge` — are
 **this feature's**. Ownership is settled; the wording is not all here yet — worktree
 ownership lands through #20, and until it does, no other spec becomes its home.
-Commit-before-pause is written, in `business.md` § *Who decides, on each path*. A
-tracker feature *traces* that
-cycle: it says which concrete artefact each abstract step becomes on its tool, and it
-never redefines the step itself.
+Committing before a pause is written down, in `business.md` § *Who decides, on each
+path*. A tracker feature *traces* that cycle: it says which concrete artefact each
+abstract step becomes on its tool, and it never redefines the step itself.
 
 `business.md` § *The code cycle* carries the ownership rule, the precedence when a
 tracker feature disagrees, and the replacement test that files any given rule on
