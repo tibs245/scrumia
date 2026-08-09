@@ -14,17 +14,47 @@
 <meta property="og:description" content="scrumia-practice-tanstack-query: the ScrumIA practices slot — query keys, invalidation, the server/client state boundary.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/modules/scrumia-practice-tanstack-query.html">
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
 <link rel="stylesheet" href="../assets/style.css">
-<script src="../assets/theme.js"></script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
+      only while something is running that can also un-hide, and never when the
+      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../assets/theme.js"></script>
+<script defer src="../assets/motion.js"></script>
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
 </head>
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
 <header class="top">
   <div class="top-inner">
-    <a class="brand" href="../index.html">Scrum<span>IA</span></a>
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
     <nav aria-label="Main">
       <a href="../index.html">Overview</a>
       <a href="../index.html#composer">Compose</a>
@@ -90,6 +120,7 @@
   <div class="footer-inner">
     <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
     <span><a href="../about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+    <span>ScrumIA is an independent project, not affiliated with, sponsored by, or endorsed by Anthropic. Claude Code is a trademark of Anthropic.</span>
   </div>
 </footer>
 

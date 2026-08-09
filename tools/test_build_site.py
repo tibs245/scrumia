@@ -54,8 +54,14 @@ def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None) 
         skill.mkdir(parents=True)
         (skill / "SKILL.md").write_text("---\nname: x\n---\n", encoding="utf-8")
 
+    # The builder mirrors the design vocabulary into the site; without one here,
+    # every fixture build would report a missing tokens file as a real error.
+    (root / "design").mkdir(parents=True)
+    (root / "design" / "tokens.css").write_text(":root { --x: 0 }\n", encoding="utf-8")
+
     site = root / "site"
     (site / "templates" / "partials").mkdir(parents=True)
+    (site / "assets").mkdir(parents=True)
     (site / "templates" / "module.html").write_text(STUB_TEMPLATE, encoding="utf-8")
     (site / "modules.json").write_text(json.dumps(
         extra if extra is not None else {p: {"emoji": e, "slot": None} for p, e in zip(plugins, "🅰🅱🅲🅳")}
@@ -76,6 +82,8 @@ def run_fixture(root: Path) -> tuple[int, list[str]]:
     bs.TPL, bs.I18N = bs.SITE / "templates", bs.SITE / "i18n"
     bs.MARKETPLACE = root / ".claude-plugin" / "marketplace.json"
     bs.MODULES_DATA = bs.SITE / "modules.json"
+    bs.TOKENS_SRC = root / "design" / "tokens.css"
+    bs.TOKENS_OUT = bs.SITE / "assets" / "tokens.css"
     bs.PAGES = []
     bs.LANGS = {
         "en": {"out": bs.SITE, "prefix": "", "root": ""},
