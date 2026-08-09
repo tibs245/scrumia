@@ -11,7 +11,8 @@
       "source": {
         "source": "github",
         "repo": "tibs245/scrumia"
-      }
+      },
+      "autoUpdate": true
     }
   }
 }
