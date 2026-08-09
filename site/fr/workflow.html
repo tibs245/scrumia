@@ -222,20 +222,18 @@ Human     │ revue PR, test → Done</code></pre>
       <tbody>
         <tr><td><code>guided</code></td><td>Le cadrage de chaque ticket <em>et</em> chaque PR</td><td>Au démarrage, pendant l'étalonnage</td></tr>
         <tr><td><code>assisted</code></td><td>Les PRs seulement</td><td>Le mode de croisière prévu</td></tr>
-        <tr><td><code>autonomous</code></td><td>Les PRs, moins les catégories autorisées</td><td>Une fois la confiance établie</td></tr>
+        <tr><td><code>autonomous</code></td><td>Les PRs hors de ce que couvre <code>auto_merge</code></td><td>Une fois la confiance établie</td></tr>
       </tbody>
     </table>
   </div>
 
 <pre><code>autonomy:
   level: autonomous
-  auto_merge:
-    - docs-only          <span class="c"># rien en dehors de docs/ et *.md</span>
-    - dependency-patch   <span class="c"># patch bump, CI vert</span></code></pre>
+  auto_merge: docs-only   <span class="c"># une PR qui touche seulement de la documentation</span></code></pre>
 
   <div class="note note-human">
-    <span class="note-title">La refactorisation est désactivée par défaut</span>
-    <p>"Refactoriser sans changement de comportement" ne peut pas être décidé automatiquement — c'est exactement quand un agent croit qu'il n'a rien changé qu'il a changé quelque chose. Rien ne vous empêche de l'ajouter sur un projet donné ; c'est juste un choix délibéré, écrit dans un fichier versionné.</p>
+    <span class="note-title">Un scalaire, pas une liste blanche</span>
+    <p><code>auto_merge</code> est un réglage unique pour tout le projet, pas une liste par catégorie : <code>none</code> (rien ne fusionne sans surveillance, par défaut), <code>docs-only</code> (une PR qui touche seulement de la documentation), ou <code>all</code>.</p>
   </div>
 </section>
 

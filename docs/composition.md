@@ -111,7 +111,7 @@ apps:
 settings:
   autonomy:
     level: guided
-    auto_merge: []
+    auto_merge: none
   specs:
     root: "features"
   tracker:
