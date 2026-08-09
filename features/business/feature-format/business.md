@@ -38,9 +38,9 @@ authoritative location: the Business feature that owns it.
 An optional file is created only when it has content. There is no fixed
 template with sections filled with "N/A": that produces a document nobody can
 tell apart from one where the author simply hadn't gotten to it yet. With the
-catalogue, the absence of a file is itself the assertion — "nothing to say on
-this subject" — and it is what lets an agent decide what to read without
-reading everything.
+catalogue, the absence of such a file is itself the assertion — "nothing to
+say on this subject" — and it is what lets an agent decide what to read
+without reading everything.
 
 **The rule gates the optional catalogue, not every file a feature holds.** A
 feature also carries files it must have whatever it is about, and for those
