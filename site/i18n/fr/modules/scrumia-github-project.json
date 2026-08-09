@@ -5,5 +5,5 @@
   "tagline": "Tickets, colonnes, branches et PRs — l'état du travail, hors du dépôt.",
   "responsibilities": "<p>Possède toute la vie d'un ticket : l'affiner jusqu'à ce qu'il porte un critère vérifiable, l'exécuter dans son propre worktree, router sa revue, et rendre compte de l'état du projet. Selon l'ADR-0013, il possède aussi le cycle du code — branches, worktrees, pull requests — une portée plus large que son nom ne le laisse croire.</p>",
   "refusals": "<p>L'état du projet n'atterrit jamais dans le dépôt : un hook <code>PreToolUse</code> bloque net les fichiers d'état. Il refuse aussi de fusionner à votre place — la validation finale revient à l'humain.</p>",
-  "philosophy": "<p>Présume un <code>gh</code> authentifié et un tableau GitHub Projects. Implique une dépendance stricte à GitHub et rien du tout hors ligne.</p>"
+  "philosophy": "<p>Présume un <code>gh</code> authentifié et un tableau GitHub Projects. Coûte une dépendance stricte à GitHub et rien du tout hors ligne.</p>"
 }

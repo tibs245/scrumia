@@ -29,16 +29,16 @@
   "rules_row2": "Échafaude une section locale au projet : entretien, récolte depuis le code et les configs de lint, écriture, enregistrement dans <code>CLAUDE.md</code>",
   "rules_row3": "Fait évoluer une règle : conteste sa décision, l'affine ou la remplace, met à jour le guide, journalise le changement",
 
-  "specs_p": "Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Demande</strong> plus de jugement lors de la rédaction qu'un modèle fixe.",
+  "specs_p": "Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Coûte</strong> plus de jugement lors de la rédaction qu'un modèle fixe.",
   "specs_row1": "Crée l'arborescence des spécifications",
   "specs_row2": "Crée, met à jour ou audite une feature",
   "specs_row3": "Trouve une règle, parcourt les dépendances, charge le contexte minimal",
 
-  "ghp_p": "Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Implique</strong> une dépendance GitHub stricte et rien en mode hors ligne.",
+  "ghp_p": "Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Coûte</strong> une dépendance GitHub stricte et rien en mode hors ligne.",
   "ghp_row1": "Colonnes, étiquettes, modèles d'issues",
   "ghp_row2": "Déplace un ticket de Backlog à Ready for dev",
-  "ghp_row3": "Exécute un ticket : worktree, spec, code, tests, review, PR",
-  "ghp_row4": "Route une review de PR et synthétise",
+  "ghp_row3": "Exécute un ticket : worktree, spec, code, tests, revue, PR",
+  "ghp_row4": "Route une revue de PR et la synthétise",
   "ghp_row5": "Vue de progression, calculée à la demande",
 
   "teams_tag_manager": "opus · memory: project",
@@ -55,11 +55,11 @@
 
   "rust_p": "États invalides rendus impossibles, <code>Result</code> aux limites, erreurs typées par couche. <strong>Refuse</strong> <code>unwrap()</code> en production, les clones qui calment l'analyseur d'emprunt, les traits à implémenteur unique.",
   "rust_row1": "La référence, chargée avant d'écrire du Rust dans une application couverte",
-  "rust_row2": "Mesure une application existante par rapport aux règles, finding par finding",
+  "rust_row2": "Mesure une application existante par rapport aux règles, constat par constat",
 
   "solidjs_p": "Réactivité à grain fin sans réflexes React, tests de composants comportement-d'abord, structure par feature. <strong>Refuse</strong> les props destructurées, les effets utilisés comme dérivations, les composants qui récupèrent les données.",
   "solidjs_row1": "La référence, chargée avant d'écrire du SolidJS dans une application couverte",
-  "solidjs_row2": "Mesure une application existante par rapport aux règles, finding par finding",
+  "solidjs_row2": "Mesure une application existante par rapport aux règles, constat par constat",
 
   "tdd_p": "Affine un point du contrat d'implémentation : <strong>comment nous testons</strong>. Le cycle opérationnalisé pour un agent, la limite des mocks, la cartographie AC-to-test.",
   "tdd_row1": "La référence : cycle, limite des mocks, où TDD s'arrête",
@@ -69,9 +69,9 @@
   "solid_p": "Affine un point du contrat d'implémentation : <strong>quels principes de conception</strong>. Les cinq principes, chacun avec sa limite d'application — la sur-application est auditée au même niveau que les violations.",
   "solid_row1": "La référence : les cinq, avec leurs limites, en OO et fonctionnel pareillement",
   "solid_row2": "Violations et sur-applications, sur un pied d'égalité",
-  "solid_row3": "Résout un finding, en étapes sûres",
+  "solid_row3": "Résout un constat, en étapes sûres",
 
-  "tanstack_p": "Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite envers l'état client seulement. Porté d'une utilisation réelle monorepo : 9 guides, 13 decisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.",
+  "tanstack_p": "Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite qui sépare l'état serveur de l'état purement client. Porté d'une utilisation réelle monorepo : 9 guides, 13 décisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.",
   "tanstack_row1": "La référence : query keys, invalidation de cache, optimistic updates, la limite serveur/client",
 
   "config_title": "Configuration",
@@ -87,12 +87,12 @@
   "impl_li3": "<strong>Comment le code est organisé</strong> — suffisamment précis pour qu'un agent place un nouveau fichier sans hésiter",
   "impl_li4": "<strong>Ce qui est refusé</strong> — la partie la plus utile, et la plus souvent ignorée. Un agent qui sait ce qui est rejeté se corrige lui-même",
   "impl_compose_h": "Comment les pratiques se composent",
-  "impl_compose_p": "Un module de pratique affine <strong>un point nommé</strong> de ce contrat — TDD affine « comment vous testez », SOLID affine « quels principes de conception » — et livre trois compétences : la référence, l'audit, la refonte. Le module d'implémentation <em>situe</em> chaque pratique pour sa pile. Une règle de précédence : <strong>spécifique bat générique</strong> — module d'implémentation plutôt que pratique, override de projet plutôt que les deux.",
+  "impl_compose_p": "Un module de pratique affine <strong>un point nommé</strong> de ce contrat — TDD affine « comment vous testez », SOLID affine « quels principes de conception » — et livre trois compétences : la référence, l'audit, la refactorisation. Le module d'implémentation <em>situe</em> chaque pratique pour sa pile. Une règle de précédence : <strong>spécifique bat générique</strong> — module d'implémentation plutôt que pratique, remplacement de projet plutôt que les deux.",
   "impl_override_h": "Surcharger sans forker",
   "impl_override_p": "Paramètres déclarés sous <code>settings.implementation.&lt;module&gt;</code> et <code>settings.practices.&lt;module&gt;</code>, plus fichiers de remplacement de projet optionnels (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) que le module lit et honore plutôt que ses propres règles. Un module n'offrant ni l'un ni l'autre est forké au premier désaccord — et ce fork ne voit jamais une mise à jour.",
 
   "rules_hier_h": "Hiérarchie des règles",
-  "rules_hier_p": "Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>specific beats generic</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
+  "rules_hier_p": "Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>spécifique bat générique</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
 
   "design_p": "Identité, tokens et composants vivent dans le dépôt ; un projet Claude Design est la surface de revue, pas la source de vérité. Une règle en dessous : une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Fournit le rôle permanent <code>designer</code> — le seul module à le faire depuis l'extérieur du slot <code>team</code>, parce qu'un rôle sans design system à garder jugerait au goût.",
   "design_row1": "Crée l'arborescence, écrit l'identité, enregistre le rôle",
@@ -106,8 +106,8 @@
   "write_title": "Écrire un module",
   "write_intro": "Trois règles, pas plus :",
   "write_li1": "<strong>Remplir un slot</strong> — un existant, ou un nouveau que vous définissez et documentez",
-  "write_li2": "<strong>Documentez vos paramètres</strong> sous <code>settings.&lt;slot&gt;</code>",
-  "write_li3": "<strong>Fournissez votre ligne <code>CLAUDE.md</code></strong> — la phrase qui dit à un agent ce dont il a besoin sans vous lire",
+  "write_li2": "<strong>Documenter vos paramètres</strong> sous <code>settings.&lt;slot&gt;</code>",
+  "write_li3": "<strong>Fournir votre ligne <code>CLAUDE.md</code></strong> — la phrase qui dit à un agent ce dont il a besoin sans vous lire",
   "write_prohibition": "Et une interdiction : <strong>ne jamais supposer qu'un autre module est présent</strong>. Si une capacité manque, dites-le et proposez l'étape suivante plutôt que d'échouer.",
   "write_c1": "# valider avant de publier",
   "write_c2": "# essayer sans installer",
