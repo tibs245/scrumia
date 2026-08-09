@@ -838,11 +838,8 @@ tbody tr:last-child td { border-bottom: 0; }
   font-weight: var(--weight-strong); color: var(--text); font-size: var(--text-base);
   display: block; margin-bottom: var(--space-1);
 }
-/* Not a warning despite the name: both uses mark where automation stops and a
-   person decides, which is human semantics and so is the blue. The name lies
-   here, not the colour — rename tracked in #94. */
-.note-warn { border-left-color: var(--human); background: var(--human-surface); }
-.note-warn .note-title { color: var(--human); }
+.note-human { border-left-color: var(--human); background: var(--human-surface); }
+.note-human .note-title { color: var(--human); }
 
 /* ---------- Detailed steps ---------- */
 
