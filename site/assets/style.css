@@ -151,7 +151,7 @@ header.top {
 
 .top nav {
   display: flex; gap: var(--space-4); margin-left: auto; align-items: center;
-  overflow-x: auto; scrollbar-width: none;
+  overflow-x: auto; scrollbar-width: none; position: relative;
 }
 .top nav::-webkit-scrollbar { display: none; }
 /* Mono at label size: the navigation names things, it does not talk. */
@@ -160,10 +160,36 @@ header.top {
   font-family: var(--font-mono); font-size: var(--text-sm);
   white-space: nowrap; padding: var(--space-1) 0;
   border-bottom: 2px solid transparent;
-  transition: color var(--dur-1) var(--ease-move), border-color var(--dur-1) var(--ease-move);
+  transition: color var(--dur-1) var(--ease-move);
 }
-.top nav a:hover { color: var(--text); border-bottom-color: var(--accent); }
+/* Hover only ever brightens the label. The accent underline belongs to
+   aria-current alone — a hover rule that also lit it double-pointed the
+   moment a reader hovered a link on a different page, which identity
+   decision 4 forbids. */
+.top nav a:hover { color: var(--text); }
 .top nav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+/* The rail: the header's one accent mark once script can measure the links.
+   It starts at zero width, so no-JS and touch readers keep the static
+   current-page underline above — header.js is what takes over from it. */
+.nav-rail {
+  position: absolute; left: 0; bottom: 0; height: 2px; width: 0;
+  background: var(--accent); border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+/* The first placement is instant — a transition here would say something
+   arrived, and the current page was already the current page. header.js
+   adds this class only after that first placement. */
+.nav-rail.is-ready {
+  transition: transform var(--dur-2) var(--ease-move), width var(--dur-2) var(--ease-move);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-rail.is-ready { transition: none; }
+}
+/* Once the rail is live it is the header's one accent mark; leaving the
+   static underline lit as well would double it up the instant a reader
+   points at a different link — see design/components/site-header/spec.md. */
+.top.nav-rail-on nav a[aria-current="page"] { border-bottom-color: transparent; }
 
 .lang { display: flex; gap: var(--space-tight); flex-shrink: 0; }
 .lang a {

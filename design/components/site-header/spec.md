@@ -3,9 +3,10 @@
 The bar at the top of every page: the mark, the wordmark, the navigation, the
 language pair and the theme toggle.
 
-**Status: decided — the rail (#74).** #59 shipped the static bar described
-below; the rail is its one pointer treatment, tracked in #112. The rejected
-candidates, and the reasons they lost, live in ticket #74 — not in this file.
+**Status: shipped — the rail (#74, implemented in #112).** #59 shipped the
+static bar described below; the rail is its one pointer treatment. The
+rejected candidates, and the reasons they lost, live in ticket #74 — not in
+this file.
 
 ## What ships
 
