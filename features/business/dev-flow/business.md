@@ -54,3 +54,56 @@ not re-decided here.
 `none` (nothing merges unattended), `docs-only` (a PR touching documentation and
 nothing else), or `all`. What exactly counts as docs-only, and what happens to a
 PR mixing docs and code, is #17's to pin down.
+
+## The code cycle: this feature is the process, a tracker feature is its trace
+
+**This feature owns the code cycle.** How a scoped ticket becomes a reviewable
+change — isolation per ticket, when work is committed, what must be reviewed and
+when, what may merge unattended — is specified here, and only here. Not all of it is
+written down yet: worktree ownership and commit-before-pause land in this file
+through #118 and #20. Ownership is settled; the wording of those rules follows.
+
+**A tracker feature owns the tracing and relaying of that cycle.** It states which
+concrete artefact each abstract step becomes on its tool: that the reviewable
+proposal is a GitHub PR opened this way, that entering execution shows up as a
+column move, that a sprint is a milestone. It adapts to this feature; it does not
+define it.
+
+**Precedence, where the two disagree: this feature governs.** A tracker feature
+found stating a different process rule is the one that must change — not this one,
+and not "whichever was written last". A tracker materialises a process it does not
+define, so a divergence is a defect on the tracker's side by construction. This is
+part of the ownership decision, not a tie-break added after the fact.
+
+That precedence is worth stating rather than leaving to inference, because both
+features read as authoritative in isolation: each is a spec, written in the same
+voice, and an agent that opens only one has no way to tell it is reading the
+subordinate half.
+
+### The replacement test — which feature does a rule belong to?
+
+Apply it before filing any rule about how code ships, at refinement time and when
+reviewing a spec change. Replace the tracker with a hypothetical
+`scrumia-tracker-local` — a file-based tracker, no PR, no board:
+
+- **The rule stays true, word for word → it belongs here.** One worktree per ticket,
+  one branch per ticket, commit before any pause or review, review before merge, the
+  three gates, `auto_merge`. None of them mentions a tracker to be stated.
+- **The rule becomes meaningless → it belongs to the tracker feature.** Opening a PR
+  and linking it to its issue, column transitions, milestone-as-sprint,
+  epic-as-native-sub-issues, board reading discipline. Each names an artefact that
+  ceases to exist.
+
+Every rule has exactly one answer, and a rule is written on one side only: this
+feature states the abstract ("an execution ends in a reviewable proposal; gate 3
+governs its merge"), the tracker feature binds it to the concrete ("that proposal is
+a GitHub PR, opened this way"). Restating the abstract rule alongside its binding
+creates a second copy that drifts — the same trap `scope/*` avoids by being
+specified once in `features/business/execution-policy/` and restated by neither
+consumer.
+
+This is a question about **spec files**, not about modules.
+`docs/adr/0013-tracker-stays-one-slot.md` decides something else — that the `tracker`
+slot is not split into a `forge` slot — and assigns no ownership of specs. The
+tracker module implementing the code cycle and this feature specifying it are both
+true at once; they are different planes, and neither overrides the other.

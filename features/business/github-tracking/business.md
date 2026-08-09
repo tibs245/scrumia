@@ -59,13 +59,27 @@ specified in `qa.md`.
 
 ## Scope of this slot
 
-Per `docs/adr/0013-tracker-stays-one-slot.md`, the `tracker` slot — filled here by
-`scrumia-github-project` — owns three concerns at once, by decision rather than by
-necessity: the work items (issues, labels, milestones, epics), the board (columns, the
-Status field, transitions), and **the code cycle** (branches, worktrees, PR creation,
-review routing, merge). The first two are "what is to be done and where it stands";
-the third is "how the change reaches `main`" — related only because GitHub happens to
-offer all three under one product.
+Two planes, easily conflated and separated on purpose: what the **module** implements,
+and where the **rules** it enacts are specified.
+
+**What the module implements.** Per `docs/adr/0013-tracker-stays-one-slot.md`, the
+`tracker` slot — filled here by `scrumia-github-project` — implements three concerns at
+once, by decision rather than by necessity: the work items (issues, labels, milestones,
+epics), the board (columns, the Status field, transitions), and **the code cycle**
+(branches, worktrees, PR creation, review routing, merge). The first two are "what is
+to be done and where it stands"; the third is "how the change reaches `main`" — related
+only because GitHub happens to offer all three under one product.
+
+**Where the rules are specified.** The code cycle's *process* is
+`features/business/dev-flow/`'s, not this feature's: that feature owns it, and this one
+traces it — it says which concrete artefact each of its steps becomes on GitHub. Where
+the two disagree, `dev-flow` governs and this feature is what changes. The replacement
+test that files any given rule on exactly one side is in `dev-flow`'s `business.md`
+§ *The code cycle*; it is stated there once and not restated here.
+
+The module implementing the cycle and `dev-flow` specifying it are both true: ADR-0013
+decides that the `tracker` slot is not split into a `forge` slot — a statement about
+modules — and assigns ownership of no spec file.
 
 The practical consequence: **issues in one tracker, pull requests on GitHub is not
 composable today.** A module filling `tracker` with Jira, Linear or a local file store

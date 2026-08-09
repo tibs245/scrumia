@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — This feature owns the code-cycle process; a tracker feature traces it
+- Issue: #123
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — Gate 2's review is routed by the diff and by nothing else; AC-6 pins the mislabelled case that #79 shipped through
 - Issue: #130
 - PR: #NN (filled at merge)

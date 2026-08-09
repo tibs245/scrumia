@@ -8,8 +8,11 @@
 How ScrumIA tracks work when the `tracker` slot is filled by `scrumia-github-project`:
 the ticket's lifecycle across the board's six columns, what a milestone and an epic
 mean, which label is read by which consumer, and the reading discipline that keeps a
-partial board read from being reported as a complete one. Per ADR-0013, this slot also
-owns the code cycle (branches, worktrees, PRs) — a scope wider than its name suggests.
+partial board read from being reported as a complete one. Per ADR-0013, the module
+filling this slot also implements the code cycle (branches, worktrees, PRs) — a scope
+wider than its name suggests — but the cycle's process is specified by
+`features/business/dev-flow/`. This feature traces that process onto GitHub: it says
+which artefact each step becomes here, and redefines none of them.
 
 ## Ticket lifecycle
 
@@ -70,6 +73,9 @@ from where their cards sit. `qa.md` specifies the board-reading scenario this im
 - Implemented by: `plugins/scrumia-github-project/` (the `tracker` slot). Not an App
   feature under `features/app/`: the plugin is the product ScrumIA ships, not one of
   this project's own `site`/`tools` apps — see `.scrumia/config.yaml`'s `apps` table.
+- Traces: `features/business/dev-flow/` — that feature specifies the code-cycle
+  process; this one binds it to GitHub's artefacts. How the two planes divide, and
+  which governs, is in `business.md` § *Scope of this slot*.
 
 ## Files present
 
