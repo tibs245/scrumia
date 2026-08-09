@@ -394,36 +394,80 @@ section > h2::before {
 .you-item span { color: var(--text-soft); font-size: var(--text-sm); line-height: var(--leading-snug); }
 
 /* ---------- Slots ---------- *
- * A slot is a hole with a shape. Filled and empty are two states of the same
- * component — an empty slot is drawn, dashed, holding its space, because
- * "deliberately empty" is a load-bearing idea and an omission cannot say it.
+ * A slot is a question, drawn as one row of a typographic index rather than a
+ * card — the card read as isolated claims; the index reads as one composition.
+ * Native <details name="slot"> gives the accordion open/close for free: no
+ * JavaScript writes or reads any state in this section, which is the whole
+ * point of choosing it over a card that would need script to expand.
+ * Filled and empty are two states of the same row — an empty one keeps its
+ * dashed leader **and** spells `nothing installed`, because a dashed line
+ * alone is not perceivable to everyone and "deliberately empty" is the idea
+ * this section exists to carry.
  */
 
-.slots {
-  display: grid; gap: var(--space-3);
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+.slots { margin: var(--space-6) 0 0; }
+
+.slot { border-top: 1px solid var(--border); }
+.slot:last-of-type { border-bottom: 1px solid var(--border); }
+.slot summary {
+  list-style: none; cursor: pointer;
+  padding-block: var(--space-5);
+  transition: background var(--dur-2) var(--ease-move);
 }
-.slot {
-  display: flex; flex-direction: column; gap: var(--space-2);
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  background: var(--surface); padding: var(--space-4);
+.slot summary::-webkit-details-marker { display: none; }
+.slot summary:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.slot summary:focus-visible { outline-offset: -2px; }
+
+.slot-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  margin: 0; font-weight: var(--weight-body); font-size: inherit; font-family: inherit;
 }
-.slot-empty {
-  background: none; border-style: dashed; border-color: var(--border-strong);
+.slot-sign {
+  font-family: var(--font-mono); color: var(--text-faint);
+  width: 1.2em; flex: none; text-align: center;
+  transition: transform var(--dur-2) var(--ease-summon), color var(--dur-2);
 }
+.slot[open] .slot-sign { transform: rotate(45deg); color: var(--accent); }
 .slot-name {
   font-family: var(--font-mono); font-size: var(--text-sm);
-  color: var(--accent); font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text); width: 9.5rem; flex: none;
 }
-.slot-empty .slot-name { color: var(--text-faint); }
-.slot-q { color: var(--text); font-weight: var(--weight-strong); font-size: var(--text-base); }
-.slot-a { color: var(--text-soft); font-size: var(--text-sm); line-height: var(--leading-snug); flex-grow: 1; }
+.slot-q { color: var(--text-soft); }
+.slot-lead {
+  flex: 1 1 40px; min-width: 24px; height: 0;
+  border-bottom: 1px dotted var(--border-strong);
+  opacity: 0.7;
+}
 .slot-fill {
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  border-top: 1px solid var(--border); padding-top: var(--space-2);
-  color: var(--text-faint); word-break: break-word;
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  color: var(--text-soft); flex: none; text-align: right;
 }
-.slot-empty .slot-fill { border-top-style: dashed; border-top-color: var(--border-strong); }
+.slot[open] .slot-fill { color: var(--accent); }
+
+.slot-empty .slot-name { color: var(--text-faint); }
+.slot-empty .slot-lead { border-bottom-style: dashed; border-bottom-color: var(--border); opacity: 1; }
+.slot-empty .slot-fill,
+.slot-empty[open] .slot-fill { color: var(--text-faint); }
+
+.slot-answer {
+  color: var(--text-soft);
+  max-width: var(--measure);
+  margin: 0 0 var(--space-6);
+  padding-left: calc(1.2em + var(--space-4));
+}
+.js .slot[open] .slot-answer { animation: answer-in var(--dur-3) var(--ease-summon) both; }
+@keyframes answer-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .js .slot[open] .slot-answer { animation: none; } }
+
+@media (max-width: 800px) {
+  .slot-row { flex-wrap: wrap; row-gap: var(--space-2); }
+  .slot-name { width: auto; }
+  .slot-lead { display: none; }
+  .slot-q { flex: 1 1 100%; padding-left: calc(1.2em + var(--space-4)); }
+  .slot-fill { text-align: left; }
+  .slot-answer { padding-left: 0; }
+}
 
 /* ---------- Modules ---------- */
 

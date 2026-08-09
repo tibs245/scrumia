@@ -20,7 +20,7 @@ Anatomy, in order:
 
 ## When not to use it
 
-- **A capability with no module behind it.** That is a `slot-card`, empty variant.
+- **A capability with no module behind it.** That is `slot-index`, empty row.
 - **A comparison.** Cards sit side by side but do not align field to field. Use a
   table when the reader's job is to compare rather than to pick.
 
