@@ -4,7 +4,8 @@
     "scrumia-github-project@scrumia": true,
     "scrumia-teams@scrumia": true,
     "scrumia-specs@scrumia": true,
-    "scrumia-design@scrumia": true
+    "scrumia-design@scrumia": true,
+    "scrumia-discovery@scrumia": true
   },
   "extraKnownMarketplaces": {
     "scrumia": {

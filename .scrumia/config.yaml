@@ -8,7 +8,7 @@ composition:
   specs: scrumia-specs
   tracker: scrumia-github-project
   team: scrumia-teams
-  discovery: null            # scrumia-discovery exists but is not installed: install it to scope ideas before ticketing
+  discovery: scrumia-discovery
   design: scrumia-design
 
 # ScrumIA's product is markdown: plugins/ is the deliverable and carries no

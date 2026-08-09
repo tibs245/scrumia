@@ -40,7 +40,7 @@
   "you3_title": "You merge",
   "you3_desc": "The final call stays yours, unless you delegate it in writing.",
   "slots_title": "Slots",
-  "slots_intro": "A slot is a question. A module is one answer. Below is this repo's real composition, read from <code>.scrumia/config.yaml</code> — three of the seven are empty, and nothing is faked in their place.",
+  "slots_intro": "A slot is a question. A module is one answer. Below is this repo's real composition, read from <code>.scrumia/config.yaml</code> — two of the seven are empty, and nothing is faked in their place.",
   "slot_specs_q": "Where do specs live, in what shape?",
   "slot_specs_a": "One directory per feature, files created only when they have something to say, acceptance criteria written first and turned into tests.",
   "slot_tracker_q": "Where does state live — tickets, columns, PRs?",
@@ -48,7 +48,7 @@
   "slot_team_q": "Which standing roles, with what scope?",
   "slot_team_a": "Manager, business, tech — plus a designer contributed by the design module. Each boundary is a line of refusal, and every role toggles by config.",
   "slot_discovery_q": "How does an idea become scoped work?",
-  "slot_discovery_a": "<code>scrumia-discovery</code> exists and is not installed here. An idea goes straight to a ticket without a scoping pass, and the agents are told to say that instead of improvising one.",
+  "slot_discovery_a": "<code>scrumia-discovery</code> is installed here. An idea gets a scoping pass before it becomes a ticket: <code>scrumia-brainstorm</code> opens the question, <code>scrumia-split</code> cuts what comes out of it into issues.",
   "slot_impl_q": "How is code written, per app?",
   "slot_impl_a": "This product ships markdown. Its two code apps — a static site and a validation script — carry no implementation module, so the instruction is to follow the neighbouring code instead of inventing a doctrine.",
   "slot_practices_q": "Which cross-cutting practices, per app?",
@@ -133,7 +133,7 @@
   "install_c2": "# then, in the repo to set up",
   "install_composition_heading": "Your composition",
   "install_composition_intro": "Here's what ScrumIA sees in this repository, read from <code>.scrumia/config.yaml</code>. Nothing is guessed: every slot is real, every module installed or empty on purpose.",
-  "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ─────────────────────────────────\n  specs      scrumia-specs\n  tracker    scrumia-github-project\n  team       scrumia-teams\n  discovery  empty on purpose\n  design     scrumia-design\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  The discovery slot is empty on purpose.\n    claude plugin install scrumia-discovery@scrumia --scope project\n\n  Change any of this with /scrumia-core:scrumia-compose.",
+  "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ─────────────────────────────────\n  specs      scrumia-specs\n  tracker    scrumia-github-project\n  team       scrumia-teams\n  discovery  scrumia-discovery\n  design     scrumia-design\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  Change any of this with /scrumia-core:scrumia-compose.",
   "install_after": "<code>scrumia-init</code> maps your apps, proposes a composition, offers the install command for each module it needs, and writes the composition into <code>CLAUDE.md</code>. Re-running it checks instead of overwriting.",
   "composer_js_strings": "null"
 }

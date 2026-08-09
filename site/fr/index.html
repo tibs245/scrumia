@@ -202,7 +202,7 @@
 
 <section id="slots">
   <h2>Slots</h2>
-  <p class="section-intro">Un slot est une question. Un module est une réponse. Ci-dessous, la composition réelle de ce dépôt, lue depuis <code>.scrumia/config.yaml</code> — trois des sept slots sont vides, et rien n'y est simulé.</p>
+  <p class="section-intro">Un slot est une question. Un module est une réponse. Ci-dessous, la composition réelle de ce dépôt, lue depuis <code>.scrumia/config.yaml</code> — deux des sept slots sont vides, et rien n'y est simulé.</p>
 
   <!-- name="slot" groups the seven rows into one native accordion: opening one
        closes the last, with no script reading or writing that state. -->
@@ -246,21 +246,21 @@
       <p class="slot-answer">Manager, business, tech — plus un designer apporté par le module design. Chaque frontière est une ligne de refus, et chaque rôle se bascule par la config.</p>
     </details>
 
-    <!-- Three of seven are genuinely empty in this repo's own composition —
-         see .scrumia/config.yaml. Nothing below is a hypothetical. -->
-    <details class="slot slot-empty" name="slot">
+    <details class="slot" name="slot">
       <summary>
         <h3 class="slot-row">
           <span class="slot-sign" aria-hidden="true">+</span>
           <span class="slot-name">discovery</span>
           <span class="slot-q">Comment une idée devient un travail cadré ?</span>
           <span class="slot-lead" aria-hidden="true"></span>
-          <span class="slot-fill">rien d'installé</span>
+          <span class="slot-fill">scrumia-discovery</span>
         </h3>
       </summary>
-      <p class="slot-answer"><code>scrumia-discovery</code> existe et n'est pas installé ici. Une idée va donc directement en ticket, sans étape de cadrage, et les agents sont invités à le dire plutôt que d'en improviser un.</p>
+      <p class="slot-answer"><code>scrumia-discovery</code> est installé ici. Une idée passe par un cadrage avant de devenir un ticket : <code>scrumia-brainstorm</code> ouvre la question, <code>scrumia-split</code> découpe ce qui en sort en issues.</p>
     </details>
 
+    <!-- Two of seven are genuinely empty in this repo's own composition —
+         see .scrumia/config.yaml. Nothing below is a hypothetical. -->
     <details class="slot slot-empty" name="slot">
       <summary>
         <h3 class="slot-row">
@@ -800,16 +800,13 @@ apps:
   specs      scrumia-specs
   tracker    scrumia-github-project
   team       scrumia-teams
-  discovery  empty on purpose
+  discovery  scrumia-discovery
   design     scrumia-design
 
   App    Path   Implementation  Practices
   ───────────────────────────────────────
   site   site   none            none
   tools  tools  none            none
-
-  The discovery slot is empty on purpose.
-    claude plugin install scrumia-discovery@scrumia --scope project
 
   Change any of this with /scrumia-core:scrumia-compose.</pre>
   </div>
