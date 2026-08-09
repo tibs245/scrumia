@@ -11,6 +11,8 @@ autonomous the project is configured to be. Three come from the `team` slot —
 manager, business, tech — and a fourth, designer, from whichever module fills the
 `design` slot. The roles are permanent through project memory and externalized
 board state, not through a live process (`docs/adr/0002-standing-roles.md`).
+A role can also be reached outside a ticket: convening brings the enabled
+roles up, hands the floor back to the human, and starts no sprint.
 
 **Which roles exist is a property of the composition, not of one module.**
 `settings.team.roles` is the single list, and an entry names its provider with
@@ -56,7 +58,7 @@ that module (`plugins/scrumia-design/agents/scrumia-designer.md`), not in
 | File | Why it exists |
 |---|---|
 | `business.md` | Activation triggers per role, and the escalation rules that hold regardless of the project's autonomy level |
-| `qa.md` | Acceptance criteria for role activation, arbitration and the sprint-loop constraint |
+| `qa.md` | Acceptance criteria for role activation, convening as an entry point, arbitration and the sprint-loop constraint |
 | `CHANGELOG.md` | History of changes to this feature |
 
 No `legal.md`: this feature governs the team's own workflow, not personal data,
