@@ -108,7 +108,7 @@
   </div>
 
   <h3><code>scrumia-specs</code> — slot <code>specs</code></h3>
-  <p>Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Demande</strong> plus de jugement lors de la rédaction qu'un modèle fixe.</p>
+  <p>Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Coûte</strong> plus de jugement lors de la rédaction qu'un modèle fixe.</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
@@ -121,15 +121,15 @@
   </div>
 
   <h3><code>scrumia-github-project</code> — slot <code>tracker</code></h3>
-  <p>Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Implique</strong> une dépendance GitHub stricte et rien en mode hors ligne.</p>
+  <p>Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Coûte</strong> une dépendance GitHub stricte et rien en mode hors ligne.</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
       <tbody>
         <tr><td><code>scrumia-project-setup</code></td><td>Colonnes, étiquettes, modèles d'issues</td></tr>
         <tr><td><code>scrumia-refine</code></td><td>Déplace un ticket de Backlog à Ready for dev</td></tr>
-        <tr><td><code>scrumia-ticket</code></td><td>Exécute un ticket : worktree, spec, code, tests, review, PR</td></tr>
-        <tr><td><code>scrumia-review</code></td><td>Route une review de PR et synthétise</td></tr>
+        <tr><td><code>scrumia-ticket</code></td><td>Exécute un ticket : worktree, spec, code, tests, revue, PR</td></tr>
+        <tr><td><code>scrumia-review</code></td><td>Route une revue de PR et la synthétise</td></tr>
         <tr><td><code>scrumia-status</code></td><td>Vue de progression, calculée à la demande</td></tr>
       </tbody>
     </table>
@@ -182,7 +182,7 @@
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
       <tbody>
         <tr><td><code>scrumia-rust</code></td><td>La référence, chargée avant d'écrire du Rust dans une application couverte</td></tr>
-        <tr><td><code>scrumia-rust-audit</code></td><td>Mesure une application existante par rapport aux règles, finding par finding</td></tr>
+        <tr><td><code>scrumia-rust-audit</code></td><td>Mesure une application existante par rapport aux règles, constat par constat</td></tr>
       </tbody>
     </table>
   </div>
@@ -194,7 +194,7 @@
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
       <tbody>
         <tr><td><code>scrumia-solidjs</code></td><td>La référence, chargée avant d'écrire du SolidJS dans une application couverte</td></tr>
-        <tr><td><code>scrumia-solidjs-audit</code></td><td>Mesure une application existante par rapport aux règles, finding par finding</td></tr>
+        <tr><td><code>scrumia-solidjs-audit</code></td><td>Mesure une application existante par rapport aux règles, constat par constat</td></tr>
       </tbody>
     </table>
   </div>
@@ -220,12 +220,12 @@
       <tbody>
         <tr><td><code>scrumia-solid-principles</code></td><td>La référence : les cinq, avec leurs limites, en OO et fonctionnel pareillement</td></tr>
         <tr><td><code>scrumia-solid-audit</code></td><td>Violations et sur-applications, sur un pied d'égalité</td></tr>
-        <tr><td><code>scrumia-solid-refactor</code></td><td>Résout un finding, en étapes sûres</td></tr>
+        <tr><td><code>scrumia-solid-refactor</code></td><td>Résout un constat, en étapes sûres</td></tr>
       </tbody>
     </table>
   </div>
   <h3><code>scrumia-practice-tanstack-query</code> — slot <code>practices</code></h3>
-  <p>Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite envers l'état client seulement. Porté d'une utilisation réelle monorepo : 9 guides, 13 decisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.</p>
+  <p>Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite qui sépare l'état serveur de l'état purement client. Porté d'une utilisation réelle monorepo : 9 guides, 13 décisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
@@ -306,7 +306,7 @@ settings:
   </ol>
 
   <h3>Comment les pratiques se composent</h3>
-  <p>Un module de pratique affine <strong>un point nommé</strong> de ce contrat — TDD affine « comment vous testez », SOLID affine « quels principes de conception » — et livre trois compétences : la référence, l'audit, la refonte. Le module d'implémentation <em>situe</em> chaque pratique pour sa pile. Une règle de précédence : <strong>spécifique bat générique</strong> — module d'implémentation plutôt que pratique, override de projet plutôt que les deux.</p>
+  <p>Un module de pratique affine <strong>un point nommé</strong> de ce contrat — TDD affine « comment vous testez », SOLID affine « quels principes de conception » — et livre trois compétences : la référence, l'audit, la refactorisation. Le module d'implémentation <em>situe</em> chaque pratique pour sa pile. Une règle de précédence : <strong>spécifique bat générique</strong> — module d'implémentation plutôt que pratique, remplacement de projet plutôt que les deux.</p>
 
   <h3>Surcharger sans forker</h3>
   <p>Paramètres déclarés sous <code>settings.implementation.&lt;module&gt;</code> et <code>settings.practices.&lt;module&gt;</code>, plus fichiers de remplacement de projet optionnels (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) que le module lit et honore plutôt que ses propres règles. Un module n'offrant ni l'un ni l'autre est forké au premier désaccord — et ce fork ne voit jamais une mise à jour.</p>
@@ -317,7 +317,7 @@ settings:
   </div>
 
   <h3>Hiérarchie des règles</h3>
-  <p>Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>specific beats generic</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md">ADR-0011</a>.</p>
+  <p>Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>spécifique bat générique</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md">ADR-0011</a>.</p>
 </section>
 
 <section id="write">
@@ -325,8 +325,8 @@ settings:
   <p>Trois règles, pas plus :</p>
   <ol>
     <li><strong>Remplir un slot</strong> — un existant, ou un nouveau que vous définissez et documentez</li>
-    <li><strong>Documentez vos paramètres</strong> sous <code>settings.&lt;slot&gt;</code></li>
-    <li><strong>Fournissez votre ligne <code>CLAUDE.md</code></strong> — la phrase qui dit à un agent ce dont il a besoin sans vous lire</li>
+    <li><strong>Documenter vos paramètres</strong> sous <code>settings.&lt;slot&gt;</code></li>
+    <li><strong>Fournir votre ligne <code>CLAUDE.md</code></strong> — la phrase qui dit à un agent ce dont il a besoin sans vous lire</li>
   </ol>
   <p>Et une interdiction : <strong>ne jamais supposer qu'un autre module est présent</strong>. Si une capacité manque, dites-le et proposez l'étape suivante plutôt que d'échouer.</p>
 

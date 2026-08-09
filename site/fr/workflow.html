@@ -75,12 +75,12 @@
 
 <header class="page-head summon">
   <p class="kicker">l'exécution, en détail</p>
-  <h1>Une exécution complète, de bout en bout</h1>
+  <h1>Un déroulé complet</h1>
   <p class="lead">La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.</p>
 </header>
 
 <section id="overview">
-  <h2>La forme de celui-ci</h2>
+  <h2>Sa forme</h2>
 
 <pre><code>Human     │ demande, défi, brainstorm
           ▼
@@ -161,13 +161,13 @@ Human     │ revue PR, test → Done</code></pre>
       <div class="flow-num">6</div>
       <div class="flow-body">
         <h3>Les workflows dynamiques consomment le sprint <span class="badge">agent</span></h3>
-        <p>Un workflow par ticket, en parallèle, chacun dans son propre worktree. Chaque obtient un numéro de ticket et rien d'autre — il charge son propre contexte.</p>
+        <p>Un workflow par ticket, en parallèle, chacun dans son propre worktree. Chacun obtient un numéro de ticket et rien d'autre — il charge son propre contexte.</p>
         <ol>
           <li>Charger le contexte par le module de specs</li>
-          <li><strong>Mettez à jour la spec avant le code</strong>, si le comportement change</li>
-          <li>Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique surpasse générique</li>
+          <li><strong>Mettre à jour la spec avant le code</strong>, si le comportement change</li>
+          <li>Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique bat générique</li>
           <li>Couvrir chaque <code>AC-n</code> avec un test qui peut échouer</li>
-          <li>Auto-review, puis review par les rôles selon le périmètre d'impact</li>
+          <li>Autorevue, puis revue par les rôles selon le périmètre d'impact</li>
           <li>Ouvrir la PR</li>
         </ol>
 <pre><code>/scrumia-teams:scrumia-sprint</code></pre>
@@ -178,7 +178,7 @@ Human     │ revue PR, test → Done</code></pre>
       <div class="flow-num">7</div>
       <div class="flow-body">
         <h3>L'humain revoit et fusionne <span class="badge badge-human">humain</span></h3>
-        <p>La PR porte la correspondance critère par critère, les specs qu'elle a changées, les verdicts de review, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.</p>
+        <p>La PR porte la correspondance critère par critère, les specs qu'elle a changées, les verdicts de revue, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.</p>
       </div>
     </div>
   </div>
