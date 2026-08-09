@@ -20,5 +20,6 @@
   "mod_h_skills": "Ses compétences",
   "mod_h_install": "L'installer",
   "mod_h_source": "Lire le source sur GitHub",
-  "mod_h_tags": "Étiquettes"
+  "mod_h_tags": "Étiquettes",
+  "footer_non_affiliation": "ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic."
 }
