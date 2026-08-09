@@ -77,5 +77,7 @@ And no reader sees one theme painted and then replaced by another
 
 - The hero, the slot index and the run (#60, #61, #62). This feature lands the
   ground they stand on and nothing that stands on it.
-- Which of the three `site-header` candidates wins. Until that is decided the
-  masthead carries no scroll behaviour at all, which is the only honest default.
+- The `site-header` rail's own behaviour (hover/focus tracking, reduced-motion
+  fallback). The candidate is decided (#74, the rail) but not yet implemented
+  (#112); until it lands the masthead carries no pointer behaviour at all,
+  which is the only honest default in the meantime.
