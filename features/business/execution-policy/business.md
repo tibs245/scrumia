@@ -87,6 +87,23 @@ to violate: it is a grid the invariant cannot be checked against, and that is re
 A check that silently does not run misleads its reader as surely as one that cries wolf,
 and this is the state a project is in until it declares the order beside its grid.
 
+## The order runs higher than the grid does
+
+A capability order names every model the vendor sells, including ones a project is not
+willing to spend on by default. So the project declares a **ceiling** beside the order,
+and the invariant is that **no cell names a model above it** — not the bare cells, and
+not the fallback a split-preferring cell carries.
+
+The ceiling is a spending judgement, not a capability one. A cell above it bills at that
+rate on every ticket it matches, indefinitely, and nobody re-reads a grid that is
+working — which makes the top of the order precisely the place a default does the most
+damage. Above the ceiling the choice is made per ticket, by the human who wants it there,
+and it arrives the way every other departure from the policy's answer arrives: as a human
+override, recorded as a deviation with its reason (below).
+
+Which model is the ceiling is project data, declared beside the order in the same
+configuration and for the same reason — the two are read, edited and go stale together.
+
 ## One reader, one decision
 
 A caller asks the policy and acts on the **instruction it answers with**. It does not

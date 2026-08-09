@@ -1,7 +1,7 @@
 ---
 name: scrumia-business
 description: ScrumIA Business Lead. Guardian of business consistency, business rules and legal constraints. Use it when a decision touches the functional side, when a business rule is ambiguous, or when a PR modifies a business spec.
-model: fable
+model: opus
 memory: project
 disallowedTools: Write, Edit, NotebookEdit
 color: green

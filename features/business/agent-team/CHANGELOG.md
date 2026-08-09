@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — All standing roles run on opus, the ceiling assigned without being asked; the tier above is opted into by a human, never by a default
+- Issue: #120
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-08 — The model-per-ticket deferrals point at the execution-policy feature, and the business role's trigger reads the blast-radius test rather than a file path
 - Issue: #13
 - PR: #NN (filled at merge)

@@ -56,7 +56,7 @@ The price: dependency on GitHub, nothing readable offline. An equivalent module 
 
 ### `scrumia-teams` — three roles, configurable
 
-Manager (Opus), Business and Tech (Fable). Each boundary is a **refusal line**: without it, the three converge toward the same generalist agent.
+Manager, Business and Tech, all three on Opus — the ceiling the project assigns without being asked. Each boundary is a **refusal line**: without it, the three converge toward the same generalist agent.
 
 Three is not a magic number — roles are enabled, disabled and added through configuration. See [`agents.md`](agents.md).
 

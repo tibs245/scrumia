@@ -64,10 +64,17 @@ rather than negotiating with each other directly (`docs/adr/0002-standing-roles.
 
 ## Models live in the agent, not in configuration
 
-Each role's model is declared in its own agent's frontmatter
-(`plugins/scrumia-teams/agents/scrumia-manager.md`,
-`scrumia-business.md`, `scrumia-tech.md`) — currently manager on `opus`,
-business and tech on `fable`. `.scrumia/config.yaml`'s `team.roles` carries
+Each role's model is declared in its own agent's frontmatter — the three this
+module ships (`plugins/scrumia-teams/agents/scrumia-manager.md`,
+`scrumia-business.md`, `scrumia-tech.md`) and any a plugged-in module registers
+beside them, such as `designer`
+(`plugins/scrumia-design/agents/scrumia-designer.md`,
+`docs/adr/0014-roles-ship-with-their-capability.md`). All of them on `opus`,
+which is the ceiling this project assigns without being asked. A stronger model
+exists above it (`fable`, twice the per-token price) and no default reaches for
+it: moving a role there is an explicit human decision, taken case by case. What
+a *ticket* may reach is not this feature's rule — see `execution-policy`.
+`.scrumia/config.yaml`'s `team.roles` carries
 only `enabled` per role. A `roles[].model` key existed there previously; it
 governed nothing and was removed. This spec does not reintroduce it: a second
 place claiming to hold the model would drift from the frontmatter that actually

@@ -12,10 +12,12 @@ This module provides a **default** team, not an imposed one. Three roles cover m
 | Role | Model | Owns | Doesn't own |
 |---|---|---|---|
 | `manager` | `opus` | The board, splitting, routing, cadence | Business rules, architecture, merge |
-| `business` | `fable` | Business rules, vocabulary, compliance | Architecture, stack, planning |
-| `tech` | `fable` | Architecture, contracts, debt, quality | Business rules, priorities |
+| `business` | `opus` | Business rules, vocabulary, compliance | Architecture, stack, planning |
+| `tech` | `opus` | Architecture, contracts, debt, quality | Business rules, priorities |
 
 Those models live in each agent's frontmatter, not in `.scrumia/config.yaml` — the platform reads them at load time. The models used to **execute tickets** are a separate policy, set in Step 3.
+
+`opus` is the ceiling this module ships, in the frontmatter as in the matrix. A stronger model exists above it (`fable`, at twice opus per token), and nothing here reaches for it on its own: raising a role that far is a change the human makes deliberately, knowing what it bills.
 
 The reasoning behind this split: each boundary is a **line of refusal**. Without it, the three roles converge toward the same generalist agent and the separation no longer serves any purpose.
 
@@ -42,11 +44,12 @@ settings:
         scope_prefix: "scope/"
         risk_prefix: "risk/"
       # Capability order, weakest to strongest: sonnet < opus < fable — see Step 3.
+      # Opus is the ceiling a seeded cell may name; fable is opted into by hand.
       matrix:
         S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
         M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
         L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
-        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_opus,  critical: split_or_opus }
     escalation:
       to_human:                    # what always escalates to the human
         - disagreement between roles
@@ -65,7 +68,7 @@ Ask the user what they want to change, presenting the consequences rather than t
 - **Disabling `business`** — no one keeps business rules consistent across features anymore; contradictions will surface at implementation or in production.
 - **Disabling `tech`** — no more architecture review; acceptable on a single app, costly as soon as several apps share contracts.
 - **Disabling `manager`** — the human takes back splitting, routing and sprint assembly.
-- **Changing a standing role's model** — edit that role's agent file in `agents/`; the platform reads the frontmatter at load time and no config key overrides it. A smaller model costs less and misses more subtle contradictions; it's an arbitration, not a degradation. Don't confuse it with Step 3: this sets who reviews, that sets who executes.
+- **Changing a standing role's model** — edit that role's agent file in `agents/`; the platform reads the frontmatter at load time and no config key overrides it. A smaller model costs less and misses more subtle contradictions; it's an arbitration, not a degradation. Going the other way, above `opus`, is an arbitration too and a costlier one — propose it only if the human asks, never as a fix for a role that reviewed something poorly. Don't confuse any of this with Step 3: this sets who reviews, that sets who executes.
 
 Adding a role is possible: it takes an agent file in `agents/`, a scope that overlaps no existing role, and an explicit line of refusal. A role without a line of refusal is a duplicate.
 
@@ -78,6 +81,8 @@ Standing roles have fixed models. The **executor of a ticket** does not: `scrumi
 Two axes, both carried by the ticket's own labels: **scope** (how much work) and **risk** (what it costs to get wrong). They are independent — a one-line change to a payment rule is `scope/S` and `risk/critical`, and it deserves the strong model precisely because it is small enough to look harmless.
 
 Which model is the strong one is not something the names say. The cells climb a capability order — **`sonnet` < `opus` < `fable`** — and nothing enforces it: an inverted grid parses, validates and runs, spending the strong model on the cheap tickets while the critical ones get the weak one. It fails silently, in the direction nobody checks. Write the order beside every grid you seed, and read it before editing a cell.
+
+**Seed no cell above `opus`.** `fable` sits at the top of that order and bills at twice opus per token, which is exactly why it must not arrive through a default: a matrix that names it spends at that rate on every ticket the cell matches, silently, forever. If the human wants a specific ticket run there, they say so on that ticket — a one-off instruction the executor follows, not a policy written into the grid. Treat a `fable` cell you find in an existing config as a question for the human, not as a value to preserve.
 
 Nobody reads this matrix by hand, including you. `scripts/pick-model.sh <issue>` reads it and answers:
 
