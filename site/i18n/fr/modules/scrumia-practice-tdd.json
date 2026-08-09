@@ -3,7 +3,7 @@
   "meta_description": "scrumia-practice-tdd : le slot practices de ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.",
   "og_title": "scrumia-practice-tdd — ScrumIA",
   "tagline": "Un point nommé du contrat d'implémentation : comment nous testons.",
-  "responsibilities": "<p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer. Référence, audit et refonte, trois compétences.</p>",
+  "responsibilities": "<p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer.</p>",
   "refusals": "<p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne.</p>",
   "philosophy": "<p>Présume qu'un test qui échoue est la spécification la moins chère à écrire. Coûte une première passe plus lente, remboursée seulement si le code survit au sprint qui l'a produit.</p>"
 }
