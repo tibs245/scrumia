@@ -56,7 +56,7 @@ a decision rather than a drift: the colour marks *which* agent runtime this
 composition targets, and nothing else. The line it must not cross is Anthropic's
 graphic identity — no logo, no wordmark, no mascot wearing it. Colour is the whole of
 the borrowing, and the non-affiliation statement that puts it on the record is
-`features/business/*/legal.md`, owned by #67.
+`features/app/site/ground-and-shell/legal.md`, owned by #67.
 
 ## Where this is not yet settled
 
