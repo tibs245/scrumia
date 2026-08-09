@@ -99,8 +99,8 @@ reviewing a spec change. Replace the tracker with a hypothetical
 `scrumia-tracker-local` — a file-based tracker, no PR, no board:
 
 - **The rule stays true, word for word → it belongs here.** One worktree per ticket,
-  one branch per ticket, commit before any pause or review, review before merge, the
-  three gates, `auto_merge`. None of them mentions a tracker to be stated.
+  one branch per ticket, commit before the run yields control, review before merge,
+  the three gates, `auto_merge`. None of them mentions a tracker to be stated.
 - **The rule becomes meaningless → it belongs to the tracker feature.** Opening a PR
   and linking it to its issue, column transitions, milestone-as-sprint,
   epic-as-native-sub-issues, board reading discipline. Each names an artefact that

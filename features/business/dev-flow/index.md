@@ -20,7 +20,8 @@ soft, light once it is a scoped ticket.
 ## This feature owns the code-cycle process
 
 The execution path's mechanics — one worktree per ticket, one branch per ticket,
-committing before a pause, review before merge, the three gates, `auto_merge` — are
+committing before the run yields control, review before merge, the three gates,
+`auto_merge` — are
 **this feature's**. Ownership is settled; the wording is not all here yet — worktree
 ownership lands through #20, and until it does, no other spec becomes its home.
 Committing before a pause is written down, in `business.md` § *Who decides, on each
