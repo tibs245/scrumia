@@ -423,14 +423,27 @@ section > h2::before {
  * four lines. One threshold, written once, at the bottom of this block.
  */
 
-.run { margin: var(--space-10) 0 0; }
+.run {
+  margin: var(--space-10) 0 0;
+  /* One mark size for the run and for the legend that explains it: a key drawn
+     smaller than the thing it keys is a second component wearing the same name. */
+  --mark: 11px;
+  /* On the rail the legend comes first — the digits are the only place the ratio
+     is countable when the seven marks are 900px apart. On the horizon it comes
+     last, where it explains what the reader has just taken in. */
+  display: flex; flex-direction: column;
+}
+.run-legend { order: -1; }
 
 /* The rail: the same run turned on its side. Same marks, same order, same words
-   — only the axis changes, so nothing has to be cut for it. */
+   — only the axis changes, so nothing has to be cut for it. The spine is drawn in
+   --border-strong, not the page's hairline: at 1.29:1 against cream the scenery
+   token reads as one more background grid line, and the branches hanging off it
+   would be stronger than the line they hang from. */
 .run-track { position: relative; padding-left: var(--space-8); }
 .run-track::before {
   content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px;
-  width: 1px; background: var(--border);
+  width: 1px; background: var(--border-strong);
 }
 .run-horizon { display: none; }
 .step { position: relative; padding-bottom: var(--space-8); }
@@ -440,7 +453,7 @@ section > h2::before {
 }
 
 .step-dot {
-  width: 11px; height: 11px; border-radius: 50%;
+  width: var(--mark); height: var(--mark); border-radius: 50%;
   background: var(--ground); border: 2px solid var(--agent);
   position: relative; z-index: 1;
 }
@@ -478,24 +491,28 @@ section > h2::before {
 
 .run-legend {
   display: flex; flex-wrap: wrap; gap: var(--space-6);
-  margin: var(--space-8) 0 0; font-size: var(--text-sm); color: var(--text-faint);
+  margin: 0 0 var(--space-6); font-size: var(--text-sm); color: var(--text-faint);
 }
 .run-legend span { display: inline-flex; align-items: center; gap: var(--space-2); }
 .run-legend b { color: var(--text-soft); font-weight: var(--weight-medium); }
-/* The legend's marks are the run's own dots, filled the same way: a key that
+/* The legend's marks are the run's own dots — same size, same fill: a key that
    draws a different shape from the thing it explains is a second component. */
 .run-legend i {
-  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  width: var(--mark); height: var(--mark); border-radius: 50%; flex: none;
   border: 2px solid var(--agent);
 }
 .run-legend .is-human i { border-color: var(--human); background: var(--human); }
 
-/* --page-wide plus the two gutters main already reserves. Below it the rail
-   above stands; at it and past it the run becomes the horizon and steps out of
-   --page-max. The two are one decision, so this is the only number that states
-   it. The breakout margin is computed from 100% — the width main actually gives
-   the run — rather than from --page-max, so it stays exact whatever padding
-   main carries. */
+/* --page-wide plus the two gutters main already reserves. Below it the rail above
+   stands; at it and past it the run becomes the horizon and steps out of
+   --page-max. A media query cannot read a custom property, so this 1440 and
+   --page-wide's 1400 are two numbers that have to stay --space-5 apart: widen
+   --page-wide alone and the run reaches past the viewport, where body's
+   overflow-x: clip would hide the loss rather than show a scrollbar.
+   tools/check_run_horizon.py asserts the run's own edges instead of trusting the
+   pair. The breakout margin is computed from 100% — the width main actually
+   gives the run — rather than from --page-max, so it stays exact whatever
+   padding main carries, as long as main itself stays centred. */
 @media (min-width: 1440px) {
   .run {
     width: var(--page-wide);
@@ -508,12 +525,19 @@ section > h2::before {
     column-gap: var(--space-3);
     padding-left: 0;
   }
+  /* The legend goes back under the run here, and back onto the page's own left
+     edge: it is prose, and prose pinned to the breakout edge sits 160px left of
+     every other sentence in the section. */
+  .run-legend {
+    order: 0; margin: var(--space-8) 0 0;
+    padding-inline: calc((100% - var(--page-max)) / 2);
+  }
   .run-track::before { content: none; }
   .run-horizon {
     display: block;
     grid-row: 2; grid-column: 1 / -1; align-self: center;
     height: 1px; width: 100%;
-    background: linear-gradient(90deg, transparent, var(--border) 6%, var(--border) 94%, transparent);
+    background: linear-gradient(90deg, transparent, var(--border-strong) 6%, var(--border-strong) 94%, transparent);
   }
   /* display:contents lets one step own two cells in two different rows, so every
      mark lands on exactly the same y however tall the copy above it runs. */
@@ -923,10 +947,12 @@ footer a:hover { color: var(--accent); }
   animation: summon var(--dur-3) var(--ease-summon) both;
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
-/* The mark only fades. A dot that travelled would leave the line it stands on,
-   and the line is the diagram. */
+/* The marks only fade, and so does the line under them. A dot that travelled
+   would leave the line it stands on — and a line that travels under dots that do
+   not is the same defect drawn the other way round. */
 @keyframes land { from { opacity: 0; } to { opacity: 1; } }
-.js .run-track.summon.is-in > .step > .step-mark { animation-name: land; }
+.js .run-track.summon.is-in > .step > .step-mark,
+.js .run-track.summon.is-in > .run-horizon { animation-name: land; }
 
 /* The one flare on the page. The human mark stands for "this one waits for
    you", so its arrival is the single state change worth a pulse — and the human
@@ -953,9 +979,12 @@ footer a:hover { color: var(--accent); }
      the state change still reads, it just stops travelling. */
   .js .summon > *,
   .js .summon.is-in > *,
-  /* the run's cells are grandchildren: a step generates no box to hide */
+  /* the run's cells are grandchildren, and its dot a great-grandchild: a step
+     generates no box, so the blanket reset above never reaches down to them */
   .js .run-track.summon > .step > *,
-  .js .run-track.summon.is-in > .step > * { opacity: 1; animation: none; }
+  .js .run-track.summon.is-in > .step > *,
+  .js .run-track.summon.is-in > .step > .step-mark,
+  .js .run-track.summon.is-in > .step-human .step-dot { opacity: 1; animation: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

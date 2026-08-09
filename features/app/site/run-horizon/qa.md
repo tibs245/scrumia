@@ -2,11 +2,20 @@
 
 One scenario per rule in `index.md`. Each scenario must be able to fail.
 
-`tools/check_run_horizon.py` is the runnable form of AC-1 to AC-4: it renders the
-built pages in headless Chrome at nine widths in both languages and reads the
-line counts, the marks and the actor words back out. It is not a spec file, and
-it exits 2 rather than 0 when it finds no browser — a check that passes because
-it could not run is worse than one that is missing.
+`tools/check_run_horizon.py` is the runnable form of AC-1, AC-2, AC-3 and AC-4's
+first scenario: it renders the built pages in headless Chrome at nine widths in
+both languages and reads the line counts, the marks, the actor words, the run's
+own edges and the legend's digits back out. It is not a spec file, and it exits 2
+rather than 0 when it finds no browser — a check that passes because it could not
+run is worse than one that is missing.
+
+**AC-4's second scenario is the one thing here no script can prove.** Forcing
+reduced motion is exactly what stops the `.js` gate being set, so the code path
+that would bloom is never the code path under test. It is verified by reading the
+selectors, and the rule it depends on is that every animated descendant of the
+run appears in the `prefers-reduced-motion` block in `site/assets/style.css` —
+including `.step-dot`, which is a great-grandchild of the `.summon` container and
+so is missed by any blanket `> * ` reset.
 
 ## Nominal
 

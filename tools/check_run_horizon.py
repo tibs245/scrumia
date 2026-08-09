@@ -51,9 +51,13 @@ PROBE = """
     };
   });
   var track = document.querySelector('.run-track');
+  var run = document.querySelector('.run').getBoundingClientRect();
   document.title = 'PROBE' + JSON.stringify({
     track: Math.round(track.getBoundingClientRect().width),
-    ground: getComputedStyle(document.body).backgroundColor,
+    left: Math.round(run.left),
+    right: Math.round(run.right),
+    page: document.documentElement.clientWidth,
+    legend: document.querySelector('.run-legend').textContent,
     horizon: getComputedStyle(document.querySelector('.run-horizon')).display,
     steps: steps
   });
@@ -83,8 +87,8 @@ def render(chrome: str, page: Path, width: int) -> dict:
     if not found:
         raise RuntimeError(f"{page.name} at {width}px rendered no measurement")
     text = found.group(1)
-    for entity, char in (("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"')):
-        text = text.replace(entity, char)
+    for entity, char in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'), ("&amp;", "&")):
+        text = text.replace(entity, char)  # &amp; last, or "&amp;lt;" in copy double-decodes
     return json.loads(text)
 
 
@@ -128,11 +132,13 @@ def rules(css: str):
 def check_css(fail, verbose: bool) -> None:
     """AC-4, and it needs no browser: one animated glow, on the human mark alone."""
     css = re.sub(r"/\*.*?\*/", "", STYLE.read_text(encoding="utf-8"), flags=re.DOTALL)
-    glowing = [name for name in re.findall(r"@keyframes\s+([\w-]+)", css)
-               if "box-shadow" in balanced(css, css.index("{", css.index("@keyframes " + name)))[0]]
+    # Matched with its opening brace rather than looked up by name: two keyframes
+    # whose names share a prefix would otherwise be judged by the wrong body.
+    glowing = [m.group(1) for m in re.finditer(r"@keyframes\s+([\w-]+)\s*\{", css)
+               if "box-shadow" in balanced(css, m.end() - 1)[0]]
     if glowing != ["bloom"]:
         fail(f"AC-4: the animated glows are {glowing or 'none'}, expected exactly ['bloom']")
-    users = [sel for sel, body in rules(css) if re.search(r"animation:\s*bloom\b", body)]
+    users = [sel for sel, body in rules(css) if re.search(r"animation(-name)?:[^;]*\bbloom\b", body)]
     if not users:
         fail("AC-4: nothing consumes the bloom — the flare is dead code")
     for sel in users:
@@ -171,6 +177,11 @@ def check_page(data: dict, lang: str, width: int, fail, verbose: bool) -> None:
         if not s["human"] and filled:
             fail(f"{lang} {width}: agent step {s['no']} draws a filled mark")
 
+    # AC-2 — the ratio in digits, so it survives greyscale and a printout.
+    digits = re.sub(r"\s+", " ", data["legend"])
+    if not (re.search(r"\b3\b[^0-9]{1,6}\b7\b", digits) and re.search(r"\b4\b[^0-9]{1,6}\b7\b", digits)):
+        fail(f"{lang} {width}: the legend does not state 3-of-7 and 4-of-7 — {digits!r}")
+
     # The horizon exists only where it fits; below that the rail carries the run.
     wide = width >= 1440
     if wide and data["horizon"] == "none":
@@ -179,6 +190,11 @@ def check_page(data: dict, lang: str, width: int, fail, verbose: bool) -> None:
         fail(f"{lang} {width}: the horizon is drawn below the width it needs")
     if wide and data["track"] < 1400:
         fail(f"{lang} {width}: the track is {data['track']}px, expected --page-wide")
+
+    # 1400 and 1440 live apart and `overflow-x: clip` would hide the day they drift.
+    if data["left"] < 0 or data["right"] > data["page"]:
+        fail(f"{lang} {width}: the run spans {data['left']}–{data['right']}px "
+             f"in a {data['page']}px page")
 
     if verbose:
         shape = "horizon" if wide else "rail   "
@@ -193,6 +209,10 @@ def main() -> int:
 
     chrome = find_chrome()
     if not chrome:
+        # The CSS findings are already in hand; losing them to a missing browser
+        # would report the one thing that could not be checked and none of what was.
+        for line in failures:
+            print(f"error: {line}", file=sys.stderr)
         print("error: no Chrome or Chromium found — the line budget went unmeasured",
               file=sys.stderr)
         return 2
