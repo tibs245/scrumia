@@ -20,12 +20,13 @@ When the manager routes it
 Then it delegates the question to the tech role rather than answering it itself
 ```
 
-### AC-15 — Convening the team brings the roles up without starting a sprint
+### AC-12 — Convening the team brings the roles up without starting a sprint
 
 ```gherkin
 Given a project whose team slot is filled and whose roles are enabled
 When a human asks to start the team
-Then the enabled roles are convened and each states what it owns
+Then the enabled roles are convened and each states what it owns and what it
+  refuses to rule on
 And no sprint starts and no card moves
 ```
 
@@ -118,7 +119,7 @@ Then they do not resolve — a hot reload refreshes skills but not agent types �
   and the answer names the restart rather than falling back silently
 ```
 
-### AC-16 — A role is declared but its module is not installed
+### AC-13 — A role is declared but its module is not installed
 
 ```gherkin
 Given the composition declares a role as enabled: true whose module is not
@@ -126,6 +127,7 @@ Given the composition declares a role as enabled: true whose module is not
 When the team is convened
 Then that role is reported as a gap rather than silently convened as part of
   a smaller roster
+And the install command is named, not a restart
 ```
 
 ## Out of scope

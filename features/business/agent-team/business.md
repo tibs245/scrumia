@@ -39,18 +39,19 @@ actual scope conditions who reviews at exit, independent of the label.
 Being reached precedes being activated: a role can be brought up to state what
 it owns before any ticket assigns it a trigger. Convening and executing a
 sprint are distinct entry points. A request to start the team brings the
-enabled roles up, each reports what it owns and its read of the current
-state, and the floor returns to the human — it never starts a sprint, moves a
-card, or refines a ticket. Launching a sprint stays a separate, later, human
-decision, taken with a batch of tickets in front of them.
+enabled roles up, each reports what it owns, its read of the current state,
+and what it refuses to rule on with where that goes instead, and the floor
+returns to the human — it never starts a sprint, moves a card, or refines a
+ticket. Launching a sprint stays a separate, later, human decision, taken
+with a batch of tickets in front of them.
 
 Convening checks that each enabled role's module is **installed**, not merely
-declared. A role carrying `enabled: true` in `settings.team.roles` whose
-module is absent is the worst of the three states a role can be in: the
-composition claims the reviewer exists and nothing reaches it. Convening
-reports that gap rather than silently bringing up a smaller roster — a
-partial team convened in silence would let a project believe it has a
-reviewer it does not.
+declared. A role is in one of three states: disabled, enabled with its module
+installed, or enabled with its module absent — and the last is the worst of
+the three: the composition claims the reviewer exists and nothing reaches it.
+Convening reports that gap, naming the install command, rather than silently
+bringing up a smaller roster — a partial team convened in silence would let a
+project believe it has a reviewer it does not.
 
 ## Escalation to the human
 
