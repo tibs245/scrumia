@@ -190,7 +190,7 @@ header.top {
 main { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--space-5) var(--space-20); }
 section { padding-top: var(--space-16); scroll-margin-top: calc(var(--header-h) + var(--space-4)); }
 
-h1, h2, h3, .stat b, .brand {
+h1, h2, h3, .count b, .brand {
   font-family: var(--font-display);
 }
 h1 {
@@ -239,13 +239,20 @@ section > h2::before {
 
 /* ---------- Hero ---------- */
 
-.hero { position: relative; padding: var(--space-16) 0 var(--space-24); }
+.hero {
+  position: relative;
+  padding: var(--space-16) 0 var(--space-24);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: repeat(4, auto);
+  column-gap: clamp(var(--space-8), 6vw, var(--space-20));
+}
 
 /* The limb: a planet's edge, lit from behind. It is what closes the hero — a rim
    light instead of a border, so the page ends on a horizon rather than on a line
    somebody drew. Wider than the viewport by design; body clips it.
    Drawn as ::after rather than as an element: it is decoration with no content,
-   and a sixth child would shift the stagger indices the hero's arrival counts on. */
+   and a seventh child would shift the stagger indices the hero's arrival counts on. */
 .hero::after {
   content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
   width: 210vw; aspect-ratio: 2.4 / 1;
@@ -254,16 +261,8 @@ section > h2::before {
   box-shadow: 0 -2px 90px -28px var(--limb-glow);
   pointer-events: none;
 }
-.hero h1 { margin-top: 0; max-width: 18ch; }
-.hero h1 em {
-  font-style: normal; color: var(--accent);
-}
-.hero .lead {
-  font-size: var(--text-xl); line-height: var(--leading-snug);
-  color: var(--text-soft); max-width: 44ch;
-  margin-bottom: var(--space-2);
-}
 .eyebrow {
+  grid-column: 1; grid-row: 1; justify-self: start;
   display: inline-flex; align-items: center; gap: var(--space-2);
   font-family: var(--font-mono); font-size: var(--text-xs);
   letter-spacing: var(--tracking-label); text-transform: uppercase;
@@ -272,6 +271,25 @@ section > h2::before {
   padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill);
   margin-bottom: var(--space-5);
 }
+/* Architecture scale, not the documentation scale h1 uses elsewhere: the three
+   lines are authored with <br> in the string, not produced by text-wrap: balance
+   — at this size the break is a composition decision, not layout's to make. */
+.hero h1 {
+  grid-column: 1; grid-row: 2;
+  margin: 0; max-width: none;
+  font-size: var(--text-hero); line-height: var(--leading-hero);
+  letter-spacing: var(--tracking-hero);
+}
+.hero h1 em {
+  font-style: normal; color: var(--accent);
+}
+.hero .lead {
+  grid-column: 1; grid-row: 3;
+  font-size: var(--text-xl); line-height: var(--leading-snug);
+  color: var(--text-soft); max-width: 44ch;
+  margin: var(--space-10) 0 0;
+}
+.hero .cta-row { grid-column: 1; grid-row: 4; margin: var(--space-8) 0 0; }
 
 .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-8) 0 var(--space-1); }
 .btn {
@@ -283,32 +301,92 @@ section > h2::before {
               background var(--dur-1) var(--ease-move),
               border-color var(--dur-1) var(--ease-move);
 }
+/* The only filled control in the hero. One accent means one thing points. */
 .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow-accent); }
 .btn-primary:hover { transform: translateY(-1px); }
 .btn-ghost { border-color: var(--border-strong); color: var(--text); }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn:active { transform: translateY(0); }
 
-/* ---------- Stats ---------- */
+/* ---------- Hop ---------- *
+ * The mascot: four segments and one eye, built from the same segments the flow
+ * diagrams use. `.hop-arrive` plays once, gated by the same `.js` class the
+ * pre-paint script in head.html sets — so a reader with no JavaScript, a script
+ * that failed, or `prefers-reduced-motion` sees Hop assembled and lit from the
+ * first frame rather than mid-flight or invisible.
+ */
+.hero-figure {
+  grid-column: 2; grid-row: 1 / 5;
+  align-self: center; justify-self: end;
+  position: relative; isolation: isolate;
+  display: grid; place-items: center; margin: 0;
+  width: clamp(160px, 20vw, 240px); aspect-ratio: 1;
+}
+/* The ring is the only closed shape in the hero, so Hop reads as a body at a
+   distance instead of a sticker dropped on a dark background. */
+.hero-figure::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at 50% 42%, var(--halo-near), transparent 64%);
+}
+.hero-figure .hop { position: relative; z-index: 1; width: 54%; height: auto; }
 
-/* The rules are box-shadows rather than gaps or borders: a gap would tint the cell
-   a wrapped row leaves empty, and a right border alone cannot separate two rows. */
-.stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  margin: var(--space-10) 0 0;
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  background: var(--surface); overflow: hidden;
+.hop { display: block; }
+.hop-seg {
+  fill: var(--surface-raised); stroke: var(--border-strong); stroke-width: 1.5;
+  transform-box: fill-box; transform-origin: 50% 100%;
 }
-.stat {
-  padding: var(--space-3) var(--space-5);
-  box-shadow: 1px 0 0 var(--border), 0 1px 0 var(--border);
+.hop-eye {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 65%, transparent));
+  transform-box: fill-box; transform-origin: 50% 50%;
 }
-.stat b {
-  display: block; font-size: var(--text-xl); font-weight: var(--weight-display);
-  letter-spacing: var(--tracking-display); color: var(--text);
-  font-variant-numeric: tabular-nums;
+.hop-head { fill: var(--accent-surface); }
+.hop-s1 { --dx: -9px; --sy: 2.29; }
+.hop-s2 { --dx: -3px; --sy: 1.39; }
+.hop-s3 { --dx:  1px; --sy: 1.23; }
+.hop-s4 { --dx:  5px; --sy: 1.88; }
+
+@keyframes hop-in {
+  from { transform: translateX(var(--dx)) scaleY(var(--sy)); }
+  to   { transform: none; }
 }
-.stat span { font-size: var(--text-sm); color: var(--text-faint); }
+@keyframes hop-eye-in {
+  0%, 45%  { opacity: 0; transform: scale(0.3); }
+  100%     { opacity: 1; transform: scale(1); }
+}
+.js .hop-arrive .hop-seg {
+  animation: hop-in var(--dur-3) var(--ease-hop) both;
+  animation-delay: calc(var(--i) * var(--stagger-hop));
+}
+.js .hop-arrive .hop-eye {
+  animation: hop-eye-in var(--dur-4) var(--ease-move) both;
+  animation-delay: var(--dur-2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hop-seg, .hop-eye { animation: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* ---------- Counts ---------- *
+ * Plain numbers, not a card: the hero closes on a horizon, not a bordered box.
+ */
+.counts {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; gap: clamp(var(--space-8), 5vw, var(--space-16));
+  margin: clamp(var(--space-12), 7vh, var(--space-20)) 0 0;
+  padding-top: var(--space-6);
+}
+.count b {
+  display: block; font-weight: var(--weight-display);
+  font-size: var(--text-2xl); letter-spacing: var(--tracking-tight);
+  line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums;
+}
+.count span {
+  display: block; color: var(--text-faint);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+}
 
 /* ---------- Principles ---------- */
 
@@ -732,11 +810,13 @@ footer a:hover { color: var(--accent); }
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
 
-/* The page itself is a summoned thing: eyebrow, claim, lead, numbers, next step. */
+/* The page itself is a summoned thing: eyebrow, claim, lead, next step, Hop,
+   numbers — in DOM order, which is also arrival order. */
 .js .hero.is-in > *:nth-child(2) { --i: 1; }
 .js .hero.is-in > *:nth-child(3) { --i: 2; }
 .js .hero.is-in > *:nth-child(4) { --i: 3; }
 .js .hero.is-in > *:nth-child(5) { --i: 4; }
+.js .hero.is-in > *:nth-child(6) { --i: 5; }
 
 /* The columns of a diagram arrive left to right: the sequence is the content. */
 .js .flowmap.is-in > .fm:nth-child(1) { --i: 0; }
@@ -769,6 +849,22 @@ footer a:hover { color: var(--accent); }
 }
 
 /* ---------- Narrow screens ---------- */
+
+/* Hop moves above the headline rather than beside it: at this width the ring
+   competes with the text for a column neither can spare. */
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .hero-figure {
+    grid-column: 1; grid-row: 1; justify-self: start;
+    width: clamp(120px, 32vw, 180px);
+    margin: 0 0 var(--space-4);
+  }
+  .eyebrow { grid-row: 2; }
+  .hero h1 { grid-row: 3; }
+  .hero .lead { grid-row: 4; }
+  .hero .cta-row { grid-row: 5; }
+  .counts { grid-row: 6; }
+}
 
 @media (max-width: 640px) {
   .top-inner { gap: var(--space-3); }
