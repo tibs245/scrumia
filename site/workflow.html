@@ -233,7 +233,7 @@ Human     │ review PR, test → Done</code></pre>
     - docs-only          <span class="c"># nothing outside docs/ and *.md</span>
     - dependency-patch   <span class="c"># patch bump, green CI</span></code></pre>
 
-  <div class="note note-warn">
+  <div class="note note-human">
     <span class="note-title">Refactoring is left off by default</span>
     <p>"Refactor with no behaviour change" can't be decided automatically — it's exactly when an agent believes it changed nothing that it changed something. Nothing stops you adding it on a given project; it just becomes a deliberate choice, written in a versioned file.</p>
   </div>
@@ -251,7 +251,7 @@ Human     │ review PR, test → Done</code></pre>
 
   <p>Everywhere else, agents move on their own. If you find yourself doing something else, that's a signal about the composition — not about your discipline.</p>
 
-  <div class="note note-warn">
+  <div class="note note-human">
     <span class="note-title">On "prepare the next sprint while this one runs"</span>
     <p>Not automatable within one session: a subagent can't spawn subagents, and agent teams are experimental with one team per session. Two Claude Code sessions on the same repo get you there — one consuming the current sprint, one refining the next. Since state lives in the tracker rather than in session memory, they stay consistent without coordinating.</p>
   </div>

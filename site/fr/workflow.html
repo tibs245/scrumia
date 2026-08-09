@@ -233,7 +233,7 @@ Human     │ revue PR, test → Done</code></pre>
     - docs-only          <span class="c"># rien en dehors de docs/ et *.md</span>
     - dependency-patch   <span class="c"># patch bump, CI vert</span></code></pre>
 
-  <div class="note note-warn">
+  <div class="note note-human">
     <span class="note-title">La refactorisation est désactivée par défaut</span>
     <p>"Refactoriser sans changement de comportement" ne peut pas être décidé automatiquement — c'est exactement quand un agent croit qu'il n'a rien changé qu'il a changé quelque chose. Rien ne vous empêche de l'ajouter sur un projet donné ; c'est juste un choix délibéré, écrit dans un fichier versionné.</p>
   </div>
@@ -251,7 +251,7 @@ Human     │ revue PR, test → Done</code></pre>
 
   <p>Partout ailleurs, les agents progressent d'eux-mêmes. Si vous vous trouvez à faire autre chose, c'est un signal sur la composition — pas sur votre discipline.</p>
 
-  <div class="note note-warn">
+  <div class="note note-human">
     <span class="note-title">Sur « préparer le prochain sprint tandis que celui-ci s'exécute »</span>
     <p>Non automatisable en une session : un subagent ne peut pas faire naître des subagents, et les équipes d'agents sont expérimentales avec une équipe par session. Deux sessions Claude Code sur le même dépôt vous y arrivent — l'une consomme le sprint actuel, l'autre affine le prochain. Puisque l'état réside dans le suivi plutôt que dans la mémoire de session, ils restent cohérents sans coordonner.</p>
   </div>
