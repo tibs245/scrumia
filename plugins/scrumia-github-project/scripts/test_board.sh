@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Tests board.sh's cmd_read state handling — AC-1/AC-2/AC-8, qa.md. `gh` is
-# stubbed with a fixture: no network call, no dependency on the live board.
+# Tests board.sh's cmd_read state handling — AC-1/AC-2/AC-4/AC-8, qa.md. `gh`
+# is stubbed with a fixture: no network call, no dependency on the live board.
 
 set -uo pipefail
 
@@ -84,6 +84,76 @@ check "AC-8: the flagged ticket is the right one" \
 done_state=$(jq -r '.columns[] | select(.status=="Done") | .items[0].state' <<<"$OUT")
 check "a closed ticket sitting in Done is a normal merge, kept and stated" \
   "$([ "$done_state" = "CLOSED" ] && echo true || echo false)" "got: $done_state"
+
+# --- AC-4: a filtered, non-empty read confirms before it's trusted ---
+WORKDIR2=$(mktemp -d)
+trap 'rm -rf "$WORKDIR" "$WORKDIR2"' EXIT
+
+# Calls 1/2/3 simulate the index catching up: 4 items, then 5, then 5 again
+# — two consecutive equal counts is what cmd_read treats as "at rest".
+cat > "$WORKDIR2/gh" <<'STUB'
+#!/usr/bin/env bash
+case "$1 $2" in
+  "project item-list")
+    n=$(( $(cat "$CALL_COUNTER" 2>/dev/null || echo 0) + 1 ))
+    echo "$n" > "$CALL_COUNTER"
+    [ "$n" -gt 3 ] && n=3
+    cat "$FIXTURE_DIR/item-list-$n.json"
+    ;;
+  "api graphql") cat "$FIXTURE_DIR/states.json" ;;
+  *) echo "unstubbed gh call: $*" >&2; exit 1 ;;
+esac
+STUB
+chmod +x "$WORKDIR2/gh"
+
+mkdir -p "$WORKDIR2/.scrumia"
+cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR2/.scrumia/config.yaml"
+
+cat > "$WORKDIR2/item-list-1.json" <<'JSON'
+{"totalCount": 4, "items": [
+  {"content": {"number": 301, "type": "Issue"}, "title": "A", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 302, "type": "Issue"}, "title": "B", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 303, "type": "Issue"}, "title": "C", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 304, "type": "Issue"}, "title": "D", "status": "Ready for dev", "labels": []}
+]}
+JSON
+cat > "$WORKDIR2/item-list-2.json" <<'JSON'
+{"totalCount": 5, "items": [
+  {"content": {"number": 301, "type": "Issue"}, "title": "A", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 302, "type": "Issue"}, "title": "B", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 303, "type": "Issue"}, "title": "C", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 304, "type": "Issue"}, "title": "D", "status": "Ready for dev", "labels": []},
+  {"content": {"number": 305, "type": "Issue"}, "title": "E", "status": "Ready for dev", "labels": []}
+]}
+JSON
+cp "$WORKDIR2/item-list-2.json" "$WORKDIR2/item-list-3.json"
+
+cat > "$WORKDIR2/states.json" <<'JSON'
+{"data": {"repository": {
+  "n301": {"number": 301, "state": "OPEN"}, "n302": {"number": 302, "state": "OPEN"},
+  "n303": {"number": 303, "state": "OPEN"}, "n304": {"number": 304, "state": "OPEN"},
+  "n305": {"number": 305, "state": "OPEN"}
+}}}
+JSON
+
+CALL_COUNTER="$WORKDIR2/calls"
+export FIXTURE_DIR="$WORKDIR2" CALL_COUNTER
+
+OUT2=$(PATH="$WORKDIR2:$PATH" SCRUMIA_CONFIG="$WORKDIR2/.scrumia/config.yaml" \
+       SCRUMIA_BOARD_RETRY_MAX=2 SCRUMIA_BOARD_RETRY_DELAY=0 \
+       "$BOARD_SH" read --query "status:\"Ready for dev\"" 2>/dev/null)
+
+ac4_count=$(jq -r '.total_matching' <<<"$OUT2")
+check "AC-4: a filtered read confirms the count that GitHub's index was still catching up on" \
+  "$([ "$ac4_count" = "5" ] && echo true || echo false)" "got: $ac4_count"
+
+ac4_calls=$(cat "$CALL_COUNTER")
+check "AC-4: the confirmation actually re-read the board rather than trusting the first pass" \
+  "$([ "$ac4_calls" -ge 2 ] && echo true || echo false)" "got: $ac4_calls calls"
+
+ac4_has_last=$(jq '[.columns[].items[].number] | contains([305])' <<<"$OUT2")
+check "AC-4: the item missing from the first read is present in the final one" \
+  "$([ "$ac4_has_last" = "true" ] && echo true || echo false)"
 
 echo
 if [ "$FAILURES" -eq 0 ]; then
