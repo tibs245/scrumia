@@ -89,6 +89,25 @@ Then it is filed here if it stays true word for word, to the tracker feature if 
   becomes meaningless, and to exactly one of the two — never to both
 ```
 
+### AC-9 — A review reads a commit, never a dirty working tree
+
+```gherkin
+Given an execution that has written its implementation
+When it spawns a role agent for review
+Then the work is already committed on the ticket's branch, and the reviewer reads a
+  commit rather than a dirty tree
+```
+
+### AC-10 — A yield that is not a review commits too
+
+```gherkin
+Given an execution that stops mid-run and hands the next move to someone else — an
+  escalation, a blocked run, a wait on a human verdict
+When it yields control
+Then its in-flight work is already committed on the ticket's branch, so the branch it
+  leaves behind carries that work rather than resolving to its base commit
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
