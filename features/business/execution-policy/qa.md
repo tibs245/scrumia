@@ -211,9 +211,15 @@ Then it answers what the cell says, unchanged — the history is evidence for ed
 Given a run that used a model the policy did not name, and that no human chose
 When it is recorded
 Then it is not filed as a human override — the override kind names the human whose
-  decision it was, and a departure nobody decided is reported as a failure to follow the
-  policy rather than as a decision to review
+  decision it was, and a departure nobody decided is not counted among the deviations the
+  grid is judged by
 ```
+
+Only the negative half is a criterion. What *should* happen to such a run — who is told,
+and in what shape — is not specified here, because nothing today can tell an agent's
+unilateral departure from a human's override in the first place: both arrive as the same
+comment. Attribution that a machine can check is #42's, and until it lands this criterion
+guards the vocabulary rather than the behaviour.
 
 ## Out of scope
 

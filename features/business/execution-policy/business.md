@@ -190,15 +190,23 @@ Two moments, one mechanism:
   the policy has spoken, which is why the policy's answer carries the *obligation* to
   state a reason rather than the reason itself. Stated there, it is contradictable while
   the decision is still being made.
-- **Durably**, in **one venue, the same one for both kinds**, written when the deviation
-  is decided rather than when the work is finished. A split refusal is a second *kind*
-  recorded there, not a second mechanism: the record's only reader has one question, and
-  a reader who must look in two places to answer it will look in one.
+- **Durably**, in **one venue, the same one for both kinds**, written by whoever runs the
+  ticket, before the work starts. A split refusal is a second *kind* recorded there, not a
+  second mechanism: the record's only reader has one question, and a reader who must look
+  in two places to answer it will look in one.
 
-Beside the three fields, the record carries the **kind** and the **cell**. The kind,
-because the reviewer's question differs between a human disagreeing with the grid and an
-executor judging work indivisible. The cell, because the cell is what repetition is
-counted on.
+Not earlier, and not later, and both bounds are load-bearing. Not earlier, because "what
+actually ran" presupposes a run: a model a human chose for a ticket that was then never
+launched is a decision nobody executed, and recording it as a deviation would count a
+run that never happened. Not later, because a record written at the end belongs to the
+end — it dies with a run that fails halfway, which is the failure that a record written
+up front does not have.
+
+Beside the three fields, the record carries the **kind**, the **cell**, and **who
+decided**. The kind, because the reviewer's question differs between a human disagreeing
+with the grid and an executor judging work indivisible. The cell, because the cell is what
+repetition is counted on. Who, because an override is answerable to someone and a fallback
+taken by an executor is not the same event.
 
 ### An override is a human's, by definition
 
@@ -207,8 +215,12 @@ human choosing against the policy's answer; a **refused split** is the executor
 exercising the fallback the cell itself names. Both are legitimate. What is neither is an
 agent running on a model the policy did not name and nobody chose — that has overridden
 nothing, it has failed to follow the policy, and recording it as an override files a
-defect as a decision. An agent writing an override records whose it was and can point at
-where that human said so.
+defect as a decision. An agent writing an override records whose it was.
+
+Nothing checks that attribution. An agent can write a human's name against its own
+decision, and this rule would not catch it — making what an agent writes to the tracker
+machine-attributable is #42's, and this record is one of the three consumers waiting on
+it.
 
 ### Structured, because prose was already tried
 
@@ -235,6 +247,13 @@ That is a stopping point, not an oversight: the record's purpose is to make the 
 answerable at all, and it now is. **Who asks it and when — a sprint boundary, a
 retrospective, a status pass — is open, and tracked in #167**, along with whether anything
 surfaces it unprompted.
+
+Whoever ends up reading it needs one warning stated here rather than learned later: **a
+count of zero is evidence of nothing.** Nothing forces a deviation to be recorded — an
+omitted record is indistinguishable from a compliant run — so the record is complete only
+to the extent it was written. A cell with no entries is a cell nobody reported deviating
+from, which is not the same claim as a cell the grid gets right, and reading it as the
+second is how this record would come to certify the very thing it exists to question.
 
 The policy's answer stays the default. Recording a deviation makes it visible — it does not
 make it a second way to pick a model. Nothing reads the record back to decide: a past

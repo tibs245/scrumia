@@ -107,14 +107,13 @@ Then the record is reported as non-compliant, and it is not counted as a deviati
   somebody explained — an entry that parses is not an entry that says why
 ```
 
-### AC-10 — The record is posted when the deviation is decided, not when the PR opens
+### AC-10 — The record is on the issue, not in the PR that may never open
 
 ```gherkin
-Given a ticket whose model a human overrode before execution started
-When the execution dies mid-run and no PR is ever opened
-Then the deviation is still on the issue, because it was written at the moment it was
-  decided — a record that only exists once a PR is created disappears with the run that
-  never produced one
+Given a ticket whose model a human overrode, whose run dies before opening a pull request
+When someone later asks how that ticket ran against what the policy preferred
+Then the answer is on the issue as a comment — the artefact that exists independently of
+  the run — and not in a PR body, which for this ticket was never written
 ```
 
 ### AC-11 — A deviation is found by its cell without opening the tickets
@@ -122,9 +121,10 @@ Then the deviation is still on the issue, because it was written at the moment i
 ```gherkin
 Given several issues across the project carrying deviation comments on different cells
 When the records for one cell are searched
-Then they are returned by a search over comment text on the fixed prefix and the cell
-  token, without enumerating the board or opening each issue — this is what the fielded
-  shape buys, and prose in a PR body is what fails it
+Then they are returned by a search over comment text on the cell token, without
+  enumerating the board or opening each issue, and a search term matching nothing returns
+  nothing rather than the whole repository — this is what the fielded shape buys, and
+  prose in a PR body is what fails it
 ```
 
 ## Out of scope

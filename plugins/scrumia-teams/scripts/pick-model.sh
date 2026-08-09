@@ -101,12 +101,16 @@ emit() {
      because: $because}'
 }
 
+# A deviation happens after the policy speaks, so the answer carries the obligation
+# to state a reason, never the reason.
+DEVIATION_NOTE=" Running on anything else is a deviation: record it on the ticket — what the policy chose, what ran, and why — before the work starts."
+
 # No scope label means the ticket was never refined; guessing one would invent
 # an estimate nobody made.
 if [ "$SCOPE_RATED" = false ]; then
   warn "issue has no ${SCOPE_PREFIX}* label — falling back to execution.unlabeled"
   emit "model" "$UNLABELED" \
-    "Run on $UNLABELED, and say in the PR that this ticket carried no ${SCOPE_PREFIX}* label. Ask for refinement rather than assuming a size." \
+    "Run on $UNLABELED, and say in the PR that this ticket carried no ${SCOPE_PREFIX}* label. Ask for refinement rather than assuming a size.$DEVIATION_NOTE" \
     "no ${SCOPE_PREFIX}* label -> execution.unlabeled"
   exit 0
 fi
@@ -117,17 +121,13 @@ CELL=$(jq -r --arg s "$SCOPE" --arg r "$RISK" \
 if [ -z "$CELL" ]; then
   warn "no matrix cell for scope=$SCOPE risk=$RISK — falling back to execution.unlabeled"
   emit "model" "$UNLABELED" \
-    "Run on $UNLABELED. The matrix in $CONFIG has no cell for scope=$SCOPE risk=$RISK — report this gap." \
+    "Run on $UNLABELED. The matrix in $CONFIG has no cell for scope=$SCOPE risk=$RISK — report this gap.$DEVIATION_NOTE" \
     "matrix[$SCOPE][$RISK] undefined -> execution.unlabeled"
   exit 0
 fi
 
 RISK_NOTE=""
 [ "$RISK_RATED" = false ] && RISK_NOTE=" Risk was not rated, so ${RISK_PREFIX}${RISK} was assumed — flag this if the ticket looks riskier."
-
-# A deviation happens after the policy has spoken, so the answer can only carry the
-# obligation to state a reason, never the reason itself.
-DEVIATION_NOTE=" Running on anything else is a deviation: record it on the ticket — what the policy chose, what ran, and why — before the work starts."
 
 # split_or_<model>: prefer splitting, but oversized is not a dead end. The
 # caller judges feasibility, which is why the fallback travels with the verdict.
@@ -140,7 +140,7 @@ case "$CELL" in
     ;;
   split)
     emit "split" "" \
-      "Split this ticket before executing it. This cell allows no fallback model — return it to refinement.$RISK_NOTE" \
+      "Split this ticket before executing it. This cell allows no fallback model — return it to refinement.$RISK_NOTE Executing it anyway is a deviation, whatever it runs on: record it on the ticket — that the policy answered split, what ran, and why — before the work starts." \
       "scope=$SCOPE risk=$RISK -> split"
     ;;
   *)

@@ -35,7 +35,7 @@ A ticket answering `split_or_model` doesn't enter the sprint as-is: try to split
 
 Present the batch before launching: number, title, scope, risk, the model each will run on, apps touched, and the reason for excluding the discarded tickets. Showing the model matters — it is where an unrated risk becomes visible as a cost, and where the human can object before anything runs.
 
-**A human objecting to a model is an override**, and this is the only moment its reason exists. Write it down in the human's own words, against the ticket it applies to. Reconstructed a day later it is a guess, and a deviation whose reason is a guess is worth nothing to the reader it was recorded for.
+**A human objecting to a model is an override**, and this is the only moment its reason exists. Keep it in the batch, in the human's own words, against the ticket it applies to — Step 3 hands it to the execution, which is what records it. Don't record it yourself here: a deviation is a property of a run, and the batch you are presenting may not launch. Reconstructed a day later the reason is a guess, and a deviation whose reason is a guess is worth nothing to the reader it was recorded for.
 
 **Launching is a human decision.** Don't infer it from an agreement given to something else.
 
@@ -45,7 +45,9 @@ One dynamic workflow per ticket, in parallel, each with `isolation: worktree`. E
 
 Give each execution the ticket number and the model it runs on — nothing else. It loads its own context via the plugged-in modules; passing it your summary of the ticket would add a distortion.
 
-The one exception is a **deviation**: where the model you pass is not the one `pick-model.sh` answered — a human overrode it in Step 2, or Step 1 refused a split — say so, and pass the reason with it. The execution records it on the ticket before it starts work; it cannot reconstruct a reason it was never told, and a model handed over with no explanation reads exactly like a policy answer. Tell it not to re-derive the choice either: the decision was made here.
+The one exception is a **deviation**: where the model you pass is not the one `pick-model.sh` answered — a human overrode it in Step 2, or Step 1 refused a split — say so, and pass the reason with it. It cannot reconstruct a reason it was never told, and a model handed over with no explanation reads exactly like a policy answer. Tell it not to re-derive the choice either: the decision was made here.
+
+Recording it is the tracker module's business, not this one's: `scrumia-github-project` writes it on the issue at its ticket flow's Step 0. Another module fills the slot differently — pass it the deviation all the same, and if it turns out to record nothing, that is a gap to report rather than a reason to keep the reason to yourself.
 
 The model is per ticket, not per sprint. A batch of five routinely runs on three different models, and that is the point: a `scope/S risk/critical` ticket gets the strong model while a `scope/M risk/low` one next to it does not.
 

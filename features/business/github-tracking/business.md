@@ -48,8 +48,9 @@ the model the policy chose, or an executor refusing a split and taking the cell'
 prose, and findable by the cell it happened on. That is the rule. Here is what it becomes
 on GitHub.
 
-**The venue is a comment on the ticket's own issue.** Two lines, posted by whoever carries
-out the deviation, **when it is decided** — before the work starts, not when the PR opens:
+**The venue is a comment on the ticket's own issue**, posted by whoever runs the ticket,
+before the work starts rather than at PR time — `execution-policy` says why that moment and
+not a later one. Two lines:
 
 ```
 Deviation: <kind> — cell <scope>/<risk> — policy <decision> — ran <model> — by <who>
@@ -58,11 +59,11 @@ Reason: <why, in as many lines as it takes>
 
 | Field | Values |
 |---|---|
-| `<kind>` | `override` — a human chose against the policy's answer. `split-refused` — a `split_or_<model>` cell preferred a split and the work proved indivisible |
-| `cell` | the scope and risk the policy read, in the axes' own vocabulary — `L/low`, `XL/medium` — not the project's label spelling |
-| `policy` | what the policy answered, verbatim: a model name, or `split_or_<model>` |
+| `<kind>` | `override` — a human chose against the policy's answer. `split_refused` — a `split_or_<model>` cell preferred a split and the work proved indivisible |
+| `cell` | the scope and risk the policy read, in the axes' own vocabulary — `L/low`, `XL/medium` — not the project's label spelling. `unlabeled/<risk>` where the ticket carried no scope label and the policy answered on its configured default |
+| `policy` | what the policy answered, verbatim: a model name, `split_or_<model>`, or `split` for a cell that named no fallback |
 | `ran` | the model the ticket actually executed on |
-| `<who>` | for `override`, `human` and the handle whose decision it was; for `split-refused`, the skill that judged the work indivisible |
+| `<who>` | for `override`, `human` and the handle whose decision it was; for `split_refused`, the skill that judged the work indivisible |
 
 `Reason:` is not optional. A `Deviation:` line with no reason under it is the
 non-compliant record `execution-policy`'s AC-7 describes, and is reported as such rather
@@ -78,11 +79,26 @@ already writes to rather than inventing a third.
 role-signed verdict uses. Across the project — which is what the record exists for:
 
 ```bash
-gh search issues --repo <owner>/<repo> 'in:comments "Deviation:" "cell L/low"'
+gh search issues --repo <owner>/<repo> --match comments 'Deviation:' 'cell L/low'
 ```
 
-The fixed prefix and the `cell <scope>/<risk>` token are what make that a query instead of
-a reading. Nothing runs it on a schedule; per `execution-policy`, whose job that is remains
+`--match comments` is not optional and not a convenience. Folding the qualifier into the
+query string instead — `'in:comments "Deviation:" …'` — makes `gh` send the whole rest of
+the string as the qualifier's *value*; GitHub discards what it cannot parse and answers
+with **every issue in the repository**, exit code 0, no warning. A filter that silently
+stops filtering is the board-reading trap of this file's own § *Reading discipline*, one
+API over.
+
+What discriminates is the **`cell` token**, not the `Deviation:` prefix: the search index
+strips the colon, so the prefix matches prose about deviations as readily as records. The
+two terms are ANDed, and `L/low` does not collide with `XL/low` — adjacency is preserved.
+Counting one cell means trusting the cell token and reading what comes back.
+
+`gh search issues` restricts itself to issues, so a deviation posted on a pull request is
+not findable this way. That is consistent — the venue is the issue — but it means a record
+written in the wrong place is not merely misfiled, it is invisible.
+
+Nothing runs any of this on a schedule; per `execution-policy`, whose job that is remains
 #167's.
 
 **The PR body echoes it, and stops being the record.** A PR whose ticket carries a

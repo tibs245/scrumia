@@ -39,16 +39,24 @@ If no team module is plugged in, there is no policy to read: execute on the curr
 Two things make this run deviate from the policy: **a human overrode the model** — you were told to run on something other than what `pick-model.sh` answered — or **you refused the split** a `split_or_<model>` cell preferred. Either one gets one comment on the issue, posted **now**, before Step 2:
 
 ```bash
-gh issue comment <n> --body 'Deviation: override — cell L/low — policy opus — ran sonnet — by human @<handle>
-Reason: <why, in the words of whoever decided it>'
+gh issue comment <n> --body-file - <<'EOF'
+Deviation: override — cell L/low — policy opus — ran sonnet — by human @<handle>
+Reason: <why, in the words of whoever decided it>
+EOF
 ```
 
-- `<kind>` is `override` or `split-refused`. An **override is a human's decision by definition** — if nobody chose it, you have not overridden the policy, you have failed to follow it, and that is reported as such, never filed as an override.
-- `cell` is the scope and risk `pick-model.sh` read back, in the axes' own vocabulary (`L/low`), not the project's label spelling.
-- `policy` is what it answered, verbatim — a model name, or `split_or_<model>`.
+Use the heredoc, not `--body '…'`: a reason is English prose and the first apostrophe in it ends the quote and breaks the command.
+
+- `<kind>` is `override` or `split_refused`. An **override is a human's decision by definition** — if nobody chose it, you have not overridden the policy, you have failed to follow it. Do not file that as an override.
+- `cell` is the scope and risk `pick-model.sh` read back, in the axes' own vocabulary (`L/low`), not the project's label spelling. Where it reports `scope_rated: false`, write `unlabeled/<risk>`.
+- `policy` is what it answered, verbatim — a model name, `split_or_<model>`, or `split`.
+- `ran` is the model you are actually executing on.
+- `by` is `human` and the handle whose decision it was for an override; for a refused split it is you — name this skill.
 - **`Reason:` is mandatory.** A deviation with no reason cannot be reviewed and cannot be told apart from a mistake; a record missing it is non-compliant, not a note to complete later.
 
 Now, not at PR time: the record has to survive a run that dies before opening one. The PR echoes it in Step 7 for a human reading the diff, and the echo is a copy — this comment is the record. Prose in five PR bodies is exactly what this replaces.
+
+**If the comment cannot be posted, stop** — same discipline as any other failing `gh` call in this step, and for a sharper reason: a deviation that runs unrecorded is the exact failure this record exists to end, and it is invisible afterwards. Report it and let the human decide.
 
 This record is written and never read back. It is evidence for editing the grid in `.scrumia/config.yaml`, not a precedent that changes what a cell answers today — the policy's answer stays the only way a model is chosen.
 
