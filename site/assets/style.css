@@ -407,74 +407,154 @@ section > h2::before {
 }
 .principle span { color: var(--text-soft); font-size: var(--text-base); line-height: var(--leading-snug); }
 
-/* ---------- The flow, as columns ---------- *
- * The deck explains mechanism with labelled columns, and this is the site's
- * version of that idiom. Warm top edge = a human decides here; cold = an agent
- * runs. That split is the argument, so it is carried by colour, not by a legend.
+/* ---------- The run, as a horizon ---------- *
+ * Seven steps standing on one line. Human copy above it, agent copy below, and
+ * the two positions carry the three-of-seven ratio before a word is read. That
+ * is also why this section refuses to scroll sideways: four of seven columns in
+ * view makes the section's whole argument a lie until the reader drags.
+ *
+ * No wash anywhere here. #52 moved coral onto the agent, the abundant actor, so
+ * a wash would paint the page's most common state as its loudest. Colour is
+ * spent on the mark, the step title and the actor word — nothing wider.
+ *
+ * The rail below is the base state and the horizon is the enhancement, in that
+ * order, because the horizon is only honest at --page-wide: measured, a column
+ * narrower than that holds twelve to sixteen characters and every step runs to
+ * four lines. One threshold, written once, at the bottom of this block.
  */
 
-.flowmap {
-  display: grid; grid-auto-flow: column;
-  /* Seven columns have to fit --page-max without scrolling: the sequence is the
-     point, and a step you have to scroll to find is a step you did not see. */
-  grid-auto-columns: minmax(132px, 1fr);
-  gap: 0; overflow-x: auto;
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  background: var(--surface);
-  -webkit-overflow-scrolling: touch;
+.run { margin: var(--space-10) 0 0; }
+
+/* The rail: the same run turned on its side. Same marks, same order, same words
+   — only the axis changes, so nothing has to be cut for it. */
+.run-track { position: relative; padding-left: var(--space-8); }
+.run-track::before {
+  content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px;
+  width: 1px; background: var(--border);
 }
-.fm {
-  padding: var(--space-4); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: var(--space-2);
-  min-width: 0; position: relative;
+.run-horizon { display: none; }
+.step { position: relative; padding-bottom: var(--space-8); }
+.step-mark {
+  position: absolute; left: calc(-1 * var(--space-8)); top: 4px;
+  display: flex; align-items: center;
 }
-.fm::before {
-  content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+
+.step-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--ground); border: 2px solid var(--agent);
+  position: relative; z-index: 1;
 }
-.fm-human::before { background: var(--human); }
-.fm-ai::before { background: var(--agent); }
-.fm:last-child { border-right: 0; }
-.fm-who {
+/* Filled, not just recoloured. --human and --agent sit at nearly the same
+   luminance in both themes, so two rings are the same mark in greyscale; solid
+   versus hollow survives that, and the solid one is the rare actor. */
+.step-human .step-dot { border-color: var(--human); background: var(--human); }
+
+.step-no {
+  display: block; margin-bottom: var(--space-1);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  color: var(--text-faint); letter-spacing: var(--tracking-label);
+}
+.step-title {
+  font-size: var(--text-xl); line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight); font-weight: var(--weight-strong);
+  margin: 0 0 var(--space-1);
+}
+.step-human .step-title { color: var(--human); }
+/* This is the section's content, not a caption — the outcome is what the step
+   leaves behind, so it gets the strongest ink on the step. */
+.step-out { margin: 0; font-size: var(--text-base); color: var(--text-soft); line-height: var(--leading-snug); }
+.step-out b { display: block; color: var(--text); font-weight: var(--weight-medium); }
+
+/* The actor in words, on every step — the split has to survive being read by
+   someone who cannot see the two hues, and by anyone holding a printout. An
+   absent label is not the opposite of a present one; it just reads unfinished. */
+.step-who {
+  display: block; margin-top: var(--space-2);
   font-family: var(--font-mono); font-size: var(--text-xs);
   letter-spacing: var(--tracking-label); text-transform: uppercase;
-  padding: var(--space-tight) var(--space-2); border-radius: var(--radius-sm);
-  align-self: flex-start; font-weight: var(--weight-medium);
+  color: var(--agent);
 }
-.fm-human .fm-who { background: var(--human-surface); color: var(--human); }
-.fm-ai .fm-who { background: var(--agent-surface); color: var(--agent); }
-.fm-title {
-  font-weight: var(--weight-strong); font-size: var(--text-base);
-  color: var(--text); line-height: var(--leading-snug);
-}
-.fm-out { font-size: var(--text-sm); color: var(--text-soft); line-height: var(--leading-snug); flex-grow: 1; }
-.fm-mod {
-  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-faint);
-  border-top: 1px solid var(--border); padding-top: var(--space-2); word-break: break-word;
-}
-.fm-human { background: var(--human-surface); }
+.step-human .step-who { color: var(--human); }
 
-.flow-legend {
-  display: flex; gap: var(--space-5); flex-wrap: wrap; margin: var(--space-3) 0 0;
-  font-size: var(--text-sm); color: var(--text-faint);
+.run-legend {
+  display: flex; flex-wrap: wrap; gap: var(--space-6);
+  margin: var(--space-8) 0 0; font-size: var(--text-sm); color: var(--text-faint);
 }
-.flow-legend b { font-weight: var(--weight-medium); }
-.dot {
-  display: inline-block; width: 8px; height: 8px; border-radius: 2px;
-  margin-right: var(--space-2); vertical-align: 0;
+.run-legend span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.run-legend b { color: var(--text-soft); font-weight: var(--weight-medium); }
+/* The legend's marks are the run's own dots, filled the same way: a key that
+   draws a different shape from the thing it explains is a second component. */
+.run-legend i {
+  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  border: 2px solid var(--agent);
 }
-.dot-human { background: var(--human); }
-.dot-ai { background: var(--agent); }
+.run-legend .is-human i { border-color: var(--human); background: var(--human); }
 
-/* ---------- What stays yours ---------- */
-
-.you-strip {
-  display: grid; gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  margin: var(--space-6) 0 0;
+/* --page-wide plus the two gutters main already reserves. Below it the rail
+   above stands; at it and past it the run becomes the horizon and steps out of
+   --page-max. The two are one decision, so this is the only number that states
+   it. The breakout margin is computed from 100% — the width main actually gives
+   the run — rather than from --page-max, so it stays exact whatever padding
+   main carries. */
+@media (min-width: 1440px) {
+  .run {
+    width: var(--page-wide);
+    margin-inline: calc((100% - var(--page-wide)) / 2);
+  }
+  .run-track {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows: auto var(--space-12) auto;
+    column-gap: var(--space-3);
+    padding-left: 0;
+  }
+  .run-track::before { content: none; }
+  .run-horizon {
+    display: block;
+    grid-row: 2; grid-column: 1 / -1; align-self: center;
+    height: 1px; width: 100%;
+    background: linear-gradient(90deg, transparent, var(--border) 6%, var(--border) 94%, transparent);
+  }
+  /* display:contents lets one step own two cells in two different rows, so every
+     mark lands on exactly the same y however tall the copy above it runs. */
+  .step { display: contents; }
+  .step-mark {
+    position: static;
+    grid-row: 2; grid-column: var(--c);
+    align-self: center; justify-self: start;
+    height: var(--space-12);
+  }
+  .step-body {
+    grid-column: var(--c); grid-row: 3; align-self: start;
+    border-left: 1px solid var(--border);
+    padding: var(--space-5) 0 0 var(--space-3);
+    margin-left: 5px;  /* the dot's own radius: the rule falls from its centre */
+  }
+  .step-human .step-body {
+    grid-row: 1; align-self: end;
+    padding: 0 0 var(--space-5) var(--space-3);
+    border-left-color: color-mix(in srgb, var(--human) 45%, transparent);
+  }
 }
-.you-item { border-left: 2px solid var(--human); padding: var(--space-1) 0 var(--space-1) var(--space-3); }
-.you-item b { display: block; color: var(--text); font-size: var(--text-base); font-weight: var(--weight-strong); }
-.you-item span { color: var(--text-soft); font-size: var(--text-sm); line-height: var(--leading-snug); }
+
+/* ---------- The three moments ---------- *
+ * What the horizon leaves implicit: the three marks above the line, named. They
+ * carry the human blue because they are the human's own section of the page.
+ */
+
+.moments {
+  display: grid; gap: clamp(var(--space-6), 4vw, var(--space-12));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: clamp(var(--space-12), 7vh, var(--space-20)) 0 0;
+}
+.moment { border-left: 2px solid var(--human); padding-left: var(--space-4); }
+.moment h3 {
+  font-size: var(--text-lg); letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-strong); color: var(--human);
+  margin: 0 0 var(--space-2);
+}
+.moment p { margin: 0; color: var(--text-soft); font-size: var(--text-base); line-height: var(--leading-snug); }
+@media (max-width: 760px) { .moments { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Slots ---------- *
  * A slot is a question, drawn as one row of a typographic index rather than a
@@ -826,14 +906,40 @@ footer a:hover { color: var(--accent); }
 .js .hero.is-in > *:nth-child(5) { --i: 4; }
 .js .hero.is-in > *:nth-child(6) { --i: 5; }
 
-/* The columns of a diagram arrive left to right: the sequence is the content. */
-.js .flowmap.is-in > .fm:nth-child(1) { --i: 0; }
-.js .flowmap.is-in > .fm:nth-child(2) { --i: 1; }
-.js .flowmap.is-in > .fm:nth-child(3) { --i: 2; }
-.js .flowmap.is-in > .fm:nth-child(4) { --i: 3; }
-.js .flowmap.is-in > .fm:nth-child(5) { --i: 4; }
-.js .flowmap.is-in > .fm:nth-child(6) { --i: 5; }
-.js .flowmap.is-in > .fm:nth-child(7) { --i: 6; }
+/* The run arrives left to right: the sequence is the content. A .step is
+   display:contents and generates no box, so it cannot be faded itself — the two
+   cells it owns are what arrive, and they inherit the step's own --i, which is
+   what keeps the stagger travelling along the horizon rather than down it. */
+.js .run-track.summon > .step > * {
+  opacity: 0;
+  animation: unhide 0s linear 6s forwards;
+}
+/* A step is a pass-through in both layouts — display:contents on the horizon, a
+   plain box on the rail — so it never arrives itself. Without this the rail would
+   fade the same pixels twice, once through the step and once through its cells. */
+.js .run-track.summon > .step,
+.js .run-track.summon.is-in > .step { opacity: 1; animation: none; }
+.js .run-track.summon.is-in > .step > * {
+  animation: summon var(--dur-3) var(--ease-summon) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+/* The mark only fades. A dot that travelled would leave the line it stands on,
+   and the line is the diagram. */
+@keyframes land { from { opacity: 0; } to { opacity: 1; } }
+.js .run-track.summon.is-in > .step > .step-mark { animation-name: land; }
+
+/* The one flare on the page. The human mark stands for "this one waits for
+   you", so its arrival is the single state change worth a pulse — and the human
+   is the rare actor, three of seven. The agent steps never bloom: what is
+   abundant does not get to flare. */
+@keyframes bloom {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--human) 55%, transparent); }
+  to   { box-shadow: 0 0 0 14px transparent; }
+}
+.js .run-track.summon.is-in > .step-human .step-dot {
+  animation: bloom var(--dur-4) var(--ease-resolve) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + var(--dur-2));
+}
 
 .js .slots.is-in > .slot:nth-child(2) { --i: 1; }
 .js .slots.is-in > .slot:nth-child(3) { --i: 2; }
@@ -846,7 +952,10 @@ footer a:hover { color: var(--accent); }
   /* Reveal without movement, and drop every transition to a single frame —
      the state change still reads, it just stops travelling. */
   .js .summon > *,
-  .js .summon.is-in > * { opacity: 1; animation: none; }
+  .js .summon.is-in > *,
+  /* the run's cells are grandchildren: a step generates no box to hide */
+  .js .run-track.summon > .step > *,
+  .js .run-track.summon.is-in > .step > * { opacity: 1; animation: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

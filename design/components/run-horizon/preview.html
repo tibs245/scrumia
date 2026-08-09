@@ -1,0 +1,141 @@
+<!-- @dsCard group="Diagrams" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>run-horizon — ScrumIA design system</title>
+<!-- The site is the only implementation of these components; a preview that
+     restated their CSS would be a second implementation, and the two would drift. -->
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  /* The run's breakout is measured against the width its container gives it, so
+     the preview has to reproduce main's box or the horizon never appears. */
+  body { max-width: var(--page-max); margin: 0 auto; padding: var(--space-8) var(--space-5); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-16) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+  .preview-note { color: var(--text-faint); font-size: var(--text-sm); max-width: var(--measure); }
+</style>
+</head>
+<body>
+
+<h1>run-horizon</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<p class="preview-note">Narrow this window past 1440px and the horizon turns into
+the vertical rail. Both are the same seven steps with the same words; only the
+axis changes.</p>
+
+<h2>The reference run, seven steps</h2>
+
+<div class="run">
+  <div class="run-track">
+    <div class="run-horizon" aria-hidden="true"></div>
+
+    <div class="step step-human" style="--c:1; --i:0">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">01</span>
+        <h3 class="step-title">Brief</h3>
+        <p class="step-out">An idea, a problem. Nothing formatted.</p>
+        <span class="step-who">Human</span>
+      </div>
+    </div>
+
+    <div class="step" style="--c:2; --i:1">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">02</span>
+        <h3 class="step-title">Scoping</h3>
+        <p class="step-out">Challenged and split.<b>→ issues + specs</b></p>
+        <span class="step-who">Agent</span>
+      </div>
+    </div>
+
+    <div class="step" style="--c:3; --i:2">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">03</span>
+        <h3 class="step-title">Refinement</h3>
+        <p class="step-out">Each role weighs in.<b>→ Ready for dev</b></p>
+        <span class="step-who">Agent</span>
+      </div>
+    </div>
+
+    <div class="step step-human" style="--c:4; --i:3">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">04</span>
+        <h3 class="step-title">Sign-off</h3>
+        <p class="step-out">Only on doubt, risk or criticality.</p>
+        <span class="step-who">Human</span>
+      </div>
+    </div>
+
+    <div class="step" style="--c:5; --i:4">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">05</span>
+        <h3 class="step-title">Sprint</h3>
+        <p class="step-out">No tickets collide.<b>→ To dev</b></p>
+        <span class="step-who">Agent</span>
+      </div>
+    </div>
+
+    <div class="step" style="--c:6; --i:5">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">06</span>
+        <h3 class="step-title">Build</h3>
+        <p class="step-out">One worktree each.<b>→ spec, code, PR</b></p>
+        <span class="step-who">Agent</span>
+      </div>
+    </div>
+
+    <div class="step step-human" style="--c:7; --i:6">
+      <div class="step-mark"><span class="step-dot"></span></div>
+      <div class="step-body">
+        <span class="step-no">07</span>
+        <h3 class="step-title">Merge</h3>
+        <p class="step-out">You read it and test.<b>→ Done</b></p>
+        <span class="step-who">Human</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="run-legend">
+    <span class="is-human"><i></i><b>Human</b> — 3 of 7</span>
+    <span><i></i><b>Agents</b> — 4 of 7</span>
+    <span>Swap a module and this line changes shape.</span>
+  </p>
+</div>
+
+<h2>The three moments it leaves implicit</h2>
+
+<div class="moments">
+  <div class="moment"><h3>You brief</h3><p>You state the problem. The agents challenge it; you settle what blocks them.</p></div>
+  <div class="moment"><h3>You sign off</h3><p>Only on designs that are doubtful, critical or risky. The rest just ships.</p></div>
+  <div class="moment"><h3>You merge</h3><p>The final call stays yours, unless you delegate it in writing.</p></div>
+</div>
+
+</body>
+</html>
