@@ -36,17 +36,18 @@ STUB_TEMPLATE = """<!doctype html>
 <body><h1>{{@mod_emoji}} {{@mod_name}}</h1>
 <p>{{@mod_slot}} {{@mod_version}}</p>
 <ul>{{@mod_skills}}</ul>
+<ul>{{@mod_tags}}</ul>
 <code>{{@mod_install}}</code><a href="{{@mod_source}}">src</a>
 <div>{{responsibilities}}</div></body></html>
 """
 
 
-def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None) -> None:
+def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None, tags=("t",)) -> None:
     """A miniature site: two plugins, one stub template, one prose file per language."""
     (root / ".claude-plugin").mkdir(parents=True)
     (root / ".claude-plugin" / "marketplace.json").write_text(json.dumps({
         "name": "fixture",
-        "plugins": [{"name": p, "version": "1.0.0", "tags": ["t"]} for p in plugins],
+        "plugins": [{"name": p, "version": "1.0.0", "tags": list(tags)} for p in plugins],
     }), encoding="utf-8")
 
     for p in plugins:
@@ -206,9 +207,48 @@ def test_ac4_sitemap() -> None:
     check("both language URLs per module are listed", not missing, str(missing))
 
 
+# --- AC-6 --------------------------------------------------------------------
+
+
+def test_ac6_malformed_page_json_is_reported_not_raised() -> None:
+    print("AC-6 a malformed page string file is reported, never raised")
+
+    tmp = Path(tempfile.mkdtemp())
+    make_fixture(tmp)
+    # load_strings already parses this file under a try; the unused-key reparse
+    # in render_page must not raise a second time on the same broken file.
+    (tmp / "site" / "i18n" / "en" / "modules" / "alpha.json").write_text("{not json", encoding="utf-8")
+    try:
+        code, errors = run_fixture(tmp)
+        raised = False
+    except json.JSONDecodeError:
+        code, errors, raised = 1, [], True
+    check("build() does not raise on invalid JSON", not raised)
+    check("the failure is reported, exit code 1", code == 1)
+    check("load_strings' own error is the one reported",
+          any("modules/alpha.json" in e and "invalid JSON" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+
+# --- AC-7 --------------------------------------------------------------------
+
+
+def test_ac7_manifest_facts_are_escaped() -> None:
+    print("AC-7 a manifest fact interpolated into markup is escaped")
+
+    code, errors, tmp = with_fixture(tags=("<b>x</b>",))
+    check("a tag with markup still builds", code == 0, str(errors))
+    page = (tmp / "site" / "modules" / "alpha.html").read_text(encoding="utf-8")
+    check("the raw tag is not in the output", "<li><b>x</b></li>" not in page)
+    check("the tag is HTML-escaped", "<li>&lt;b&gt;x&lt;/b&gt;</li>" in page, page)
+    shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
-                 test_ac3_one_file_owns_the_emoji, test_ac4_sitemap):
+                 test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
+                 test_ac6_malformed_page_json_is_reported_not_raised,
+                 test_ac7_manifest_facts_are_escaped):
         test()
     print()
     if FAILURES:

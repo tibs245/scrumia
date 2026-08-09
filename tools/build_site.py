@@ -23,6 +23,7 @@ Run from anywhere: python3 tools/build_site.py
 Adding a language = add site/i18n/<lang>/ and one entry to LANGS below.
 """
 
+import html
 import json
 import re
 import sys
@@ -189,24 +190,30 @@ def load_modules() -> list[dict]:
 def module_specials(module: dict, labels: dict[str, str]) -> dict[str, str]:
     """Manifest facts, injected as specials so no page can restate them by hand.
 
+    Every fact here comes from marketplace.json or the skills tree — authored in
+    this repo and gated by tools/validate.py today, but escaped anyway (#71):
+    a fact heading into markup or an href attribute stays escaped the day the
+    marketplace takes an outside contribution, instead of becoming a hole then.
+
     An empty slot is a stated fact, not a blank — and the only one of these that
     needs a word rather than a slug, hence the chrome string.
     """
+    name = html.escape(module["name"])
     if module["slot"]:
-        slot = f"<code>{module['slot']}</code>"
+        slot = f"<code>{html.escape(module['slot'])}</code>"
     else:
         slot = labels.get("mod_no_slot", "")
         if "mod_no_slot" not in labels:
             ERRORS.append(f"common.json: 'mod_no_slot' is needed by '{module['name']}', which fills none")
     return {
-        "@mod_name": module["name"],
-        "@mod_emoji": module["emoji"],
+        "@mod_name": name,
+        "@mod_emoji": html.escape(module["emoji"]),
         "@mod_slot": slot,
-        "@mod_version": module["version"],
-        "@mod_tags": " ".join(f"<li>{t}</li>" for t in module["tags"]),
-        "@mod_skills": "".join(f"<li><code>{s}</code></li>" for s in module["skills"]),
-        "@mod_install": f"/plugin install {module['name']}@scrumia",
-        "@mod_source": f"{REPO_URL}/tree/main/plugins/{module['name']}",
+        "@mod_version": html.escape(module["version"]),
+        "@mod_tags": " ".join(f"<li>{html.escape(t)}</li>" for t in module["tags"]),
+        "@mod_skills": "".join(f"<li><code>{html.escape(s)}</code></li>" for s in module["skills"]),
+        "@mod_install": f"/plugin install {name}@scrumia",
+        "@mod_source": f"{REPO_URL}/tree/main/plugins/{name}",
     }
 
 
@@ -239,8 +246,12 @@ def render_page(lang: str, cfg: dict, page: str, tpl_path: Path, extra: dict[str
     if "{{" in html:
         ERRORS.append(f"{origin}: unresolved '{{{{' left in output")
     page_json = I18N / lang / f"{page}.json"
-    # Chrome keys are shared: only warn about unused page-level keys.
-    page_keys = set(json.loads(page_json.read_text(encoding="utf-8")).keys()) if page_json.exists() else set()
+    # Chrome keys are shared: only warn about unused page-level keys. A malformed
+    # file is already reported by load_strings above — this reparse must not raise.
+    try:
+        page_keys = set(json.loads(page_json.read_text(encoding="utf-8")).keys()) if page_json.exists() else set()
+    except json.JSONDecodeError:
+        page_keys = set()
     for key in sorted({k for k in strings if k not in used} & page_keys):
         print(f"warning: {origin}: unused string '{key}'")
     out = cfg["out"] / f"{page}.html"
