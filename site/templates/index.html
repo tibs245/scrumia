@@ -94,57 +94,101 @@
   <h2>{{slots_title}}</h2>
   <p class="section-intro">{{slots_intro}}</p>
 
+  <!-- name="slot" groups the seven rows into one native accordion: opening one
+       closes the last, with no script reading or writing that state. -->
   <div class="slots summon">
-    <div class="slot">
-      <span class="slot-name">specs</span>
-      <span class="slot-q">{{slot_specs_q}}</span>
-      <span class="slot-a">{{slot_specs_a}}</span>
-      <span class="slot-fill">scrumia-specs</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">tracker</span>
-      <span class="slot-q">{{slot_tracker_q}}</span>
-      <span class="slot-a">{{slot_tracker_a}}</span>
-      <span class="slot-fill">scrumia-github-project</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">team</span>
-      <span class="slot-q">{{slot_team_q}}</span>
-      <span class="slot-a">{{slot_team_a}}</span>
-      <span class="slot-fill">scrumia-teams</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">discovery</span>
-      <span class="slot-q">{{slot_discovery_q}}</span>
-      <span class="slot-a">{{slot_discovery_a}}</span>
-      <span class="slot-fill">scrumia-discovery</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">implementation</span>
-      <span class="slot-q">{{slot_impl_q}}</span>
-      <span class="slot-a">{{slot_impl_a}}</span>
-      <span class="slot-fill">scrumia-impl-rust · scrumia-impl-solidjs</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">practices</span>
-      <span class="slot-q">{{slot_practices_q}}</span>
-      <span class="slot-a">{{slot_practices_a}}</span>
-      <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">design</span>
-      <span class="slot-q">{{slot_design_q}}</span>
-      <span class="slot-a">{{slot_design_a}}</span>
-      <span class="slot-fill">scrumia-design</span>
-    </div>
-    <!-- The eighth card is not a slot ScrumIA ships: it is the empty state,
-         drawn rather than omitted, because "deliberately empty" is the idea. -->
-    <div class="slot slot-empty">
-      <span class="slot-name">{{slot_none_name}}</span>
-      <span class="slot-q">{{slot_none_q}}</span>
-      <span class="slot-a">{{slot_none_a}}</span>
-      <span class="slot-fill">{{slot_none_fill}}</span>
-    </div>
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">specs</span>
+          <span class="slot-q">{{slot_specs_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-specs</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_specs_a}}</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">tracker</span>
+          <span class="slot-q">{{slot_tracker_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-github-project</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_tracker_a}}</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">team</span>
+          <span class="slot-q">{{slot_team_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-teams</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_team_a}}</p>
+    </details>
+
+    <!-- Three of seven are genuinely empty in this repo's own composition —
+         see .scrumia/config.yaml. Nothing below is a hypothetical. -->
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">discovery</span>
+          <span class="slot-q">{{slot_discovery_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">{{slot_empty_fill}}</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_discovery_a}}</p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">implementation</span>
+          <span class="slot-q">{{slot_impl_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">{{slot_empty_fill}}</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_impl_a}}</p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">practices</span>
+          <span class="slot-q">{{slot_practices_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">{{slot_empty_fill}}</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_practices_a}}</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">design</span>
+          <span class="slot-q">{{slot_design_q}}</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-design</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">{{slot_design_a}}</p>
+    </details>
   </div>
 </section>
 

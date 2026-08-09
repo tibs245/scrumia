@@ -156,59 +156,103 @@
 
 <section id="slots">
   <h2>Slots</h2>
-  <p class="section-intro">Un slot est une question. Un module est une réponse. Un slot vide est une capacité que le projet n'a pas — les agents s'ajustent en conséquence.</p>
+  <p class="section-intro">Un slot est une question. Un module est une réponse. Ci-dessous, la composition réelle de ce dépôt, lue depuis <code>.scrumia/config.yaml</code> — trois des sept slots sont vides, et rien n'y est simulé.</p>
 
+  <!-- name="slot" groups the seven rows into one native accordion: opening one
+       closes the last, with no script reading or writing that state. -->
   <div class="slots summon">
-    <div class="slot">
-      <span class="slot-name">specs</span>
-      <span class="slot-q">Où vivent les specs, sous quelle forme ?</span>
-      <span class="slot-a">Un répertoire par feature, fichiers créés seulement quand ils ont du contenu, critères d'acceptation écrits d'abord et transformés en tests.</span>
-      <span class="slot-fill">scrumia-specs</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">tracker</span>
-      <span class="slot-q">Où vit l'état — tickets, colonnes, PRs ?</span>
-      <span class="slot-a">GitHub Issues et Projects. Rien de stateful dans le repo ; un hook le garantit.</span>
-      <span class="slot-fill">scrumia-github-project</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">team</span>
-      <span class="slot-q">Quels rôles établis, avec quel périmètre ?</span>
-      <span class="slot-a">Manager, business, tech. Chaque limite est une ligne de refus. Les rôles se basculent par config.</span>
-      <span class="slot-fill">scrumia-teams</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">discovery</span>
-      <span class="slot-q">Comment une idée devient un travail cadré ?</span>
-      <span class="slot-a">Challenge, découpage en features, livrez les specs sur une branche aux côtés des issues.</span>
-      <span class="slot-fill">scrumia-discovery</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">implementation</span>
-      <span class="slot-q">Comment le code est écrit — par app</span>
-      <span class="slot-a">Un module par stack : Rust, SolidJS. Chacun couvre les tests, les principes, la mise en page, et ce qu'il refuse.</span>
-      <span class="slot-fill">scrumia-impl-rust · scrumia-impl-solidjs</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">practices</span>
-      <span class="slot-q">Quelles pratiques transversales — par app</span>
-      <span class="slot-a">TDD, SOLID — chacune avec des compétences de référence, d'audit et de refactorisation. Le module d'implémentation les situe pour son stack.</span>
-      <span class="slot-fill">scrumia-practice-tdd · -solid · -tanstack-query</span>
-    </div>
-    <div class="slot">
-      <span class="slot-name">design</span>
-      <span class="slot-q">Où vit le système de conception ?</span>
-      <span class="slot-a">Identité, tokens et composants sous forme de fichiers dans le dépôt ; un projet Claude Design comme surface de revue. Une valeur que les tokens ne portent pas est un constat, pas une exception.</span>
-      <span class="slot-fill">scrumia-design</span>
-    </div>
-    <!-- The eighth card is not a slot ScrumIA ships: it is the empty state,
-         drawn rather than omitted, because "deliberately empty" is the idea. -->
-    <div class="slot slot-empty">
-      <span class="slot-name">— aucun —</span>
-      <span class="slot-q">Et si vous laissez un slot vide ?</span>
-      <span class="slot-a">Rien n'est simulé. Les agents savent que la capacité est absente et le disent au lieu de l'improviser — ce dépôt lui-même tourne avec discovery vide, volontairement.</span>
-      <span class="slot-fill">rien d'installé</span>
-    </div>
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">specs</span>
+          <span class="slot-q">Où vivent les specs, sous quelle forme ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-specs</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">Un répertoire par feature, des fichiers créés seulement quand ils ont quelque chose à dire, des critères d'acceptation écrits d'abord puis transformés en tests.</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">tracker</span>
+          <span class="slot-q">Où vit l'état — tickets, colonnes, PRs ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-github-project</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">GitHub Issues et Projects. Rien de stateful dans le dépôt, et un hook qui refuse le commit qui tenterait de l'être.</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">team</span>
+          <span class="slot-q">Quels rôles établis, avec quel périmètre ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-teams</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">Manager, business, tech — plus un designer apporté par le module design. Chaque frontière est une ligne de refus, et chaque rôle se bascule par la config.</p>
+    </details>
+
+    <!-- Three of seven are genuinely empty in this repo's own composition —
+         see .scrumia/config.yaml. Nothing below is a hypothetical. -->
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">discovery</span>
+          <span class="slot-q">Comment une idée devient un travail cadré ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">rien d'installé</span>
+        </h3>
+      </summary>
+      <p class="slot-answer"><code>scrumia-discovery</code> existe et n'est pas installé ici. Une idée va donc directement en ticket, sans étape de cadrage, et les agents sont invités à le dire plutôt que d'en improviser un.</p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">implementation</span>
+          <span class="slot-q">Comment le code est écrit, par app ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">rien d'installé</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">Ce produit livre du markdown. Ses deux apps de code — un site statique et un script de validation — ne portent aucun module d'implémentation : la consigne est de suivre le code voisin plutôt que d'inventer une doctrine.</p>
+    </details>
+
+    <details class="slot slot-empty" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">practices</span>
+          <span class="slot-q">Quelles pratiques transversales, par app ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">rien d'installé</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">Aucune ici. TDD, SOLID et TanStack Query restent sur l'étagère — un dépôt de prose n'en a pas besoin, et prétendre le contraire coûterait à chaque agent du contexte qu'il pourrait consacrer au travail.</p>
+    </details>
+
+    <details class="slot" name="slot">
+      <summary>
+        <h3 class="slot-row">
+          <span class="slot-sign" aria-hidden="true">+</span>
+          <span class="slot-name">design</span>
+          <span class="slot-q">Où vit le système de conception ?</span>
+          <span class="slot-lead" aria-hidden="true"></span>
+          <span class="slot-fill">scrumia-design</span>
+        </h3>
+      </summary>
+      <p class="slot-answer">Identité, tokens et composants sous forme de fichiers dans le dépôt, synchronisés un par un avec un projet Claude Design. Une valeur que les tokens ne portent pas est un constat, pas une exception — y compris sur cette page.</p>
+    </details>
   </div>
 </section>
 
