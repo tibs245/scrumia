@@ -237,6 +237,40 @@ section > h2::before {
   margin-bottom: var(--space-4);
 }
 
+/* ---------- Page head ---------- *
+ * The opening of every page that is not the home page: a kicker naming the
+ * page's role in the argument (never the title restated), the h1, and a lead.
+ * `--text-display` is the rung tokens.css reserved for exactly this — above
+ * the documentation `h1` the rest of the site uses, below the hero's
+ * `--text-hero` — so spending it here touches nothing shared with index.html.
+ */
+
+.page-head { margin: var(--space-4) 0 var(--space-2); }
+.page-head .kicker {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint); margin: 0 0 var(--space-5);
+}
+/* The horizon in miniature — the same idiom as the accent rule above every
+   h2, spent here as a dash instead of a bar because it sits beside text
+   rather than above it. Scoped to .page-head, not a bare .kicker: the class
+   name is generic enough that a future component would otherwise inherit
+   this layout and dash by accident. */
+.page-head .kicker::before {
+  content: ""; flex: none; width: var(--space-8); height: 1px;
+  background: var(--accent);
+}
+.page-head h1 {
+  font-size: var(--text-display); line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display); margin: 0;
+}
+.page-head .lead {
+  font-size: var(--text-lg); line-height: var(--leading-snug);
+  color: var(--text-soft); max-width: var(--measure);
+  margin: var(--space-5) 0 0;
+}
+
 /* ---------- Hero ---------- */
 
 .hero {

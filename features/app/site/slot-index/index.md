@@ -59,6 +59,7 @@ would be the second copy the design contract exists to prevent.
 
 ## Open issues
 
-- #57 — retires `design/components/slot-card/preview.html` and its Claude
-  Design card. Left for that ticket on purpose: it batches with the removal of
-  the other unchosen explorations.
+- #57 retired `design/components/slot-card/preview.html`, batched with the
+  other unchosen explorations. Its Claude Design card could not be removed in
+  that same run — no `DesignSync` tool was available in the session — and is
+  tracked by #92 instead.
