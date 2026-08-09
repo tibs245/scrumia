@@ -94,6 +94,9 @@ reviewing a spec change. Replace the tracker with a hypothetical
   epic-as-native-sub-issues, board reading discipline. Each names an artefact that
   ceases to exist.
 
+Apply it to one atomic statement at a time. A rule that returns both answers is two
+rules — splitting it is the first step, not a sign the test failed.
+
 Every rule has exactly one answer, and a rule is written on one side only: this
 feature states the abstract ("an execution ends in a reviewable proposal; gate 3
 governs its merge"), the tracker feature binds it to the concrete ("that proposal is

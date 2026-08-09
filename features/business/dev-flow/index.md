@@ -21,7 +21,9 @@ soft, light once it is a scoped ticket.
 
 The execution path's mechanics — one worktree per ticket, one branch per ticket,
 committing before a pause, review before merge, the three gates, `auto_merge` — are
-**this feature's**, and they are specified here. A tracker feature *traces* that
+**this feature's**. Ownership is settled; the wording is not all here yet — worktree
+ownership and commit-before-pause land through #118 and #20, and until they do, no
+other spec becomes their home. A tracker feature *traces* that
 cycle: it says which concrete artefact each abstract step becomes on its tool, and it
 never redefines the step itself.
 

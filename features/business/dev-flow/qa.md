@@ -1,8 +1,8 @@
 # Acceptance criteria — dev-flow
 
 Given/When/Then, one scenario per case. These are process-level criteria: verified
-by reading the ticket, its labels, and `.scrumia/config.yaml` — not by application
-code.
+by reading the ticket, its labels, `.scrumia/config.yaml` and the specs — not by
+application code.
 
 ## Nominal
 
