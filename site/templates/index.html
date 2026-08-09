@@ -42,61 +42,95 @@
   <h2>{{flow_title}}</h2>
   <p class="section-intro">{{flow_intro}}</p>
 
-  <div class="flowmap summon">
-    <div class="fm fm-human">
-      <span class="fm-who">{{who_human}}</span>
-      <span class="fm-title">{{flow1_title}}</span>
-      <span class="fm-out">{{flow1_out}}</span>
-      <span class="fm-mod">—</span>
+  <!-- One hairline, seven marks on it. --c is the grid column and --i the
+       arrival order; they are the same index, written once, inline, because both
+       are facts about this step's place in the run rather than about its style. -->
+  <div class="run">
+    <div class="run-track summon">
+      <div class="run-horizon" aria-hidden="true"></div>
+
+      <div class="step step-human" style="--c:1; --i:0">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">01</span>
+          <h3 class="step-title">{{flow1_title}}</h3>
+          <p class="step-out">{{flow1_out}}</p>
+          <span class="step-who">{{who_human}}</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:2; --i:1">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">02</span>
+          <h3 class="step-title">{{flow2_title}}</h3>
+          <p class="step-out">{{flow2_out}}</p>
+          <span class="step-who">{{who_ai}}</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:3; --i:2">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">03</span>
+          <h3 class="step-title">{{flow3_title}}</h3>
+          <p class="step-out">{{flow3_out}}</p>
+          <span class="step-who">{{who_ai}}</span>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:4; --i:3">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">04</span>
+          <h3 class="step-title">{{flow4_title}}</h3>
+          <p class="step-out">{{flow4_out}}</p>
+          <span class="step-who">{{who_human}}</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:5; --i:4">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">05</span>
+          <h3 class="step-title">{{flow5_title}}</h3>
+          <p class="step-out">{{flow5_out}}</p>
+          <span class="step-who">{{who_ai}}</span>
+        </div>
+      </div>
+
+      <div class="step" style="--c:6; --i:5">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">06</span>
+          <h3 class="step-title">{{flow6_title}}</h3>
+          <p class="step-out">{{flow6_out}}</p>
+          <span class="step-who">{{who_ai}}</span>
+        </div>
+      </div>
+
+      <div class="step step-human" style="--c:7; --i:6">
+        <div class="step-mark"><span class="step-dot"></span></div>
+        <div class="step-body">
+          <span class="step-no">07</span>
+          <h3 class="step-title">{{flow7_title}}</h3>
+          <p class="step-out">{{flow7_out}}</p>
+          <span class="step-who">{{who_human}}</span>
+        </div>
+      </div>
     </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">{{who_ai}}</span>
-      <span class="fm-title">{{flow2_title}}</span>
-      <span class="fm-out">{{flow2_out}}</span>
-      <span class="fm-mod">discovery</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">{{who_ai}}</span>
-      <span class="fm-title">{{flow3_title}}</span>
-      <span class="fm-out">{{flow3_out}}</span>
-      <span class="fm-mod">tracker + team</span>
-    </div>
-    <div class="fm fm-human">
-      <span class="fm-who">{{who_human}}</span>
-      <span class="fm-title">{{flow4_title}}</span>
-      <span class="fm-out">{{flow4_out}}</span>
-      <span class="fm-mod">—</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">{{who_ai}}</span>
-      <span class="fm-title">{{flow5_title}}</span>
-      <span class="fm-out">{{flow5_out}}</span>
-      <span class="fm-mod">team</span>
-    </div>
-    <div class="fm fm-ai">
-      <span class="fm-who">{{who_ai}}</span>
-      <span class="fm-title">{{flow6_title}}</span>
-      <span class="fm-out">{{flow6_out}}</span>
-      <span class="fm-mod">team + impl + practices</span>
-    </div>
-    <div class="fm fm-human">
-      <span class="fm-who">{{who_human}}</span>
-      <span class="fm-title">{{flow7_title}}</span>
-      <span class="fm-out">{{flow7_out}}</span>
-      <span class="fm-mod">—</span>
-    </div>
+
+    <p class="run-legend">
+      <span class="is-human"><i></i>{{legend_human}}</span>
+      <span><i></i>{{legend_ai}}</span>
+      <span>{{legend_swap}}</span>
+    </p>
   </div>
 
-  <div class="flow-legend">
-    <span><span class="dot dot-human"></span>{{legend_human}}</span>
-    <span><span class="dot dot-ai"></span>{{legend_ai}}</span>
-    <span>{{legend_swap}}</span>
-  </div>
-
-  <div class="you-strip">
-    <div class="you-item"><b>{{you1_title}}</b><span>{{you1_desc}}</span></div>
-    <div class="you-item"><b>{{you2_title}}</b><span>{{you2_desc}}</span></div>
-    <div class="you-item"><b>{{you3_title}}</b><span>{{you3_desc}}</span></div>
+  <div class="moments">
+    <div class="moment"><h3>{{you1_title}}</h3><p>{{you1_desc}}</p></div>
+    <div class="moment"><h3>{{you2_title}}</h3><p>{{you2_desc}}</p></div>
+    <div class="moment"><h3>{{you3_title}}</h3><p>{{you3_desc}}</p></div>
   </div>
 </section>
 

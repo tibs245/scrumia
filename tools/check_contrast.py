@@ -19,15 +19,11 @@ HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
 # Minimums are WCAG 2.1: 4.5 for body text (1.4.3), 3.0 for a boundary that
 # carries meaning (1.4.11).
 PAIRS = [
-    ("human", "human-surface", 4.5, ".fm-human .fm-who — actor label on its wash"),
-    ("agent", "agent-surface", 4.5, ".fm-ai .fm-who — actor label on its wash"),
-    ("text", "human-surface", 4.5, ".fm-title on the human wash"),
-    ("text-soft", "human-surface", 4.5, ".fm-out on the human wash"),
-    ("text-faint", "human-surface", 4.5, ".fm-mod on the human wash"),
-    ("human", "surface", 3.0, ".fm-human::before — top edge"),
-    ("agent", "surface", 3.0, ".fm-ai::before — top edge"),
-    ("human", "ground", 3.0, ".dot-human, .you-item rule"),
-    ("agent", "ground", 3.0, ".dot-ai"),
+    # 4.5 not 3.0: the run has no wash left, so both actors now carry text.
+    ("human", "ground", 4.5, ".step-title, .step-who and the filled .step-dot, human step"),
+    ("agent", "ground", 4.5, ".step-who and the .step-dot ring, agent step"),
+    ("agent", "agent-surface", 4.5, ".badge — module name on its wash"),
+    ("agent", "surface", 3.0, ".card-manager left rule, .flow-num ring"),
     ("agent", "surface", 4.5, ".flow-num numeral, agent step"),
     ("human", "human-surface", 4.5, ".flow-human .flow-num, .badge-human, .note-warn title"),
     ("text", "agent-surface", 4.5, "text on the agent wash"),

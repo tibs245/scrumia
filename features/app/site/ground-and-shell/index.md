@@ -83,8 +83,9 @@ this feature.
 
 ## Open issues
 
-- #62 — the run. It consumes the tokens this feature lands and is out of its
-  scope. The hero and the slot index shipped, each with its own feature:
-  `features/app/site/hero/` and `features/app/site/slot-index/`.
+- The three sections this feature's tokens exist for have all shipped, each with
+  its own feature: `features/app/site/hero/`, `features/app/site/slot-index/`
+  and `features/app/site/run-horizon/`. The last of them (#62) is what spends
+  `--page-wide`.
 - The `site-header` component still ships three candidates and no verdict; the
   shell renders none of the three scroll behaviours until that is settled.
