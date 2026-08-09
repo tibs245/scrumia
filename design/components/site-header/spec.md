@@ -1,7 +1,7 @@
 # site-header
 
-The bar at the top of every page: Hop, the wordmark, the navigation, the language
-pair and the theme toggle.
+The bar at the top of every page: the mark, the wordmark, the navigation, the
+language pair and the theme toggle.
 
 **Status: three candidates, none chosen.** The preview renders all three so the
 decision can be made by looking. Once one wins, the other two come out of this
@@ -12,7 +12,7 @@ decided.
 
 | | Treatment | What its motion stands for | Costs |
 |---|---|---|---|
-| **A** | Assembly | Hop assembles on load; on scroll the bar compacts, its ground goes solid, a cyan rule fills to your position | The rule is a fourth thing competing for the accent |
+| **A** | Assembly | on scroll the bar compacts, its ground goes solid, a cyan rule fills to your position | The rule is a fourth thing competing for the accent |
 | **B** | Scanline | a cyan sweep crosses on a slow loop | It moves when nothing happened — the one thing [identity.md](../../identity.md) says gets cut |
 | **C** | Rail | one cyan rail slides to whatever you point at, and goes home when you stop | Invisible until the reader hovers; does nothing on touch |
 
@@ -26,8 +26,11 @@ one-accent rule, since it puts two cyan marks in the same bar.
 
 ## What is settled, whichever wins
 
-- **Hop sits at 26px, left of the wordmark**, and arrives once per page load. It
-  never loops there. See [hop](../hop/spec.md).
+- **The masthead carries the mark, not Hop, at 22px left of the wordmark.** Hop
+  is one per screen ([hop](../hop/spec.md)), and #60 gave its one arrival to the
+  hero, in its ring — a sticky header would put a second lit eye over it on
+  every scroll past the fold. The masthead also sits below Hop's 28px floor,
+  which is exactly the case hop/spec.md names the mark's fallback for.
 - **The header is translucent over the ground**, not a solid band: the page runs
   underneath it, which is what makes the compaction in A legible at all.
 - **The rail and the progress rule are the same cyan**, and only one of them may
