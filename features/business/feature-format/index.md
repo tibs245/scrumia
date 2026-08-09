@@ -73,3 +73,6 @@ documentation convention with no interface or exposed library of its own.
 
 - #2 — [EPIC] Spec the data organisation: the feature format and the monorepo layout (parent)
 - #22 — `validate.py`'s link gate doesn't cover `features/`
+- #175 — Widen the specs contract with a key that declares the mandatory file set
+- #177 — What is the minimum content of a mandatory file, and does an empty one satisfy the rule?
+- #178 — What is a Business feature with no `business.md`?

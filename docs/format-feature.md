@@ -24,7 +24,7 @@ This seemingly innocuous rule is the heart of the format. With a fixed template,
 
 Direct consequence: an agent can decide what to read without reading everything. That is what keeps the context cost contained.
 
-The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature has to be findable, has to be possible to follow over time, and has to be possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, made in its own catalog, and another module may require a different set. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
+The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature has to be findable, has to be possible to follow over time, and has to be possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, made in its own catalog, and another module may require a different set. A consumer does not resolve that set for itself — it delegates the writing to the specs module's own writing skill. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
 
 ## Two strata
 

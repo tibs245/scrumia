@@ -77,12 +77,13 @@ Then it is written as an ADR under `docs/adr/` instead of into `archi.md`
 ### AC-8 — The mandatory set is read from the plugged module, never assumed
 
 ```gherkin
-Given a consumer that needs to know which files a feature must carry
-When it resolves that set
-Then it reads the declaration of the module filling the `specs` slot, rather
-  than treating `scrumia-specs`'s three as a property of the format
-And it does not infer the set from `CLAUDE.md`'s `## Specs contract` block,
-  which names the module's files without marking any of them required
+Given a consumer that needs a feature to carry the files its specs module
+  requires
+When it acts
+Then it delegates the writing to that module's own writing skill, rather than
+  deciding the mandatory set itself
+And it does not infer that set from `CLAUDE.md`'s `## Specs contract` block,
+  which names a module's files without marking any of them required
 ```
 
 ## Out of scope

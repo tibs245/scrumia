@@ -11,7 +11,7 @@ A feature is not a document, it's a **directory of targeted files**. Each file h
 
 This is a preference, not a truth. It comes from a usage finding: a fixed template produces empty sections filled with "N/A", which nobody cleans up and everybody reloads. You then no longer know whether "N/A" means "not applicable" or "not thought through yet".
 
-The catalog moves the problem: **the absence of an optional file becomes information**. No `legal.md` means "nothing legal at stake", asserted rather than omitted. It works because it is bounded: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory, so their absence stays a gap rather than a claim — a feature nobody can follow over time or test is not a feature. That mandatory set is this module's own, declared in `references/catalog.md`; another module at the `specs` slot may require a different one.
+The catalog moves the problem: **the absence of an optional file becomes information**. No `legal.md` means "nothing legal at stake", asserted rather than omitted. It works because it is bounded: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory, so their absence stays a gap rather than a claim — a feature nobody can find, follow over time, or test is not a feature. That mandatory set is this module's own, declared in `references/catalog.md`; another module at the `specs` slot may require a different one.
 
 In exchange, it demands a bit more judgment at writing time — that's the price to pay, and it doesn't suit every team.
 
