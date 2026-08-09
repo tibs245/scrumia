@@ -88,6 +88,3 @@ from where their cards sit. `qa.md` specifies the board-reading scenario this im
   automated move yet, found while writing this feature
 - #26 — the suspect-filter rule in `qa.md` (AC-3) doesn't catch a short, stale read
   right after a write; specified as a known gap in AC-4, not fixed
-- #79 — `board.sh read` never surfaces the issue's own `state`, so a ticket closed
-  without a PR reads as live work; specified as a known gap in `qa.md`'s AC-8, not
-  fixed

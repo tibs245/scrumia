@@ -213,18 +213,51 @@ cmd_read() {
   local truncated=false
   [ "$count" -lt "$matching" ] && { truncated=true; warn "showing $count of $matching matching items — raise --limit or narrow --query"; }
 
+  # Status survives a close (index.md); only the issue's own state tells live
+  # from abandoned (qa.md AC-8) — one batched query, not one round-trip per item.
+  local states="[]"
+  local numbers
+  numbers=$(jq -r '[.items[] | select(.content.type == "Issue" or .content.type == "PullRequest") | .content.number] | unique | .[]' <<<"$out")
+  if [ -n "$numbers" ]; then
+    local fields="" n
+    while IFS= read -r n; do
+      fields="$fields n$n: issueOrPullRequest(number:$n){ ... on Issue { number state } ... on PullRequest { number state } }"
+    done <<<"$numbers"
+    local states_out
+    states_out=$(gh api graphql -f query="query(\$owner:String!,\$repo:String!){ repository(owner:\$owner,name:\$repo){ $fields } }" \
+                   -F owner="$REPO_OWNER" -F repo="$REPO_NAME" 2>/dev/null)
+    if jq -e '.data.repository' >/dev/null 2>&1 <<<"$states_out"; then
+      states=$(jq '[.data.repository[] | select(. != null) | {number, state}]' <<<"$states_out")
+    else
+      warn "issue state lookup failed — items will report state:null, closed tickets may read as live"
+    fi
+  fi
+
+  local done_column; done_column=$(resolve_column "done")
+  [ "$done_column" = "done" ] && done_column="Done"
+
   jq --arg q "$query" --argjson trunc "$truncated" --argjson suspect "$suspect" \
-     --argjson explicit "$explicit_query" --argjson matching "$matching" '
-    {ok: true, query: (if $q == "" then null else $q end),
-     query_was_explicit: $explicit, count: (.items|length),
-     total_matching: $matching,
-     truncated: $trunc, filter_suspect: $suspect,
-     columns: (.items | group_by(.status) | map({
-       status: (.[0].status // "(no status)"),
-       count: length,
-       items: map({number: .content.number, title: .title,
-                   type: .content.type, labels: [.labels[]?]})
-     }))}' <<<"$out"
+     --argjson explicit "$explicit_query" --argjson matching "$matching" \
+     --argjson states "$states" --arg done_col "$done_column" '
+    (reduce $states[] as $s ({}; .[$s.number|tostring] = $s.state)) as $by_number
+    | (.items | map(. + {state: ($by_number[(.content.number|tostring)] // null)})) as $items
+    # Closed-in-Done is a normal merge, not the AC-8 gap.
+    | ($items | map(select(.state != "CLOSED" or .status == $done_col))) as $live
+    | ($items | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
+    | {ok: true, query: (if $q == "" then null else $q end),
+       query_was_explicit: $explicit, count: (.items|length),
+       total_matching: $matching,
+       truncated: $trunc, filter_suspect: $suspect,
+       closed_without_pr_count: ($stale|length),
+       columns: ($live | group_by(.status) | map({
+         status: (.[0].status // "(no status)"),
+         count: length,
+         items: map({number: .content.number, title: .title,
+                     type: .content.type, labels: [.labels[]?], state})
+       })),
+       closed_without_pr: ($stale | map({number: .content.number, title: .title,
+         status: (.status // "(no status)"), type: .content.type,
+         labels: [.labels[]?], state}))}' <<<"$out"
 }
 
 cmd_ready() {
