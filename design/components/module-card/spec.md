@@ -12,7 +12,14 @@ belongs in a table instead.
 Anatomy, in order:
 
 - `.mod-ico` — one emoji, the only decorative element on the card
-- `.mod-name` — the plugin's real id, mono, never prettified
+- `.mod-name` — the plugin's real id, mono, never prettified. Links to
+  `modules/<name>.html` — every card has one, the manifest that enumerates the
+  cards is the same one that enumerates the pages. It stays text-coloured at
+  rest, accent only on hover/focus: `.mod-slot` right below it already carries
+  the card's one accent, and a second cyan two lines down would compete with
+  it rather than reinforce it. This is the site's one colourless-at-rest link;
+  it earns the exception because of that neighbour, not as a precedent for
+  quieting links elsewhere
 - `.mod-slot` — the slot it fills, or `kernel` / `no slot`
 - `.mod-desc` — one or two sentences, what it does and what it needs
 - `.mod-foot` — `.pill`s: availability first, then contents (skills, agents, hooks)

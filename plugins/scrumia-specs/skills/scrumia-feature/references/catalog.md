@@ -2,12 +2,14 @@
 
 Complete reference. Each file has a defined content, a reader, and a condition of existence.
 
-> **The rule that governs everything else**: a file is only created if it has content.
+> **The rule that governs the optional files**: a file is only created if it has content.
 > The absence of a file is an assertion ("nothing to say here"), not an oversight.
+
+**Three files this rule does not gate**: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory in every feature. A feature has to be findable, has to be possible to follow over time, and has to be possible to test — an absent changelog or an absent set of criteria asserts nothing, it is simply missing. That is **this module's** declaration, not a property of the format as such: whichever module fills the `specs` slot declares its own mandatory set, and this file is where `scrumia-specs` declares its own. Do not read the set out of `CLAUDE.md`'s `## Specs contract` block instead — that block names the files a module uses so consumers need not hard-code them, and marks none of them required (`docs/adr/0012-specs-contract.md`).
 
 ---
 
-## `index.md` — mandatory, everywhere
+## `index.md` — mandatory in every feature
 
 The entry point. It's the only file an agent or a human systematically reads before deciding what to read next. It must fit in one reading.
 
@@ -40,9 +42,9 @@ Read by: business, QA, devs.
 
 ---
 
-## `qa.md` — acceptance criteria
+## `qa.md` — mandatory in every feature
 
-Mandatory everywhere. Given/When/Then, one scenario per case.
+The acceptance criteria. Given/When/Then, one scenario per case.
 
 **Business feature**: the business criteria, independent of any interface.
 **App feature**: the criteria of this implementation, including technical cases (timeout, network error, concurrent state).
@@ -55,7 +57,7 @@ Read by: QA, devs, execution and review agents.
 
 ---
 
-## `CHANGELOG.md` — mandatory, everywhere
+## `CHANGELOG.md` — mandatory in every feature
 
 Short. One entry per notable change, reverse-chronological.
 

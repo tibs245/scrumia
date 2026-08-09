@@ -7,6 +7,11 @@ Reverse-chronological. Short. The reasoning is in the issues, not here.
 - PR: #NN (filled at merge)
 - Breaking: no
 
+## 2026-08-09 — AC-4's short-read gap closed: `board.sh` confirms a filtered, non-empty read with retry-with-backoff
+- Issue: #26
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — The code cycle's process moves to `dev-flow`; this feature keeps its materialisation
 - Issue: #123
 - PR: #NN (filled at merge)

@@ -38,7 +38,7 @@ Apply the specs module's own splitting signals, documented in its writing skill 
 
 ### 2. Write the Business features
 
-For each one, via the specs module's writing skill (`scrumia-feature` for `scrumia-specs`): the file named by `feature_index`, the file named by `acceptance_file`, the file named by `changelog`, plus whichever `catalog` files the subject demands — compliance, cross-app architecture, and so on.
+For each one, via the specs module's writing skill (`scrumia-feature` for `scrumia-specs`). That skill decides which files its module requires of every feature — do not derive that set from which keys sit outside `catalog`, since a key names a file without mandating it. Bring it the subject matter, and whichever `catalog` files the subject demands on top — compliance, cross-app architecture, and so on.
 
 Write what was established during scoping. **Don't invent the missing rules.** A rule invented at this step becomes everyone's reference without anyone having decided it. When a rule is missing, write it as an open question in the file named by `feature_index` and create an issue.
 

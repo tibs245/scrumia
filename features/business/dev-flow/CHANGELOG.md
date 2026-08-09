@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — An execution commits to the ticket's branch before it yields control, at every yield point
+- Issue: #118
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — This feature owns the code-cycle process; a tracker feature traces it
 - Issue: #123
 - PR: #NN (filled at merge)

@@ -110,6 +110,18 @@ ${CLAUDE_SKILL_DIR}/../../scripts/board.sh move <n> in_progress
 
 The flow step maps to this board's actual column name through the config ([`projects-v2.md`](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md)). If the move fails, continue anyway and say so in the final report: a dead column is not a blocked ticket.
 
+## Commit before you yield
+
+From here on, what carries this run's output is the branch created in Step 2 — not the working tree. The working tree belongs to whatever process happens to hold it, and that process can vanish while the run is paused. So commit to the ticket's branch before the run hands control to anyone else:
+
+```bash
+git add -A && git commit -m "<type>: <what changed>"
+```
+
+The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
+
+This sits before Step 3 because Step 2 is where the branch starts existing and Step 3 can already yield. The steps that name it — 3, 5, 6, and *When you're blocked* — are where it bites in practice, not the extent of it.
+
 ## Step 3 — Update the spec first
 
 Skip this step in the degraded case from Step 1: no specs module documented, no spec to update — go straight to Step 4.
@@ -122,7 +134,7 @@ Otherwise, if the ticket changes a behavior, the spec changes **before** the cod
 
 Writing the spec first surfaces contradictions before they get encoded in code. That's where the cost is lowest.
 
-If while writing the spec you discover a contradiction with another feature: stop, comment on the issue, call on the business role. Do not decide a business rule yourself.
+If while writing the spec you discover a contradiction with another feature: stop, commit the spec changes you have — calling the role is a yield, and it is your spec edits that expose the contradiction — then comment on the issue and call on the business role. Do not decide a business rule yourself.
 
 ## Step 4 — Implement according to the app's module
 
@@ -145,7 +157,17 @@ Reread your own diff before proposing it. Look for: an uncovered `AC`, an ignore
 
 Fix what you find. What you can't fix here becomes an explicit note in the PR.
 
+Commit those fixes before going further, per *Commit before you yield* above.
+
 ## Step 6 — Agent review according to the diff
+
+**Do not spawn a role while the working tree is dirty** — spawning one is a yield, per *Commit before you yield* above. Check it:
+
+```bash
+git status --porcelain   # must print nothing before a role is spawned
+```
+
+`git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else.
 
 If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
@@ -171,7 +193,7 @@ claude -p --agent scrumia-teams:scrumia-tech \
 
 Both run the actual role. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
 
-A **Blocked** review gets fixed before opening the PR. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
+A **Blocked** review gets fixed before opening the PR — and the fix is committed before the role is asked again, which is another yield. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 
 Without a team module plugged in, your self-review from step 5 is the only review before the human. Say so explicitly in the PR: the reviewer must know what was checked and by whom.
 
@@ -207,4 +229,4 @@ git worktree remove .worktrees/<type>/<n>-<slug>
 
 ## When you're blocked
 
-Comment on the issue with: what you tried, what's blocking, and the options you see. Leave the branch in place. Do not open a half-done PR — an incomplete PR costs more to review than a clear comment.
+Commit what you have first: stopping hands the next move to a human, and a branch left in place with an uncommitted tree carries nothing. Then comment on the issue with: what you tried, what's blocking, and the options you see. Leave the branch in place. Do not open a half-done PR — an incomplete PR costs more to review than a clear comment.

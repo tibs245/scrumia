@@ -92,5 +92,3 @@ from where their cards sit. `qa.md` specifies the board-reading scenario this im
   feature; this ticket was executed by exception, tracked there
 - #23 — the `To dev` / `Done` transitions named in the lifecycle above have no
   automated move yet, found while writing this feature
-- #26 — the suspect-filter rule in `qa.md` (AC-3) doesn't catch a short, stale read
-  right after a write; specified as a known gap in AC-4, not fixed
