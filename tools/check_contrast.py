@@ -26,12 +26,16 @@ PAIRS = [
     ("agent", "surface", 4.5, ".flow-num numeral and ring, .card-manager left rule"),
     ("human", "human-surface", 4.5, ".flow-human .flow-num, .badge-human, .note-warn title"),
     ("text", "agent-surface", 4.5, "text on the agent wash"),
-    ("text-soft", "human-surface", 4.5, ".composer-note"),
+    ("text-soft", "human-surface", 4.5, ".opt description, on a chosen option"),
+    # #56: the composer draws a chosen module name in the human hue, as text on
+    # the ground. The 3.0 pair above is a rule and a dot; this one is read.
+    ("human", "ground", 4.5, ".slots-choose .slot-fill — a chosen module name"),
     ("text", "ground", 4.5, "body copy on the ground"),
     ("text-soft", "ground", 4.5, "secondary copy on the ground"),
     ("text-faint", "ground", 4.5, "mono labels on the ground"),
     ("text", "surface", 4.5, "body copy on a surface"),
     ("text-faint", "surface-sunken", 4.5, "code and inputs"),
+    ("agent", "surface-sunken", 4.5, "pre .m — module names inside a generated file"),
     ("accent", "ground", 4.5, "the accent as a link"),
     ("accent", "surface", 4.5, "the accent on a card"),
     ("accent", "accent-surface", 4.5, ".note title on its wash"),

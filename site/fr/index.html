@@ -302,59 +302,312 @@
 
 <section id="composer">
   <h2>Composez votre équipe</h2>
-  <p class="section-intro">Trois questions. Le compositeur sélectionne vos modules, écrit vos commandes d'installation et rédige votre <code>.scrumia/config.yaml</code> — le même fichier que <code>scrumia-init</code> vérifiera.</p>
+  <p class="section-intro">Sept emplacements, sept décisions — y compris celles que vous laissez vides exprès. Le même index que plus haut, sauf qu'ici c'est vous qui répondez : les lignes écrivent vos commandes d'installation et le <code>.scrumia/config.yaml</code> que <code>scrumia-init</code> vérifiera.</p>
 
-  <form id="composer-form">
-    <div class="composer">
-      <fieldset>
-        <legend><span class="step-num">1</span>Votre situation</legend>
-        <label class="choice"><input type="radio" name="situation" value="solo">
-          <b>Script solo</b><span>Une app, sans cérémonie — les specs payent toujours.</span></label>
-        <label class="choice"><input type="radio" name="situation" value="exploring">
-          <b>Explorer une idée</b><span>Cadrage et specs d'abord, tickets plus tard.</span></label>
-        <label class="choice"><input type="radio" name="situation" value="production" checked>
-          <b>Backlog de production</b><span>La boucle complète : tickets, rôles, sprints, PRs.</span></label>
-        <label class="choice"><input type="radio" name="situation" value="othertracker">
-          <b>Équipe sur Jira / autre</b><span>Specs + cadrage ; un module de suivi à écrire.</span></label>
-      </fieldset>
-
-      <fieldset>
-        <legend><span class="step-num">2</span>Vos stacks</legend>
-        <label class="choice"><input type="checkbox" name="stack" value="rust" checked>
-          <b>Rust</b><span>Erreurs typées, invariants, un test par invariant.</span></label>
-        <label class="choice"><input type="checkbox" name="stack" value="solidjs" checked>
-          <b>SolidJS</b><span>Réactivité granulaire, tests axés sur le comportement.</span></label>
-        <label class="choice"><input type="checkbox" name="stack" value="other">
-          <b>Quelque chose d'autre</b><span>Suit le code voisin — ou écrivez votre module.</span></label>
-      </fieldset>
-
-      <fieldset>
-        <legend><span class="step-num">3</span>Vos pratiques</legend>
-        <label class="choice"><input type="checkbox" name="practice" value="tdd" checked>
-          <b>TDD</b><span>Red-green-refactor, compétences d'audit et de refactorisation incluses.</span></label>
-        <label class="choice"><input type="checkbox" name="practice" value="solid">
-          <b>SOLID</b><span>Principes situés — la sur-application est aussi auditée.</span></label>
-        <label class="choice"><input type="checkbox" name="practice" value="tanstack">
-          <b>TanStack Query</b><span>Query keys, invalidation, optimistic updates — la limite serveur/client.</span></label>
-      </fieldset>
+  <!-- A div, not a form: nothing here is submitted anywhere, and a <form> with
+       no action is a control that implies a round trip it will never make. -->
+  <div id="composer-choices">
+    <!-- The four situations the composer used to ask about as question 1. They
+         are shortcuts that check the rows below, never a state of their own —
+         so they only exist where a script can apply them. -->
+    <div class="presets">
+      <span class="presets-label">Partir de</span>
+      <button type="button" class="preset" data-preset="solo">Script solo</button>
+      <button type="button" class="preset" data-preset="exploring">Explorer une idée</button>
+      <button type="button" class="preset" data-preset="production">Backlog de production</button>
+      <button type="button" class="preset" data-preset="othertracker">Équipe sur Jira / autre</button>
     </div>
-  </form>
 
-  <div class="composer-out" aria-live="polite">
-    <div class="chips" id="composer-modules"></div>
-    <div class="composer-cols">
-      <div>
-        <h3>Installer</h3>
-        <pre id="composer-install"></pre>
-        <button class="copy-btn" id="composer-copy" data-done="Copié ✓">Copier les commandes</button>
-      </div>
-      <div>
-        <h3>.scrumia/config.yaml</h3>
-        <pre id="composer-config"></pre>
-      </div>
+    <!-- The same seven rows as #slots, in their choosable state: <details> owns
+         what is open, the radios and checkboxes own what is chosen, and :has()
+         owns what the fill reports. No script is involved in any of that.
+         name="composer-slot" and not "slot": the two indexes must not fuse into
+         one accordion across sections. -->
+    <div class="slots slots-choose summon">
+
+      <details class="slot" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">specs</span>
+            <span class="slot-q" id="cq-specs">Où vivent les specs, sous quelle forme ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-specs</span>
+              <span class="fill-2">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-specs">
+          <label class="opt opt-1">
+            <input type="radio" name="c-specs" value="scrumia-specs" checked>
+            <b>scrumia-specs</b><span>Un dossier par feature, des fichiers créés seulement quand ils ont quelque chose à dire, des critères d'acceptation écrits avant le code.</span>
+          </label>
+          <label class="opt opt-2 opt-empty">
+            <input type="radio" name="c-specs" value="" data-note="# pas de contrat de specs — les agents partent du texte du ticket">
+            <b>Le laisser vide</b><span>Pas de contrat de specs : les agents traitent un ticket à partir de son seul texte, ne mettent aucune spec à jour, et le disent. Ce qui a été décidé ne survit que là où le ticket l'a écrit.</span>
+          </label>
+        </div>
+      </details>
+
+      <details class="slot" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">tracker</span>
+            <span class="slot-q" id="cq-tracker">Où vit l'état — tickets, colonnes, PRs ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-github-project</span>
+              <span class="fill-2">à écrire</span>
+              <span class="fill-3">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-tracker">
+          <label class="opt opt-1">
+            <input type="radio" name="c-tracker" value="scrumia-github-project" checked>
+            <b>scrumia-github-project</b><span>Issues, colonnes et PR sur GitHub. Rien d'étatique dans le repo, et un hook qui refuse le commit qui essaie.</span>
+          </label>
+          <!-- A tracker of your own is a variant of empty, not a third fill: the
+               slot has no module until you write one. -->
+          <label class="opt opt-2 opt-empty">
+            <input type="radio" name="c-tracker" value="other" data-note="# à écrire — le contrat de l'emplacement tient en une page">
+            <b>Un suivi à vous</b><span>Jira, Linear, autre chose. L'emplacement a un contrat défini, donc le module est un travail borné — tant qu'il n'existe pas, l'emplacement est vide et se comporte comme tel.</span>
+          </label>
+          <label class="opt opt-3 opt-empty">
+            <input type="radio" name="c-tracker" value="" data-note="# pas de suivi — ticket et tableau se dégradent en texte">
+            <b>Le laisser vide</b><span>Les compétences ticket, tableau et revue se dégradent en sortie texte, et le disent. L'état du projet n'a nulle part où vivre : pas de colonnes, pas de routage de PR, aucune trace de ce qui est en cours.</span>
+          </label>
+        </div>
+      </details>
+
+      <details class="slot" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">team</span>
+            <span class="slot-q" id="cq-team">Quels rôles établis, avec quel périmètre ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-teams</span>
+              <span class="fill-2">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-team">
+          <label class="opt opt-1">
+            <input type="radio" name="c-team" value="scrumia-teams" checked>
+            <b>scrumia-teams</b><span>Manager, business et tech comme rôles permanents — chacun avec un périmètre, un modèle et une ligne de refus.</span>
+          </label>
+          <label class="opt opt-2 opt-empty">
+            <input type="radio" name="c-team" value="" data-note="# aucun rôle permanent — chaque verdict vous revient">
+            <b>Le laisser vide</b><span>Aucun rôle permanent : rien ne conteste une règle métier, un choix d'architecture ou un écran avant la fusion, et rien ne compose de sprint. Chaque verdict vous revient.</span>
+          </label>
+        </div>
+      </details>
+
+      <details class="slot" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">discovery</span>
+            <span class="slot-q" id="cq-discovery">Comment une idée devient un travail cadré ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-discovery</span>
+              <span class="fill-2">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-discovery">
+          <label class="opt opt-1">
+            <input type="radio" name="c-discovery" value="scrumia-discovery" checked>
+            <b>scrumia-discovery</b><span>Une étape de cadrage entre une idée et un ticket : la contester, la découper en features, écrire les specs sur une branche.</span>
+          </label>
+          <label class="opt opt-2 opt-empty">
+            <input type="radio" name="c-discovery" value="" data-note="# une idée va directement en ticket, sans cadrage">
+            <b>Le laisser vide</b><span>Une idée va directement en ticket, sans étape de cadrage, et les agents sont invités à le dire plutôt que d'en improviser une.</span>
+          </label>
+        </div>
+      </details>
+
+      <!-- implementation and practices are the two slots that repeat per app,
+           so they are the two that take checkboxes. Nothing checked is the
+           empty state; `something else` adds an app without adding a module. -->
+      <details class="slot slot-multi" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">implementation</span>
+            <span class="slot-q" id="cq-impl">Comment le code est écrit, par app ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-impl-rust</span>
+              <span class="fill-2">scrumia-impl-solidjs</span>
+              <span class="fill-none">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-impl">
+          <label class="opt opt-1 opt-mod">
+            <input type="checkbox" name="c-impl" value="rust" checked>
+            <b>Rust</b><span>Erreurs typées, invariants, un test par invariant.</span>
+          </label>
+          <label class="opt opt-2 opt-mod">
+            <input type="checkbox" name="c-impl" value="solidjs" checked>
+            <b>SolidJS</b><span>Réactivité granulaire, tests axés sur le comportement.</span>
+          </label>
+          <label class="opt opt-3">
+            <input type="checkbox" name="c-impl" value="other">
+            <b>Quelque chose d'autre</b><span>Suit le code voisin — ou écrivez votre module.</span>
+          </label>
+          <!-- The two repeating slots have no `leave it empty` option — checking
+               nothing is that choice — so their consequence is stated here
+               instead, and only while it applies. -->
+          <p class="opt-hint">Vide : les agents suivent le code voisin — comportement normal, pas un manque. Le coût arrive au premier fichier d'une nouvelle stack, là où il n'y a aucun voisin à suivre.</p>
+        </div>
+      </details>
+
+      <details class="slot slot-multi" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">practices</span>
+            <span class="slot-q" id="cq-practices">Quelles pratiques transversales, par app ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-practice-tdd</span>
+              <span class="fill-2">scrumia-practice-solid</span>
+              <span class="fill-3">scrumia-practice-tanstack-query</span>
+              <span class="fill-none">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-practices">
+          <label class="opt opt-1 opt-mod">
+            <input type="checkbox" name="c-practice" value="tdd" checked>
+            <b>TDD</b><span>Red-green-refactor, compétences d'audit et de refactorisation incluses.</span>
+          </label>
+          <label class="opt opt-2 opt-mod">
+            <input type="checkbox" name="c-practice" value="solid">
+            <b>SOLID</b><span>Principes situés — la sur-application est aussi auditée.</span>
+          </label>
+          <label class="opt opt-3 opt-mod">
+            <input type="checkbox" name="c-practice" value="tanstack">
+            <b>TanStack Query</b><span>Query keys, invalidation, optimistic updates — la limite serveur/client.</span>
+          </label>
+          <p class="opt-hint">Vide : aucune discipline transverse n'est imposée. Rien ne fait passer les tests d'abord ni ne garde un motif cohérent d'une app à l'autre — ce que le module d'implémentation ne dit pas, personne ne le dit.</p>
+        </div>
+      </details>
+
+      <details class="slot" name="composer-slot">
+        <summary>
+          <h3 class="slot-row">
+            <span class="slot-sign" aria-hidden="true">+</span>
+            <span class="slot-name">design</span>
+            <span class="slot-q" id="cq-design">Où vit le système de conception ?</span>
+            <span class="slot-lead" aria-hidden="true"></span>
+            <span class="slot-fill">
+              <span class="fill-1">scrumia-design</span>
+              <span class="fill-2">rien d'installé</span>
+            </span>
+          </h3>
+        </summary>
+        <div class="shelf" role="group" aria-labelledby="cq-design">
+          <label class="opt opt-1">
+            <input type="radio" name="c-design" value="scrumia-design" checked>
+            <b>scrumia-design</b><span>Identité, tokens et composants comme fichiers du repo, plus un rôle designer qui juge ce qu'un utilisateur voit vraiment.</span>
+          </label>
+          <label class="opt opt-2 opt-empty">
+            <input type="radio" name="c-design" value="" data-note="# pas de contrat de design — aucun rôle ne juge l'interface">
+            <b>Le laisser vide</b><span>Pas de contrat de design : chaque page est stylée au goût, les valeurs partent en dur sans token pour en répondre, et aucun rôle ne juge l'interface avant la fusion.</span>
+          </label>
+        </div>
+      </details>
     </div>
-    <p class="composer-note" id="composer-note"></p>
   </div>
+
+  <!-- Two files you take away, not a result panel. Both are pre-rendered here
+       for the composition the rows load with, so the takeaway is correct and
+       copyable before — and without — any script. -->
+  <div class="artifacts">
+    <div class="artifact">
+      <p class="artifact-head">
+        <span class="artifact-name">Installer</span>
+        <span class="artifact-role">à lancer dans Claude Code</span>
+        <button type="button" class="copy-btn" data-copy="composer-install" data-done="Copié ✓">Copier</button>
+      </p>
+<pre id="composer-install"><span class="c"># ajouter la place de marché une seule fois</span>
+/plugin marketplace add tibs245/scrumia
+
+<span class="c"># installer votre composition</span>
+/plugin install scrumia-core@scrumia
+/plugin install scrumia-specs@scrumia
+/plugin install scrumia-github-project@scrumia
+/plugin install scrumia-teams@scrumia
+/plugin install scrumia-discovery@scrumia
+/plugin install scrumia-design@scrumia
+/plugin install scrumia-impl-rust@scrumia
+/plugin install scrumia-impl-solidjs@scrumia
+/plugin install scrumia-practice-tdd@scrumia
+
+<span class="c"># puis, à l'intérieur du repo à configurer</span>
+/scrumia-core:scrumia-init</pre>
+    </div>
+
+    <div class="artifact">
+      <p class="artifact-head">
+        <span class="artifact-name">.scrumia/config.yaml</span>
+        <span class="artifact-role">commitez-le, puis scrumia-init le vérifie au lieu de redemander</span>
+        <button type="button" class="copy-btn" data-copy="composer-config" data-done="Copié ✓">Copier</button>
+      </p>
+<pre id="composer-config"><span class="c"># Généré par le compositeur — relisez, puis commitez</span>
+project:
+  name: your-project
+  repo: you/your-repo   <span class="c"># remplacez ces deux lignes par les vôtres</span>
+
+composition:
+  specs: <span class="m">scrumia-specs</span>
+  tracker: <span class="m">scrumia-github-project</span>
+  team: <span class="m">scrumia-teams</span>
+  discovery: <span class="m">scrumia-discovery</span>
+  design: <span class="m">scrumia-design</span>
+
+apps:
+  - name: api
+    path: apps/api
+    type: backend
+    implementation: <span class="m">scrumia-impl-rust</span>
+    practices: [<span class="m">scrumia-practice-tdd</span>]
+  - name: web
+    path: apps/web
+    type: frontend
+    implementation: <span class="m">scrumia-impl-solidjs</span>
+    practices: [<span class="m">scrumia-practice-tdd</span>]</pre>
+    </div>
+  </div>
+
+  <!-- Pre-rendered like the two files above, and for the same reason: the
+       default composition checks a practice and declares two apps, so this note
+       applies from load. composer.js replaces the whole element on any change. -->
+  <p class="composer-note" id="composer-note"><span>Les pratiques s'appliquent app par app, et seulement aux types d'app dont elles parlent. Là où l'une contredit le module d'implémentation, c'est le module d'implémentation qui gagne.</span></p>
+  <p class="composer-live" id="composer-live" aria-live="polite"></p>
+
+  <!-- The strings composer.js writes into the two files. They live on the
+       markup rather than in a script object so each one has exactly one home
+       in site/i18n/, and the per-slot ones sit on the option that causes them
+       (data-note on each input above). -->
+  <div id="composer-strings" hidden
+       data-marketplace="# ajouter la place de marché une seule fois"
+       data-install="# installer votre composition"
+       data-then-init="# puis, à l'intérieur du repo à configurer"
+       data-config="# Généré par le compositeur — relisez, puis commitez"
+       data-project="# remplacez ces deux lignes par les vôtres"
+       data-note-own-tracker="L'emplacement suivi a un contrat défini : écrire un module Jira ou Linear est un travail borné. En attendant, les compétences ticket et tableau se dégradent en sortie texte, et le disent."
+       data-note-own-impl="Pas de module d'implémentation pour cette stack : l'app suit les conventions du code d'à côté. Comportement normal, pas un manque — et le contrat pour écrire le vôtre tient en une page."
+       data-note-practices="Les pratiques s'appliquent app par app, et seulement aux types d'app dont elles parlent. Là où l'une contredit le module d'implémentation, c'est le module d'implémentation qui gagne."
+       data-note-practices-noapp="Les pratiques s'attachent aux apps. Sans app déclarée, elles s'installent et n'activent rien tant qu'aucune app n'apparaît dans le fichier."></div>
 </section>
 
 <section id="modules">
@@ -577,7 +830,6 @@
   </div>
 </footer>
 
-<script>window.SCRUMIA_COMPOSER_STRINGS = {"marketplace": "# ajouter la place de marché une seule fois", "install": "# installer votre composition", "thenInit": "# puis, à l'intérieur du repo à configurer", "configComment": "# Généré par le compositeur - examinez, puis validez", "trackerToWrite": "tracker : le vôtre à écrire", "implNeighbor": "implementation: code voisin", "noteSolo": "Pas de suivi, pas d'équipe : de la bonne taille pour un script solo. Les specs restent actuelles dans le repo; l'historique vit dans git.", "noteExploring": "Pas de suivi encore: le cadrage produit les specs sur une branche. Branchez le suivi quand les idées deviennent un backlog.", "noteProduction": "La boucle complète. Vous conservez trois points de contact : décisions de cadrage, validations risquées, et la fusion. Les agents font le reste.", "noteOtherTracker": "Le slot de suivi a un contrat défini - écrire un module Jira ou Linear est un travail borné (voir les docs). Jusqu'à alors, les compétences de tickets se dégradent en sortie texte.", "noteOtherStack": "Aucun module d'implémentation pour ce stack encore: l'app suit les conventions du code voisin - comportement normal, pas une lacune. Le contrat pour écrire le vôtre tient une page.", "notePractices": "Les pratiques s'appliquent app par app ; où l'une est en désaccord avec le module d'implémentation, le module d'implémentation gagne."};</script>
 <script src="../assets/composer.js"></script>
 
 </body>

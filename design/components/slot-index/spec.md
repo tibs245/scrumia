@@ -21,6 +21,45 @@ with no script reading or writing that state.
 |---|---|---|
 | Filled | `.slot` | dotted leader, accent sign and fill when open, module name in the row |
 | Empty | `.slot.slot-empty` | dashed leader, muted name, `nothing installed` |
+| Choosable | `.slots-choose .slot` | the same row, but the fill is a decision the reader makes — `--human`, because choosing is the human act |
+
+## The choosable state (#56)
+
+An index can report a composition or take one. Reporting is the default;
+`.slots-choose` on the container turns the same seven rows into the choice.
+Nothing about the anatomy changes — only what sits in the `<details>` body, and
+what colour the fill carries.
+
+- **The body is a shelf of native inputs**, one `<label class="opt">` per
+  option: radios for a slot that takes one module, checkboxes for the two that
+  repeat per app. `leave it empty` is an option in every group, never an
+  absence of options.
+- **`--human` marks the fill**, against `--text-soft` in a reporting index.
+  A reported fill is a fact; a chosen one is a decision, and
+  `design/identity.md` decision 1 says who decisions belong to.
+- **CSS reports the choice, not script.** `.slot-fill` holds one pre-rendered
+  span per option and `:has()` reveals the checked one. The index therefore
+  keeps the property that made it worth choosing over a card: it opens, chooses
+  and reports with no JavaScript running.
+- **`name=` must differ per index.** Two indexes on one page grouped under the
+  same `name` become one accordion across sections — opening a composer row
+  would close a reporting row two sections away.
+
+The empty state is unchanged in meaning: `.slot-empty` for a reported absence,
+and `:has(.opt-empty input:checked)` for a chosen one. Both draw the same row,
+because a slot only ever knows decided states — and both draw their fill at
+body weight, because bold on the word `nothing installed` sends two signals at
+once.
+
+### The gap idiom
+
+What an empty slot costs is stated in the **gap idiom**: `--font-mono` at
+`--text-xs`, `--text-soft`, indented `--space-4` behind a `--space-tight`
+`--border-strong` rule. No human blue and no accent — a capability reported
+absent is the system saying what it cannot do, not a person deciding and not
+something pointing. It is the one register in which a degradation is allowed to
+speak, and any new place that needs to say "this is what you gave up" wears it
+rather than inventing a variant.
 
 ## Row anatomy
 
@@ -53,7 +92,14 @@ variant.
 - **Dashes as the only signal.** `.slot-fill` spells the state out in words,
   because a dashed leader is not perceivable to everyone.
 - **A second way to draw a slot.** One drawing exists in `design/`, here —
-  never a card alongside the index for the same information.
+  never a card alongside the index for the same information, and never a
+  separate drawing for a slot the reader chooses rather than reads.
+- **A `<select>` for the choice.** The native popup escapes both the theme and
+  the drawing, and reads as a form control in a section whose whole argument is
+  that it is not a form.
+- **A "not yet chosen" state.** The choosable index loads with a composition
+  already decided. A third empty-ish state would need a third drawing, and a
+  slot only reports what was decided.
 - **JavaScript for open/close.** `<details name="slot">` is the accordion;
   anything reaching for a script to expand a row is solving an already-solved
   problem.
