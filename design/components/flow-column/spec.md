@@ -7,14 +7,19 @@ instead of asserting a benefit.
 ## When to use it
 
 A sequence where **who acts** changes from step to step. That is the whole reason
-the component exists: the warm/cold split is the argument, not decoration.
+the component exists: the cold/warm split is the argument, not decoration.
 
 Two variants, and there are only two:
 
 | Variant | Class | Means |
 |---|---|---|
-| Human | `.fm.fm-human` | a person decides here — coral top edge, coral wash |
-| Agent | `.fm.fm-ai` | an agent runs here — cold blue top edge, no wash |
+| Human | `.fm.fm-human` | a person decides here — blue top edge, blue wash |
+| Agent | `.fm.fm-ai` | an agent runs here — warm coral top edge, no wash |
+
+The wash marks the human and stays there. It is the *rare* actor — three of the
+reference run's seven steps — and marking the rare one is what makes the diagram
+readable at a glance. Washing four columns coral would make the page's most common
+state its loudest, which is the emphasis backwards.
 
 Four slots inside, all four filled or the column reads as broken:
 
@@ -33,9 +38,11 @@ Four slots inside, all four filled or the column reads as broken:
 
 ## What it refuses
 
-- **A third actor colour.** Warm is human, cold is agent, and there is no third
+- **A third actor colour.** Cold is human, warm is agent, and there is no third
   thing. A step that fits neither is a step described wrong.
 - **The accent.** Cyan points at one thing per screen and a diagram is not it. The
-  column never uses `--accent`.
+  column never uses `--accent` — and `--human` is not a way to smuggle it in: the
+  two are a hue category apart precisely so the human column never reads as the
+  thing that points.
 - **A colour-only distinction.** `.fm-who` names the actor in words, always: the
   human/agent split survives being read by someone who cannot see the hues.

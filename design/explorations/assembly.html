@@ -7,8 +7,9 @@
   parts that snap into them, and wires drawn between things that are actually
   connected.
 
-  KEPT FROM THE IDENTITY — cold navy ground, coral only where a human hand enters
-  the machine (three points, drawn as a rail above the run), one cyan accent that
+  KEPT FROM THE IDENTITY — cold navy ground, blue only where a human hand enters
+  the machine (three points, drawn as a rail above the run) and coral where an
+  agent runs, which is the way round #52 settled; one cyan accent that
   points and nothing else; Hop reused verbatim as its own exploded assembly,
   because four segments that gather into a body already *is* this direction.
 
@@ -62,11 +63,10 @@
   --accent: #73E3FF;
   --accent-surface: #07293C;
   --accent-ink: #00121E;
-  --human: #F0996F;
-  --human-surface: #2B1811;
-  --human-ink: #1A0B04;
-  --agent: #6BB8E4;
-  --agent-surface: #07243A;
+  --human: #85AAF2;
+  --human-surface: #12204A;
+  --agent: #F0996F;
+  --agent-surface: #2B1811;
   --ok: #54CE94;
   --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
   --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
@@ -82,8 +82,8 @@
     --border: #E1D9CD; --border-strong: #8C7F6D;
     --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
     --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
-    --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
-    --agent: #175B7A; --agent-surface: #E4EFF6; --ok: #16704F;
+    --human: #2650AC; --human-surface: #DFE5FF;
+    --agent: #9E4517; --agent-surface: #FAEBE1; --ok: #16704F;
     --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
     --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
     --rule: #DCD2C2; --rule-fine: #EDE7DC; --haze: #E7DFD1;
@@ -96,8 +96,8 @@
   --border: #E1D9CD; --border-strong: #8C7F6D;
   --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
   --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
-  --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
-  --agent: #175B7A; --agent-surface: #E4EFF6; --ok: #16704F;
+  --human: #2650AC; --human-surface: #DFE5FF;
+  --agent: #9E4517; --agent-surface: #FAEBE1; --ok: #16704F;
   --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
   --glow-accent: 0 0 0 1px rgb(10 96 118 / 0.22), 0 6px 24px -12px rgb(10 96 118 / 0.35);
   --rule: #DCD2C2; --rule-fine: #EDE7DC; --haze: #E7DFD1;
@@ -109,8 +109,8 @@
   --border: #153453; --border-strong: #3B7CAD;
   --text: #EAF2FA; --text-soft: #A9C2D6; --text-faint: #7C95AB;
   --accent: #73E3FF; --accent-surface: #07293C; --accent-ink: #00121E;
-  --human: #F0996F; --human-surface: #2B1811; --human-ink: #1A0B04;
-  --agent: #6BB8E4; --agent-surface: #07243A; --ok: #54CE94;
+  --human: #85AAF2; --human-surface: #12204A;
+  --agent: #F0996F; --agent-surface: #2B1811; --ok: #54CE94;
   --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
   --glow-accent: 0 0 0 1px rgb(115 227 255 / 0.28), 0 6px 28px -10px rgb(115 227 255 / 0.4);
   --rule: #10314F; --rule-fine: #071A2E; --haze: #0E2B48;
@@ -1373,7 +1373,7 @@ html[data-js] .summon.is-in > * {
     });
   }
 
-  // The run: three coral drops from the human rail, four from the bus to the
+  // The run: three blue drops from the human rail, four from the bus to the
   // module that drives the step. Nothing is wired that is not connected.
   function drawRun() {
     var host = document.querySelector(".run");

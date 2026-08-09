@@ -8,8 +8,9 @@
   in one.
 
   Kept from the identity: the navy ground with raised blue surfaces, the single
-  cyan accent that points and nothing else, coral reserved strictly for the three
-  moments a human decides, Hop as four columns that gather and fall back, and the
+  cyan accent that points and nothing else, blue reserved strictly for the three
+  moments a human decides and coral for the agent steps between them (#52 inverted
+  that pair), Hop as four columns that gather and fall back, and the
   rule that motion only ever stands for a state change.
 
   Deliberately broken: the display face. identity.md makes Sora the display type;
@@ -68,12 +69,11 @@
   --accent: #73E3FF;
   --accent-surface: #07293C;
   --accent-ink: #00121E;
-  --human: #F0996F;
-  --human-surface: #2B1811;
-  --human-ink: #1A0B04;
-  --agent: #6BB8E4;
-  --agent-surface: #07243A;
-  --agent-ink: #00121E;
+  --human: #85AAF2;
+  --human-surface: #12204A;
+  --agent: #F0996F;
+  --agent-surface: #2B1811;
+  --agent-ink: #1A0B04;
   --ok: #54CE94;
   --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
@@ -90,8 +90,8 @@
     --border: #E1D9CD; --border-strong: #8C7F6D;
     --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
     --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
-    --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
-    --agent: #175B7A; --agent-surface: #E4EFF6; --agent-ink: #FFFFFF;
+    --human: #2650AC; --human-surface: #DFE5FF;
+    --agent: #9E4517; --agent-surface: #FAEBE1; --agent-ink: #FFFFFF;
     --ok: #16704F;
     --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
     --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
@@ -108,8 +108,8 @@
   --border: #E1D9CD; --border-strong: #8C7F6D;
   --text: #0A1626; --text-soft: #3C4C5E; --text-faint: #59687A;
   --accent: #0A6076; --accent-surface: #DFF1F7; --accent-ink: #FFFFFF;
-  --human: #9E4517; --human-surface: #FAEBE1; --human-ink: #FFFFFF;
-  --agent: #175B7A; --agent-surface: #E4EFF6; --agent-ink: #FFFFFF;
+  --human: #2650AC; --human-surface: #DFE5FF;
+  --agent: #9E4517; --agent-surface: #FAEBE1; --agent-ink: #FFFFFF;
   --ok: #16704F;
   --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
   --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
@@ -125,8 +125,8 @@
   --border: #153453; --border-strong: #3B7CAD;
   --text: #EAF2FA; --text-soft: #A9C2D6; --text-faint: #7C95AB;
   --accent: #73E3FF; --accent-surface: #07293C; --accent-ink: #00121E;
-  --human: #F0996F; --human-surface: #2B1811; --human-ink: #1A0B04;
-  --agent: #6BB8E4; --agent-surface: #07243A; --agent-ink: #00121E;
+  --human: #85AAF2; --human-surface: #12204A;
+  --agent: #F0996F; --agent-surface: #2B1811; --agent-ink: #1A0B04;
   --ok: #54CE94;
   --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
@@ -188,7 +188,7 @@ body {
 }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 
-/* The ground is not flat: a cyan halo where the session starts, a coral one
+/* The ground is not flat: a cyan halo where the session starts, a human-blue one
    where the human steps are, and a dot grid that fades out as the run goes on. */
 .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .bg::before {
@@ -825,7 +825,7 @@ pre.cmd .v { color: var(--agent); }
     <p class="sec-num"><b>01</b> — the run</p>
     <h2 id="run-h">One run, end to end.</h2>
     <p class="sec-intro">
-      The reference composition, executing. Coral is where the run stops and a person
+      The reference composition, executing. Blue is where the run stops and a person
       decides — it happens three times, and never by accident.
     </p>
 
