@@ -152,18 +152,31 @@ page when you stop. Hover the navigation. The accent has exactly one position, a
   var nav = document.getElementById('railNav');
   var rail = nav.querySelector('.hdr-rail');
   var home = nav.querySelector('[aria-current="page"]');
+  var resting = home;
 
-  function railTo(el) {
+  function railTo(el, instant) {
+    // A resize-triggered move lands the same way the first-ever placement
+    // does: no transition, since it stands for a layout change, not intent.
+    if (instant) rail.classList.remove('is-ready');
     rail.style.width = el.offsetWidth + 'px';
     rail.style.transform = 'translateX(' + el.offsetLeft + 'px)';
+    if (instant) {
+      void rail.offsetWidth;
+      rail.classList.add('is-ready');
+    }
   }
   nav.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('mouseenter', function () { railTo(a); });
-    a.addEventListener('focus', function () { railTo(a); });
+    a.addEventListener('mouseenter', function () { resting = a; railTo(a); });
+    a.addEventListener('focus', function () { resting = a; railTo(a); });
   });
-  nav.addEventListener('mouseleave', function () { railTo(home); });
+  nav.addEventListener('mouseleave', function () { resting = home; railTo(home); });
   nav.addEventListener('focusout', function (e) {
-    if (!nav.contains(e.relatedTarget)) railTo(home);
+    if (!nav.contains(e.relatedTarget)) { resting = home; railTo(home); }
+  });
+  // Reposition to the resting link on resize, without a transition — see
+  // railTo above.
+  window.addEventListener('resize', function () {
+    if (header.classList.contains('hdr-rail-live')) railTo(resting, true);
   });
 
   // Placed after fonts settle, and on a synchronous reflow rather than
