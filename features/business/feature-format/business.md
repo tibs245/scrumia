@@ -76,7 +76,9 @@ not outside `features/` (per
 rejected that third option). It carries how those apps talk to each other
 **for this EPIC**: the contracts at stake, the data flow, the deployment
 order if it matters, the degraded modes. It dies with the EPIC it was written
-for.
+for: the file is deleted once the EPIC closes, not merely left unmaintained —
+anything in it still worth keeping has already been promoted to an ADR by
+then, per the lifespan test below, so what remains carries no value.
 
 A decision that outlives the EPIC does not belong in `archi.md` — it is a
 project ADR under `docs/adr/`. ADR-0003 states the boundary as a test, quoted
