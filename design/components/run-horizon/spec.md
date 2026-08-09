@@ -7,9 +7,15 @@ the sequence readable and the ratio invisible, and the ratio is the argument.
 ## When to use it
 
 A sequence where **who acts** changes from step to step, and where *how often*
-each actor acts is the point. Position carries the split before a word is read —
-human steps above the line, agent steps below — so a reader who never gets past
-the diagram still leaves with three-of-seven.
+each actor acts is the point.
+
+On the horizon, position carries the split before a word is read — human steps
+above the line, agent steps below — so a reader who never gets past the diagram
+still leaves with three-of-seven. **That is a property of the horizon, not of the
+component.** On the rail there is no above and no below, and the seven marks are
+too far apart to take in at once; there the ratio is stated in words above the
+run and in digits in the legend, which is why the legend moves to the top of the
+rail and back under the horizon. That is accepted, not overlooked.
 
 There is exactly one on the site, in `#flow` on the home page.
 
@@ -56,7 +62,13 @@ bloom; what is abundant does not get to flare.
 
 - **A wash.** Coral marks the abundant actor after #52, and washing four of
   seven columns would make the page's most common state its loudest. Colour is
-  spent on the mark, the title and the actor word — nothing wider.
+  spent on the mark, the title, the actor word, and — on the horizon only — the
+  rule that ties a human step's copy back to the line, at 45% of `--human`.
+  Nothing wider, and nothing that fills an area.
+- **A spine drawn in the page's hairline.** The line is the component; drawn in
+  `--border` it measures 1.29:1 against the cream ground and reads as one more
+  background grid line, weaker than the rules that hang off it. It takes
+  `--border-strong`, the token that exists to carry a boundary you have to see.
 - **A third actor colour.** Cold is human, warm is agent. A step that fits
   neither is a step described wrong.
 - **The accent.** Cyan points at one thing per screen and a diagram is not it.

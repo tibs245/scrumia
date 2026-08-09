@@ -40,7 +40,7 @@
 
   /* The two actors. These names say the job, not the hue, which is why they
    * survived the inversion in #52 with every consumer untouched: a rule written
-   * as `.fm-human::before { background: var(--human) }` was already correct after.
+   * as `.step-human .step-dot { border-color: var(--human) }` was already correct after.
    *
    * Cold human. Blue marks every point where a person decides — and nothing else.
    * It sits at OKLCh hue 263°, pure blue's own hue and a full category off the
