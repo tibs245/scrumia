@@ -61,6 +61,7 @@ sits.
 |---|---|
 | `qa.md` | The criteria the shell must keep passing — both themes, both directions, no-JS |
 | `tech.md` | The browser floor this bet needs, and the two mechanisms that look like tricks |
+| `legal.md` | The trademark / affiliation risk the redesign's palette and mascot carry, its mitigations, and the owner's acceptance of what's left over |
 | `CHANGELOG.md` | History of changes to this spec |
 
 No `business.md`: there is no business rule here, and no Business parent to
