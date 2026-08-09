@@ -73,8 +73,11 @@
 
 <main id="main">
 
-<h1>A full run, end to end</h1>
-<p class="section-intro">The reference composition, step by step. Each step names the module behind it.</p>
+<header class="page-head summon">
+  <p class="kicker">the run, in detail</p>
+  <h1>A full run, end to end</h1>
+  <p class="lead">The reference composition, step by step. Each step names the module behind it.</p>
+</header>
 
 <section id="overview">
   <h2>The shape of it</h2>
@@ -115,7 +118,7 @@ Human     │ review PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">2</div>
       <div class="flow-body">
-        <h3>Scoping produces issues and a specs branch</h3>
+        <h3>Scoping produces issues and a specs branch <span class="badge">agent</span></h3>
         <p>Business features first, then app features — one per app, never two. Then the issues.</p>
         <p>Specs ship on a <code>specs/&lt;slug&gt;</code> branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
 <pre><code>/scrumia-discovery:scrumia-split</code></pre>
@@ -125,7 +128,7 @@ Human     │ review PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">3</div>
       <div class="flow-body">
-        <h3>Refinement makes the ticket executable</h3>
+        <h3>Refinement makes the ticket executable <span class="badge">agent</span></h3>
         <p>Four conditions, all checkable:</p>
         <ul>
           <li>A feature it belongs to exists and is current</li>
@@ -149,7 +152,7 @@ Human     │ review PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">5</div>
       <div class="flow-body">
-        <h3>The manager builds the sprint</h3>
+        <h3>The manager builds the sprint <span class="badge">agent</span></h3>
         <p>A batch of tickets that <strong>don't collide</strong> — two tickets on the same files either serialise or merge. The human approves the batch explicitly.</p>
       </div>
     </div>
@@ -157,7 +160,7 @@ Human     │ review PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">6</div>
       <div class="flow-body">
-        <h3>Dynamic workflows consume the sprint</h3>
+        <h3>Dynamic workflows consume the sprint <span class="badge">agent</span></h3>
         <p>One workflow per ticket, in parallel, each in its own worktree. Each gets a ticket number and nothing else — it loads its own context.</p>
         <ol>
           <li>Load context through the specs module</li>

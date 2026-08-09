@@ -1,0 +1,54 @@
+<!-- @dsCard group="Content" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>page-head — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1.preview-title { font-size: var(--text-xl); margin: 0 0 var(--space-6); font-family: var(--font-display); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<h1 class="preview-title">page-head</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>A dense page — reference.html</h2>
+<header class="page-head">
+  <p class="kicker">every module, every command</p>
+  <h1>Reference</h1>
+  <p class="lead">Modules, skills, configuration, and how to write your own.</p>
+</header>
+
+<h2>A narrative page — about.html</h2>
+<header class="page-head">
+  <p class="kicker">why this exists</p>
+  <h1>About</h1>
+  <p class="lead">Where ScrumIA comes from, the premise it runs on, and what it deliberately leaves for you to decide.</p>
+</header>
+
+</body>
+</html>

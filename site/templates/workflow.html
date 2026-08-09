@@ -9,8 +9,11 @@
 
 <main id="main">
 
-<h1>{{hero_title}}</h1>
-<p class="section-intro">{{hero_intro}}</p>
+<header class="page-head summon">
+  <p class="kicker">{{page_kicker}}</p>
+  <h1>{{hero_title}}</h1>
+  <p class="lead">{{hero_intro}}</p>
+</header>
 
 <section id="overview">
   <h2>{{shape_title}}</h2>
@@ -35,7 +38,7 @@
     <div class="flow-step">
       <div class="flow-num">2</div>
       <div class="flow-body">
-        <h3>{{step2_title}}</h3>
+        <h3>{{step2_title}} <span class="badge">{{badge_agent}}</span></h3>
         <p>{{step2_p1}}</p>
         <p>{{step2_p2}}</p>
 <pre><code>/scrumia-discovery:scrumia-split</code></pre>
@@ -45,7 +48,7 @@
     <div class="flow-step">
       <div class="flow-num">3</div>
       <div class="flow-body">
-        <h3>{{step3_title}}</h3>
+        <h3>{{step3_title}} <span class="badge">{{badge_agent}}</span></h3>
         <p>{{step3_p1}}</p>
         <ul>
           <li>{{step3_li1}}</li>
@@ -69,7 +72,7 @@
     <div class="flow-step">
       <div class="flow-num">5</div>
       <div class="flow-body">
-        <h3>{{step5_title}}</h3>
+        <h3>{{step5_title}} <span class="badge">{{badge_agent}}</span></h3>
         <p>{{step5_p1}}</p>
       </div>
     </div>
@@ -77,7 +80,7 @@
     <div class="flow-step">
       <div class="flow-num">6</div>
       <div class="flow-body">
-        <h3>{{step6_title}}</h3>
+        <h3>{{step6_title}} <span class="badge">{{badge_agent}}</span></h3>
         <p>{{step6_p1}}</p>
         <ol>
           <li>{{step6_li1}}</li>

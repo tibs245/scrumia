@@ -73,8 +73,11 @@
 
 <main id="main">
 
-<h1>Une exécution complète, de bout en bout</h1>
-<p class="section-intro">La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.</p>
+<header class="page-head summon">
+  <p class="kicker">l'exécution, en détail</p>
+  <h1>Une exécution complète, de bout en bout</h1>
+  <p class="lead">La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.</p>
+</header>
 
 <section id="overview">
   <h2>La forme de celui-ci</h2>
@@ -115,7 +118,7 @@ Human     │ revue PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">2</div>
       <div class="flow-body">
-        <h3>Le cadrage produit des issues et une branche de specs</h3>
+        <h3>Le cadrage produit des issues et une branche de specs <span class="badge">agent</span></h3>
         <p>Les features business d'abord, puis les features app — une par app, jamais deux. Puis les issues.</p>
         <p>Les specs sont expédiées sur une branche <code>specs/&lt;slug&gt;</code> dans une PR ouverte : le design est examiné dans le même outil que le code, et l'affinement commence à partir de quelque chose de fixe plutôt qu'une conversation mémorisée.</p>
 <pre><code>/scrumia-discovery:scrumia-split</code></pre>
@@ -125,7 +128,7 @@ Human     │ revue PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">3</div>
       <div class="flow-body">
-        <h3>L'affinement rend le ticket exécutable</h3>
+        <h3>L'affinement rend le ticket exécutable <span class="badge">agent</span></h3>
         <p>Quatre conditions, toutes vérifiables :</p>
         <ul>
           <li>Une feature de rattachement existe et est à jour</li>
@@ -149,7 +152,7 @@ Human     │ revue PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">5</div>
       <div class="flow-body">
-        <h3>Le manager construit le sprint</h3>
+        <h3>Le manager construit le sprint <span class="badge">agent</span></h3>
         <p>Un lot de tickets qui <strong>ne se heurtent pas</strong> — deux tickets sur les mêmes fichiers soit se sérialisent soit fusionnent. L'humain approuve le lot explicitement.</p>
       </div>
     </div>
@@ -157,7 +160,7 @@ Human     │ revue PR, test → Done</code></pre>
     <div class="flow-step">
       <div class="flow-num">6</div>
       <div class="flow-body">
-        <h3>Les workflows dynamiques consomment le sprint</h3>
+        <h3>Les workflows dynamiques consomment le sprint <span class="badge">agent</span></h3>
         <p>Un workflow par ticket, en parallèle, chacun dans son propre worktree. Chaque obtient un numéro de ticket et rien d'autre — il charge son propre contexte.</p>
         <ol>
           <li>Charger le contexte par le module de specs</li>
