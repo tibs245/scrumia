@@ -60,6 +60,14 @@ And the run exits non-zero when either fails
 The hue floor is the half a contrast ratio cannot see: it is a luminance
 measurement, and two colours a reader cannot tell apart can sit at 7:1.
 
+AC-6 is enforced, not just stated: `python3 tools/check_contrast.py` runs as its own
+step in the `validate` CI workflow, so a failing pair or hue floor goes red under its
+own name, not under a generic marketplace check. The tool only measures the pairs it
+is told about — it cannot see a consumer that lays one token on another for the first
+time. Whoever introduces a new token-on-token pair in `site/assets/style.css` adds the
+matching row to `PAIRS` in `tools/check_contrast.py`, in the same PR that introduces
+the pair.
+
 ### AC-7 — The rail is the header's one accent mark
 
 ```gherkin
