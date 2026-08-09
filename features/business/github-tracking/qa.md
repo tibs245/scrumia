@@ -42,14 +42,18 @@ Then the read must be distinguishable from one taken at rest — not reported wi
   the same confidence as a complete, current read
 ```
 
-**Not yet enforced — currently fails.** The suspect-filter rule (AC-3) only triggers
-on a *zero*-item result; a short but non-empty one passes through unflagged, and this
-criterion is unmet by `board.sh` today. Observed directly during this sprint:
-immediately after moving five cards to `Ready for dev`, the same filtered read by
-milestone returned 4 of 5 with the suspect flag `false`; the fifth card appeared on a
-retry a few seconds later. A sprint built from that first read would have silently
-dropped a ticket nobody noticed was missing. Tracked in #26 — not fixed here, this
-feature only specifies the requirement.
+Observed directly during the sprint that wrote this feature: immediately after moving
+five cards to `Ready for dev`, the same filtered read by milestone returned 4 of 5 with
+the suspect flag `false`; the fifth card appeared on a retry a few seconds later. A
+sprint built from that first read would have silently dropped a ticket nobody noticed
+was missing.
+
+The rule that makes this pass: a filtered, non-empty `board.sh` read confirms its own
+`totalCount` before returning it — re-issuing the same query, backing off between
+checks, until two consecutive reads agree or a small retry budget runs out. This is
+retry-with-backoff internal to `board.sh`; it changes no output field; a caller reads
+the same JSON shape whether the first read landed at rest or had to converge across a
+few retries. Fixed in #26.
 
 ### AC-5 — An unfiltered read past the page size is reported as partial, not as the board
 

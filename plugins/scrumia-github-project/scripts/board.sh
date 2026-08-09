@@ -6,6 +6,9 @@ set -uo pipefail
 
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
 DEFAULT_LIMIT=200
+# Bounds for cmd_read's confirm-retry (AC-4); overridable so tests don't sleep for real.
+DEFAULT_RETRY_MAX=2
+DEFAULT_RETRY_DELAY=1
 
 die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
 warn() { echo "board.sh: $1" >&2; }
@@ -173,6 +176,15 @@ cmd_move() {
     '{ok:true, issue:$issue, moved_to:$col, item_id:$item}'
 }
 
+fetch_items() {
+  local query="$1" limit="$2"
+  if [ -n "$query" ]; then
+    gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --query "$query" --format json 2>&1
+  else
+    gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --format json 2>&1
+  fi
+}
+
 cmd_read() {
   need_project
   local query="-status:Done" limit="$DEFAULT_LIMIT" explicit_query=false
@@ -186,17 +198,40 @@ cmd_read() {
   done
 
   local out
-  if [ -n "$query" ]; then
-    out=$(gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --query "$query" --format json 2>&1)
-  else
-    out=$(gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --limit "$limit" --format json 2>&1)
-  fi
+  out=$(fetch_items "$query" "$limit")
   [ $? -eq 0 ] || die "item-list failed: $out"
 
   local count matching
   count=$(jq '.items | length' <<<"$out")
   # totalCount is the count *after* filtering, so it dates truncation exactly.
   matching=$(jq '.totalCount // 0' <<<"$out")
+
+  # AC-4: the project search index can lag a just-made write, so a short but
+  # non-empty filtered read looks complete. Confirm the count stopped moving.
+  if [ -n "$query" ] && [ "$count" -gt 0 ]; then
+    local retry_max="${SCRUMIA_BOARD_RETRY_MAX:-$DEFAULT_RETRY_MAX}"
+    local delay="${SCRUMIA_BOARD_RETRY_DELAY:-$DEFAULT_RETRY_DELAY}"
+    local retry=0 prev_total="$matching" retry_out retry_total
+    while [ "$retry" -lt "$retry_max" ]; do
+      sleep "$delay"
+      retry_out=$(fetch_items "$query" "$limit")
+      if [ $? -ne 0 ]; then
+        warn "confirmation retry failed, keeping the prior read: $retry_out"
+        break
+      fi
+      retry_total=$(jq '.totalCount // 0' <<<"$retry_out")
+      retry=$((retry + 1))
+      out="$retry_out"
+      if [ "$retry_total" = "$prev_total" ]; then
+        break
+      fi
+      warn "query '$query' moved from $prev_total to $retry_total items on retry $retry — the project search index may still be catching up"
+      prev_total="$retry_total"
+      delay=$((delay * 2))
+    done
+    count=$(jq '.items | length' <<<"$out")
+    matching=$(jq '.totalCount // 0' <<<"$out")
+  fi
 
   # An invalid filter and one that matches nothing both return 0 here, so the
   # only way to tell them apart is to ask again without the filter.

@@ -32,6 +32,8 @@ These are not hypotheticals. Each was found by running these commands against a 
 
 **2. An invalid filter returns zero items, silently.** `--query 'zorglub:nawak'` yields `{"items": [], "totalCount": 0}` — byte for byte what a valid filter matching nothing returns. A typo, a column that doesn't exist, a milestone misspelled: all of them read as "nothing to do". `board.sh` re-reads the board unfiltered whenever a filtered read comes back empty, and sets `filter_suspect` when the board is demonstrably not empty. **Never report "nothing in progress" from a response carrying `filter_suspect: true`.**
 
+A short but non-empty filtered read is the same trap with `totalCount` non-zero: the project search index can lag a just-made write by a few seconds, so a read taken right after a `move` can report 4 of 5 cards with nothing marking it incomplete (#26). `board.sh` re-issues a filtered, non-empty read and backs off until two consecutive counts agree — this changes no JSON field, so a caller sees the same shape whether the first read landed at rest or had to converge.
+
 **3. Column matching is case-sensitive where it counts.** `field-list` returns option names verbatim, so `select(.name == "In progress")` finds nothing on a board whose column reads `IN PROGRESS` — and GitHub's own default is `In Progress`, with a capital P that the obvious spelling misses. `board.sh` falls back to a case-insensitive match and warns that config and board disagree, rather than failing on a capital letter.
 
 Filter *values*, by contrast, are case-insensitive: `-status:DONE` and `-status:Done` return the same 57 items. The asymmetry is real — the filter syntax forgives, the JSON does not.
