@@ -41,6 +41,17 @@ light derived from the accent is written as a `color-mix()` of `--accent`, never
 that accent's own hex spelled out again. Derivations recomputed by hand stop being
 derivations the moment the accent moves.
 
+**Scenery is not spelled from an actor.** The ground's far wash is a mix of
+`--sky`, a base whose only consumer is `--halo-far`. A ground derived from
+`--human` or `--agent` flips the day the actors do, which is exactly what #52 did
+to them — and the ground did not change sides.
+
+**An actor colour is measured against the accent, not just against its background.**
+`--human` marks the one thing on a screen that must never be mistaken for the thing
+that points, so it is held a hue category off `--accent` (`qa.md` AC-6). Contrast
+alone cannot enforce this: it is a luminance ratio, and two colours nobody can tell
+apart can pass it comfortably.
+
 **Nothing is hidden by CSS that JavaScript has to un-hide.** The hiding is gated on
 a class set by an inline script before first paint — the same script that can
 un-hide. A reader with no JavaScript, a failed script, or `prefers-reduced-motion`
@@ -62,6 +73,7 @@ sits.
 | `qa.md` | The criteria the shell must keep passing — both themes, both directions, no-JS |
 | `tech.md` | The browser floor this bet needs, and the two mechanisms that look like tricks |
 | `legal.md` | The trademark / affiliation risk the redesign's palette and mascot carry, its mitigations, and the owner's acceptance of what's left over |
+| `tools/check_contrast.py` | Not a spec file: the runnable form of `qa.md` AC-6 |
 | `CHANGELOG.md` | History of changes to this spec |
 
 No `business.md`: there is no business rule here, and no Business parent to
