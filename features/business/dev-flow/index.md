@@ -57,4 +57,6 @@ exactly one side.
 - #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
 - #11 — Spec the human ceremonies: triggers, artefacts, cadence (this feature defers to it)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0
+- #20 — Sprint Step 3 describes the orchestration in prose instead of shipping it (carries this feature's worktree-ownership wording)
 - #118 — A ticket agent can lose its whole implementation by pausing for a review it was told to ask for
+- #170 — A branch left behind by a stopped run is indistinguishable from a finished implementation
