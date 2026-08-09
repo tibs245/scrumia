@@ -40,8 +40,11 @@ Then either they are computed from `.claude-plugin/marketplace.json` and
 ```gherkin
 Given a reader with JavaScript enabled and no reduced-motion preference
 When the hero loads
-Then Hop's segments and eye animate in once, gated by the same `.js` class the
-  shell's pre-paint script sets, and never repeat
+Then the ring (`.hero-figure`) is visible from the first frame, not faded in with
+  the rest of the hero
+And Hop's segments and eye animate in once inside it, gated by the same `.js`
+  class the shell's pre-paint script sets, and never repeat
+And the eyebrow, headline and lead fade in after the ring, never before it
 
 Given a reader with JavaScript disabled, or `prefers-reduced-motion: reduce`
 When the hero loads
