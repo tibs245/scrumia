@@ -42,6 +42,13 @@ the same pre-paint gate the rest of the shell uses — so Hop is assembled and l
 the first frame for a reader with no JavaScript, a script that failed, or
 `prefers-reduced-motion`.
 
+**The ring is lit before anything is summoned, and the rest arrives into it.**
+`.hero-figure` is exempt from the arrival fade every other element in the hero gets:
+the ring reads as an already-waiting slot, and the eyebrow, headline and lead fade in
+after it — never the reverse. Motion stands for causality (`design/identity.md`,
+decision 2): Hop arriving before anything summoned it is the one order this page must
+never show.
+
 **A count in the hero is derived, or its debt is dated.** Today's three counts (slots,
 modules shipped, human touchpoints) are literals because #65 (the manifest enumerator)
 has not landed; the debt is written as a comment in `site/templates/index.html` next
