@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — `scope/*`'s second reader is the manager's entry routing, not the exit review: the count and AC-5 re-aimed after #130 removed the review gate's read
+- Issue: #130
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — The capability order gets a ceiling: no cell may name a model above it, and reaching higher is a per-ticket human override recorded as a deviation
 - Issue: #120
 - PR: #NN (filled at merge)

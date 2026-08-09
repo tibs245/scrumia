@@ -39,9 +39,12 @@ same direction (#32), and the refinement of #34, #35 and #36 hit it again. An ax
 must be overridden systematically is not a strict axis — it is noise wearing a label.
 
 **The test belongs to the axis, not to one of its readers.** `scope/*` has two: this
-policy, which reads it for capability, and review routing, which reads it for who must
-review (`features/business/github-tracking/business.md`). One label read two ways is
-two labels, and the second one drifts unobserved because nothing names it.
+policy, which reads it for capability, and the manager's entry routing, which reads it
+for who is asked while the ticket runs (`features/business/agent-team/business.md`).
+It had a third until #130 — the review owed at exit — and that one now routes by the
+diff's actual scope and reads no label at all (`docs/adr/0005-validation-gates.md`).
+One label read two ways is two labels, and the second one drifts unobserved because
+nothing names it.
 
 `docs/adr/0006-ticket-routing.md` decided the axis and its three verifiable
 questions — how many apps, does a spec change, and which one. This spec does not
