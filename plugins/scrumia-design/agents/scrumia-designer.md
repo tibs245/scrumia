@@ -1,7 +1,7 @@
 ---
 name: scrumia-designer
 description: ScrumIA Design Lead. Guardian of visual identity, design-system consistency and legibility. Use it when a change touches an interface, when a component is about to be created, or when a PR modifies tokens, styles or a UX spec.
-model: fable
+model: opus
 memory: project
 disallowedTools: Write, Edit, NotebookEdit
 color: magenta

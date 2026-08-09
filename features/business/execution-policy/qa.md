@@ -161,11 +161,22 @@ Then the missing declaration is reported — the invariant cannot be checked aga
   nothing, and a check that silently does not run is not a grid that passed
 ```
 
+### AC-16 — A cell above the declared ceiling is reported, not executed
+
+```gherkin
+Given a grid whose cell — a bare model, or the fallback a split_or_<model> cell carries
+  — names a model above the ceiling declared beside the capability order
+When the policy is read
+Then the cell is reported rather than executed — above the ceiling is reachable only as
+  a human override recorded as a deviation, never as a default a table applies
+```
+
 ## Out of scope
 
-- The grid's cells, and the capability order they climb: project data, declared in
-  `.scrumia/config.yaml` under `settings.team.execution`, beside each other. Restating
-  either here would create the second statement AC-2 exists to prevent.
+- The grid's cells, the capability order they climb, and the ceiling they stop below:
+  project data, declared in `.scrumia/config.yaml` under `settings.team.execution`,
+  beside each other. Restating any of them here would create the second statement AC-2
+  exists to prevent.
 - The mechanics of the script that enacts this policy — its flags, its output shape,
   how it detects a broken grid. It implements these criteria; it is not specified by
   them.

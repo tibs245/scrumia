@@ -42,7 +42,7 @@
   "ghp_row5": "Vue de progression, calculée à la demande",
 
   "teams_tag_manager": "opus · memory: project",
-  "teams_tag_role": "fable · memory: project",
+  "teams_tag_role": "opus · memory: project",
   "teams_manager_p": "Tableau, division, routage, cadence. N'est pas responsable des règles métier, de l'architecture, ou de la fusion.",
   "teams_business_p": "Règles, vocabulaire, conformité. N'est pas responsable de l'architecture, de la pile, ou de la planification.",
   "teams_tech_p": "Architecture, contrats, dette, qualité. N'est pas responsable des règles métier ou des priorités.",

@@ -5,10 +5,10 @@ Defined in `plugins/scrumia-teams/agents/`, and configurable per project. They a
 | Role | Model | Owns | Does not own |
 |---|---|---|---|
 | **Manager** | Opus | Board, splitting, routing, cadence | Business rules, architecture, the merge |
-| **Business** | Fable | Business rules, vocabulary, compliance | Architecture, the stack, planning |
-| **Tech** | Fable | Architecture, contracts, debt, quality | Business rules, priorities |
+| **Business** | Opus | Business rules, vocabulary, compliance | Architecture, the stack, planning |
+| **Tech** | Opus | Architecture, contracts, debt, quality | Business rules, priorities |
 
-The model choice: Opus for the Manager, who arbitrates and orchestrates constantly; Fable for Business and Tech, whose work is to ingest a lot of spec or code before giving an opinion.
+The model choice: Opus everywhere, because all three read a lot of spec or code before arbitrating, and Opus holds that without the bill of the tier above. That tier — Fable — is deliberately absent from every default: it costs twice as much per token, so it is opted into by a human for a specific role or ticket, never assigned by a table.
 
 ## What makes the split useful
 

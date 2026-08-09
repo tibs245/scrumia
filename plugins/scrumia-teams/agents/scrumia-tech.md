@@ -1,7 +1,7 @@
 ---
 name: scrumia-tech
 description: ScrumIA Tech Lead. Guardian of architecture, implementation quality and debt. Use it to review a PR, validate a technical choice, arbitrate a dependency, or when a change touches several apps.
-model: fable
+model: opus
 memory: project
 disallowedTools: Write, Edit, NotebookEdit
 color: cyan

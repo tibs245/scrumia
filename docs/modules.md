@@ -65,8 +65,8 @@ Standing roles and sprint execution.
 | Component | Role |
 |---|---|
 | `agents/scrumia-manager.md` | Board, splitting, routing, cadence — Opus |
-| `agents/scrumia-business.md` | Business rules, vocabulary, compliance — Fable |
-| `agents/scrumia-tech.md` | Architecture, contracts, debt, quality — Fable |
+| `agents/scrumia-business.md` | Business rules, vocabulary, compliance — Opus |
+| `agents/scrumia-tech.md` | Architecture, contracts, debt, quality — Opus |
 | `scrumia-team-setup` | Configures active roles, their models, escalation |
 | `scrumia-sprint` | Prepares a sprint and consumes it as dynamic workflows |
 
@@ -142,7 +142,7 @@ Identity, tokens and components as files in the repo; a `claude.ai/design` proje
 
 | Component | Role |
 |---|---|
-| `agents/scrumia-designer.md` | Visual identity, system consistency, legibility, visual a11y — Fable |
+| `agents/scrumia-designer.md` | Visual identity, system consistency, legibility, visual a11y — Opus |
 | `scrumia-design-setup` | Creates the tree, writes the identity, registers the role |
 | `scrumia-design-system` | The reference: what lives where, the four questions before writing a component |
 | `scrumia-design-sync` | Pushes and pulls components through `DesignSync`, one at a time |

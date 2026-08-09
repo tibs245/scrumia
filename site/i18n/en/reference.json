@@ -42,7 +42,7 @@
   "ghp_row5": "Progress view, computed on demand",
 
   "teams_tag_manager": "opus · memory: project",
-  "teams_tag_role": "fable · memory: project",
+  "teams_tag_role": "opus · memory: project",
   "teams_manager_p": "Board, splitting, routing, cadence. Doesn't own business rules, architecture, or the merge.",
   "teams_business_p": "Rules, vocabulary, compliance. Doesn't own architecture, stack, or planning.",
   "teams_tech_p": "Architecture, contracts, debt, quality. Doesn't own business rules or priorities.",

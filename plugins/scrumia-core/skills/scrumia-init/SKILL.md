@@ -113,11 +113,13 @@ settings:
       # Capability order, weakest to strongest: sonnet < opus < fable. The matrix
       # below climbs it; state it wherever the grid is seeded, because the model
       # names carry no ordering and an inverted grid still parses and still runs.
+      # Opus is the ceiling a seeded grid may name: fable bills at twice opus per
+      # token, so a human opts into it per ticket rather than a cell doing it for them.
       matrix:                # scope × risk → the model to run on, or split_or_<model> when the work is oversized
         S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
         M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
         L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
-        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_opus,  critical: split_or_opus }
     escalation:
       to_human:               # read by scrumia-team-setup on re-run to check drift; the team agents' arbitration mirrors these defaults
         - disagreement between roles

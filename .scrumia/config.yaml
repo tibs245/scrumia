@@ -55,11 +55,13 @@ settings:
       # Capability order, weakest to strongest: sonnet < opus < fable. The matrix
       # below climbs it; read it before editing a cell, because the names carry no
       # ordering of their own and a grid can ship inverted without failing anything.
+      # Opus is the ceiling: fable bills at twice opus per token, so no cell may
+      # name it. Reaching for it is a human's call, ticket by ticket, never a default.
       matrix:                # scope × risk → model, or split_or_<model> when oversized
         S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
         M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
         L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
-        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_fable, critical: split_or_fable }
+        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_opus,  critical: split_or_opus }
     escalation:
       to_human:              # read by scrumia-team-setup on re-run to check drift
         - disagreement between roles
