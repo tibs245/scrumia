@@ -1,0 +1,58 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mark — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+  .mark-row { display: flex; align-items: center; gap: var(--space-8); }
+  .mark-tile { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+  .mark-tile span { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-faint); }
+  .mark-16 { width: 16px; height: 16px; display: block; }
+</style>
+</head>
+<body>
+
+<h1>mark</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  // The point of this preview: flip it and the mark holds still, because it
+  // does not consult the token cascade at all (spec.md, "Why it does not theme").
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>Holds still while the ground changes</h2>
+<div class="mark-row">
+  <div class="mark-tile">
+    <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
+    <span>22px — masthead, favicon</span>
+  </div>
+  <div class="mark-tile">
+    <img class="mark-16" src="../../../site/assets/mark.svg" alt="" width="16" height="16">
+    <span>16px — the floor; smaller closes the empty slot up</span>
+  </div>
+</div>
+
+</body>
+</html>
