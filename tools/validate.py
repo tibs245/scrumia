@@ -266,6 +266,24 @@ def check_composition_drift() -> None:
             f"Run 'bash plugins/scrumia-core/scripts/compose-status.sh > tests/fixtures/composition-output.txt' "
             f"to update the fixture."
         )
+        return
+
+    # Nobody reads the fixture; the page renders the string below. Gating only
+    # the fixture lets the site show a stale composition with the check green.
+    for lang in ("en", "fr"):
+        page_strings = ROOT / "site" / "i18n" / lang / "index.json"
+        try:
+            shown = json.loads(page_strings.read_text(encoding="utf-8")).get("install_composition_output")
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            error(f"{page_strings.relative_to(ROOT)}: unreadable — {e}")
+            continue
+        if shown is None:
+            error(f"{page_strings.relative_to(ROOT)}: no 'install_composition_output' to check")
+        elif shown.strip() != fixture_content.strip():
+            error(
+                f"{page_strings.relative_to(ROOT)}: 'install_composition_output' does not match "
+                f"{fixture_path.relative_to(ROOT)} — the page would show a composition this repo does not have"
+            )
 
 
 def main() -> int:

@@ -534,6 +534,31 @@
 <span class="c"># then, in the repo to set up</span>
 /scrumia-core:scrumia-init</code></pre>
 
+  <h3>Your composition</h3>
+  <p>Here's what ScrumIA sees in this repository, read from <code>.scrumia/config.yaml</code>. Nothing is guessed: every slot is real, every module installed or empty on purpose.</p>
+
+  <div class="code">
+    <pre>ScrumIA composition — ScrumIA (tibs245/scrumia)
+
+  Slot       Module
+  ─────────────────────────────────
+  specs      scrumia-specs
+  tracker    scrumia-github-project
+  team       scrumia-teams
+  discovery  empty on purpose
+  design     scrumia-design
+
+  App    Path   Implementation  Practices
+  ───────────────────────────────────────
+  site   site   none            none
+  tools  tools  none            none
+
+  The discovery slot is empty on purpose.
+    claude plugin install scrumia-discovery@scrumia --scope project
+
+  Change any of this with /scrumia-core:scrumia-compose.</pre>
+  </div>
+
   <p><code>scrumia-init</code> maps your apps, proposes a composition, offers the install command for each module it needs, and writes the composition into <code>CLAUDE.md</code>. Re-running it checks instead of overwriting.</p>
 
   <div class="cta-row">
