@@ -17,6 +17,18 @@ terms, whether the decision is still open or already made. Kept apart, validatio
 cost tracks where the decision actually happens — heavy while the idea is still
 soft, light once it is a scoped ticket.
 
+## This feature owns the code-cycle process
+
+The execution path's mechanics — one worktree per ticket, one branch per ticket,
+committing before a pause, review before merge, the three gates, `auto_merge` — are
+**this feature's**, and they are specified here. A tracker feature *traces* that
+cycle: it says which concrete artefact each abstract step becomes on its tool, and it
+never redefines the step itself.
+
+`business.md` § *The code cycle* carries the ownership rule, the precedence when a
+tracker feature disagrees, and the replacement test that files any given rule on
+exactly one side.
+
 ## Links
 
 - Implemented by: none — this business feature is enacted directly by the plugin
@@ -25,13 +37,17 @@ soft, light once it is a scoped ticket.
 - Defers to: `features/business/execution-policy/` for which model executes a scoped
   ticket. This feature says the human validates at the end of execution, not which
   model does the executing.
+- Traced by: `features/business/github-tracking/` — it binds this feature's abstract
+  cycle to GitHub's concrete artefacts (a PR, a column, a milestone). Whichever
+  feature fills the tracker slot plays that role; none of them redefines the process.
 
 ## Files present
 
 | File | Why it exists |
 |---|---|
-| `business.md` | who decides what on each path, and where the human gate sits |
+| `business.md` | who decides what on each path, where the human gate sits, and who owns the code cycle |
 | `qa.md` | the refusal rule that keeps execution from running on a guessed intent, the autonomy gates, and what routes gate 2's review |
+| `CHANGELOG.md` | history of this feature's changes, one entry per notable change |
 
 ## Open issues
 

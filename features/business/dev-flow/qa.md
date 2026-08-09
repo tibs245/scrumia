@@ -69,9 +69,33 @@ Then the business role reviews it, alongside tech, because the diff routes the
   as a scoping failure per ADR-0006
 ```
 
+### AC-7 — Where a tracker feature and this one disagree on the process, this one governs
+
+```gherkin
+Given a tracker feature's spec states a code-cycle process rule that contradicts
+  this feature's
+When the contradiction surfaces, in refinement or in a spec review
+Then this feature's rule stands and the tracker feature's is the one corrected,
+  without the reader having to infer which of the two governs
+```
+
+### AC-8 — A code-cycle rule is filed on exactly one side, by the replacement test
+
+```gherkin
+Given a new rule about how code ships, being filed to a parent feature
+When it is checked against the replacement test in `business.md` — restate it for a
+  tracker with no PR and no board
+Then it is filed here if it stays true word for word, to the tracker feature if it
+  becomes meaningless, and to exactly one of the two — never to both
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
   by `features/business/execution-policy/`, not here.
 - The ceremonies (retrospective, refactor session, debt audit): trigger, cadence,
   artefact — specified by #11, not here.
+- The concrete artefacts the code cycle is traced through — the pull request, the
+  board column, the milestone. This feature owns the process; whichever feature
+  fills the tracker slot (today `features/business/github-tracking/`) specifies its
+  materialisation.

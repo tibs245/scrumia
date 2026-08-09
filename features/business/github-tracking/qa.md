@@ -102,9 +102,13 @@ usual. Fixed in #79.
 
 - Creating the board's columns and the project itself (`scrumia-project-setup`) —
   setup-time, not the ongoing reading and moving this feature specifies.
-- The code-cycle half of the `tracker` slot — branches, worktrees, PR review routing,
-  merge policy. This feature names that the slot owns it (`business.md`, per
-  ADR-0013); the cycle itself belongs to the dev-flow spec.
+- The code cycle's **process** — isolation per ticket, when work is committed, what
+  is reviewed when, what may merge. `features/business/dev-flow/` owns those rules and
+  is where they are stated in full. What stays in scope here is their
+  **materialisation** on GitHub: that the reviewable proposal is a pull request,
+  opened and linked to its issue this way, and that its progress shows as a column
+  move. The module implements the cycle (`business.md`, per ADR-0013); it does not
+  specify it.
 - Composing a non-GitHub tracker with GitHub pull requests. Not a gap in this spec —
   a gap in the slot, per ADR-0013, closed only when that ADR is reopened.
 - Authentication and reachability failures — `gh` not logged in, the `project` scope

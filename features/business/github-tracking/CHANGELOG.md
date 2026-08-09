@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — The code cycle's process moves to `dev-flow`; this feature keeps its materialisation
+- Issue: #123
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — `scope/*` is down to one programmatic reader: Step 6 stopped gating the review on the label
 - Issue: #130
 - PR: #NN (filled at merge)
