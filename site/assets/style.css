@@ -754,8 +754,8 @@ section > h2::before {
   font-family: var(--font-mono); font-size: var(--text-base); font-weight: var(--weight-strong);
   color: var(--text); display: block; word-break: break-word;
 }
-/* The card already points with .mod-cmd (one accent); the name's own link stays
-   text-coloured and underlined rather than taking the accent a second time. */
+/* .mod-slot right below already carries the card's one accent; the name's link
+   stays text-coloured and underlined at rest so the two don't compete. */
 a.mod-name:hover, a.mod-name:focus-visible { color: var(--accent); }
 .mod-slot { font-size: var(--text-xs); color: var(--accent); font-family: var(--font-mono); }
 .mod-desc { font-size: var(--text-base); color: var(--text-soft); line-height: var(--leading-snug); flex-grow: 1; margin: 0; }
