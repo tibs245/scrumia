@@ -17,6 +17,8 @@
   .preview-bar { display: flex; align-items: center; gap: var(--space-3);
        margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
        color: var(--text-faint); }
+  .preview-note { max-width: var(--measure); color: var(--text-soft);
+       font-size: var(--text-sm); margin: 0 0 var(--space-4); }
 </style>
 </head>
 <body>
@@ -89,6 +91,65 @@
       </h3>
     </summary>
     <p class="slot-answer">This product ships markdown; its two code apps carry no implementation module.</p>
+  </details>
+</div>
+
+<h2>Choosable — the same row, taking a composition instead of reporting one</h2>
+<p class="preview-note">No script on this page touches these two rows: the inputs
+  record the choice and <code>:has()</code> picks which pre-rendered fill the row
+  shows. Try the radios, then the checkboxes with nothing checked.</p>
+<div class="slots slots-choose">
+  <details class="slot" name="preview-slot-3" open>
+    <summary>
+      <h3 class="slot-row">
+        <span class="slot-sign" aria-hidden="true">+</span>
+        <span class="slot-name">discovery</span>
+        <span class="slot-q">How does an idea become scoped work?</span>
+        <span class="slot-lead" aria-hidden="true"></span>
+        <span class="slot-fill">
+          <span class="fill-1">scrumia-discovery</span>
+          <span class="fill-2">nothing installed</span>
+        </span>
+      </h3>
+    </summary>
+    <div class="shelf" role="group" aria-label="discovery">
+      <label class="opt opt-1">
+        <input type="radio" name="p-discovery" value="scrumia-discovery" checked>
+        <b>scrumia-discovery</b><span>A scoping pass between an idea and a ticket.</span>
+      </label>
+      <label class="opt opt-2 opt-empty">
+        <input type="radio" name="p-discovery" value="">
+        <b>Leave it empty</b><span>An idea goes straight to a ticket without a scoping pass, and the agents are told to say so instead of improvising one.</span>
+      </label>
+    </div>
+  </details>
+
+  <details class="slot slot-multi" name="preview-slot-3">
+    <summary>
+      <h3 class="slot-row">
+        <span class="slot-sign" aria-hidden="true">+</span>
+        <span class="slot-name">practices</span>
+        <span class="slot-q">Which cross-cutting practices — per app</span>
+        <span class="slot-lead" aria-hidden="true"></span>
+        <span class="slot-fill">
+          <span class="fill-1">scrumia-practice-tdd</span>
+          <span class="fill-2">scrumia-practice-solid</span>
+          <span class="fill-none">nothing installed</span>
+        </span>
+      </h3>
+    </summary>
+    <div class="shelf" role="group" aria-label="practices">
+      <label class="opt opt-1 opt-mod">
+        <input type="checkbox" name="p-practice" value="tdd" checked>
+        <b>TDD</b><span>Red-green-refactor, with audit and refactor skills.</span>
+      </label>
+      <label class="opt opt-2 opt-mod">
+        <input type="checkbox" name="p-practice" value="solid">
+        <b>SOLID</b><span>Situated principles — over-application audited too.</span>
+      </label>
+      <!-- The gap idiom: what an empty slot costs, shown only while it is empty. -->
+      <p class="opt-hint">Empty: no cross-cutting discipline is imposed. What the implementation module does not say, nobody says.</p>
+    </div>
   </details>
 </div>
 

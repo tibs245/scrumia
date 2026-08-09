@@ -594,6 +594,27 @@ section > h2::before {
 
 .slots { margin: var(--space-6) 0 0; }
 
+/* The four declarations that tell the states apart are held as custom
+   properties, so a row's state is one block that sets them rather than four
+   selectors repeated per state. #56 added a third state — choosable — and
+   without this it would have meant a third copy of the same four rules. */
+.slot {
+  --slot-name-color: var(--text);
+  --slot-lead-style: dotted;
+  --slot-lead-color: var(--border-strong);
+  --slot-lead-opacity: 0.7;
+  --slot-fill-color: var(--text-soft);
+}
+.slot[open] { --slot-fill-color: var(--accent); }
+.slot-empty,
+.slot-empty[open] {
+  --slot-name-color: var(--text-faint);
+  --slot-lead-style: dashed;
+  --slot-lead-color: var(--border);
+  --slot-lead-opacity: 1;
+  --slot-fill-color: var(--text-faint);
+}
+
 .slot { border-top: 1px solid var(--border); }
 .slot:last-of-type { border-bottom: 1px solid var(--border); }
 .slot summary {
@@ -618,24 +639,18 @@ section > h2::before {
 .slot-name {
   font-family: var(--font-mono); font-size: var(--text-sm);
   letter-spacing: var(--tracking-label); text-transform: uppercase;
-  color: var(--text); width: 9.5rem; flex: none;
+  color: var(--slot-name-color); width: 9.5rem; flex: none;
 }
 .slot-q { color: var(--text-soft); }
 .slot-lead {
   flex: 1 1 40px; min-width: 24px; height: 0;
-  border-bottom: 1px dotted var(--border-strong);
-  opacity: 0.7;
+  border-bottom: 1px var(--slot-lead-style) var(--slot-lead-color);
+  opacity: var(--slot-lead-opacity);
 }
 .slot-fill {
   font-family: var(--font-mono); font-size: var(--text-sm);
-  color: var(--text-soft); flex: none; text-align: right;
+  color: var(--slot-fill-color); flex: none; text-align: right;
 }
-.slot[open] .slot-fill { color: var(--accent); }
-
-.slot-empty .slot-name { color: var(--text-faint); }
-.slot-empty .slot-lead { border-bottom-style: dashed; border-bottom-color: var(--border); opacity: 1; }
-.slot-empty .slot-fill,
-.slot-empty[open] .slot-fill { color: var(--text-faint); }
 
 .slot-answer {
   color: var(--text-soft);
@@ -654,6 +669,8 @@ section > h2::before {
   .slot-q { flex: 1 1 100%; padding-left: calc(1.2em + var(--space-4)); }
   .slot-fill { text-align: left; }
   .slot-answer { padding-left: 0; }
+  .slots-choose .slot-fill { justify-content: flex-start; }
+  .shelf { padding-left: 0; }
 }
 
 /* ---------- Modules ---------- */
@@ -702,6 +719,9 @@ pre {
 }
 pre .c { color: var(--text-faint); }
 pre .k { color: var(--accent); }
+/* A module name inside a config file marks an actor, not a link: coral, not the
+   accent, or every generated composition would be full of things that point. */
+pre .m { color: var(--agent); }
 code {
   font-family: var(--font-mono); font-size: 0.88em; background: var(--surface);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -801,68 +821,153 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .badge-human { background: var(--human-surface); color: var(--human); }
 
-/* ---------- Composer ---------- */
+/* ---------- Composer ---------- *
+ * The same index as #slots, in its choosable state. What separates the two is
+ * one thing and it is not decoration: a reported fill is a fact and stays
+ * --text-soft; a chosen one is a decision, and decisions are the human's, so
+ * they carry --human. Everything else — the row, the leader, the empty state —
+ * is the component the slot index already ships.
+ *
+ * Nothing here needs a script. <details> opens, the inputs record the choice,
+ * and :has() picks which pre-rendered fill the row shows. composer.js writes
+ * the two files and nothing else.
+ */
 
-.composer {
-  display: grid; gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  margin: 0 0 var(--space-5);
+.presets { display: none; }
+.js .presets {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  margin: 0 0 var(--space-2);
 }
-.composer fieldset {
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  background: var(--surface); padding: var(--space-4); margin: 0; min-width: 0;
+.presets-label {
+  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-faint);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  margin-right: var(--space-1);
 }
-.composer legend {
-  font-weight: var(--weight-strong); font-size: var(--text-base); color: var(--text);
-  padding: 0 var(--space-2); margin-left: calc(var(--space-2) * -1);
+.preset {
+  font-family: var(--font-body); font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-soft);
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease-move), border-color var(--dur-1) var(--ease-move);
 }
-.composer legend .step-num {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--accent); color: var(--accent-ink);
-  font-size: var(--text-xs); font-family: var(--font-mono);
-  margin-right: var(--space-2); vertical-align: -3px;
+.preset:hover { border-color: var(--human); color: var(--human); }
+
+/* A chosen fill is the reader's decision, and an unanswered slot cannot exist:
+   the index loads on a decided composition, which is also what keeps the two
+   files below correct with no script running. */
+.slots-choose .slot { --slot-fill-color: var(--human); }
+.slots-choose .slot[open] { --slot-fill-color: var(--human); }
+.slots-choose .slot:has(.opt-empty input:checked),
+.slots-choose .slot-multi:not(:has(.opt-mod input:checked)) {
+  --slot-name-color: var(--text-faint);
+  --slot-lead-style: dashed;
+  --slot-lead-color: var(--border);
+  --slot-lead-opacity: 1;
+  --slot-fill-color: var(--text-faint);
 }
-.choice {
+
+/* A reporting row holds one fill and can afford `flex: none`. A choosable one
+   holds up to three module names — the practices row in French is the worst
+   case — so it shrinks and wraps rather than pushing the row off its edge. */
+.slots-choose .slot-fill {
+  display: flex; flex-wrap: wrap; justify-content: flex-end;
+  gap: 0 var(--space-3);
+  flex: 0 1 auto; min-width: 0;
+}
+/* A chosen module is emphasised; `nothing installed` is not. Bold-but-faint on
+   the one row whose message is absence sends two signals at once, and it would
+   also draw the empty state differently here than in the reporting index. */
+.slots-choose .fill-1, .slots-choose .fill-2, .slots-choose .fill-3 { font-weight: var(--weight-strong); }
+.slots-choose .slot:has(.opt-empty input:checked) .slot-fill > span { font-weight: var(--weight-body); }
+.slots-choose .slot-q { flex: 1 1 auto; min-width: 0; }
+.slots-choose .slot-fill > span { display: none; }
+.slots-choose .slot:has(.opt-1 input:checked) .fill-1,
+.slots-choose .slot:has(.opt-2 input:checked) .fill-2,
+.slots-choose .slot:has(.opt-3 input:checked) .fill-3,
+.slots-choose .slot-multi:not(:has(.opt-mod input:checked)) .fill-none { display: block; }
+
+/* A fill arriving is a state change, so it is allowed to move. Summoned when a
+   module answers the slot, resolved when the answer is "nothing" — the two
+   gestures the identity gives to appearing and finishing. */
+.slots-choose .slot-fill > span { animation: fill-in var(--dur-2) var(--ease-summon) both; }
+.slots-choose .slot:has(.opt-empty input:checked) .slot-fill > span,
+.slots-choose .slot-multi:not(:has(.opt-mod input:checked)) .fill-none {
+  animation-timing-function: var(--ease-resolve);
+}
+@keyframes fill-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+
+.shelf {
+  display: grid; gap: var(--space-1);
+  max-width: var(--measure); margin: 0 0 var(--space-6);
+  padding-left: calc(1.2em + var(--space-4));
+}
+.opt {
   display: grid; grid-template-columns: 16px 1fr; gap: var(--space-1) var(--space-3);
-  padding: var(--space-2); margin: 0 calc(var(--space-2) * -1);
+  padding: var(--space-2) var(--space-3); margin-left: calc(var(--space-3) * -1);
   border-radius: var(--radius-sm); cursor: pointer;
   transition: background var(--dur-1) var(--ease-move);
 }
-.choice:hover { background: var(--surface-raised); }
-.choice input { margin: var(--space-1) 0 0; accent-color: var(--accent); width: 16px; height: 16px; }
-.choice b { font-size: var(--text-base); font-weight: var(--weight-strong); color: var(--text); }
-.choice span { grid-column: 2; font-size: var(--text-sm); color: var(--text-soft); line-height: var(--leading-snug); }
-.choice:has(input:checked) { background: var(--accent-surface); }
+.opt:hover { background: var(--surface-raised); }
+.opt input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
+.opt b { font-size: var(--text-base); font-weight: var(--weight-body); color: var(--text); }
+.opt-1 b, .opt-2 b, .opt-3 b { font-family: var(--font-mono); font-size: var(--text-sm); }
+.opt-empty b, .opt-3:not(.opt-mod) b { font-family: var(--font-body); font-size: var(--text-base); }
+.opt span { grid-column: 2; font-size: var(--text-sm); color: var(--text-soft); line-height: var(--leading-snug); }
+.opt:has(input:checked) { background: var(--human-surface); }
+.opt:has(input:checked) b { color: var(--human); font-weight: var(--weight-strong); }
 
-.composer-out {
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  background: var(--surface); padding: var(--space-5);
-}
-.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-4); }
-.chip {
-  font-family: var(--font-mono); font-size: var(--text-xs); padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill); border: 1px solid var(--border);
-  color: var(--text); background: var(--surface-raised);
-}
-.chip-core { border-color: var(--accent); color: var(--accent); background: var(--accent-surface); }
-.chip-missing { border-style: dashed; border-color: var(--border-strong); color: var(--text-faint); background: none; }
-.composer-cols { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.composer-cols h3 {
-  margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: var(--text-xs);
-  color: var(--text-faint); text-transform: uppercase; letter-spacing: var(--tracking-label);
-  font-weight: var(--weight-medium);
-}
-.composer-cols pre { margin: 0; max-height: 340px; overflow: auto; }
+/* The gap idiom: an agent reporting what a composition cannot do. Mono, small,
+   a hairline rule and no colour — an absence stated by the system is not a
+   person deciding, so it takes no human blue, and no accent because it points
+   at nothing. Recorded in design/components/slot-index/spec.md so the next use
+   copies a named idiom rather than these declarations.
+   `.opt-hint` carries it while a repeating slot is empty — those two rows have
+   no `leave it empty` option, since checking nothing is that choice — and
+   `.composer-note` carries it under the two files. */
+.opt-hint,
 .composer-note {
-  margin: var(--space-4) 0 0; padding: var(--space-3) var(--space-4);
-  border-left: 3px solid var(--human); background: var(--human-surface);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  font-size: var(--text-base); color: var(--text-soft);
+  padding-left: var(--space-4);
+  border-left: var(--space-tight) solid var(--border-strong);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  line-height: var(--leading-snug); color: var(--text-soft);
+  max-width: var(--measure);
 }
+
+.opt-hint { display: none; margin: var(--space-2) 0 0; }
+.slots-choose .slot-multi:not(:has(.opt-mod input:checked)) .opt-hint { display: block; }
+
+/* ---------- The two files you take away ---------- */
+
+.artifacts {
+  display: grid; gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  margin: var(--space-6) 0 0;
+}
+.artifact { min-width: 0; }
+.artifact-head {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+}
+.artifact-name { color: var(--text); text-transform: uppercase; }
+.artifact-role { color: var(--text-faint); flex: 1 1 auto; letter-spacing: normal; text-transform: none; }
+.artifact pre { margin: 0; max-height: 380px; overflow: auto; }
+
+/* Not a note in a box: a report of what the composition implies. */
+.composer-note { margin: var(--space-5) 0 0; }
 .composer-note:empty { display: none; }
+.composer-note span { display: block; }
+.composer-note span + span { margin-top: var(--space-2); }
+
+/* Announced, not shown: the rows and the files already say it on screen. */
+.composer-live {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; margin: 0;
+}
+
 .copy-btn {
-  margin-top: var(--space-2); font-size: var(--text-xs); font-family: var(--font-mono);
+  font-size: var(--text-xs); font-family: var(--font-mono);
   padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong); background: none; color: var(--text-soft);
   cursor: pointer;
