@@ -89,7 +89,12 @@ def render(chrome: str, page: Path, width: int) -> dict:
 
 
 def balanced(css: str, start: int) -> tuple[str, int]:
-    """The body of the { } opening at `start`, and the index just past its close."""
+    """The body of the { } opening at `start`, and the index just past its close.
+
+    Counts braces without reading strings, so a `content: "}"` anywhere in the
+    stylesheet would desync it. Nothing declares one today; this is where to look
+    if the scanner ever raises on a file that renders fine.
+    """
     depth = 0
     for i in range(start, len(css)):
         if css[i] == "{":
