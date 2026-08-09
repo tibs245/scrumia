@@ -48,7 +48,7 @@ The apps come from `apps:` in the configuration. An app not listed there has no 
 This module describes itself in `CLAUDE.md`. Return to `scrumia-init` the line to insert:
 
 ```markdown
-| Specs | `scrumia-specs` | Specs live in `features/`, one per feature, as targeted files created only if they have content. See the `scrumia-feature` skill. |
+| Specs | `scrumia-specs` | Specs live in `features/`, one per feature, as targeted files. `index.md`, `qa.md` and `CHANGELOG.md` are required; the rest exist only if they have content. See the `scrumia-feature` skill. |
 ```
 
 ## Step 4 — Report back

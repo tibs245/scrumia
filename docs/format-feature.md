@@ -18,13 +18,13 @@ The fourth defect is the worst: from the moment nobody verifies anymore, the doc
 
 ## The principle: absence is information
 
-A feature is a **directory of targeted files**, each with a role and a reader. A file is created only if it has content.
+A feature is a **directory of targeted files**, each with a role and a reader. An optional file is created only if it has content.
 
 This seemingly innocuous rule is the heart of the format. With a fixed template, `legal.md` always exists and contains "N/A" — and you don't know whether that means "not applicable" or "not thought through yet". With the catalog, the absence of `legal.md` is an **assertion**: nothing legal at stake.
 
 Direct consequence: an agent can decide what to read without reading everything. That is what keeps the context cost contained.
 
-The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature must be possible to follow over time and possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, and another module may require a different set. A consumer reads the one in force from `CLAUDE.md`'s `## Specs contract` block, never from this page ([ADR-0012](adr/0012-specs-contract.md)).
+The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature has to be findable, has to be possible to follow over time, and has to be possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, made in its own catalog, and another module may require a different set. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
 
 ## Two strata
 

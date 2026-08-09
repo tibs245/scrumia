@@ -5,11 +5,11 @@ Complete reference. Each file has a defined content, a reader, and a condition o
 > **The rule that governs the optional files**: a file is only created if it has content.
 > The absence of a file is an assertion ("nothing to say here"), not an oversight.
 
-**Three files this rule does not gate**: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory everywhere. A feature must be possible to follow over time and possible to test — an absent changelog or an absent set of criteria asserts nothing, it is simply missing. That is **this module's** declaration, not a property of the format as such: whichever module fills the `specs` slot declares its own mandatory set, and a consumer reads the one in force from `CLAUDE.md`'s `## Specs contract` block, where the mandatory files carry keys of their own (`feature_index`, `acceptance_file`, `changelog`) while the optional ones are listed together under `catalog` (`docs/adr/0012-specs-contract.md`).
+**Three files this rule does not gate**: `index.md`, `qa.md` and `CHANGELOG.md` are mandatory in every feature. A feature has to be findable, has to be possible to follow over time, and has to be possible to test — an absent changelog or an absent set of criteria asserts nothing, it is simply missing. That is **this module's** declaration, not a property of the format as such: whichever module fills the `specs` slot declares its own mandatory set, and this file is where `scrumia-specs` declares its own. Do not read the set out of `CLAUDE.md`'s `## Specs contract` block instead — that block names the files a module uses so consumers need not hard-code them, and marks none of them required (`docs/adr/0012-specs-contract.md`).
 
 ---
 
-## `index.md` — mandatory, everywhere
+## `index.md` — mandatory in every feature
 
 The entry point. It's the only file an agent or a human systematically reads before deciding what to read next. It must fit in one reading.
 
@@ -42,7 +42,7 @@ Read by: business, QA, devs.
 
 ---
 
-## `qa.md` — mandatory, everywhere
+## `qa.md` — mandatory in every feature
 
 The acceptance criteria. Given/When/Then, one scenario per case.
 
@@ -57,7 +57,7 @@ Read by: QA, devs, execution and review agents.
 
 ---
 
-## `CHANGELOG.md` — mandatory, everywhere
+## `CHANGELOG.md` — mandatory in every feature
 
 Short. One entry per notable change, reverse-chronological.
 

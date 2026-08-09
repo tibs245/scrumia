@@ -25,8 +25,9 @@ operational implementation of what this feature specifies.
 The rule that governs the optional rows below: **a file is created only when
 it has content.** Its absence is an assertion — "nothing to say here" — not
 an oversight and not a placeholder. It does not gate the mandatory rows: a
-feature must be possible to follow over time and possible to test, and a
-missing history or a missing set of criteria is a gap, not a statement.
+feature has to be findable, has to be possible to follow over time, and has
+to be possible to test, and a missing entry point, a missing history or a
+missing set of criteria is a gap, not a statement.
 
 Which files are mandatory is declared by whichever module fills the `specs`
 slot, not universally — see `business.md`. `scrumia-specs`, the module

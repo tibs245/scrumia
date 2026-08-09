@@ -45,19 +45,20 @@ reading everything.
 **The rule gates the optional catalogue, not every file a feature holds.** A
 feature also carries files it must have whatever it is about, and for those
 the content test does not apply — their absence asserts nothing except that
-nobody wrote them. Two properties draw the line: a feature must be possible
-to **follow over time** and possible to **test**. A rubric that does not
-apply is information; a missing history or a missing set of criteria is a
-gap.
+nobody wrote them. What puts a file on that side of the line is a property a
+feature cannot lack and still be one: being **findable**, being possible to
+**follow over time**, being possible to **test**. A rubric that does not
+apply is information; a missing entry point, a missing history or a missing
+set of criteria is a gap.
 
 **Which files those are is declared by whichever module fills the `specs`
 slot** — it is that module's rule, not a universal one. Another specs module
-may require a different set and remain a valid one. A consumer reads the set
-from `CLAUDE.md`'s `## Specs contract` block
-([ADR-0012](../../../docs/adr/0012-specs-contract.md)), whose shape already
-carries the distinction: the mandatory files are named by keys of their own
-(`feature_index`, `acceptance_file`, `changelog`), the optional ones are
-listed together under `catalog`.
+may require a different set and remain a valid one, so a consumer that needs
+the set reads it from the module's own declaration. `CLAUDE.md`'s
+`## Specs contract` block ([ADR-0012](../../../docs/adr/0012-specs-contract.md))
+does not carry it: that block gives a consumer the *names* a module uses, so
+it can say "the file named by `acceptance_file`" instead of hard-coding one,
+and a key there marks nothing as required.
 
 `scrumia-specs`, the module currently in the slot, requires three. `index.md`,
 because a feature needs a single entry point to be found and understood

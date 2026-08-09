@@ -26,12 +26,13 @@ Then no file exists for that rubric — not a file saying "N/A"
 ### AC-3 — The mandatory files exist whatever the feature has to say
 
 ```gherkin
-Given a feature just started, whose author has nothing yet to say under any
-  optional rubric
+Given a feature with no legal, cross-app, interface or technical rubric that
+  applies to it
 When the feature is written
 Then the files the plugged specs module declares mandatory exist regardless —
   for `scrumia-specs`: `index.md`, `qa.md` and `CHANGELOG.md`
-And their absence is read as a gap, never as the assertion "nothing to say"
+And an audit of that feature reports any one of them missing as a defect,
+  never as the assertion "nothing to say"
 ```
 
 ### AC-4 — An App feature references its Business parent instead of duplicating it
@@ -78,11 +79,10 @@ Then it is written as an ADR under `docs/adr/` instead of into `archi.md`
 ```gherkin
 Given a consumer that needs to know which files a feature must carry
 When it resolves that set
-Then it reads it from `CLAUDE.md`'s `## Specs contract` block — the files
-  named by `feature_index`, `acceptance_file` and `changelog` — rather than
-  naming `scrumia-specs`'s own three
-And a specs module declaring a different mandatory set is served correctly by
-  that same read
+Then it reads the declaration of the module filling the `specs` slot, rather
+  than treating `scrumia-specs`'s three as a property of the format
+And it does not infer the set from `CLAUDE.md`'s `## Specs contract` block,
+  which names the module's files without marking any of them required
 ```
 
 ## Out of scope
