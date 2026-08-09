@@ -24,7 +24,8 @@ does not exist: it would have nothing to guard but its own taste.
   `plugins/scrumia-teams/agents/` (`scrumia-manager.md`, `scrumia-business.md`,
   `scrumia-tech.md`); `scrumia-designer.md` lives in `plugins/scrumia-design/agents/`
   and is registered in the same list. All are consumed by `scrumia-github-project`'s `scrumia-ticket` skill
-  at Step 6, which routes the review by scope. Step 0 invokes no role — it runs the
+  at Step 6, which routes the review by the diff's actual scope, not by the ticket's
+  `scope/*` label (`docs/adr/0005-validation-gates.md`). Step 0 invokes no role — it runs the
   refusal gate and calls `pick-model.sh`, which enacts the execution policy specified
   in `features/business/execution-policy/`.
 - No App feature implements this. `plugins/` is ScrumIA's own product and carries

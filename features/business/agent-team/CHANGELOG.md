@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — The roles reach Step 6 through the diff's scope, not the ticket's label
+- Issue: #130
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — All standing roles run on opus, the ceiling assigned without being asked; the tier above is opted into by a human, never by a default
 - Issue: #120
 - PR: #NN (filled at merge)

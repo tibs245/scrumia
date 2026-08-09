@@ -59,6 +59,21 @@ When CI is green and gate 2 raised no blocker
 Then nothing merges without the human, whatever `settings.autonomy.level` says
 ```
 
+### AC-6 — A label that under-states the diff does not shrink the review
+
+```gherkin
+Given a ticket labelled `scope/S` whose diff touches `features/business/**`
+When gate 2 runs at `scrumia-ticket` Step 6
+Then the business role reviews it, alongside tech, because the diff routes the
+  review and the label does not, and the gap between the two is flagged in the PR
+  as a scoping failure per ADR-0006
+```
+
+Not a hypothetical: #79 was labelled `scope/S`, its diff touched
+`features/business/github-tracking/`, and its PR (#150, merged 2026-08-09) recorded in
+so many words that the label's grid required no review, so none ran. The label is what
+the review was expected to be; it gates nothing.
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
