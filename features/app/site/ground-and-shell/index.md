@@ -87,5 +87,6 @@ this feature.
   its own feature: `features/app/site/hero/`, `features/app/site/slot-index/`
   and `features/app/site/run-horizon/`. The last of them (#62) is what spends
   `--page-wide`.
-- The `site-header` component still ships three candidates and no verdict; the
-  shell renders none of the three scroll behaviours until that is settled.
+- The `site-header` component's candidate is settled — the rail (#74) — but not
+  yet implemented; the shipped shell still renders no scroll/pointer behaviour
+  until #112 lands.
