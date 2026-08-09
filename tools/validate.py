@@ -206,6 +206,71 @@ def check_french_leftovers() -> None:
             warn(f"{md.relative_to(ROOT)}: {len(hits)} accented characters — leftover French?")
 
 
+def check_composition_drift() -> None:
+    """Verify that the captured composition in orbit.html matches the actual .scrumia/config.yaml.
+
+    The composition is re-run on every validate pass to detect drift: if the config
+    changes and orbit.html isn't updated, CI will catch it.
+    """
+    orbit_file = ROOT / "design" / "explorations" / "orbit.html"
+    if not orbit_file.exists():
+        return  # orbit.html is only on the redesign branch
+
+    # Extract the captured composition from orbit.html (between <pre id="compose-status"> tags)
+    text = orbit_file.read_text(encoding="utf-8")
+    start_tag = '<pre id="compose-status">'
+    end_tag = '</pre>'
+
+    start_idx = text.find(start_tag)
+    if start_idx == -1:
+        return  # No compose-status block yet, skip check
+
+    start_idx += len(start_tag)
+    end_idx = text.find(end_tag, start_idx)
+    if end_idx == -1:
+        error(f"design/explorations/orbit.html: malformed compose-status block (no closing tag)")
+        return
+
+    captured_html = text[start_idx:end_idx]
+
+    # Strip HTML tags and decode entities to get plain text
+    captured = re.sub(r'<[^>]+>', '', captured_html)
+    captured = captured.replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&')
+    captured = '\n'.join(line.rstrip() for line in captured.split('\n'))
+    captured = captured.strip()
+
+    # Run compose-status.sh to get the actual composition
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["bash", str(ROOT / "tools" / "compose-status.sh")],
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode != 0:
+            error(f"tools/compose-status.sh: failed with exit code {result.returncode}")
+            if result.stderr:
+                error(f"  stderr: {result.stderr}")
+            return
+        actual = result.stdout.strip()
+    except subprocess.TimeoutExpired:
+        error("tools/compose-status.sh: timeout")
+        return
+    except Exception as e:
+        error(f"tools/compose-status.sh: {e}")
+        return
+
+    # Normalize both for comparison (ignore trailing whitespace on each line)
+    captured_lines = [line.rstrip() for line in captured.split('\n') if line.strip()]
+    actual_lines = [line.rstrip() for line in actual.split('\n') if line.strip()]
+
+    if captured_lines != actual_lines:
+        error(f"design/explorations/orbit.html: composition in #compose-status is out of date")
+        error(f"  Run: ./tools/compose-status.sh > /tmp/c.txt and update the captured output")
+
+
 def main() -> int:
     check_marketplace()
     check_skills()
@@ -214,6 +279,7 @@ def main() -> int:
     check_doc_links()
     check_skill_scripts()
     check_french_leftovers()
+    check_composition_drift()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")
