@@ -37,3 +37,16 @@ Both language URLs of every module appear in `site/sitemap.xml`.
 
 The builder is proven against a fixture whose template carries the tokens and nothing
 else, which is what makes this feature independent of the design work.
+
+## AC-6 — a malformed page string file is reported, never raised
+
+`render_page`'s unused-key check reads the same `site/i18n/<lang>/<page>.json` that
+`load_strings` already parsed under a `try`. An invalid file is reported once, by
+`load_strings`, as a clean `error:` line — never as a raw traceback from the check.
+
+## AC-7 — a manifest fact interpolated into markup is escaped
+
+`@mod_tags` and `@mod_skills` build markup out of names sourced from
+`marketplace.json` and the skills tree. Every fact placed inside an HTML tag or
+attribute is HTML-escaped before interpolation, the same way a template engine would
+escape it by default — regardless of how trustworthy today's fixed set of entries is.

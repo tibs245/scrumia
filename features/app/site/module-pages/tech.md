@@ -66,6 +66,15 @@ chrome linked to `index.html` relatively. `@root` already meant *back to the sit
 special was added: `@lroot`, *back to the language root*. It is empty on every page that
 existed before, which is why their generated output is byte-for-byte unchanged.
 
+## Escaping manifest facts
+
+`module_specials` builds `@mod_tags` and `@mod_skills` out of names sourced from
+`marketplace.json` and the skills tree. Those names are HTML-escaped before they're
+folded into `<li>` markup (#71) — every entry in that manifest is authored in this repo
+and gated by `tools/validate.py` in CI today, which made the raw interpolation safe in
+practice, but escaping costs nothing and stops being optional the day the marketplace
+takes an outside contribution.
+
 ## Deliberately not done here
 
 The template is a stub: it carries the structure and the tokens and no design decision —
