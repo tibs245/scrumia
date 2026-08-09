@@ -510,12 +510,10 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .card-accent { border-left: 3px solid var(--accent); }
 
-/* Role cards. The three lead roles are told apart by weight of rule, not by
-   three new hues — a second pointing colour would cancel the accent. */
-.card-manager, .card-business, .card-tech { border-left-width: 3px; border-left-style: solid; }
-.card-manager { border-left-color: var(--accent); }
-.card-business { border-left-color: var(--human); }
-.card-tech { border-left-color: var(--agent); }
+/* One rule for all three: every lead role is an agent, which is what coral now
+   says. Three hues told them apart by asserting a falsehood — that the business
+   role is a human — and their <h3> names already distinguish them. */
+.card-manager, .card-business, .card-tech { border-left: 3px solid var(--agent); }
 
 /* ---------- Notes ---------- */
 
@@ -529,6 +527,9 @@ tbody tr:last-child td { border-bottom: 0; }
   font-weight: var(--weight-strong); color: var(--text); font-size: var(--text-base);
   display: block; margin-bottom: var(--space-1);
 }
+/* Not a warning despite the name: both uses mark where automation stops and a
+   person decides, which is human semantics and so is the blue. The name lies
+   here, not the colour — rename tracked in #94. */
 .note-warn { border-left-color: var(--human); background: var(--human-surface); }
 .note-warn .note-title { color: var(--human); }
 

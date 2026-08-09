@@ -55,8 +55,14 @@ into a smudge — use `mark.svg` there instead.
   someone else, and beyond the legal question a borrowed personality cannot be
   changed when the product changes.
 - **Anthropic's graphic identity.** Hop belongs to the Claude Code ecosystem
-  through *colour only* — the coral on the human side of the flow. A mascot on a
-  third-party plugin marketplace wearing Anthropic's identity would imply an
-  affiliation that does not exist.
+  through *colour only* — the coral that marks the agent side of the flow. A mascot
+  on a third-party plugin marketplace wearing Anthropic's identity would imply an
+  affiliation that does not exist. Since #52 that colour sits on the agent rather
+  than the human, which is nearer the line and therefore on the record: see
+  "What coral costs, stated" in [identity.md](../../identity.md).
+- **Wearing the agent colour itself.** Hop is not a coral body. It is built from
+  the diagram's own segments and lit by one cyan eye; painting it coral would make
+  the mascot the single largest coral surface on the page and turn a layout device
+  into the borrowed identity the clause above refuses.
 - **Motion under `prefers-reduced-motion`.** Hop stays assembled with its eye lit,
   and nothing travels. The mascot is a shape before it is an animation.
