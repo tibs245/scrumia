@@ -76,7 +76,7 @@ GitHub then computes the parent's progress itself (`subIssuesSummary`), which is
 
 ## Step 5 — Set the scope and the risk
 
-Two labels, two independent questions. Getting this wrong is not cosmetic: `pick-model.sh` reads both to decide which model executes the ticket, and `scrumia-ticket` reads the scope to decide who reviews it.
+Two labels, two independent questions. Getting this wrong is not cosmetic: `pick-model.sh` reads both to decide which model executes the ticket. Who reviews the PR is **not** one of the consequences — gate 2 routes that by the diff's actual scope, not by this label ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)). A higher label buys a stronger model, never an extra reviewer.
 
 One `scope/*` label, based on three objective questions: how many apps are touched, does a spec file change, and which one.
 
@@ -87,7 +87,7 @@ One `scope/*` label, based on three objective questions: how many apps are touch
 | `scope/L` | ≥2 apps, or a business spec, or an interface contract |
 | `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
 
-When hesitating between two levels, take the higher one: one review too many costs a few minutes, a missing review costs a revert.
+When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 
 Then one `risk/*` label, answering a different question: **what does it cost if this is wrong in production?** Not how hard it is — how expensive the mistake is.
 

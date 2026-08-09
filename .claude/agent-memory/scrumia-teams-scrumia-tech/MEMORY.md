@@ -1,1 +1,2 @@
 - [Site motion invariants](site-motion-invariants.md) — .js gate semantics, reduced-motion delay blind spot, nth-child stagger coupling
+- [Cross-skill claims go stale silently](pitfall-cross-skill-claims.md) — skills assert what siblings do; validate.py checks links, never truth
