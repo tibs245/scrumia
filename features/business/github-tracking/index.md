@@ -81,7 +81,7 @@ from where their cards sit. `qa.md` specifies the board-reading scenario this im
 
 | File | Why it exists |
 |---|---|
-| `business.md` | milestone/epic vocabulary, label consumers, the slot's scope per ADR-0013 |
+| `business.md` | milestone/epic vocabulary, label consumers, where a deviation from the execution policy is recorded, the slot's scope per ADR-0013 |
 | `qa.md` | the board-reading discipline as falsifiable scenarios |
 | `CHANGELOG.md` | history of this feature's changes, one entry per notable change |
 

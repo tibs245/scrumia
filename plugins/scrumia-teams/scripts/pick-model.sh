@@ -125,13 +125,17 @@ fi
 RISK_NOTE=""
 [ "$RISK_RATED" = false ] && RISK_NOTE=" Risk was not rated, so ${RISK_PREFIX}${RISK} was assumed — flag this if the ticket looks riskier."
 
+# A deviation happens after the policy has spoken, so the answer can only carry the
+# obligation to state a reason, never the reason itself.
+DEVIATION_NOTE=" Running on anything else is a deviation: record it on the ticket — what the policy chose, what ran, and why — before the work starts."
+
 # split_or_<model>: prefer splitting, but oversized is not a dead end. The
 # caller judges feasibility, which is why the fallback travels with the verdict.
 case "$CELL" in
   split_or_*)
     FALLBACK=${CELL#split_or_}
     emit "split_or_model" "$FALLBACK" \
-      "First try to split this ticket into independently executable tickets. If — and only if — the work is genuinely indivisible, execute it on $FALLBACK and state in the PR why the split was refused. Do not split into tickets that cannot ship on their own.$RISK_NOTE" \
+      "First try to split this ticket into independently executable tickets. If — and only if — the work is genuinely indivisible, execute it on $FALLBACK and record the refused split on the ticket, with the reason it could not be divided. Do not split into tickets that cannot ship on their own.$RISK_NOTE" \
       "scope=$SCOPE risk=$RISK -> $CELL"
     ;;
   split)
@@ -141,7 +145,7 @@ case "$CELL" in
     ;;
   *)
     emit "model" "$CELL" \
-      "Execute this ticket on $CELL.$RISK_NOTE" \
+      "Execute this ticket on $CELL.$RISK_NOTE$DEVIATION_NOTE" \
       "scope=$SCOPE risk=$RISK -> $CELL"
     ;;
 esac

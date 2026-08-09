@@ -190,14 +190,53 @@ Two moments, one mechanism:
   the policy has spoken, which is why the policy's answer carries the *obligation* to
   state a reason rather than the reason itself. Stated there, it is contradictable while
   the decision is still being made.
-- **Durably**, it lives wherever an override lives; split refusals are a second *kind*
-  recorded there, not a second mechanism. Which venue that is — a label, a field, a
-  structured comment — is chosen in #32, not here.
+- **Durably**, in **one venue, the same one for both kinds**, written when the deviation
+  is decided rather than when the work is finished. A split refusal is a second *kind*
+  recorded there, not a second mechanism: the record's only reader has one question, and
+  a reader who must look in two places to answer it will look in one.
 
-Repetition is what the record is for. Deviations leaning the same way on the same cell
-are that cell asking to be adjusted, and a signal that only survives if it can be
-queried. Five overrides written into five PR bodies in one sprint did not survive; that
-is what produced #32.
+Beside the three fields, the record carries the **kind** and the **cell**. The kind,
+because the reviewer's question differs between a human disagreeing with the grid and an
+executor judging work indivisible. The cell, because the cell is what repetition is
+counted on.
 
-The policy's answer stays the default. Recording a deviation makes it visible — it does
-not make it a second way to pick a model.
+### An override is a human's, by definition
+
+The two kinds differ in who decides, and the record says which. An **override** is a
+human choosing against the policy's answer; a **refused split** is the executor
+exercising the fallback the cell itself names. Both are legitimate. What is neither is an
+agent running on a model the policy did not name and nobody chose — that has overridden
+nothing, it has failed to follow the policy, and recording it as an override files a
+defect as a decision. An agent writing an override records whose it was and can point at
+where that human said so.
+
+### Structured, because prose was already tried
+
+The record is **fielded, not prose**. "How many deviations on this cell, and which way did
+they lean" has to be a query, not a reading of every ticket the project ever ran.
+
+Repetition is what the record is for. Deviations leaning the same way on the same cell are
+that cell asking to be adjusted, and a signal that only survives if it can be counted. Five
+overrides written into five PR bodies in one sprint did not survive — not because nobody
+could read them, but because nobody could count them. That is what produced #32.
+
+Which venue holds the record is the tracker's to say — an issue comment, a row in a file,
+whatever the tool makes queryable. `features/business/github-tracking/` names the one in
+use here and gives its shape; this feature does not restate it.
+
+### Reading the record is a human's job
+
+Nothing in this policy watches the record and raises a hand. Counting repetition on a cell
+is deliberately left to a human asking the question, because the answer ends in editing the
+grid — project data a human owns — and because a threshold nobody agreed on would either
+cry wolf or stay silent, with no way to tell which.
+
+That is a stopping point, not an oversight: the record's purpose is to make the question
+answerable at all, and it now is. **Who asks it and when — a sprint boundary, a
+retrospective, a status pass — is open, and tracked in #167**, along with whether anything
+surfaces it unprompted.
+
+The policy's answer stays the default. Recording a deviation makes it visible — it does not
+make it a second way to pick a model. Nothing reads the record back to decide: a past
+deviation on a cell is evidence for changing that cell, never a precedent that changes what
+the cell answers today. When the grid should say something else, the grid is edited.

@@ -40,6 +40,56 @@ What happens when either label is absent — which default applies, and that the
 assumption is stated rather than silently applied — belongs to the policy that reads
 them, and is specified there for the same reason.
 
+## A deviation is a structured comment on its own issue
+
+`features/business/execution-policy/` requires that a **deviation** — a human overriding
+the model the policy chose, or an executor refusing a split and taking the cell's fallback
+— be recorded once, durably, in one venue for both kinds, fielded rather than written as
+prose, and findable by the cell it happened on. That is the rule. Here is what it becomes
+on GitHub.
+
+**The venue is a comment on the ticket's own issue.** Two lines, posted by whoever carries
+out the deviation, **when it is decided** — before the work starts, not when the PR opens:
+
+```
+Deviation: <kind> — cell <scope>/<risk> — policy <decision> — ran <model> — by <who>
+Reason: <why, in as many lines as it takes>
+```
+
+| Field | Values |
+|---|---|
+| `<kind>` | `override` — a human chose against the policy's answer. `split-refused` — a `split_or_<model>` cell preferred a split and the work proved indivisible |
+| `cell` | the scope and risk the policy read, in the axes' own vocabulary — `L/low`, `XL/medium` — not the project's label spelling |
+| `policy` | what the policy answered, verbatim: a model name, or `split_or_<model>` |
+| `ran` | the model the ticket actually executed on |
+| `<who>` | for `override`, `human` and the handle whose decision it was; for `split-refused`, the skill that judged the work indivisible |
+
+`Reason:` is not optional. A `Deviation:` line with no reason under it is the
+non-compliant record `execution-policy`'s AC-7 describes, and is reported as such rather
+than counted as a deviation somebody explained.
+
+**Why an issue comment.** A label is queryable and carries no reason, and the reason is the
+substance. A Projects v2 field is structured but moves the record into board-side state,
+against ADR-0009's "documented composition, no dynamic resolution". A comment carries the
+reason, lives beside the ticket, survives the executor, and reuses a carrier the project
+already writes to rather than inventing a third.
+
+**How it is read back.** One ticket: `gh issue view <n> --json comments`, the same read a
+role-signed verdict uses. Across the project — which is what the record exists for:
+
+```bash
+gh search issues --repo <owner>/<repo> 'in:comments "Deviation:" "cell L/low"'
+```
+
+The fixed prefix and the `cell <scope>/<risk>` token are what make that a query instead of
+a reading. Nothing runs it on a schedule; per `execution-policy`, whose job that is remains
+#167's.
+
+**The PR body echoes it, and stops being the record.** A PR whose ticket carries a
+deviation restates it for a human reading the diff, and that echo is a courtesy. Five PR
+bodies were the whole record once, in the sprint that produced #32; the comment is now the
+record and the PR is its copy.
+
 ## Reading discipline: a board is read through a filter, never whole
 
 This is a product rule, not an implementation footnote. `gh project item-list` returns
