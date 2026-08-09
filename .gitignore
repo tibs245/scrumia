@@ -6,3 +6,7 @@ node_modules/
 __pycache__/
 *.pyc
 .worktrees/
+
+# check_run_horizon.py measures a page in place, so its scratch copy lands next to
+# the real one — and site/ is what Pages publishes.
+site/**/_probe.html
