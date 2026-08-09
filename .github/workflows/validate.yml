@@ -19,16 +19,12 @@ jobs:
           python-version: "3.12"
       - name: Validate manifests, skills, hooks and links
         run: python3 tools/validate.py
-<<<<<<< HEAD
       - name: Test the site builder's guards
         run: python3 tools/test_build_site.py
-
-=======
       - name: Check the composition summary against its acceptance criteria
         run: |
           python3 -m pip install --quiet pyyaml   # the script's YAML reader when yq is absent
           python3 tools/test_compose_status.py
->>>>>>> 6c613eb (feat: print the composition from a script instead of retyping it)
       - name: Rebuild the site and check the committed output is current
         run: |
           python3 tools/build_site.py
