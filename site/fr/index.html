@@ -75,21 +75,31 @@
 
 <div class="hero summon">
   <span class="eyebrow">Place de marché de plugins Claude Code</span>
-  <h1>Composez votre équipe de dev IA avec des <em>modules interchangeables</em>.</h1>
-  <p class="lead">Cadrage, specs, tickets, code, revues, PRs : chaque capacité est un slot. Vous y branchez un plugin Claude Code, vous le remplacez quand le projet change.</p>
-
-  <div class="stats" role="group" aria-label="Statistiques du projet">
-    <div class="stat"><b>11</b><span>modules</span></div>
-    <div class="stat"><b>29</b><span>compétences</span></div>
-    <div class="stat"><b>3</b><span>rôles agents</span></div>
-    <div class="stat"><b>12</b><span>décisions documentées</span></div>
-    <div class="stat"><b>3</b><span>points de contact humains</span></div>
-  </div>
-
+  <h1>Chaque<br>capacité<br>est <em>un slot</em>.</h1>
+  <p class="lead">Cadrage, specs, tickets, code, revues : remplissez chaque slot avec un plugin Claude Code, et remplacez-le le jour où le projet change.</p>
   <div class="cta-row">
     <a class="btn btn-primary" href="#composer">Composez votre équipe</a>
     <a class="btn btn-ghost" href="workflow.html">Voir une exécution complète</a>
   </div>
+
+  <figure class="hero-figure">
+    <svg class="hop hop-arrive" width="188" height="188" viewBox="0 0 96 96" role="img" aria-label="Hop, la mascotte de ScrumIA : quatre colonnes de schéma de flux rassemblées en un corps, un œil allumé.">
+      <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+      <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+      <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+      <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+      <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+    </svg>
+  </figure>
+
+  <!-- Literal until #65 (the manifest enumerator) lands: these three counts are
+       facts that drift rather than values computed from .claude-plugin/marketplace.json
+       and .scrumia/config.yaml. Debt noted 2026-08-09, sequence a recount after #65. -->
+  <p class="counts" role="group" aria-label="Statistiques du projet">
+    <span class="count"><b>7</b><span>slots</span></span>
+    <span class="count"><b>12</b><span>modules livrés</span></span>
+    <span class="count"><b>3</b><span>points de contact humains</span></span>
+  </p>
 </div>
 
 <section id="flow">

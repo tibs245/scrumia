@@ -1,0 +1,56 @@
+# Acceptance criteria — Hero
+
+One scenario per rule in `index.md`. Each scenario must be able to fail.
+
+## Nominal
+
+### AC-1 — The hero renders from the build, in both languages, with the breaks holding at every width
+
+```gherkin
+Given the site built by `tools/build_site.py`
+When the English and French home pages are read
+Then the hero renders with no unresolved template token
+And the headline's authored `<br>` breaks land in the same place regardless of
+  viewport width — nothing is re-wrapped by `text-wrap: balance`
+```
+
+### AC-2 — Exactly one filled control shows in the hero
+
+```gherkin
+Given the rendered hero
+When every control inside it is inspected
+Then exactly one carries `.btn-primary`, and no other element in the hero's
+  viewport is filled with the accent colour
+```
+
+## Edge cases
+
+### AC-3 — A count is derived, or its debt is dated
+
+```gherkin
+Given the three numbers in `.counts`
+When their source is checked
+Then either they are computed from `.claude-plugin/marketplace.json` and
+  `.scrumia/config.yaml`, or a dated comment naming the issue that will compute
+  them sits next to the numbers in `site/templates/index.html`
+```
+
+### AC-4 — Hop arrives once and respects reduced motion
+
+```gherkin
+Given a reader with JavaScript enabled and no reduced-motion preference
+When the hero loads
+Then Hop's segments and eye animate in once, gated by the same `.js` class the
+  shell's pre-paint script sets, and never repeat
+
+Given a reader with JavaScript disabled, or `prefers-reduced-motion: reduce`
+When the hero loads
+Then Hop is already assembled and its eye is already lit — nothing travels
+```
+
+## Out of scope
+
+- The slot index and the run, and everything below the hero (#61, #62). This
+  feature lands only the hero.
+- Which of the three `site-header` candidates wins, and the human/agent colour
+  rule (#52) — the hero uses neither `--human` nor `--agent`.

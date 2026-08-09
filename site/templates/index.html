@@ -13,19 +13,29 @@
   <span class="eyebrow">{{hero_eyebrow}}</span>
   <h1>{{hero_title}}</h1>
   <p class="lead">{{hero_lead}}</p>
-
-  <div class="stats" role="group" aria-label="{{stats_aria}}">
-    <div class="stat"><b>11</b><span>{{stat_modules}}</span></div>
-    <div class="stat"><b>29</b><span>{{stat_skills}}</span></div>
-    <div class="stat"><b>3</b><span>{{stat_roles}}</span></div>
-    <div class="stat"><b>12</b><span>{{stat_decisions}}</span></div>
-    <div class="stat"><b>3</b><span>{{stat_touchpoints}}</span></div>
-  </div>
-
   <div class="cta-row">
     <a class="btn btn-primary" href="#composer">{{hero_cta_compose}}</a>
     <a class="btn btn-ghost" href="workflow.html">{{hero_cta_run}}</a>
   </div>
+
+  <figure class="hero-figure">
+    <svg class="hop hop-arrive" width="188" height="188" viewBox="0 0 96 96" role="img" aria-label="{{hero_hop_alt}}">
+      <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
+      <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
+      <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
+      <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
+      <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
+    </svg>
+  </figure>
+
+  <!-- Literal until #65 (the manifest enumerator) lands: these three counts are
+       facts that drift rather than values computed from .claude-plugin/marketplace.json
+       and .scrumia/config.yaml. Debt noted 2026-08-09, sequence a recount after #65. -->
+  <p class="counts" role="group" aria-label="{{stats_aria}}">
+    <span class="count"><b>7</b><span>{{stat_slots}}</span></span>
+    <span class="count"><b>12</b><span>{{stat_modules}}</span></span>
+    <span class="count"><b>3</b><span>{{stat_touchpoints}}</span></span>
+  </p>
 </div>
 
 <section id="flow">
