@@ -44,6 +44,22 @@ Then both carry a `footer_non_affiliation` key — the build's anti-divergence
   in the language of that page
 ```
 
+### AC-6 — Every real pair is measured, and the two actors stay tellable apart
+
+```gherkin
+Given `design/tokens.css`
+When `python3 tools/check_contrast.py` resolves both themes from its `light-dark()`
+  pairs
+Then every pair a page actually lays on another meets its WCAG 2.1 minimum — 4.5:1
+  for body text, 3:1 for a boundary that carries meaning — in light and in dark
+And `--human` sits at least 35° of OKLab hue and ΔE 8 away from `--accent`, so the
+  colour that marks a person's decision can never be read as the colour that points
+And the run exits non-zero when either fails
+```
+
+The hue floor is the half a contrast ratio cannot see: it is a luminance
+measurement, and two colours a reader cannot tell apart can sit at 7:1.
+
 ## Edge cases
 
 ### AC-4 — The page is complete without JavaScript

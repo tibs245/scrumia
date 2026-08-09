@@ -4,15 +4,15 @@
   space, and its centre is one gesture: pull a module out of a slot and the
   whole page (header readout, rail, config file, run) re-states itself to match.
   Contrast does the arguing — navy for the substrate the agents work on, one
-  coral band for the three moments a person decides, nothing in between.
+  blue band for the three moments a person decides, nothing in between.
 
   Kept from design/identity.md: the navy ground and its raised blue surfaces,
-  coral reserved for human decision points and used nowhere else, one cyan
-  accent that points at exactly one thing per screen, Sora / Source Sans 3 /
-  JetBrains Mono, mechanism shown rather than claimed (the composition is a
-  live artefact, not a screenshot), motion only where it stands for a state
-  change, and Hop — summoned when the composition changes, because that is the
-  moment the agents re-read it.
+  blue reserved for human decision points and coral for the agent steps — the way
+  round #52 settled — one cyan accent that points at exactly one thing per screen,
+  Sora / Source Sans 3 / JetBrains Mono, mechanism shown rather than claimed (the
+  composition is a live artefact, not a screenshot), motion only where it stands
+  for a state change, and Hop — summoned when the composition changes, because
+  that is the moment the agents re-read it.
 
   Deliberately broken: the radii and the soft elevation — there is no --radius
   and no --elev on this page at all, because a rounded corner and a shadow on
@@ -47,12 +47,12 @@
   --surface-sunken:#02101F; --border:#153453; --border-strong:#3B7CAD;
   --text:#EAF2FA; --text-soft:#A9C2D6; --text-faint:#7C95AB;
   --accent:#73E3FF; --accent-surface:#07293C; --accent-ink:#00121E;
-  --human:#F0996F; --human-surface:#2B1811;
-  --agent:#6BB8E4; --agent-surface:#07243A;
-  /* NEW — the coral band. tokens.css has coral as a mark, not as a ground; a
-     full-bleed band needs its own ink pair to hold 4.5:1 against it. */
-  --band-bg:#F0996F; --band-ink:#1A0B04; --band-ink-soft:#3B1A0A;
-  --band-rule:rgb(26 11 4 / .30);
+  --human:#85AAF2; --human-surface:#12204A;
+  --agent:#F0996F; --agent-surface:#2B1811;
+  /* NEW — the human band. tokens.css has the human blue as a mark, not as a
+     ground; a full-bleed band needs its own ink pair to hold 4.5:1 against it. */
+  --band-bg:#85AAF2; --band-ink:#0A1626; --band-ink-soft:#24344A;
+  --band-rule:rgb(10 22 38 / .30);
   /* NEW — the two washes behind the ground, so it is never flat. */
   --halo:rgb(115 227 255 / .13);
   --rule-faint:rgb(115 227 255 / .07);
@@ -64,9 +64,9 @@
     --surface-sunken:#F1ECE4; --border:#E1D9CD; --border-strong:#8C7F6D;
     --text:#0A1626; --text-soft:#3C4C5E; --text-faint:#59687A;
     --accent:#0A6076; --accent-surface:#DFF1F7; --accent-ink:#FFFFFF;
-    --human:#9E4517; --human-surface:#FAEBE1;
-    --agent:#175B7A; --agent-surface:#E4EFF6;
-      --band-bg:#9E4517; --band-ink:#FFFFFF; --band-ink-soft:#F5E3D8;
+    --human:#2650AC; --human-surface:#DFE5FF;
+    --agent:#9E4517; --agent-surface:#FAEBE1;
+      --band-bg:#2650AC; --band-ink:#FFFFFF; --band-ink-soft:#D8E1F5;
     --band-rule:rgb(255 255 255 / .34);
     --halo:rgb(10 96 118 / .10);
     --rule-faint:rgb(10 22 38 / .06);
@@ -78,9 +78,9 @@
   --surface-sunken:#F1ECE4; --border:#E1D9CD; --border-strong:#8C7F6D;
   --text:#0A1626; --text-soft:#3C4C5E; --text-faint:#59687A;
   --accent:#0A6076; --accent-surface:#DFF1F7; --accent-ink:#FFFFFF;
-  --human:#9E4517; --human-surface:#FAEBE1;
-  --agent:#175B7A; --agent-surface:#E4EFF6;
-  --band-bg:#9E4517; --band-ink:#FFFFFF; --band-ink-soft:#F5E3D8;
+  --human:#2650AC; --human-surface:#DFE5FF;
+  --agent:#9E4517; --agent-surface:#FAEBE1;
+  --band-bg:#2650AC; --band-ink:#FFFFFF; --band-ink-soft:#D8E1F5;
   --band-rule:rgb(255 255 255 / .34);
   --halo:rgb(10 96 118 / .10);
   --rule-faint:rgb(10 22 38 / .06);
@@ -91,10 +91,10 @@
   --surface-sunken:#02101F; --border:#153453; --border-strong:#3B7CAD;
   --text:#EAF2FA; --text-soft:#A9C2D6; --text-faint:#7C95AB;
   --accent:#73E3FF; --accent-surface:#07293C; --accent-ink:#00121E;
-  --human:#F0996F; --human-surface:#2B1811;
-  --agent:#6BB8E4; --agent-surface:#07243A;
-  --band-bg:#F0996F; --band-ink:#1A0B04; --band-ink-soft:#3B1A0A;
-  --band-rule:rgb(26 11 4 / .30);
+  --human:#85AAF2; --human-surface:#12204A;
+  --agent:#F0996F; --agent-surface:#2B1811;
+  --band-bg:#85AAF2; --band-ink:#0A1626; --band-ink-soft:#24344A;
+  --band-rule:rgb(10 22 38 / .30);
   --halo:rgb(115 227 255 / .13);
   --rule-faint:rgb(115 227 255 / .07);
 }
@@ -218,8 +218,8 @@ code,pre,.mono{font-family:var(--font-mono)}
 .hero-say{display:flex;flex-direction:column;gap:var(--space-8)}
 
 .cta-row{display:flex;flex-wrap:wrap;gap:var(--space-3)}
-/* Coral is the human decision. A call to action is one, and that is the only
-   reason it is coral — not because a button wants to be warm. */
+/* Blue is the human decision. A call to action is one, and that is the only
+   reason it is blue — not because a button wants to be cold. */
 .btn{display:inline-flex;align-items:center;gap:var(--space-2);
   padding:var(--space-4) var(--space-6);text-decoration:none;
   font-family:var(--font-mono);font-size:var(--text-sm);letter-spacing:.04em;
@@ -292,7 +292,7 @@ button.rail-face:hover{background:var(--surface-raised)}
 .opt-name .pfx{color:var(--text-faint)}
 .opt-desc{display:block;font-size:var(--text-sm);color:var(--text-soft);line-height:var(--leading-snug);
   margin-top:var(--space-1)}
-/* The one you picked is the decision you made, so it is the coral thing here. */
+/* The one you picked is the decision you made, so it is the human-blue thing here. */
 .opt[aria-pressed="true"]{background:var(--human-surface)}
 .opt[aria-pressed="true"] .opt-mark{background:var(--band-bg);border-color:var(--band-bg)}
 .opt[aria-pressed="true"] .opt-name{color:var(--human);font-weight:var(--weight-strong)}
@@ -336,12 +336,12 @@ button.rail-face:hover{background:var(--surface-raised)}
    contrast and loses its fill instead. */
 .chip.is-missing{text-decoration:line-through;background:none;border-style:dashed;
   border-color:var(--border-strong);color:var(--text-soft)}
-/* The gap note is deliberately NOT coral. Coral means a person decides; this is
-   the agents reporting what they were told they do not have. */
+/* The gap note is deliberately NOT the human blue. Blue means a person decides;
+   this is the agents reporting what they were told they do not have. */
 .gap{font-family:var(--font-mono);font-size:var(--text-xs);line-height:var(--leading-snug);
   color:var(--text);border-left:2px solid var(--border-strong);padding-left:var(--space-3)}
 .gap:empty{display:none}
-/* A human step is coral all the way through — the same rule as the band below. */
+/* A human step is blue all the way through — the same rule as the band below. */
 .step.is-human{background:var(--human-surface);border-right-color:var(--human);
   box-shadow:inset 0 3px 0 0 var(--human)}
 .step.is-human .step-who{color:var(--human)}
@@ -353,7 +353,7 @@ button.rail-face:hover{background:var(--surface-raised)}
   color:var(--text-faint);max-width:52ch}
 .live{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-/* ══ Coral band — the three human touchpoints ════════════════════════════════
+/* ══ Human band — the three human touchpoints ════════════════════════════════
    The only band on the page that changes colour, because it is the only place
    the argument changes hands. */
 .human-band{background:var(--band-bg);color:var(--band-ink);
@@ -611,7 +611,7 @@ pre.term .c{color:var(--text-faint)}
 
       <div class="run-head" id="run">
         <h3>One run, end to end</h3>
-        <p class="kicker">coral steps need a person — three of seven</p>
+        <p class="kicker">blue steps need a person — three of seven</p>
       </div>
     </div>
   </div>
@@ -686,7 +686,7 @@ pre.term .c{color:var(--text-faint)}
   </div>
 </section>
 
-<!-- ══ Coral band ══════════════════════════════════════════════════════════ -->
+<!-- ══ Human band ══════════════════════════════════════════════════════════ -->
 <section class="human-band band" id="human">
   <div class="shell">
     <span class="kicker">03 — where you decide</span>

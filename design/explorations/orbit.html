@@ -6,8 +6,9 @@
   content, headlines are big enough to be architecture, and sections are
   separated by emptiness instead of by borders and cards.
 
-  Kept from design/identity.md: cold navy ground and warm coral for every point
-  where a human decides; one cyan accent doing the pointing and nothing else;
+  Kept from design/identity.md: cold navy ground, blue for every point where a
+  human decides and warm coral for every point where an agent runs (#52 inverted
+  that pair); one cyan accent doing the pointing and nothing else;
   Sora / Source Sans 3 / JetBrains Mono; motion only where it stands for a state
   change (Hop is summoned, sections arrive, an answer opens); mechanism over
   claim — the page shows this repo's real composition, empty slots included.
@@ -59,8 +60,8 @@
     });
 
     /* Arrival. Each revealed element stands for something being summoned; the
-       human steps of the run bloom coral as they land, which is the only place
-       coral is animated. */
+       human steps of the run bloom blue as they land, which is the only place
+       the human colour is animated. */
     var targets = [].slice.call(document.querySelectorAll('.reveal'));
     function land(el) { el.classList.add('is-in'); }
     if (doc.classList.contains('js')) {
@@ -143,12 +144,11 @@
   --accent-surface: #07293C;
   --accent-ink: #00121E;
 
-  --human: #F0996F;
-  --human-surface: #2B1811;
-  --human-ink: #1A0B04;
+  --human: #85AAF2;
+  --human-surface: #12204A;
 
-  --agent: #6BB8E4;
-  --agent-surface: #07243A;
+  --agent: #F0996F;
+  --agent-surface: #2B1811;
 
   --ok: #54CE94;
 
@@ -181,11 +181,10 @@
     --accent: #0A6076;
     --accent-surface: #DFF1F7;
     --accent-ink: #FFFFFF;
-    --human: #9E4517;
-    --human-surface: #FAEBE1;
-    --human-ink: #FFFFFF;
-    --agent: #175B7A;
-    --agent-surface: #E4EFF6;
+    --human: #2650AC;
+    --human-surface: #DFE5FF;
+    --agent: #9E4517;
+    --agent-surface: #FAEBE1;
     --ok: #16704F;
     --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
     --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
@@ -212,11 +211,10 @@
   --accent: #0A6076;
   --accent-surface: #DFF1F7;
   --accent-ink: #FFFFFF;
-  --human: #9E4517;
-  --human-surface: #FAEBE1;
-  --human-ink: #FFFFFF;
-  --agent: #175B7A;
-  --agent-surface: #E4EFF6;
+  --human: #2650AC;
+  --human-surface: #DFE5FF;
+  --agent: #9E4517;
+  --agent-surface: #FAEBE1;
   --ok: #16704F;
   --elev-1: 0 1px 2px rgb(10 22 38 / 0.06);
   --elev-2: 0 14px 34px -14px rgb(10 22 38 / 0.22);
@@ -242,11 +240,10 @@
   --accent: #73E3FF;
   --accent-surface: #07293C;
   --accent-ink: #00121E;
-  --human: #F0996F;
-  --human-surface: #2B1811;
-  --human-ink: #1A0B04;
-  --agent: #6BB8E4;
-  --agent-surface: #07243A;
+  --human: #85AAF2;
+  --human-surface: #12204A;
+  --agent: #F0996F;
+  --agent-surface: #2B1811;
   --ok: #54CE94;
   --elev-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --elev-2: 0 12px 32px -12px rgb(0 0 0 / 0.7);
@@ -746,8 +743,8 @@ h2 {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   The run — one horizon. Human steps stand above the line in coral, agent
-   steps hang below it in the quieter blue. No boxes: the line is the diagram.
+   The run — one horizon. Human steps stand above the line in blue, agent steps
+   hang below it in coral. No boxes: the line is the diagram.
    ───────────────────────────────────────────────────────────────────────── */
 .run { margin-top: clamp(var(--space-16), 9vh, var(--space-24)); }
 .run-track {
@@ -818,8 +815,9 @@ h2 {
    that slides would leave the line it is supposed to sit on. */
 .js .step-mark.reveal { transform: none; }
 
-/* Coral blooms only when a human step arrives — the mark stands for "this one
-   needs you", so it is the one thing on the page allowed to flare. */
+/* The human blue blooms only when a human step arrives — the mark stands for
+   "this one needs you", so it is the one thing on the page allowed to flare.
+   The agent steps never bloom: what is abundant does not get to flare. */
 @keyframes bloom {
   from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--human) 55%, transparent); }
   to   { box-shadow: 0 0 0 14px transparent; }
@@ -1171,7 +1169,7 @@ footer a:hover { color: var(--text); }
   <p class="kicker mono reveal"><b>02</b> the run</p>
   <h2 class="reveal" style="--d:1">Seven steps. Three of them are you.</h2>
   <p class="section-lead reveal" style="--d:2">
-    One idea, from a sentence to a merged pull request. Coral marks a step that
+    One idea, from a sentence to a merged pull request. Blue marks a step that
     waits for a person; everything below the line runs without one.
   </p>
 
