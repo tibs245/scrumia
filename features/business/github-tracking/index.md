@@ -23,7 +23,7 @@ A ticket crosses six columns, in order:
 | `Backlog` | Raw intent, not yet refined |
 | `Ready for dev` | Refined: criteria written, scope and risk set |
 | `To dev` | Selected into the current sprint |
-| `In progress` | Being executed, in its own worktree |
+| `In progress` | Being executed |
 | `In review` | PR open, awaiting review |
 | `Done` | Merged |
 
@@ -44,7 +44,7 @@ ScrumIA adopt a board that already exists — columns renamed, vocabulary alread
 | (no status) → `Backlog` | a ticket is filed | none — the column name is used directly, once |
 | `Backlog` → `Ready for dev` | `scrumia-refine` judges its four readiness conditions met | `ready` |
 | `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — see #23 |
-| `To dev` → `In progress` | a worktree opens for the ticket | `in_progress` |
+| `To dev` → `In progress` | execution starts on the ticket | `in_progress` |
 | `In progress` → `In review` | the PR opens | `in_review` |
 | `In review` → `Done` | the PR merges | `done` — not automated today either, see #23 |
 

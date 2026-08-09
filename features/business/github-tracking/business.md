@@ -77,9 +77,9 @@ the two disagree, `dev-flow` governs and this feature is what changes. The repla
 test that files any given rule on exactly one side is in `dev-flow`'s `business.md`
 § *The code cycle*; it is stated there once and not restated here.
 
-The module implementing the cycle and `dev-flow` specifying it are both true: ADR-0013
-decides that the `tracker` slot is not split into a `forge` slot — a statement about
-modules — and assigns ownership of no spec file.
+The module implementing the cycle and `dev-flow` specifying it are both true, because
+they speak on different planes. Why ADR-0013 does not settle this — and why no
+superseding ADR is owed — is argued once, in `dev-flow`'s `business.md`.
 
 The practical consequence: **issues in one tracker, pull requests on GitHub is not
 composable today.** A module filling `tracker` with Jira, Linear or a local file store
