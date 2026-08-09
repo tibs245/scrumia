@@ -39,7 +39,6 @@ not this feature's — the template here is deliberately a stub. No `api-contrac
 ## Open issues
 
 - #65 — Enumerate modules from the manifests and generate their pages
-- #66 — Write the twelve module micro-identities in English
 - #58 — French copy pass over the redesigned site
 - #70 — Nothing links to the module pages: they exist only in the sitemap
 - #71 — An unreadable page JSON tracebacks, and manifest facts reach the HTML unescaped

@@ -17,8 +17,9 @@ not from the manifest's own `description`: a French page carrying an English sen
 would be a divergence the build could not see.
 
 Skill *descriptions* are left off the page for the same reason — the frontmatter that
-carries them is English-only. The pages name the skills; whether they should also
-describe them, and out of which bilingual file, is #66's call.
+carries them is English-only. #66 settled the call: the pages name the skills and stop
+there. Describing each one would need a bilingual file of its own, and a module's
+`SKILL.md` frontmatter already carries the description for whoever installs it.
 
 ## Why `site/modules.json` and not the manifest
 
@@ -67,7 +68,6 @@ existed before, which is why their generated output is byte-for-byte unchanged.
 
 ## Deliberately not done here
 
-The template is a stub. It carries the structure and the tokens and no design decision —
-the identity work belongs to the redesign epic, and #66 needs a settled voice before the
-prose is worth writing. The prose committed with this feature is a skeleton in both
-languages so the guards have something to guard.
+The template is a stub: it carries the structure and the tokens and no design decision —
+that belongs to the redesign epic. English prose is real as of #66, reviewed against the
+voice the hero (#60) and the slot index (#61) settled; French is #58's.
