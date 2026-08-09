@@ -113,13 +113,35 @@ Whether an implementation module is plugged in or not: if a specs module is docu
 
 Stay within the ticket's scope. What you notice in passing that exceeds it becomes an issue, not an extra line of diff. A PR that overflows is hard to validate — and human validation is the system's bottleneck.
 
+### Commit before you yield
+
+Commit what you have to the ticket's branch now, before Step 5:
+
+```bash
+git add -A && git commit -m "<type>: <what changed>"
+```
+
+Then commit again before **every** later point where this run yields control — Step 6's role review, a human verdict, a hand-off to a sub-agent, a wait on a check. The rule and why it exists are in `features/business/dev-flow/business.md` § *Who decides, on each path* → **Execution**; it is stated there as the general case, so it also covers a pause this skill does not list yet. Read it there rather than inferring it from these two steps.
+
+The two named below are where it bites in practice, not the extent of it.
+
 ## Step 5 — Self-review
 
 Reread your own diff before proposing it. Look for: an uncovered `AC`, an ignored error case, a contract modified without its file, dead code, a secret, an out-of-scope file.
 
 Fix what you find. What you can't fix here becomes an explicit note in the PR.
 
+Commit those fixes before going further, per *Commit before you yield* above.
+
 ## Step 6 — Agent review according to the diff
+
+**Do not spawn a role while the working tree is dirty.** Check it, and commit what comes back:
+
+```bash
+git status --porcelain   # must print nothing before a role is spawned
+```
+
+A role reviews the branch, so uncommitted work is work nobody reviewed — and a paused run does not own the directory it left the work in. `git diff <base>...HEAD` below reads committed history for the same reason.
 
 If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
@@ -145,7 +167,7 @@ claude -p --agent scrumia-teams:scrumia-tech \
 
 Both run the actual role. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
 
-A **Blocked** review gets fixed before opening the PR. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
+A **Blocked** review gets fixed before opening the PR — and the fix is committed before the role is asked again, which is another yield. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 
 Without a team module plugged in, your self-review from step 5 is the only review before the human. Say so explicitly in the PR: the reviewer must know what was checked and by whom.
 

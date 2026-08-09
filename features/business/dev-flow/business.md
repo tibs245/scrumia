@@ -28,6 +28,17 @@ for the bootstrap case, is what it produces — see #18).
 - Neither role settles a business rule found missing mid-execution: that stops the
   run and escalates instead, per `settings.team.escalation.to_human` in
   `.scrumia/config.yaml`.
+- **An execution commits its in-flight work to the ticket's branch before the run
+  yields control.** A yield is any pause that hands the next move to someone else —
+  a role review, a sub-agent, a human verdict, a wait on a check. The rule is stated
+  as the general case on purpose: it covers every yield point, including the ones no
+  skill enumerates yet, because a pause added later is exactly the one an enumeration
+  would leave uncovered.
+- What carries an execution's output is **the branch**, not the working tree. The
+  working tree belongs to whatever process happens to hold it, and that process can
+  vanish while the run is paused; a branch survives it. Uncommitted work is therefore
+  not work the run may assume it still has — and a reviewer asked for a verdict is
+  reading the branch, so uncommitted work is also not under review.
 - The human's unconditional decision point is the merge, per gate 3 below. Under
   `guided` autonomy the human also validates each ticket's transition into
   execution — a second decision, before any agent starts.
@@ -60,8 +71,9 @@ PR mixing docs and code, is #17's to pin down.
 **This feature owns the code cycle.** How a scoped ticket becomes a reviewable
 change — isolation per ticket, when work is committed, what must be reviewed and
 when, what may merge unattended — is specified here, and only here. Not all of it is
-written down yet: worktree ownership and commit-before-pause land in this file
-through #118 and #20. Ownership is settled; the wording of those rules follows.
+written down yet: worktree ownership lands in this file through #20. Commit-before-
+pause is written, above, under § *Who decides, on each path* → **Execution**.
+Ownership is settled; the wording of what remains follows.
 
 **A tracker feature owns the tracing and relaying of that cycle.** It states which
 concrete artefact each abstract step becomes on its tool: that the reviewable

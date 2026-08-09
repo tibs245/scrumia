@@ -22,8 +22,9 @@ soft, light once it is a scoped ticket.
 The execution path's mechanics — one worktree per ticket, one branch per ticket,
 committing before a pause, review before merge, the three gates, `auto_merge` — are
 **this feature's**. Ownership is settled; the wording is not all here yet — worktree
-ownership and commit-before-pause land through #118 and #20, and until they do, no
-other spec becomes their home. A tracker feature *traces* that
+ownership lands through #20, and until it does, no other spec becomes its home.
+Commit-before-pause is written, in `business.md` § *Who decides, on each path*. A
+tracker feature *traces* that
 cycle: it says which concrete artefact each abstract step becomes on its tool, and it
 never redefines the step itself.
 
@@ -56,3 +57,4 @@ exactly one side.
 - #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
 - #11 — Spec the human ceremonies: triggers, artefacts, cadence (this feature defers to it)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0
+- #118 — A ticket agent can lose its whole implementation by pausing for a review it was told to ask for
