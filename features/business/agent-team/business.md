@@ -25,9 +25,9 @@ file under `features/business/` moved); or the manager escalates a business-rule
 ambiguity, a functional edge case, or a compliance question directly, outside
 of a ticket's routing.
 
-**Tech** — a ticket is labeled `scope/M` or `scope/L` (review is required at
-both); or the manager escalates a doubt about architecture, a dependency, debt,
-or implementation quality directly.
+**Tech** — a ticket is labeled `scope/M` or `scope/L` (routed to tech at both);
+or the manager escalates a doubt about architecture, a dependency, debt, or
+implementation quality directly.
 
 The label conditions who is asked at entry; ADR-0006 also holds that the diff's
 actual scope conditions who reviews at exit, independent of the label.

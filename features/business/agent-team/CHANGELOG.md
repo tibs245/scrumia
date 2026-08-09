@@ -2,7 +2,7 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
-## 2026-08-09 — The roles reach Step 6 through the diff's scope, not the ticket's label
+## 2026-08-09 — The roles' entry triggers stop borrowing the exit gate's words: "asked at entry", not "required review"
 - Issue: #130
 - PR: #NN (filled at merge)
 - Breaking: no

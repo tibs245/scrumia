@@ -9,7 +9,7 @@ One scenario per case. Each scenario must be able to fail.
 ```gherkin
 Given a ticket labeled scope/L that modifies a file under features/business/**
 When the manager routes it
-Then the business role is included in the required review, alongside tech
+Then the business role is asked at entry, alongside tech
 ```
 
 ### AC-2 — The manager routes without deciding the substance

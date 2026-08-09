@@ -50,8 +50,8 @@ Then it is scope/L on the spec clause, whether or not the change is small in lin
 
 ```gherkin
 Given a ticket whose scope label was set on the blast-radius test
-When the execution policy reads it for capability and review routing reads it for who
-  must review
+When the execution policy reads it for capability and the manager's entry routing reads
+  it for who is asked while the ticket runs
 Then both apply the same reading of what "a business rule changes" means, and neither
   restates the test in its own words
 ```
