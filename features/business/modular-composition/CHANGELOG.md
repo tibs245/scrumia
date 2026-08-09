@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — AC-1 names the artefact its Then-clause is checked against
+- Issue: #38
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-08 — The composition is printed by a script, not retyped by an agent
 - Issue: #63
 - PR: #73

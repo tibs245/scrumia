@@ -10,8 +10,12 @@ One scenario per rule in `business.md`. Each scenario must be able to fail.
 Given the seven slots named in `index.md` (`specs`, `tracker`, `team`,
   `discovery`, `implementation`, `practices`, `design`)
 When a project has not chosen a module for one of them
-Then the slot itself is still a valid question the project could answer later —
-  it is not removed from the composition for lack of an answer today
+Then `plugins/scrumia-core/scripts/compose-status.sh` still reports it rather
+  than dropping it: for a project-wide slot, its `SLOTS` list still names the
+  slot and the report still prints a row for it, labelled "empty on purpose"
+  or "not declared"; for `implementation` or `practices`, which repeat per
+  app, the affected app's row in the apps table still prints "none" for that
+  column instead of omitting the app or the column
 ```
 
 ### AC-2 — A module fills a slot through configuration, not convention
