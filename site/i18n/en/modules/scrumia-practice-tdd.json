@@ -3,7 +3,7 @@
   "meta_description": "scrumia-practice-tdd: the ScrumIA practices slot — the TDD cycle situated for an agent, mock boundary, AC-to-test.",
   "og_title": "scrumia-practice-tdd — ScrumIA",
   "tagline": "One named point of the implementation contract: how we test.",
-  "responsibilities": "<p>Refines a single question the implementation module leaves open — the red-green-refactor cycle operationalised for an agent, where the mock boundary sits, and how an acceptance criterion maps to a test that can actually fail. Reference, audit and refactor, three skills.</p>",
+  "responsibilities": "<p>Refines a single question the implementation module leaves open — the red-green-refactor cycle operationalised for an agent, where the mock boundary sits, and how an acceptance criterion maps to a test that can actually fail.</p>",
   "refusals": "<p>It does not own the stack, the file structure or the design principles — and where it disagrees with the implementation module, the implementation module wins.</p>",
   "philosophy": "<p>Assumes a failing test is the cheapest specification you can write. Costs a slower first pass, paid back only if the code outlives the sprint that produced it.</p>"
 }

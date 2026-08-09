@@ -4,6 +4,6 @@
   "og_title": "scrumia-core — ScrumIA",
   "tagline": "The kernel. It describes the composition and does nothing else.",
   "responsibilities": "<p>Holds the project's active composition: which module fills which slot, where the configuration lives, and the conventions every other module assumes. <code>scrumia-init</code> installs or checks it; <code>scrumia-compose</code> inspects, changes and diagnoses it.</p>",
-  "refusals": "<p>It decides nothing a module should decide. It fills no slot, ships no workflow of its own, and never answers a question a plugged-in module is there to answer.</p>",
+  "refusals": "<p>It decides nothing a module should decide, ships no workflow of its own, and never answers a question a plugged-in module is there to answer.</p>",
   "philosophy": "<p>Assumes a project is only legible to an agent if its composition is written down rather than inferred. Costs one more file that has to stay true — a stale composition block is worse than none.</p>"
 }
