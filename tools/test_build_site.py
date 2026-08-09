@@ -244,11 +244,46 @@ def test_ac7_manifest_facts_are_escaped() -> None:
     shutil.rmtree(tmp)
 
 
+# --- AC-8 --------------------------------------------------------------------
+
+
+def test_ac8_index_links_to_every_module() -> None:
+    print("AC-8 every module is reachable from the site's navigation")
+    market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+    names = [p["name"] for p in market["plugins"]]
+
+    for lang, index in (("en", REPO / "site" / "index.html"), ("fr", REPO / "site" / "fr" / "index.html")):
+        page = index.read_text(encoding="utf-8")
+        missing = [n for n in names if f'<a class="mod-name" href="modules/{n}.html">{n}</a>' not in page]
+        check(f"[{lang}] every module card links to its page", not missing, str(missing))
+
+
+# --- AC-9 --------------------------------------------------------------------
+
+
+def test_ac9_link_is_generated_not_hand_written() -> None:
+    print("AC-9 the link is generated, not twelve hand-written hrefs")
+
+    template = (REPO / "site" / "templates" / "index.html").read_text(encoding="utf-8")
+    check("the template carries no literal modules/*.html href",
+          'href="modules/' not in template and 'href="{{@lroot}}modules/' not in template)
+    check("the template uses one @modlink_<name> special per card",
+          template.count("{{@modlink_") == len(
+              json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))["plugins"]))
+
+    # The special itself comes from a function of the module list, not a name
+    # hardcoded anywhere near it — arbitrary module names produce matching hrefs.
+    specials = bs.module_link_specials([{"name": "zeta"}, {"name": "a-b-c"}])
+    check("the URL is derived from the module name",
+          specials == {"@modlink_zeta": "modules/zeta.html", "@modlink_a-b-c": "modules/a-b-c.html"}, str(specials))
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
                  test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
                  test_ac6_malformed_page_json_is_reported_not_raised,
-                 test_ac7_manifest_facts_are_escaped):
+                 test_ac7_manifest_facts_are_escaped,
+                 test_ac8_index_links_to_every_module, test_ac9_link_is_generated_not_hand_written):
         test()
     print()
     if FAILURES:

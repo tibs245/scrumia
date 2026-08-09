@@ -12,7 +12,10 @@ belongs in a table instead.
 Anatomy, in order:
 
 - `.mod-ico` — one emoji, the only decorative element on the card
-- `.mod-name` — the plugin's real id, mono, never prettified
+- `.mod-name` — the plugin's real id, mono, never prettified. Links to the module's
+  own page when one is generated for it (`modules/<name>.html`) — underlined by the
+  page's default link style, not a second accent colour, so the card still points
+  with only the command at the bottom
 - `.mod-slot` — the slot it fills, or `kernel` / `no slot`
 - `.mod-desc` — one or two sentences, what it does and what it needs
 - `.mod-foot` — `.pill`s: availability first, then contents (skills, agents, hooks)

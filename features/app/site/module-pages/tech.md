@@ -66,6 +66,18 @@ chrome linked to `index.html` relatively. `@root` already meant *back to the sit
 special was added: `@lroot`, *back to the language root*. It is empty on every page that
 existed before, which is why their generated output is byte-for-byte unchanged.
 
+## Reaching a module page from the index
+
+The index page's `#modules` cards existed before `module.html` did (#65), each one
+hand-written per plugin. Their `.mod-name` had no link — the manifest enumerator gave
+every fact on the card a source except that one, so #70 closes it the same way #65
+opened the pages: `@modlink_<name>`, one special per module, computed alongside
+`@emoji_<name>` in `build()` from the same `modules` list, never a literal
+`href="modules/…"` typed by hand. Twelve names still appear in `index.html` — the
+card content is not itself generated (#65's scope stopped at the module pages) — but
+the URL each one points to is, which is what AC-9 asks for: the string a template
+author could get wrong lives in one Python expression, not twelve.
+
 ## Escaping manifest facts
 
 `module_specials` builds `@mod_tags` and `@mod_skills` out of names sourced from
