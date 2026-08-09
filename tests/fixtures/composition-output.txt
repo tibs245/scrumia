@@ -1,0 +1,21 @@
+
+ScrumIA composition — ScrumIA (tibs245/scrumia)
+
+  Slot       Module
+  ─────────────────────────────────
+  specs      scrumia-specs
+  tracker    scrumia-github-project
+  team       scrumia-teams
+  discovery  empty on purpose
+  design     scrumia-design
+
+  App    Path   Implementation  Practices
+  ───────────────────────────────────────
+  site   site   none            none
+  tools  tools  none            none
+
+  The discovery slot is empty on purpose.
+    claude plugin install scrumia-discovery@scrumia --scope project
+
+  Change any of this with /scrumia-core:scrumia-compose.
+

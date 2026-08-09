@@ -8,6 +8,7 @@ Exit code 0 when everything passes, 1 otherwise. No dependencies.
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -225,6 +226,48 @@ def check_french_leftovers() -> None:
             warn(f"{md.relative_to(ROOT)}: {len(hits)} accented characters — leftover French?")
 
 
+def check_composition_drift() -> None:
+    """The composition output shown on the site must match the real output from the script.
+
+    The fixture is at tests/fixtures/composition-output.txt and serves as the gate.
+    Drifts in .scrumia/config.yaml that aren't reflected here fail CI.
+    """
+    fixture_path = ROOT / "tests" / "fixtures" / "composition-output.txt"
+    if not fixture_path.exists():
+        error(f"{fixture_path.relative_to(ROOT)}: fixture missing — run compose-status.sh and commit the output")
+        return
+
+    script_path = ROOT / "plugins" / "scrumia-core" / "scripts" / "compose-status.sh"
+    if not script_path.exists():
+        error(f"{script_path.relative_to(ROOT)}: script missing")
+        return
+
+    try:
+        result = subprocess.run(
+            ["bash", str(script_path)],
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        real_output = result.stdout
+    except subprocess.TimeoutExpired:
+        error(f"{script_path.relative_to(ROOT)}: script timed out")
+        return
+    except Exception as e:
+        error(f"{script_path.relative_to(ROOT)}: failed to run — {e}")
+        return
+
+    fixture_content = fixture_path.read_text(encoding="utf-8")
+
+    if real_output.strip() != fixture_content.strip():
+        error(
+            f"{fixture_path.relative_to(ROOT)}: output drifted from the real composition. "
+            f"Run 'bash plugins/scrumia-core/scripts/compose-status.sh > tests/fixtures/composition-output.txt' "
+            f"to update the fixture."
+        )
+
+
 def main() -> int:
     check_marketplace()
     check_skills()
@@ -234,6 +277,7 @@ def main() -> int:
     check_doc_links()
     check_skill_scripts()
     check_french_leftovers()
+    check_composition_drift()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")
