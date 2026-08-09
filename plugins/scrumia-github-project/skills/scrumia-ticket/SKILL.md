@@ -119,15 +119,22 @@ Reread your own diff before proposing it. Look for: an uncovered `AC`, an ignore
 
 Fix what you find. What you can't fix here becomes an explicit note in the PR.
 
-## Step 6 — Agent review according to scope
+## Step 6 — Agent review according to the diff
 
-If a team module is plugged in, apply the label's grid:
+If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
-| Label | Required review |
+| What the diff touches | Required review |
 |---|---|
-| `scope/S` | none |
-| `scope/M` | the tech role |
-| `scope/L` | the tech role, plus the business role if a business spec is touched |
+| 1 app, no spec | your Step 5 self-review, already done |
+| Code, an App spec | the tech role |
+| A business feature under `specs_root`, or a `catalog` legal/compliance file | the tech role + the business role |
+| ≥2 apps, or an interface-contract file from `catalog` | the tech role, + the business role if business is at stake |
+
+This is the same table `scrumia-review` applies at gate 2, deliberately: the two must never disagree about who owed this PR a review.
+
+**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR: per [ADR-0006](../../../../docs/adr/0006-ticket-routing.md), that gap is a signal of failed scoping, not a detail.
+
+The table has no scope tier in it, `scope/XL` included: ADR-0006 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
 Spawn the role by its agent type — `scrumia-teams:scrumia-tech`, `scrumia-teams:scrumia-business`. If the type does not resolve, the module that ships it was installed or updated without a restart since; say so rather than reviewing anyway, and fall back to a subprocess, prompt on stdin:
 
@@ -150,7 +157,7 @@ The same holds when the role itself could not be reached. Handing your own gener
 gh pr create --title "<type>: <expected outcome>" --body "..."
 ```
 
-The description contains: what was done, the `Closes #<n>` link, the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews, and the open reservations with their issues.
+The description contains: what was done, the `Closes #<n>` link, the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
 
 Then comment on the issue with the PR link, and move the card to the `in_review` step:
 

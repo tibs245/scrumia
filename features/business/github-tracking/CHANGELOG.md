@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — `scope/*` is down to one reader: Step 6 stopped gating the review on the label
+- Issue: #130
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — `board.sh read` now surfaces the issue's own `state` and flags a close without a PR
 - Issue: #79
 - PR: #150

@@ -23,14 +23,17 @@ the label is a signal, not the source of truth.
 | Label | Read by | For |
 |---|---|---|
 | `scope/*` | `scrumia-teams/scripts/pick-model.sh` | the scope × risk cell of the execution matrix |
-| `scope/*` | `scrumia-ticket` Step 6 | which role reviews (`S` none, `M` tech, `L` tech + business if a business rule changes) |
 | `risk/*` | `scrumia-teams/scripts/pick-model.sh` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
-`scope/*` has two readers, and they read one axis, not two: what counts as "a business
-rule changes" is specified once, in `features/business/execution-policy/`, and neither
-consumer restates it. A label read two ways is two labels, and the second one drifts
-without anyone naming it.
+`scope/*` has exactly one reader, `pick-model.sh`, and what its cell means is specified
+once, in `features/business/execution-policy/`. It had a second until #130 —
+`scrumia-ticket` Step 6, which gated the required review on the tier. Gate 2 routes by
+the diff's actual scope instead (`docs/adr/0005-validation-gates.md`), because a wrong
+label is precisely the failure a review guards against, and a label cannot guard against
+itself. The label still says which review to *expect*, which is a reader's convenience,
+not a gate. A label read two ways is two labels, and the second one drifts without
+anyone naming it — this one did, and #79 shipped with the review it was owed skipped.
 
 What happens when either label is absent — which default applies, and that the
 assumption is stated rather than silently applied — belongs to the policy that reads

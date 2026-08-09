@@ -41,7 +41,7 @@ If absent, propose these values and write them. The columns reflect the real flo
 | Label | Usage | Read by |
 |---|---|---|
 | `scrumia` | Marks tickets driven by the composition | filters, to separate them from tickets opened by hand |
-| `scope/S` `scope/M` `scope/L` `scope/XL` | How much work, set at refinement | `pick-model.sh`, `scrumia-ticket` Step 6 |
+| `scope/S` `scope/M` `scope/L` `scope/XL` | How much work, set at refinement | `pick-model.sh` — and no one else: the PR review is routed by the diff, not by this label |
 | `risk/low` `risk/medium` `risk/high` `risk/critical` | What it costs to get this wrong | `pick-model.sh` |
 | `needs-<role>` | Escalation requested to a role — one per active role in `settings.team.roles`, including those a non-team module provides (`needs-design`) | `scrumia-manager` |
 | `epic` | Marks a unit of value; its children are **native sub-issues** | `scrumia-status`, `board.sh epic` |

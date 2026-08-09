@@ -31,7 +31,7 @@ soft, light once it is a scoped ticket.
 | File | Why it exists |
 |---|---|
 | `business.md` | who decides what on each path, and where the human gate sits |
-| `qa.md` | the refusal rule that keeps execution from running on a guessed intent |
+| `qa.md` | the refusal rule that keeps execution from running on a guessed intent, the autonomy gates, and what routes gate 2's review |
 
 ## Open issues
 

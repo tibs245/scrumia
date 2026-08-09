@@ -57,6 +57,8 @@ Three questions are enough to settle it: *how many apps?*, *does a specs file ch
 
 When hesitating between two levels, take the higher one. One review too many costs a few minutes; a missing review costs a revert.
 
+That "Handling" column is **entry** routing — who is asked before and during execution, and which model runs it. It does not decide who reviews the PR at the end: gate 2 routes that by the diff's actual scope (ADR-0005), so a ticket whose diff outgrows the label you set still gets the review its diff calls for, and the gap comes back to you as a scoping signal rather than as a skipped review.
+
 ## Preparing a sprint
 
 A sprint is a set of tickets that can move forward **in parallel without stepping on each other**. The selection criterion is not priority alone, it's priority **and** absence of conflict.

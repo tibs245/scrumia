@@ -90,7 +90,7 @@ The outline:
 2. **Update the spec before the code**, if the behavior changes
 3. Implement **per the app's implementation module**
 4. Cover each `AC-n` with a test that can fail
-5. Self-review, then review by the roles according to the scope
+5. Self-review, then review by the roles according to the diff's actual scope
 6. Open the PR
 
 > **Modules** — `scrumia-teams` orchestrates, `scrumia-impl-*` says how to code in each app, `scrumia-github-project` carries the PRs.
