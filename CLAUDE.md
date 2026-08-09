@@ -11,15 +11,12 @@ ScrumIA is the composition it ships: this repo runs on its own plugins.
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 | Team | `scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
+| Discovery | `scrumia-discovery` | Scope an idea before it becomes a ticket: `scrumia-brainstorm`, then `scrumia-split`. |
 | Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
 `scrumia-design` also ships the `designer` standing role, registered in
 `settings.team.roles` like the other three (`docs/adr/0014`). Route interface questions
 to it — it is the only role that judges what a user actually sees.
-
-The `discovery` slot is empty: `scrumia-discovery` is not installed. An idea therefore
-goes straight to a ticket without a scoping pass — say so rather than improvising one.
-Install it with `claude plugin install scrumia-discovery@scrumia --scope project`.
 
 ### Implementation and practices, per app
 

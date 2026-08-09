@@ -17,7 +17,7 @@ And the activated row's answer opens, and the previously open row closes,
 ### AC-2 — The empty state is stated in words, not only in stroke style
 
 ```gherkin
-Given the `discovery`, `implementation` and `practices` rows, which are empty
+Given the `implementation` and `practices` rows, which are empty
   in this repo's real composition
 When any of them is read, with or without colour vision
 Then its `.slot-fill` reads `nothing installed`, and its dashed leader is a
