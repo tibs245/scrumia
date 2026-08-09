@@ -2,6 +2,16 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — The rail ships
+- Issue: #112
+- PR: (filled at merge)
+- Breaking: no. Implements `design/components/site-header/spec.md` → "The rail",
+  decided in #74. `site/assets/style.css` no longer lights the hover
+  underline — only `aria-current` does, in the baseline — and a new
+  `site/assets/header.js` slides a rail under the pointed-at or focused nav
+  link for hover-capable pointers, home to the current page at rest. Touch
+  and no-JS keep the static underline #59 shipped, unchanged.
+
 ## 2026-08-09 — The site-header candidate is settled: the rail
 - Issue: #74
 - PR: (filled at merge)

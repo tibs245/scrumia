@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="../../tokens.css">
 <link rel="stylesheet" href="../../../site/assets/style.css">
 <style>
-  /* Three candidate treatments, side by side, so the choice is made by looking.
-     None is implemented on the site yet — the winner moves into style.css whole.
-     Scroll inside each frame: two of the three only exist once you do. */
+  /* The two states the shipped header renders: the baseline underline (no-JS,
+     touch, reduced motion at rest) and the rail it hands off to for a
+     hover-capable pointer. See "The rail" in spec.md for the rules. */
 
   body { padding: var(--space-8); }
   h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
@@ -46,7 +46,6 @@
   .hdr-in {
     display: flex; align-items: center; gap: var(--space-5);
     padding: 0 var(--space-5); height: var(--header-h);
-    transition: height var(--dur-2) var(--ease-move);
   }
   .hdr-brand {
     display: flex; align-items: center; gap: var(--space-2);
@@ -57,71 +56,32 @@
   .hdr-brand em { font-style: normal; color: var(--accent); }
   .hdr-nav { display: flex; gap: var(--space-4); margin-left: auto; align-items: center; position: relative; }
   .hdr-nav a {
-    color: var(--text-soft); text-decoration: none; font-size: var(--text-base);
-    white-space: nowrap; padding: var(--space-1) 0;
+    color: var(--text-faint); text-decoration: none; font-size: var(--text-base);
+    white-space: nowrap; padding: var(--space-1) 0; border-bottom: 2px solid transparent;
     transition: color var(--dur-1) var(--ease-move);
   }
-  .hdr-nav a:hover, .hdr-nav a[aria-current="page"] { color: var(--text); }
+  .hdr-nav a:hover { color: var(--text); }
 
-  /* ── A — Assembly ─────────────────────────────────────────────────────── *
-   * The header earns its keep on scroll: it compacts, its ground goes solid,
-   * and a cyan rule reports how far down the page you are. Every change
-   * stands for a state, which is the rule. The mark, not Hop, sits at rest
-   * beside the wordmark — see "What is settled" in spec.md for why.
-   */
-  .hdr-a .hdr-progress {
-    position: absolute; left: 0; bottom: -1px; height: 2px;
-    background: var(--accent); width: var(--p, 0%);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
-    transition: width 80ms linear;
-  }
-  .hdr-a.is-stuck .hdr-in { height: calc(var(--header-h) - var(--space-3)); }
-  .hdr-a.is-stuck { background: color-mix(in srgb, var(--ground) 94%, transparent); }
+  /* ── Baseline — the static current-page underline ───────────────────────
+     No JS, touch, or a pointer this header hasn't taken over from yet. */
+  .hdr-nav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
 
-  /* ── B — Scanline ─────────────────────────────────────────────────────── *
-   * A cyan sweep crosses the header on a slow loop, the way a process polls.
-   * Quieter than A and always on — which is also its risk: it moves when
-   * nothing has happened.
+  /* ── The rail ─────────────────────────────────────────────────────────── *
+   * One cyan rail, sliding to whatever you point at or focus, home to the
+   * current page when you stop. Once it is live it owns the accent, so the
+   * static underline above is turned off for this frame.
    */
-  .hdr-b { overflow: hidden; }
-  .hdr-b::after {
-    content: ""; position: absolute; inset: auto 0 -1px 0; height: 1px;
-    background: linear-gradient(90deg,
-      transparent, var(--accent) 42%, var(--accent) 58%, transparent);
-    opacity: 0.9;
-    animation: scan 4.5s var(--ease-move) infinite;
+  .hdr-rail-live .hdr-nav a[aria-current="page"] { border-bottom-color: transparent; }
+  .hdr-rail {
+    position: absolute; left: 0; bottom: 0; height: 2px; width: 0;
+    background: var(--accent); border-radius: var(--radius-pill);
   }
-  @keyframes scan {
-    0%   { transform: translateX(-100%); }
-    55%, 100% { transform: translateX(100%); }
-  }
-
-  /* ── C — Rail ─────────────────────────────────────────────────────────── *
-   * The accent is a single rail that slides to whatever you point at, and
-   * returns to the current page when you stop. One accent, one position,
-   * moving only in response to you.
-   */
-  .hdr-c .hdr-rail {
-    position: absolute; bottom: -1px; height: 2px; background: var(--accent);
-    border-radius: var(--radius-pill);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
-    width: 0; transform: translateX(0);
-  }
-  /* The rail takes its first position without a transition, and only then earns
-     one. Animating in from zero width would say something arrived, and nothing
-     did — the current page was already the current page. */
-  .hdr-c .hdr-rail.is-ready {
-    transition: transform var(--dur-2) var(--ease-summon),
-                width var(--dur-2) var(--ease-summon);
+  .hdr-rail.is-ready {
+    transition: transform var(--dur-2) var(--ease-move), width var(--dur-2) var(--ease-move);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* The header still reports; it just stops travelling. A's rule jumps to its
-       value, B's sweep is removed outright — a loop with no state behind it is
-       the first thing to cut — and C's rail moves without easing. */
-    .hdr-a .hdr-progress, .hdr-c .hdr-rail { transition: none; }
-    .hdr-b::after { animation: none; opacity: 0.35; transform: none; }
-    .hdr-in { transition: none; }
+    .hdr-rail.is-ready { transition: none; }
   }
 </style>
 </head>
@@ -134,39 +94,14 @@
   <button class="copy-btn" type="button" id="t">dark / light</button>
 </div>
 
-<p class="note-line">Three treatments of the same header. Scroll inside each frame — A and C only
-exist once you do something.</p>
+<p class="note-line">The header's two states. The rail frame only exists once you hover or focus a
+link inside it — try both.</p>
 
-<h2><span class="tag">Variant A</span>Assembly — the header reports where you are</h2>
-<p class="note-line">On scroll the bar compacts, its ground goes solid, and a cyan rule fills to
-your position. Nothing moves that is not a state change.</p>
-<div class="frame" data-variant="a">
-  <header class="hdr hdr-a">
-    <div class="hdr-in">
-      <a class="hdr-brand" href="#">
-        <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
-        Scrum<em>IA</em>
-      </a>
-      <nav class="hdr-nav">
-        <a href="#" aria-current="page">Overview</a><a href="#">Workflow</a><a href="#">Reference</a><a href="#">About</a>
-      </nav>
-    </div>
-    <div class="hdr-progress"></div>
-  </header>
-  <div class="frame-body">
-    <h3>One run, end to end</h3>
-    <p>The reference composition. Blue steps need a human; coral steps don't.</p>
-    <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
-    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
-    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
-  </div>
-</div>
-
-<h2><span class="tag">Variant B</span>Scanline — the header is always working</h2>
-<p class="note-line">A cyan sweep crosses on a slow loop, the way a process polls. Quieter and
-present from the first frame — and its own risk: it moves when nothing has happened.</p>
-<div class="frame" data-variant="b">
-  <header class="hdr hdr-b">
+<h2><span class="tag">Baseline</span>The static current-page underline</h2>
+<p class="note-line">What no-JS, touch and a pointer the rail hasn't taken over from yet all
+render: the current page keeps its underline, hover only brightens the label.</p>
+<div class="frame" data-variant="baseline">
+  <header class="hdr">
     <div class="hdr-in">
       <a class="hdr-brand" href="#">
         <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
@@ -181,22 +116,20 @@ present from the first frame — and its own risk: it moves when nothing has hap
     <h3>One run, end to end</h3>
     <p>The reference composition. Blue steps need a human; coral steps don't.</p>
     <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
-    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
-    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
   </div>
 </div>
 
-<h2><span class="tag">Variant C</span>Rail — the accent follows your attention</h2>
+<h2><span class="tag">The rail</span>The accent follows your attention</h2>
 <p class="note-line">One cyan rail, sliding to whatever you point at and returning to the current
 page when you stop. Hover the navigation. The accent has exactly one position, and it only moves because you did.</p>
-<div class="frame" data-variant="c">
-  <header class="hdr hdr-c">
+<div class="frame" data-variant="rail">
+  <header class="hdr" id="railHeader">
     <div class="hdr-in">
       <a class="hdr-brand" href="#">
         <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
         Scrum<em>IA</em>
       </a>
-      <nav class="hdr-nav">
+      <nav class="hdr-nav" id="railNav">
         <a href="#" aria-current="page">Overview</a><a href="#">Workflow</a><a href="#">Reference</a><a href="#">About</a>
         <span class="hdr-rail" aria-hidden="true"></span>
       </nav>
@@ -206,8 +139,6 @@ page when you stop. Hover the navigation. The accent has exactly one position, a
     <h3>One run, end to end</h3>
     <p>The reference composition. Blue steps need a human; coral steps don't.</p>
     <p>A slot is a question. A module is one answer. An empty slot is a capability the project doesn't have — agents adjust accordingly.</p>
-    <p>Specs ship on a branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.</p>
-    <p>Roles with the wider view get pulled in when their answer changes the ticket — not to rubber-stamp it.</p>
   </div>
 </div>
 
@@ -217,35 +148,31 @@ page when you stop. Hover the navigation. The accent has exactly one position, a
     r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
   });
 
-  // A — compact on scroll, and report the position.
-  var frameA = document.querySelector('[data-variant="a"]');
-  var hdrA = frameA.querySelector('.hdr-a');
-  frameA.addEventListener('scroll', function () {
-    var max = frameA.scrollHeight - frameA.clientHeight;
-    hdrA.style.setProperty('--p', (max > 0 ? (frameA.scrollTop / max) * 100 : 0) + '%');
-    hdrA.classList.toggle('is-stuck', frameA.scrollTop > 8);
-  });
+  var header = document.getElementById('railHeader');
+  var nav = document.getElementById('railNav');
+  var rail = nav.querySelector('.hdr-rail');
+  var home = nav.querySelector('[aria-current="page"]');
 
-  // C — the rail follows the pointer, and goes home when it leaves.
-  var navC = document.querySelector('.hdr-c .hdr-nav');
-  var railC = navC.querySelector('.hdr-rail');
   function railTo(el) {
-    railC.style.width = el.offsetWidth + 'px';
-    railC.style.transform = 'translateX(' + el.offsetLeft + 'px)';
+    rail.style.width = el.offsetWidth + 'px';
+    rail.style.transform = 'translateX(' + el.offsetLeft + 'px)';
   }
-  var homeC = navC.querySelector('[aria-current="page"]');
-  navC.querySelectorAll('a').forEach(function (a) {
+  nav.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('mouseenter', function () { railTo(a); });
     a.addEventListener('focus', function () { railTo(a); });
   });
-  navC.addEventListener('mouseleave', function () { railTo(homeC); });
-  // Fonts change the measurements, so place the rail once they have loaded.
+  nav.addEventListener('mouseleave', function () { railTo(home); });
+  nav.addEventListener('focusout', function (e) {
+    if (!nav.contains(e.relatedTarget)) railTo(home);
+  });
+
+  // Placed after fonts settle, and on a synchronous reflow rather than
+  // requestAnimationFrame, which never fires in a background tab.
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
-    railTo(homeC);
-    // A synchronous reflow, not requestAnimationFrame: rAF never fires in a
-    // background tab, and the rail would stay stuck at zero until you looked.
-    void railC.offsetWidth;
-    railC.classList.add('is-ready');
+    railTo(home);
+    void rail.offsetWidth;
+    header.classList.add('hdr-rail-live');
+    rail.classList.add('is-ready');
   });
 </script>
 

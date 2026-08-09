@@ -60,6 +60,26 @@ And the run exits non-zero when either fails
 The hue floor is the half a contrast ratio cannot see: it is a luminance
 measurement, and two colours a reader cannot tell apart can sit at 7:1.
 
+### AC-7 — The rail is the header's one accent mark
+
+```gherkin
+Given a reader with a hover-capable pointer, on any page with a current nav link
+When they hover or focus a different nav link, then stop pointing at anything
+Then the rail moves under the pointed-at or focused link, and slides back to the
+  current page's link when they stop
+And at no point are the rail and the static current-page underline both showing
+  an accent mark at once
+```
+
+### AC-8 — Touch and no-JS keep the static underline
+
+```gherkin
+Given a reader on a touch device, or one whose script never ran
+When they load a page with a current nav link
+Then the header renders the current page with a static accent underline,
+  exactly as #59 shipped it, and no rail element ever activates
+```
+
 ## Edge cases
 
 ### AC-4 — The page is complete without JavaScript
@@ -73,11 +93,17 @@ Then every element is visible — nothing is left hidden waiting for a script th
 And no reader sees one theme painted and then replaced by another
 ```
 
+### AC-9 — Reduced motion keeps the rail, not its travel
+
+```gherkin
+Given a reader whose system asks for `prefers-reduced-motion: reduce`, on a
+  hover-capable pointer
+When the page loads, and they hover or focus a nav link
+Then the rail is at the correct position at every point — home on load, under
+  the pointed-at link while pointing — with no animated transition between them
+```
+
 ## Out of scope
 
 - The hero, the slot index and the run (#60, #61, #62). This feature lands the
   ground they stand on and nothing that stands on it.
-- The `site-header` rail's own behaviour (hover/focus tracking, reduced-motion
-  fallback). The candidate is decided (#74, the rail) but not yet implemented
-  (#112); until it lands the masthead carries no pointer behaviour at all,
-  which is the only honest default in the meantime.
