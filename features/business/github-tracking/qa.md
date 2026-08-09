@@ -102,8 +102,39 @@ and returned instead under `closed_without_pr`, with a `closed_without_pr_count`
 top level; a closed card sitting in `Done` is a normal merge and stays reported as
 usual. Fixed in #79.
 
+### AC-9 — A deviation comment with no reason is reported, not counted
+
+```gherkin
+Given an issue carrying a `Deviation:` comment whose `Reason:` line is absent or empty
+When the ticket's deviation record is read
+Then the record is reported as non-compliant, and it is not counted as a deviation
+  somebody explained — an entry that parses is not an entry that says why
+```
+
+### AC-10 — The record is on the issue, not in the PR that may never open
+
+```gherkin
+Given a ticket whose model a human overrode, whose run dies before opening a pull request
+When someone later asks how that ticket ran against what the policy preferred
+Then the answer is on the issue as a comment — the artefact that exists independently of
+  the run — and not in a PR body, which for this ticket was never written
+```
+
+### AC-11 — A deviation is found by its cell without opening the tickets
+
+```gherkin
+Given several issues across the project carrying deviation comments on different cells
+When the records for one cell are searched
+Then they are returned by a search over comment text on the cell token, without
+  enumerating the board or opening each issue, and a search term matching nothing returns
+  nothing rather than the whole repository — this is what the fielded shape buys, and
+  prose in a PR body is what fails it
+```
+
 ## Out of scope
 
+- Who reads the deviation records once they accumulate, and on what occasion — #167.
+  This feature materialises the record and makes the search possible; it appoints nobody.
 - Creating the board's columns and the project itself (`scrumia-project-setup`) —
   setup-time, not the ongoing reading and moving this feature specifies.
 - The code cycle's **process** — isolation per ticket, when work is committed, what

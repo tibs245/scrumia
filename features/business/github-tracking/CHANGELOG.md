@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — A deviation from the execution policy is recorded as a structured comment on its issue; the PR body becomes the echo
+- Issue: #32
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — AC-4's short-read gap closed: `board.sh` confirms a filtered, non-empty read with retry-with-backoff
 - Issue: #26
 - PR: #NN (filled at merge)

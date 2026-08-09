@@ -171,8 +171,61 @@ Then the cell is reported rather than executed — above the ceiling is reachabl
   a human override recorded as a deviation, never as a default a table applies
 ```
 
+### AC-17 — Both kinds of deviation land in the same record, which says which kind it is
+
+```gherkin
+Given one ticket whose model a human overrode, and another whose split the executor
+  refused as indivisible
+When a later reader asks, of either, whether it ran the way the policy preferred and why
+  not
+Then both answers are found in the same venue, each record naming its kind — a second
+  venue for either kind fails this, and so does one venue that cannot tell the two apart
+```
+
+### AC-18 — Deviations on one cell are countable by query, not by re-reading tickets
+
+```gherkin
+Given several tickets that deviated on the same scope × risk cell
+When someone asks how often that cell was deviated from, and in which direction
+Then the records are queried on the cell they name and returned together; a record that
+  can only be found one ticket at a time fails this, whether or not each entry is complete
+```
+
+Nothing is required to raise this on its own. Automatic surfacing is explicitly not owed
+here — a human running the query is what this criterion asks for. Who runs it and when is
+#167's, per `business.md` § *Reading the record is a human's job*.
+
+### AC-19 — The record is written, never read back to choose a model
+
+```gherkin
+Given a cell whose recorded deviations all lean the same way
+When the execution policy is asked which model runs the next ticket on that cell
+Then it answers what the cell says, unchanged — the history is evidence for editing the
+  grid, and a caller that consults past deviations to pick a model is running a second
+  policy, which AC-2 already forbids
+```
+
+### AC-20 — An agent's unilateral departure is not recorded as an override
+
+```gherkin
+Given a run that used a model the policy did not name, and that no human chose
+When it is recorded
+Then it is not filed as a human override — the override kind names the human whose
+  decision it was, and a departure nobody decided is not counted among the deviations the
+  grid is judged by
+```
+
+Only the negative half is a criterion. What *should* happen to such a run — who is told,
+and in what shape — is not specified here, because nothing today can tell an agent's
+unilateral departure from a human's override in the first place: both arrive as the same
+comment. Attribution that a machine can check is #42's, and until it lands this criterion
+guards the vocabulary rather than the behaviour.
+
 ## Out of scope
 
+- Who reads the accumulated records, and on what occasion. This feature requires that
+  repetition be countable (AC-18) and states that counting it is a human's job; the reader
+  and the moment are #167's.
 - The grid's cells, the capability order they climb, and the ceiling they stop below:
   project data, declared in `.scrumia/config.yaml` under `settings.team.execution`,
   beside each other. Restating any of them here would create the second statement AC-2
@@ -180,7 +233,9 @@ Then the cell is reported rather than executed — above the ceiling is reachabl
 - The mechanics of the script that enacts this policy — its flags, its output shape,
   how it detects a broken grid. It implements these criteria; it is not specified by
   them.
-- Where a deviation is durably recorded — a label, a field, a structured comment. This
-  feature specifies the record's content; #32 chooses its venue.
+- Which concrete artefact the durable record is. This feature requires one venue for both
+  kinds, fielded and queryable by cell; which artefact that becomes —
+  an issue comment, a row in a file — is the tracker feature's, and
+  `features/business/github-tracking/` states it for GitHub.
 - Which model a *role* runs as, as opposed to which model runs a *ticket*: that lives
   in the role's own agent frontmatter, per `features/business/agent-team/`.

@@ -29,10 +29,36 @@ ${CLAUDE_SKILL_DIR}/../../../scrumia-teams/scripts/pick-model.sh <n>
 Do what `instruction` says; don't re-derive it from the labels. Three answers are possible:
 
 - `decision: "model"` — execute here, on the model named.
-- `decision: "split_or_model"` — the ticket is oversized. **Try to split it first** (`scrumia-refine` Step 4, or the discovery module). Splitting is the preferred outcome, not a formality. If the work is genuinely indivisible — one migration, one contract that cannot be delivered by halves — execute it on the fallback model and state in the PR why the split was refused. An oversized ticket is a reason to think again, not a wall.
+- `decision: "split_or_model"` — the ticket is oversized. **Try to split it first** (`scrumia-refine` Step 4, or the discovery module). Splitting is the preferred outcome, not a formality. If the work is genuinely indivisible — one migration, one contract that cannot be delivered by halves — execute it on the fallback model and record the refused split as a deviation, below. An oversized ticket is a reason to think again, not a wall.
 - `decision: "split"` — return it to refinement; this cell allows no fallback.
 
 If no team module is plugged in, there is no policy to read: execute on the current model and say so in the PR.
+
+### Record a deviation before the work starts
+
+Two things make this run deviate from the policy: **a human overrode the model** — you were told to run on something other than what `pick-model.sh` answered — or **you refused the split** a `split_or_<model>` cell preferred. Either one gets one comment on the issue, posted **now**, before Step 2:
+
+```bash
+gh issue comment <n> --body-file - <<'EOF'
+Deviation: override — cell L/low — policy opus — ran sonnet — by human @<handle>
+Reason: <why, in the words of whoever decided it>
+EOF
+```
+
+Use the heredoc, not `--body '…'`: a reason is English prose and the first apostrophe in it ends the quote and breaks the command.
+
+- `<kind>` is `override` or `split_refused`. An **override is a human's decision by definition** — if nobody chose it, you have not overridden the policy, you have failed to follow it. Do not file that as an override.
+- `cell` is the scope and risk `pick-model.sh` read back, in the axes' own vocabulary (`L/low`), not the project's label spelling. Where it reports `scope_rated: false`, write `unlabeled/<risk>`.
+- `policy` is what it answered, verbatim — a model name, `split_or_<model>`, or `split`.
+- `ran` is the model you are actually executing on.
+- `by` is `human` and the handle whose decision it was for an override; for a refused split it is you — name this skill.
+- **`Reason:` is mandatory.** A deviation with no reason cannot be reviewed and cannot be told apart from a mistake; a record missing it is non-compliant, not a note to complete later.
+
+Now, not at PR time: the record has to survive a run that dies before opening one. The PR echoes it in Step 7 for a human reading the diff, and the echo is a copy — this comment is the record. Prose in five PR bodies is exactly what this replaces.
+
+**If the comment cannot be posted, stop** — same discipline as any other failing `gh` call in this step, and for a sharper reason: a deviation that runs unrecorded is the exact failure this record exists to end, and it is invisible afterwards. Report it and let the human decide.
+
+This record is written and never read back. It is evidence for editing the grid in `.scrumia/config.yaml`, not a precedent that changes what a cell answers today — the policy's answer stays the only way a model is chosen.
 
 **If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. This is the ticket's first `gh` call — stop here, before opening a worktree or touching the board: nothing half-started is easier to clean up than a stray branch and a stuck card.
 
@@ -180,6 +206,8 @@ gh pr create --title "<type>: <expected outcome>" --body "..."
 ```
 
 The description contains: what was done, the `Closes #<n>` link, the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
+
+If Step 0 recorded a deviation, echo it here — kind, cell, what the policy chose, what ran, why — for a human reading the diff. The echo, not the record: the comment on the issue is what a later reader queries, and the PR body is a copy of it.
 
 Then comment on the issue with the PR link, and move the card to the `in_review` step:
 

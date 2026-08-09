@@ -101,12 +101,16 @@ emit() {
      because: $because}'
 }
 
+# A deviation happens after the policy speaks, so the answer carries the obligation
+# to state a reason, never the reason.
+DEVIATION_NOTE=" Running on anything else is a deviation: record it on the ticket — what the policy chose, what ran, and why — before the work starts."
+
 # No scope label means the ticket was never refined; guessing one would invent
 # an estimate nobody made.
 if [ "$SCOPE_RATED" = false ]; then
   warn "issue has no ${SCOPE_PREFIX}* label — falling back to execution.unlabeled"
   emit "model" "$UNLABELED" \
-    "Run on $UNLABELED, and say in the PR that this ticket carried no ${SCOPE_PREFIX}* label. Ask for refinement rather than assuming a size." \
+    "Run on $UNLABELED, and say in the PR that this ticket carried no ${SCOPE_PREFIX}* label. Ask for refinement rather than assuming a size.$DEVIATION_NOTE" \
     "no ${SCOPE_PREFIX}* label -> execution.unlabeled"
   exit 0
 fi
@@ -117,7 +121,7 @@ CELL=$(jq -r --arg s "$SCOPE" --arg r "$RISK" \
 if [ -z "$CELL" ]; then
   warn "no matrix cell for scope=$SCOPE risk=$RISK — falling back to execution.unlabeled"
   emit "model" "$UNLABELED" \
-    "Run on $UNLABELED. The matrix in $CONFIG has no cell for scope=$SCOPE risk=$RISK — report this gap." \
+    "Run on $UNLABELED. The matrix in $CONFIG has no cell for scope=$SCOPE risk=$RISK — report this gap.$DEVIATION_NOTE" \
     "matrix[$SCOPE][$RISK] undefined -> execution.unlabeled"
   exit 0
 fi
@@ -131,17 +135,17 @@ case "$CELL" in
   split_or_*)
     FALLBACK=${CELL#split_or_}
     emit "split_or_model" "$FALLBACK" \
-      "First try to split this ticket into independently executable tickets. If — and only if — the work is genuinely indivisible, execute it on $FALLBACK and state in the PR why the split was refused. Do not split into tickets that cannot ship on their own.$RISK_NOTE" \
+      "First try to split this ticket into independently executable tickets. If — and only if — the work is genuinely indivisible, execute it on $FALLBACK and record the refused split on the ticket, with the reason it could not be divided. Do not split into tickets that cannot ship on their own.$RISK_NOTE" \
       "scope=$SCOPE risk=$RISK -> $CELL"
     ;;
   split)
     emit "split" "" \
-      "Split this ticket before executing it. This cell allows no fallback model — return it to refinement.$RISK_NOTE" \
+      "Split this ticket before executing it. This cell allows no fallback model — return it to refinement.$RISK_NOTE Executing it anyway is a deviation, whatever it runs on: record it on the ticket — that the policy answered split, what ran, and why — before the work starts." \
       "scope=$SCOPE risk=$RISK -> split"
     ;;
   *)
     emit "model" "$CELL" \
-      "Execute this ticket on $CELL.$RISK_NOTE" \
+      "Execute this ticket on $CELL.$RISK_NOTE$DEVIATION_NOTE" \
       "scope=$SCOPE risk=$RISK -> $CELL"
     ;;
 esac

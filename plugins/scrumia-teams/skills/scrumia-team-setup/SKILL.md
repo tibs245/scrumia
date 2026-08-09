@@ -92,12 +92,15 @@ ${CLAUDE_SKILL_DIR}/../../scripts/pick-model.sh 42
 
 ```json
 {"scope":"S","risk":"critical","decision":"model","model":"opus",
- "instruction":"Execute this ticket on opus.","because":"scope=S risk=critical -> opus"}
+ "instruction":"Execute this ticket on opus. Running on anything else is a deviation: record it on the ticket — what the policy chose, what ran, and why — before the work starts.",
+ "because":"scope=S risk=critical -> opus"}
 ```
 
 Callers act on `instruction`. A skill that re-derives the decision from the YAML is a second implementation of the policy, and the two drift.
 
-A cell holds a model, or `split_or_<model>`. The second form is a preference, not a verdict: **try to split, and if the work is genuinely indivisible, run it on the named model and say why the split was refused.** Oversized work is a reason to think again, not a dead end — which is why the fallback travels with the decision rather than leaving the caller stuck.
+A cell holds a model, or `split_or_<model>`. The second form is a preference, not a verdict: **try to split, and if the work is genuinely indivisible, run it on the named model and record why the split was refused.** Oversized work is a reason to think again, not a dead end — which is why the fallback travels with the decision rather than leaving the caller stuck.
+
+That record, and the one a human override leaves, go on the ticket itself — what the policy chose, what ran, and why — so that a cell deviated from again and again can be counted rather than remembered. Where exactly it lands is the tracker module's to say; `pick-model.sh`'s answer carries the obligation, not the venue.
 
 Two keys cover what the labels don't say. `unlabeled` is the model for a ticket carrying no scope label at all — it runs, and the answer asks for refinement rather than inventing an estimate nobody made. `unrated_risk` is the risk column assumed when only the scope is known; the answer flags the assumption so it can be contradicted.
 

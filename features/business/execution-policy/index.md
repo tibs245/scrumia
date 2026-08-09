@@ -29,7 +29,7 @@ judgement improvised when execution starts.
 
 | File | Why it exists |
 |---|---|
-| `business.md` | the two axes, what the scope axis measures, the grid's invariant, the oversized fallback, the visible assumptions, vocabulary mapping, and what a deviation records |
+| `business.md` | the two axes, what the scope axis measures, the grid's invariant, the oversized fallback, the visible assumptions, vocabulary mapping, and what a deviation records — one venue for both kinds, fielded, and who reads it |
 | `qa.md` | those rules as scenarios that can fail |
 | `CHANGELOG.md` | history of changes to this feature |
 
@@ -43,8 +43,8 @@ deliberately out of this spec, and stating them here would be the second stateme
 ## Open issues
 
 - #4 — [EPIC] Spec the agent team: roles, triggers, routing, refusal lines (parent)
-- #32 — where a deviation is durably recorded; this feature specifies the record's
-  content, #32 chooses its venue
+- #167 — the record has no reader: who counts repetition on a cell, and when. This
+  feature requires the count to be possible and stops there, on purpose
 - #47 — the residual implementation work: `pick-model.sh` detecting a grid that
   breaks the climbing invariant, and the templates that seed a grid carrying the
   order beside it
