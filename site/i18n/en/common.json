@@ -9,5 +9,6 @@
   "theme_toggle": "Toggle dark mode",
   "footer_tagline": "ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.",
   "footer_repo": "Repo",
-  "footer_decisions": "Decisions"
+  "footer_decisions": "Decisions",
+  "footer_non_affiliation": "ScrumIA is an independent project, not affiliated with, sponsored by, or endorsed by Anthropic. Claude Code is a trademark of Anthropic."
 }
