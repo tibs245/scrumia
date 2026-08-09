@@ -91,11 +91,12 @@ The rule that makes this pass: a board read filters on the issue's own `state`
 (open/closed) before reporting live work, not on the card's Status alone — the same
 field this feature already trusts for an epic's progress (`business.md`).
 
-**Not yet enforced — currently fails.** `board.sh read`'s items carry the card's Status
-and labels, but never the issue's own `state`; a closed ticket sitting in `Ready for
-dev` or `In progress` reads identically to an open one, and nothing in the response
-lets a consumer tell them apart. Tracked in #79 — not fixed here, this feature only
-specifies the requirement.
+`board.sh read`'s items carry the issue's own `state` (`OPEN`/`CLOSED`), fetched in one
+batched call rather than one per item. A closed card outside the `Done` column — the
+only place a close is expected — is pulled out of the column it reports as live work
+and returned instead under `closed_without_pr`, with a `closed_without_pr_count` at the
+top level; a closed card sitting in `Done` is a normal merge and stays reported as
+usual. Fixed in #79.
 
 ## Out of scope
 

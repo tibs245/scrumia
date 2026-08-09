@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-09 — `board.sh read` now surfaces the issue's own `state` and flags a close without a PR
+- Issue: #79
+- PR: TBD
+- Breaking: no
+
 ## 2026-08-08 — A ticket closed without a PR: card stays put, `state` is trusted
 - Issue: #34
 - PR: #82
