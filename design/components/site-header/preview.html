@@ -63,39 +63,11 @@
   }
   .hdr-nav a:hover, .hdr-nav a[aria-current="page"] { color: var(--text); }
 
-  /* ── Hop, at header size ──────────────────────────────────────────────── */
-  .hop { display: block; width: 26px; height: 26px; flex-shrink: 0; }
-  .hop-seg {
-    fill: var(--surface-raised); stroke: var(--border-strong); stroke-width: 1.5;
-    transform-box: fill-box; transform-origin: 50% 100%;
-  }
-  .hop-head { fill: var(--accent-surface); }
-  .hop-eye {
-    fill: var(--accent);
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 65%, transparent));
-    transform-box: fill-box; transform-origin: 50% 50%;
-  }
-  .hop-s1 { --dx: -9px; --sy: 2.29; }
-  .hop-s2 { --dx: -3px; --sy: 1.39; }
-  .hop-s3 { --dx:  1px; --sy: 1.23; }
-  .hop-s4 { --dx:  5px; --sy: 1.88; }
-  @keyframes hop-in { from { transform: translateX(var(--dx)) scaleY(var(--sy)); } to { transform: none; } }
-  @keyframes hop-eye-on { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: none; } }
-  @keyframes hop-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
-  .hop-arrive .hop-seg {
-    animation: hop-in var(--dur-3) var(--ease-hop) both;
-    animation-delay: calc(var(--i) * var(--stagger-hop));
-  }
-  .hop-arrive .hop-eye {
-    animation: hop-eye-on var(--dur-2) var(--ease-move) both;
-    animation-delay: var(--dur-3);
-  }
-  .hop-idle .hop-eye { animation: hop-blink 5.5s var(--ease-move) infinite; }
-
   /* ── A — Assembly ─────────────────────────────────────────────────────── *
-   * Hop builds itself on arrival, then the header earns its keep on scroll:
-   * it compacts, its ground goes solid, and a cyan rule reports how far down
-   * the page you are. Every change stands for a state, which is the rule.
+   * The header earns its keep on scroll: it compacts, its ground goes solid,
+   * and a cyan rule reports how far down the page you are. Every change
+   * stands for a state, which is the rule. The mark, not Hop, sits at rest
+   * beside the wordmark — see "What is settled" in spec.md for why.
    */
   .hdr-a .hdr-progress {
     position: absolute; left: 0; bottom: -1px; height: 2px;
@@ -149,7 +121,6 @@
        the first thing to cut — and C's rail moves without easing. */
     .hdr-a .hdr-progress, .hdr-c .hdr-rail { transition: none; }
     .hdr-b::after { animation: none; opacity: 0.35; transform: none; }
-    .hop-seg, .hop-eye { animation: none !important; transform: none !important; opacity: 1 !important; }
     .hdr-in { transition: none; }
   }
 </style>
@@ -161,26 +132,19 @@
 <div class="preview-bar">
   <span>theme</span>
   <button class="copy-btn" type="button" id="t">dark / light</button>
-  <button class="copy-btn" type="button" id="r">replay the arrivals</button>
 </div>
 
 <p class="note-line">Three treatments of the same header. Scroll inside each frame — A and C only
 exist once you do something.</p>
 
 <h2><span class="tag">Variant A</span>Assembly — the header reports where you are</h2>
-<p class="note-line">Hop builds itself from its segments on load. On scroll the bar compacts, its
-ground goes solid, and a cyan rule fills to your position. Nothing moves that is not a state change.</p>
+<p class="note-line">On scroll the bar compacts, its ground goes solid, and a cyan rule fills to
+your position. Nothing moves that is not a state change.</p>
 <div class="frame" data-variant="a">
   <header class="hdr hdr-a">
     <div class="hdr-in">
       <a class="hdr-brand" href="#">
-        <svg class="hop hop-arrive" viewBox="0 0 96 96" role="img" aria-label="Hop">
-          <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
-          <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
-          <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
-          <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
-          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
-        </svg>
+        <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
         Scrum<em>IA</em>
       </a>
       <nav class="hdr-nav">
@@ -205,13 +169,7 @@ present from the first frame — and its own risk: it moves when nothing has hap
   <header class="hdr hdr-b">
     <div class="hdr-in">
       <a class="hdr-brand" href="#">
-        <svg class="hop hop-idle" viewBox="0 0 96 96" role="img" aria-label="Hop">
-          <rect class="hop-seg hop-s1" x="13" y="50" width="15" height="28" rx="7"/>
-          <rect class="hop-seg hop-s2" x="30" y="32" width="17" height="46" rx="8"/>
-          <rect class="hop-seg hop-s3 hop-head" x="49" y="26" width="17" height="52" rx="8"/>
-          <rect class="hop-seg hop-s4" x="68" y="44" width="15" height="34" rx="7"/>
-          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
-        </svg>
+        <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
         Scrum<em>IA</em>
       </a>
       <nav class="hdr-nav">
@@ -235,13 +193,7 @@ page when you stop. Hover the navigation. The accent has exactly one position, a
   <header class="hdr hdr-c">
     <div class="hdr-in">
       <a class="hdr-brand" href="#">
-        <svg class="hop hop-arrive" viewBox="0 0 96 96" role="img" aria-label="Hop">
-          <rect class="hop-seg hop-s1" style="--i:0" x="13" y="50" width="15" height="28" rx="7"/>
-          <rect class="hop-seg hop-s2" style="--i:1" x="30" y="32" width="17" height="46" rx="8"/>
-          <rect class="hop-seg hop-s3 hop-head" style="--i:2" x="49" y="26" width="17" height="52" rx="8"/>
-          <rect class="hop-seg hop-s4" style="--i:3" x="68" y="44" width="15" height="34" rx="7"/>
-          <rect class="hop-eye" x="51" y="32" width="13" height="13" rx="6.5"/>
-        </svg>
+        <img class="brand-mark" src="../../../site/assets/mark.svg" alt="" width="22" height="22">
         Scrum<em>IA</em>
       </a>
       <nav class="hdr-nav">
@@ -294,12 +246,6 @@ page when you stop. Hover the navigation. The accent has exactly one position, a
     // background tab, and the rail would stay stuck at zero until you looked.
     void railC.offsetWidth;
     railC.classList.add('is-ready');
-  });
-
-  document.getElementById('r').addEventListener('click', function () {
-    document.querySelectorAll('.hop-arrive').forEach(function (svg) {
-      svg.replaceWith(svg.cloneNode(true));
-    });
   });
 </script>
 
