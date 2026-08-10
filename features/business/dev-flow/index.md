@@ -22,6 +22,9 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 - Traced by: `features/business/github-tracking/` — it binds this feature's abstract
   cycle to GitHub's concrete artefacts (a PR, a column, a milestone). Whichever
   feature fills the tracker slot plays that role; none of them redefines the process.
+- Defers to: `features/business/release-versioning/` for what a commit's type and scope
+  are *worth* — which bump each earns, and what a bump promises a project. This feature
+  says a commit carries them; that one says what they buy.
 - Defers to: `features/business/ceremonies/` for what happens beside the ticket path —
   which occasions are admitted, on what trigger, and what each leaves behind. This
   feature owns the gates, which are decision points inside the path and not ceremonies.
@@ -30,7 +33,7 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 
 | File | Read it when |
 |---|---|
-| `business.md` | need who decides what on each path, where the human gate sits, or who owns the code cycle |
+| `business.md` | need who decides what on each path, where the human gate sits, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
 | `qa.md` | need the refusal rule, the autonomy gates, or what routes gate 2's review, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 
