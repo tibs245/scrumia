@@ -1,6 +1,7 @@
 # ADR-0001 — Distribution as native Claude Code plugins
 
 **Status**: accepted — 2026-08-07
+**Partly superseded by**: [0017](0017-version-bump-and-commit-signal.md) — 2026-08-10. The decision below stands as it was taken; one of its accepted costs, *"Versioning is coarser than per-module npm semver. We pin by tag and by commit, which is enough"*, no longer holds — a module's version now carries a promise a tag cannot. Nothing else here was edited.
 
 ## Context
 
