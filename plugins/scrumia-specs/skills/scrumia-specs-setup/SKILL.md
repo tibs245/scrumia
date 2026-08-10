@@ -43,6 +43,8 @@ The apps come from `apps:` in the configuration. An app not listed there has no 
 
 **No example feature.** An example never deleted becomes a reference by accident, and it's then harder to fix than to write.
 
+Seed the global index too — run `python3 tools/build_features_index.py` from the repo root to write `<root>/index.md` (the file named by the contract's `global_index` key). Re-run it whenever the tree changes and the index would otherwise drift; the tool ships with this repo's own layout, so a project that vendors this module without its `tools/` directory regenerates the file some other way.
+
 ## Step 3 — Provide its composition line
 
 This module describes itself in `CLAUDE.md`. Return to `scrumia-init` the line to insert:

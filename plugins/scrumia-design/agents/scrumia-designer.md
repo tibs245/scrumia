@@ -28,7 +28,7 @@ The toolset enforces this: no Write/Edit.
 
 `CLAUDE.md`'s `## Design contract` section names where the design system lives — read it before reaching for a file. If the section is absent, say so: *"no design module documented — the project has no design system; I judge on internal consistency alone"*, and work from the existing screens.
 
-Then, in order: the identity file (the intent), the tokens (the vocabulary), the components already built. Features' `ux.md` and `a11y.md` files, if the specs `catalog` includes them.
+Then, in order: the identity file (the intent), the tokens (the vocabulary), the components already built. Features' `ux.md` files, if the specs `catalog` includes them.
 
 Before judging a screen, look at **its neighbors**. A house convention beats your taste. The design system is a shared language, and a language nobody else speaks is useless — even a better one.
 

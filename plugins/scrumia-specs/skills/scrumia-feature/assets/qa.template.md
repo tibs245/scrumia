@@ -2,6 +2,9 @@
 
 One scenario per case. Each scenario must be able to fail.
 
+<An accessibility target that can fail — a contrast ratio, a keyboard-trap
+check, an announcement — is written here as a criterion, tagged (a11y).>
+
 ## Nominal
 
 ### AC-1 — <title of the expected behavior>

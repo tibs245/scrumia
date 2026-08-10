@@ -15,10 +15,11 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0009](0009-documented-composition.md) | Documented composition, no dynamic resolution | accepted |
 | [0010](0010-cross-cutting-practices.md) | Cross-cutting practices as composable modules | accepted |
 | [0011](0011-rules-hierarchy.md) | A rules hierarchy for knowledge skills | accepted |
-| [0012](0012-specs-contract.md) | The specs contract: documented, not hard-coded | accepted |
+| [0012](0012-specs-contract.md) | The specs contract: documented, not hard-coded | superseded by [0016](0016-global-feature-index.md) |
 | [0013](0013-tracker-stays-one-slot.md) | The `tracker` slot stays one slot, for now | accepted |
 | [0014](0014-roles-ship-with-their-capability.md) | A standing role ships with the module that gives it something to guard | accepted |
 | [0015](0015-scope-measures-reach.md) | The scope axis measures reach, not medium | accepted |
+| [0016](0016-global-feature-index.md) | The specs contract gains a global index; keys stop freezing values | accepted |
 
 ## Scope of the decisions
 
@@ -33,7 +34,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The `design` module** | 0014 (a role ships with its capability) |
 | **The `practices` slot** | 0010 (cross-cutting practices) |
 | **The `implementation` and `practices` slots, plus `scrumia-core`** | 0011 (rules hierarchy) |
-| **The `specs` module, plus its consumers (`tracker`, `discovery`, `team`) and `scrumia-core`** | 0012 (specs contract) |
+| **The `specs` module, plus its consumers (`tracker`, `discovery`, `team`) and `scrumia-core`** | 0016 (specs contract, superseding 0012) |
 
 A module decision is contested by writing another module, not by debating this one.
 
@@ -43,7 +44,7 @@ A module decision is contested by writing another module, not by debating this o
 - **0004** — after three real projects, with the feature sizes actually observed
 - **0009** — if a project changes modules frequently on the same slot
 - **0011** — if the three-concern floor for staying single-file proves wrong once real modules have gone through the migration
-- **0012** — if a specs module ships with a fundamentally different shape (no per-feature catalog) than the six-key vocabulary assumes
+- **0016** — if a specs module ships with a fundamentally different shape (no per-feature catalog) than the seven-key vocabulary assumes
 - **0013** — as soon as a project needs its issues in one tool and its PRs in GitHub; that case is blocked until the slot splits
 
 ## Format

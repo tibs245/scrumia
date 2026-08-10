@@ -24,7 +24,27 @@ This seemingly innocuous rule is the heart of the format. With a fixed template,
 
 Direct consequence: an agent can decide what to read without reading everything. That is what keeps the context cost contained.
 
-The rule gates the **optional** files, not every file a feature holds. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory: a feature has to be findable, has to be possible to follow over time, and has to be possible to test, and an absent changelog asserts nothing except that nobody wrote one. Which files are mandatory is declared by whichever module fills the `specs` slot — those three are `scrumia-specs`'s declaration, made in its own catalog, and another module may require a different set. A consumer does not resolve that set for itself — it delegates the writing to the specs module's own writing skill. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
+## The three-part boundary
+
+The catalog doesn't just name each file's subject — for every file it states what the file **holds**, what it **may hold**, and what it **must not hold**, and every exclusion names the file where that content goes instead. A scope that only described its subject would leave the boundary to taste; taste is how nine indexes grew sections no template defined.
+
+Three boundaries carry most of the collisions, and each is settled by one membership test rather than restated case by case:
+
+- **business vs ux, on the journey.** A step stated as actor intent and the value delivered, naming no screen, no control, no click path, belongs to `business.md`. The moment it names one, it belongs to `ux.md`.
+- **tech vs archi, on data flow.** Flow that never leaves the app's own boundary belongs to `tech.md`. Flow that crosses apps, scoped to an EPIC, belongs to `archi.md`.
+- **ux vs qa, on accessibility.** A property the journey must have, stated in prose, belongs to `ux.md`. Anything testable against a named technical criterion — a contrast ratio, a keyboard-trap check, an announcement — is a tagged `qa.md` criterion.
+
+This document explains why the boundary exists; the operational reference — the full three-part entry for every file — is the catalog linked above.
+
+## The three existence categories
+
+**Mandatory in every feature**: `index.md`, `qa.md`, `CHANGELOG.md`. A feature has to be findable, has to be possible to follow over time, and has to be possible to test — their absence asserts nothing, it is a gap.
+
+**Mandatory per stratum**: `business.md`, at the Business stratum only. A Business feature that cannot say who it serves and why it is worth building is not a unit of value; at the App stratum the same file stays optional and holds only what is specific to that app.
+
+**Content-tested**: everything else. A file is created only when it has content; its absence is the assertion "nothing to say on this subject", not an oversight and not a placeholder.
+
+Which files fall in which category is declared by whichever module fills the `specs` slot — this three-way split is `scrumia-specs`'s own declaration, made in its own catalog, and another module may declare a different set. A consumer does not resolve that set for itself — it delegates the writing to the specs module's own writing skill. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
 
 ## Two strata
 
@@ -41,26 +61,32 @@ An App feature without a Business parent is acceptable if it is purely technical
 | File | Business | App Backend | App Frontend |
 |---|---|---|---|
 | `index.md` | **mandatory** | **mandatory** | **mandatory** |
-| `business.md` | the rules themselves | reference to the parent | reference to the parent |
+| `business.md` | **mandatory** — rules, personas, value, journey-as-intent | reference to the parent | reference to the parent |
 | `qa.md` | **mandatory** | **mandatory** | **mandatory** |
 | `CHANGELOG.md` | **mandatory** | **mandatory** | **mandatory** |
 | `legal.md` | if personal data, payment, user content, regulated | same | same |
+| `security.md` | if the feature has a meaningful risk on availability, integrity, confidentiality or traceability | same | same |
 | `archi.md` | if the EPIC touches ≥2 apps | no | no |
-| `api-contract.md` | no | often | if it consumes an API |
+| `api-contract.md` | no | if another feature or app parses what it exposes | if it consumes another feature's contract |
 | `tech.md` | no | often | sometimes |
 | `ux.md` | no | no | often |
-| `a11y.md` | no | no | often |
 | `devx.md` | no | if it exposes a lib | if it exposes components |
 
-**mandatory** marks the files `scrumia-specs` requires of every feature, whatever it is about; every other row is subject to the content test.
+**mandatory** marks the files `scrumia-specs` requires — of every feature for `index.md`, `qa.md` and `CHANGELOG.md`, of the Business stratum only for `business.md`; every other row is subject to the content test. `api-contract.md` covers any shared interface between features, not only an HTTP API — a file format or a CLI's output shape counts the moment another feature parses it.
 
 The catalog is open. Two rules so it does not sprawl: a new file must have a **distinct reader** (otherwise it is a section, not a file), and its addition must be documented in the catalog — otherwise the next feature will invent another name for the same thing, and the format will lose what makes it useful: its predictability.
 
 ## The special role of `index.md`
 
-It is the only file read systematically. It carries the summary, the status, the links, and above all **the list of the files present with one line saying why each one exists**.
+It is the only file read systematically. Its section set is fixed by the template — `In brief`, `Links`, `Files present`, `Open issues`, those four and no others — so a section outside the set is detectable rather than a matter of taste. `Files present` carries **one line per file, stating when to read it**: not why it exists, but the situation that makes an agent open it.
 
-That last point is not decorative: it is what lets an agent load `legal.md` only when it is relevant, rather than as a precaution.
+That last point is not decorative: it is what lets an agent load `legal.md` only when the situation calls for it, rather than as a precaution.
+
+## The global index
+
+`features/` also carries one index at its root — the file named by the specs contract's `global_index` key, `features/index.md` in this project — listing every feature in one line each: stratum, status, one-line brief. It makes a feature reachable without a pointer and without walking the tree.
+
+It is generated, never hand-written: `python3 tools/build_features_index.py` builds it from the tree, and `tools/validate.py` fails the build on any drift between the two. A stale index is worse than none, because it is believed. See [ADR-0016](adr/0016-global-feature-index.md) for the contract change that named it.
 
 ## Never any history in a spec
 

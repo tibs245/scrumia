@@ -6,30 +6,40 @@
 ## In brief
 
 <What this feature does and for whom, in 10 lines maximum. If you can't manage
-that, the feature is probably too big — see the splitting criterion.>
+that, the feature is probably too big — see the splitting criterion. No rule,
+no decision, no rationale here: the index indexes, and a claim that needs
+elaborating gets a one-line pointer to the file that carries it.>
 
 ## Links
 
 <For an App feature:>
 - Business parent: `features/business/<feature>/`
 - Consumes: `features/app/<app>/<feature>/`
+- Authority: `<design/ or docs/ file that answers a question this feature
+  defers>` — <one line of key info>
 
 <For a Business feature:>
 - Implemented by: `features/app/<app>/<feature>/`
 
+<Authority lines are pointers, one line of key info each — which file answers
+which question — never the answer itself.>
+
 ## Files present
 
-| File | Why it exists |
+| File | Read it when |
 |---|---|
-| `business.md` | <in one line> |
+| `business.md` | <the situation that makes an agent open it, in one line> |
 | `qa.md` | <in one line> |
 | `CHANGELOG.md` | <in one line> |
 
-<List only the files actually present. `qa.md` and `CHANGELOG.md` are
-mandatory, so they are always among them; `index.md` is mandatory too but
-does not list itself. For the rest, an absent file is an assertion: nothing
-to say on this subject.>
+<List only the files actually present. The mandatory files are always among
+them; `index.md` does not list itself. For the rest, an absent file is an
+assertion: nothing to say on this subject. The column answers "when do I need
+to open this?" — the agent deciding what to load is this table's reader.>
 
 ## Open issues
 
 - #NN — <title>
+
+<Only issues that survive the PR that touches this feature — never its
+founding issue, which the merge itself closes.>
