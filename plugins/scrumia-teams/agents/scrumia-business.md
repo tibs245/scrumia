@@ -54,7 +54,9 @@ When the rule exists nowhere, say so plainly: "this is written nowhere, a decisi
 
 ## What you write to your project memory
 
-The domain vocabulary and its pitfalls, the cross-cutting rules the features assume without writing them down, the business arbitrations already made by the human. No state, no tickets.
+The domain vocabulary and its pitfalls, and where a cross-cutting rule or a human arbitration is written down. No state, no tickets.
+
+Before writing, read what this project says its role memory may hold — in ScrumIA, `features/business/agent-team/business.md` § *What role memory may hold*. Absent such a spec, keep to pointers: name the document that owns a rule and say what to watch when applying it, rather than copying the rule into the one channel no review gate sees.
 
 ## Style
 

@@ -106,23 +106,30 @@ def index_names(index: Path) -> set[str]:
     return names
 
 
-def check_index_covers_tree(root: Path, index_name: str) -> None:
+def check_index_covers_tree(root: Path, index_name: str, names=index_names) -> None:
     """Every index under root names each .md beside it, and names no absent one.
 
-    The tree and its index filename are arguments rather than constants: the same
-    defect — an index drifted from what it indexes — is checked over
-    .claude/agent-memory/ here and over any other indexed tree by whoever passes it.
+    All three are arguments rather than constants. The tree and its index filename
+    are the obvious two; `names` is the third because how an index *names* a file
+    differs per tree, and a caller that cannot replace the reading cannot reuse the
+    check — features/ records a file's absence by naming it, which the default
+    reading calls a dangling name.
     """
     if not root.is_dir():
         return
     for index in sorted(root.rglob(index_name)):
         rel = index.relative_to(ROOT)
         present = {p.name for p in index.parent.glob("*.md")} - {index_name}
-        named = index_names(index) - {index_name}
+        named = names(index) - {index_name}
         for missing in sorted(present - named):
             error(f"{rel}: does not name {missing}, which sits beside it — invisible to whoever reads the index")
         for absent in sorted(named - present):
             error(f"{rel}: names {absent}, which is not there")
+    # An index that is short is caught above; one that is missing outright yields no
+    # iteration at all, which is the same defect at its maximum.
+    for entry_dir in sorted({p.parent for p in root.rglob("*.md")}):
+        if not (entry_dir / index_name).exists():
+            error(f"{entry_dir.relative_to(ROOT)}: holds .md files and no {index_name} — nothing indexes them")
 
 
 def check_memory_channel() -> None:
@@ -139,11 +146,12 @@ def check_memory_channel() -> None:
     check_index_covers_tree(MEMORY_ROOT, MEMORY_INDEX)
 
     # Half a channel in git reads clean in `git status` while two machines diverge.
+    # -z with quotePath off: git otherwise escapes a non-ASCII path and it reads untracked.
     try:
         listed = subprocess.run(
-            ["git", "ls-files", "--", str(rel_root)],
+            ["git", "-c", "core.quotePath=false", "ls-files", "-z", "--", str(rel_root)],
             cwd=str(ROOT), capture_output=True, text=True, timeout=5, check=True,
-        ).stdout.splitlines()
+        ).stdout.split("\0")
     except (subprocess.SubprocessError, OSError) as e:
         warn(f"{rel_root}: cannot read git's index, tracking unchecked — {e}")
         listed = None
@@ -172,13 +180,16 @@ def check_memory_channel() -> None:
                 f"{rel}: metadata.source is '{source}' — expected 'agent', or "
                 f"'human @<handle> <YYYY-MM-DD>' when a human decided it"
             )
+        for cited in (c.strip() for c in meta.get("cites", "").split(",")):
+            if "/" in cited and not (ROOT / cited).exists():
+                error(f"{rel}: cites {cited}, which does not exist — a pointer to nothing")
         topic = meta.get("topic")
         if topic:
             topics.setdefault(topic, []).append(rel)
 
     # Warned, not refused: two roles on one question are as often two halves of it.
     for topic, entries in sorted(topics.items()):
-        roles = sorted({e.parent.name for e in entries})
+        roles = sorted({e.relative_to(rel_root).parts[0] for e in entries})
         if len(roles) > 1:
             warn(
                 f"{rel_root}: topic '{topic}' is held by {len(roles)} roles "

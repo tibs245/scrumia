@@ -208,6 +208,38 @@ def test_a_partially_tracked_channel_is_caught() -> None:
         shutil.rmtree(tmp)
 
 
+def test_a_tree_recording_absences_reuses_the_check() -> None:
+    print("a tree that names a file to record its absence supplies its own reading (AC-22)")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        d = tmp / "features" / "widget"
+        d.mkdir(parents=True)
+        (d / "qa.md").write_text("# qa\n", encoding="utf-8")
+        (d / "index.md").write_text(
+            "| `qa.md` | the criteria |\n\nNo `legal.md`: this feature touches no personal data.\n",
+            encoding="utf-8")
+        v.ROOT = tmp
+        v.ERRORS.clear()
+        try:
+            v.check_index_covers_tree(tmp / "features", "index.md")
+            default_reading = list(v.ERRORS)
+            v.ERRORS.clear()
+            v.check_index_covers_tree(
+                tmp / "features", "index.md",
+                names=lambda i: {m for m in v.index_names(i) if f"`{m}`" not in
+                                 i.read_text(encoding="utf-8").split("No ", 1)[-1][:40]})
+            own_reading = list(v.ERRORS)
+        finally:
+            v.ROOT = REAL_ROOT
+            v.ERRORS.clear()
+        check("the default reading calls the recorded absence a dangling name",
+              any("legal.md" in e for e in default_reading), str(default_reading))
+        check("a caller-supplied reading clears it, without a second check",
+              own_reading == [], str(own_reading))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def test_repo_memory_channel_passes() -> None:
     print("the repo's own .claude/agent-memory/ passes the gate as it runs today")
     v.ERRORS.clear()
@@ -228,6 +260,7 @@ def main() -> int:
                  test_unattributable_human_ruling_is_caught,
                  test_two_roles_on_one_topic_are_reported,
                  test_a_partially_tracked_channel_is_caught,
+                 test_a_tree_recording_absences_reuses_the_check,
                  test_repo_memory_channel_passes):
         test()
     print()

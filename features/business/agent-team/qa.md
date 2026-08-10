@@ -166,10 +166,12 @@ Then tech is asked at entry and the business role is not
 ```gherkin
 Given an entry in .claude/agent-memory/ states a rule no spec, ADR or ticket owns
 When the channel is audited
-Then the rule is relocated to the channel the membership test names, and the
-  entry is reduced to a pointer to it — or, where relocating it is work of its
-  own, the entry names the ticket that will carry it
-And an entry whose rule has no home anywhere is not left as the rule's record
+Then the entry is reduced to a pointer, in the same change — writing the rule's
+  destination may spin off into its own ticket, but the reduction may not, because
+  an entry left whole beside a ticket is still the channel's copy of the rule
+And an entry whose rule has no home anywhere is not left as the rule's record:
+  the home is created, or the ticket that will create it is named and the entry
+  keeps only what a reader cannot get from that ticket
 ```
 
 ### AC-18 — One role's memory is tracked and another's is not
@@ -218,8 +220,9 @@ Given a role's MEMORY.md names a file that is not present, or a file is present
 When the channel is validated
 Then it fails in both directions — an unnamed file is invisible to the role, and
   a named absent file sends it to nothing
-And the check takes the tree and its index filename as arguments, so a second
-  indexed tree reuses it rather than growing a second check
+And the check takes the tree, its index filename, and how that index names a
+  file as arguments, so a tree that records a file's absence by naming it reuses
+  the check with its own reading rather than growing a second check
 ```
 
 AC-1 and AC-14 are the two halves of one trigger. `scope/L` is reached by any of the

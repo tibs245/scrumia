@@ -11,8 +11,9 @@ without settling it itself), **verdict** (a role's explicit answer:
 approved / blocked, compliant / non-compliant, or their "with reservations"
 variants), **channel** (one of the four places this project writes durable
 content an agent later acts on — skills, indexes, specs/ADRs/tickets, memory),
-**entry** (one file of a role's memory), **index** (the file a channel is
-entered through, which names what is there and nothing else).
+**memory entry** (one file of a role's memory — never bare "entry", which this
+corpus already spends on the entry/exit axis and on a grid cell), **index** (the
+file a channel is entered through, which names what is there).
 
 ## Activation triggers
 
@@ -136,7 +137,7 @@ belongs to exactly one:
 | Channel | Answers | Where it lives here |
 |---|---|---|
 | Skills | *when* to look, and *what* to check | `plugins/*/skills/` |
-| Indexes | *where* it lives | a feature's `index.md`, `docs/adr/README.md`, `CLAUDE.md`, a role's `MEMORY.md` |
+| Indexes | *where* it lives | a feature's `index.md`, `docs/adr/README.md`, a role's `MEMORY.md` |
 | Specs, ADRs, tickets | *what is true* | `features/`, `docs/adr/`, the tracker |
 | Memory | what no document owns and no index can point to | `.claude/agent-memory/<role>/` |
 
@@ -149,7 +150,9 @@ environment constraint, a pitfall that costs an hour to rediscover.
 Two rules fall out of the split, and they hold for **every** channel:
 
 - **An index navigates, it never rules.** A rule found in an index is misfiled by
-  construction, whichever index it is.
+  construction, whichever index it is. `CLAUDE.md` is deliberately not one: it is
+  the composition's manifest, and its `### Shared rules` section is a rule-bearing
+  surface by design.
 - **A rule is stated in exactly one channel.** Another channel may point at it.
   Pointing is not restating: what must live in one place is the rule's *normative*
   half — the obligation and the trigger that fires it. A second copy of its
@@ -231,11 +234,11 @@ and not wrong, it is *invisible*; a file the index names and that does not exist
 sends the role to nothing.
 
 These are checked, not merely stated: `tools/validate.py` walks the channel on
-every run and in CI. The index-versus-tree half takes **the tree it walks, and the
-name of its index, as arguments** — a second indexed tree reuses that check rather
-than growing a second one. What each tree does not share is how its index *names*
-a file: a tree whose index names a file to record its absence needs a narrower
-reading than this channel's, and supplies it when it passes its root.
+every run and in CI. The index-versus-tree half takes **three arguments** — the tree
+it walks, the name of its index, and how that index *names* a file — so a second
+indexed tree reuses the check rather than growing a second one. The third argument
+is what makes the reuse real: a tree whose index names a file in order to record its
+*absence* would fail the reading this channel needs, and supplies its own instead.
 
 ## The sprint loop's real constraint
 

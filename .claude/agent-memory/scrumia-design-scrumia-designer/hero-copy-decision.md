@@ -1,16 +1,23 @@
 ---
 name: hero-copy-decision
-description: Ticket #60 hero rulings — orbit placeholder promoted to final headline, counts cut 5→3, why
+description: The hero's copy rules are owned by the hero feature — this entry holds only the FR term the spec does not carry, and points at the rest
 metadata:
   type: project
   topic: site-hero-copy
   source: agent
-  stale_when: the hero copy or its stat row changes in site/i18n/{en,fr}/index.json, or #65's manifest enumerator stops deriving the three counts
-  cites: #60, site/i18n/en/index.json
+  stale_when: features/app/site/hero/index.md states that "slot" stays untranslated in the FR copy
+  cites: features/app/site/hero/index.md, features/app/site/hero/qa.md, #60
 ---
 
-Hero (#60): orbit's "Every capability is a slot." was promoted from placeholder to final copy (FR "Chaque capacité est un slot."), and the stat row was cut from five counts to three (7 slots · 12 modules · 3 human touchpoints).
+The hero's rules live in `features/app/site/hero/` — *"A count in the hero is derived, or
+its debt is dated"* and the authored-line-break rule, both gated by that feature's `qa.md`.
+Read them there; this entry does not carry them.
 
-**Why:** identity rules mechanism over claim — the compose verb lives in the filled CTA, so the headline states the mechanism; the three counts are the only ones #65's manifest enumerator can derive, and the five-stat row had already drifted (template said 11 modules vs "Douze livrés" in copy). "Slot" is the FR site's own term, kept untranslated.
+**The one thing no document owns:** "Slot" is the FR site's own term and is kept
+untranslated (`site/i18n/fr/index.json`). Nothing in the hero spec or in `design/` says so,
+so a translation pass would "fix" it. That belongs in the hero spec — until it is there,
+it is here.
 
-**How to apply:** don't reintroduce inventory stats (skills, decisions) into the hero; any new hero count must be derivable by #65 or carry a dated debt note. Headline breaks are authored — a copy change must re-check line silhouettes in both languages.
+**What to watch:** the three counts are still literals in `site/templates/index.html`
+under a dated debt note, not derived. #65 closed without making them derivable, so
+`features/app/site/hero/index.md`'s "Open issues" entry for #65 is past due.

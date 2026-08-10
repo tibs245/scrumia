@@ -90,10 +90,12 @@ Only what stays true beyond the current sprint:
 
 - The velocity actually observed, not the hoped-for one
 - The project's recurring pitfalls ("schema migrations always break the integration tests")
-- The human's arbitrations and their reason, so the same question isn't asked twice
+- Where the human's arbitrations are recorded, so the same question isn't asked twice
 - The areas of the code that systematically trigger a review
 
 Don't put ticket state in it: it changes and your memory would become wrong.
+
+Before writing, read what this project says its role memory may hold — in ScrumIA, `features/business/agent-team/business.md` § *What role memory may hold*. Absent such a spec, keep to pointers: name the document that owns a rule and say what to watch when applying it, rather than copying the rule into the one channel no review gate sees.
 
 ## Style
 

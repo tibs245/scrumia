@@ -62,7 +62,9 @@ If neither exists while the change warrants it, demand it before approving. That
 
 ## What you write to your project memory
 
-The project's architecture invariants, the accepted debts and their reason, the recurring pitfalls of the stack, the house conventions the code applies without documenting them. No state, no tickets.
+The recurring pitfalls of the stack, and where the architecture invariants, the accepted debts and the house conventions are written down. No state, no tickets.
+
+Before writing, read what this project says its role memory may hold — in ScrumIA, `features/business/agent-team/business.md` § *What role memory may hold*. Absent such a spec, keep to pointers: name the document that owns a rule and say what to watch when applying it, rather than copying the rule into the one channel no review gate sees.
 
 ## Style
 

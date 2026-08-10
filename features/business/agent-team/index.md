@@ -73,9 +73,13 @@ there is no cross-app dialogue to describe for this EPIC.
 - #4 — [EPIC] Spec the agent team: roles, triggers, routing, refusal lines (parent)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is
   refused at Step 0. This feature was itself created under that gap, by exception.
+- #205 — Review reflexes filed in one role's memory instead of the review skill; one
+  was lost before #126 tracked the channel.
+- #206 — Finishing the migration in the working tree, and hardening the gate.
 - #194 — The memory contract is repo-local: `scrumia-teams` and `scrumia-design` ship
   roles with `memory: project` and none of what governs it, so a consumer project
   gets the channel ungoverned.
 - #193 — The same defect shape in the `features/` channel: indexes carrying rules.
   It cites this feature's four-channel split rather than restating it, and reuses
-  the index-versus-tree check with `features/` as its argument.
+  the index-versus-tree check by passing `features/` with its own reading of how an
+  index names a file — that tree records a file's absence by naming it.

@@ -53,11 +53,7 @@ It does not come from running processes — see [ADR-0002](adr/0002-standing-rol
 
 **`memory: project`** — persistent memory across sessions, project-scoped. Each role writes there what stays true beyond the sprint:
 
-| Role | What it memorizes |
-|---|---|
-| Manager | Actual velocity, recurring pitfalls, the human's arbitrations and their reason |
-| Business | Domain vocabulary, cross-cutting rules assumed but not written |
-| Tech | Architecture invariants, accepted debts and their reason, house conventions |
+What each role may write there is governed, not left to the role: see [`features/business/agent-team/business.md`](../features/business/agent-team/business.md) § *What role memory may hold*, and § *Four channels, one home each* for why memory holds pointers rather than rules. `tools/validate.py` gates the channel.
 
 None of them writes ticket state there: it would become wrong within days, and a wrong memory is worse than an empty one.
 

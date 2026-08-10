@@ -1,36 +1,17 @@
 ---
 name: scope-rubric-vs-site-tools-coupling
-description: site/ and tools/ are declared as two apps, so scrumia-refine's "≥2 apps → scope/L" rule mislabels every site-prose ticket; the coupling is structural, not accidental
+description: The site/tools peer-app split vs the scope rubric is #196's decision — this entry says only what to do while it is open
 metadata:
   type: project
   topic: site-tools-app-split
   source: agent
-  stale_when: .scrumia/config.yaml stops declaring site and tools as peer apps, or scrumia-refine's scope rubric gains a carve-out for an app and its build tooling
-  cites: #114, #196, .scrumia/config.yaml
+  stale_when: "#196 closes"
+  cites: "#196, #114"
 ---
 
-`.scrumia/config.yaml` declares `site` and `tools` as two peer apps, but
-`tools/build_site.py` **is** the site's builder: the i18n data in `site/i18n/`
-and the guard that reads it in `tools/` cannot be changed independently. Any
-ticket that touches the site's prose contract therefore touches two apps by the
-config's own table.
+The defect, the evidence from #114 / PR #189, and the two candidate fixes are in **#196**.
+Read it there; this entry carries none of them.
 
-`scrumia-github-project/skills/scrumia-refine/SKILL.md:85-87` grades scope as:
-`S` = 1 app **and no spec modified**; `M` = 1 app but a spec changes;
-`L` = ≥2 apps. So these tickets mechanically grade `L`, which the model matrix
-(`config.yaml`, `L/low`) routes to **opus** rather than sonnet.
-
-Observed on #114 / PR #189: labelled `scope/S risk/low` (→ sonnet) while the
-diff touched `site/i18n/{en,fr}/index.json`, `tools/build_site.py`,
-`tools/test_build_site.py` and three spec files. The work was correct anyway,
-but the label was wrong on both clauses of `S`, and the refinement that set it
-had itself planned the spec edits.
-
-**Why:** the gap is not a one-off mislabel — it recurs for every site-prose
-ticket, because the two-app split does not match the real unit of change. Tracked as **#196**, which owns the decision; two
-honest fixes are on the table there: model `tools` as the site's builder rather than a peer app,
-or give the scope rubric a carve-out for an app and its build tooling.
-**How to apply:** when refining or reviewing a ticket that touches site prose,
-expect the `scope/S` vs `≥2 apps` contradiction and judge by blast radius, not
-by app count — then say which rule you applied. Do not silently approve the
-label. Related: [[contract-block-carries-names-not-status]].
+**What to do while it is open:** refining or reviewing a ticket that touches site prose,
+expect the `scope/S` vs "≥2 apps" contradiction, judge by blast radius per ADR-0015, and
+say which rule you applied. Do not silently approve the label.

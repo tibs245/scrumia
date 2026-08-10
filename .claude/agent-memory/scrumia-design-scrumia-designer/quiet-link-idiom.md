@@ -5,8 +5,8 @@ metadata:
   type: project
   topic: site-link-styling
   source: agent
-  stale_when: a second instance appears and the idiom is promoted to design/identity.md, or .mod-name stops being the only text-coloured link in site/assets/style.css
-  cites: #70, #197, design/components/module-card/spec.md
+  stale_when: design/identity.md or a component spec states the quiet-link rule, or a.mod-name no longer keeps color: var(--text) at rest in site/assets/style.css
+  cites: #70, design/components/module-card/spec.md
 ---
 
 `site/assets/style.css` styles every link as `a { color: var(--accent) }` plus the UA
@@ -19,13 +19,11 @@ neither is". On the module card the accent is already spent on `.mod-slot`, whic
 directly under `.mod-name` in the same `.mod-id` stack. Accenting the name would put
 two cyans two lines apart and the slot label would stop pointing.
 
-Note the reasoning recorded in `design/components/module-card/spec.md` and the CSS
-comment both credit `.mod-cmd` with the accent — `.mod-cmd` is `--text-soft` on
-`--surface-sunken`, it carries none. The conclusion is right, the element named is wrong — **#197**.
+The justification lives in `design/components/module-card/spec.md`, which names
+`.mod-slot` as the neighbour already holding the accent.
 
 **How to apply:** a text-coloured underlined link is a legitimate ScrumIA idiom, but only
 where an adjacent element already holds the accent. Anywhere else, links are accent.
 If a second instance appears, promote it from a per-component comment to a rule in
 `design/identity.md` or a `link-quiet` entry in the components dir — right now the
-pattern has one instance and no home in the system. See [[sky-tokens-derivation]] for the
-other case where a rule lives in a derivation rather than a token.
+pattern has one instance and no home in the system, which is why it is here and not there.
