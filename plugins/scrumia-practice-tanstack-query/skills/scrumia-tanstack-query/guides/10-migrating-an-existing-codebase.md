@@ -1,24 +1,12 @@
-# Changelog — TanStack Query practice module
+# Migrating an existing codebase
 
-## [Unreleased] — 2026-02-10
+A codebase written against the older query-key vocabulary — `lists()` / `details()` scope
+functions, per-line `as const`, names like `byUser` or `listByCategory` — reaches the current
+guides through the four steps below. Each is mechanical and each ends in `tsc --noEmit`, which
+is what turns a rename into a checked one.
 
-### Changed
-
-- **`as const` simplification** (D-12): Removed redundant `as const` from every line inside the `queryKeys` object. Only the outer object declaration keeps `as const`. Applies to `01-query-keys.md`, `02-query-options.md`, and `D-02`.
-- **Standardized query key naming** (D-13): All query key factory methods now follow a strict vocabulary (`all`, `list`, `detail`, `search`). Removed non-standard names `byUser`, `byId`, `byResource`, `listByCategory` from all guides.
-- **Removed `lists()` / `details()` scope functions**: Intermediate scope functions add indirection without practical benefit. `list` and `detail` now spread directly from `all`. Invalidation always targets `all` — simpler, safer, and not costly.
-- **Clarified `all` vs `list` distinction**: `all` is the root prefix used in `queryOptions` for "fetch everything without pagination". `list(filters)` is for paginated or filtered collections. Both exist in `queryKeys` and in the `queryOptions` factory with the same names.
-- **Hardcoded key strings replaced**: Replaced inline key arrays with `queryKeys.*` references in `08-mutations.md`, `D-08`, and `04-select.md`.
-
-### Added
-
-- **Query key vocabulary reference** in `01-query-keys.md`: New section documenting the standard keywords (`all`, `list`, `detail`, `search`) with descriptions, types, and `all` vs `list` usage guidance.
-- **D-12 — `as const` simplification**: New decision record explaining why a single `as const` on the outer object is sufficient.
-- **D-13 — Query key naming conventions**: New decision record standardizing the naming vocabulary, listing forbidden patterns, and documenting the rejected `_root` alternative.
-
----
-
-## Refactoring plan for existing codebases
+The decisions behind them are [D-12](../decisions/D-12-as-const-simplification.md) and
+[D-13](../decisions/D-13-query-key-naming-conventions.md).
 
 If your codebase was written before these changes, here is a migration checklist:
 
