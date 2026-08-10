@@ -12,9 +12,8 @@ manager, business, tech — and a fourth, designer, from whichever module fills 
 `design` slot. The roles are permanent through project memory and externalized
 board state, not through a live process (`docs/adr/0002-standing-roles.md`).
 That memory is one of the four channels this project writes durable content
-into, and the only one outside ADR-0005's gates: `business.md` states the split
-and its membership test once, for all four, then says what a role's memory may
-hold — pointers, never rules.
+into, and the only one outside ADR-0005's gates. `business.md` carries both the
+split — stated once, for all four channels — and what a role's memory may hold.
 A role can also be reached outside a ticket: convening brings the enabled
 roles up, hands the floor back to the human, and starts no sprint.
 

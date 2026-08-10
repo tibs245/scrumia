@@ -1,6 +1,6 @@
 # Designer memory — ScrumIA
 
-Pointers only. What each entry may hold, and what its frontmatter owes, is
+What an entry here may hold, and what its frontmatter owes, is
 `features/business/agent-team/business.md` § *What role memory may hold*.
 
 - [Sky tokens derivation](sky-tokens-derivation.md) — sky = color-mix of themed tokens; per-theme strength via light-dark(color-mix(), color-mix())

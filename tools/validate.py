@@ -143,7 +143,7 @@ def check_memory_channel() -> None:
         listed = subprocess.run(
             ["git", "ls-files", "--", str(rel_root)],
             cwd=str(ROOT), capture_output=True, text=True, timeout=5, check=True,
-        ).stdout.split()
+        ).stdout.splitlines()
     except (subprocess.SubprocessError, OSError) as e:
         warn(f"{rel_root}: cannot read git's index, tracking unchecked — {e}")
         listed = None

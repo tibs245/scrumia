@@ -1,6 +1,6 @@
 # Business memory — ScrumIA
 
-Pointers only. What each entry may hold, and what its frontmatter owes, is
+What an entry here may hold, and what its frontmatter owes, is
 `features/business/agent-team/business.md` § *What role memory may hold*.
 
 - [scope/* label readers](vocab-scope-label-readers.md) — entry vs exit vocabulary; "one reader" and "two readers" are both true, say which you count

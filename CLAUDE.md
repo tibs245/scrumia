@@ -81,9 +81,9 @@ a finding, not an exception.
   `gh project` calls: a board read without a filter is silently truncated at 30 items.
 - Before executing a ticket, ask `scrumia-teams/scripts/pick-model.sh <n>` which model it
   runs on, and act on its `instruction` rather than re-reading the matrix.
-- A role's memory under `.claude/agent-memory/` holds pointers, never rules, and is one of
-  four channels with one home each. What an entry may carry, and what its frontmatter owes,
-  is `features/business/agent-team/business.md` § *What role memory may hold* —
+- Before writing to a role's memory under `.claude/agent-memory/`, read
+  `features/business/agent-team/business.md` § *Four channels, one home each* for what
+  belongs there at all, and § *What role memory may hold* for what an entry owes.
   `tools/validate.py` fails on an entry that skips it.
 <!-- scrumia:end -->
 
@@ -91,8 +91,9 @@ a finding, not an exception.
 
 The deliverable is prose that an agent executes. A skill that reads well but sends an
 agent to a file that doesn't exist is broken, so `python3 tools/validate.py` gates the
-marketplace, the frontmatter, every relative link, the scripts skills invoke, and the
-skills commands hand off to. Run it before pushing; CI runs it too.
+marketplace, the frontmatter, every relative link, the scripts skills invoke, the skills
+commands hand off to, and the role-memory channel under `.claude/`. Run it before
+pushing; CI runs it too.
 
 Files are in English — including comments, commit messages and workflow names. Only
 `site/fr/` is French.

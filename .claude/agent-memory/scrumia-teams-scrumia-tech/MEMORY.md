@@ -1,6 +1,6 @@
 # Tech memory — ScrumIA
 
-Pointers only. What each entry may hold, and what its frontmatter owes, is
+What an entry here may hold, and what its frontmatter owes, is
 `features/business/agent-team/business.md` § *What role memory may hold*.
 
 - [Site motion invariants](site-motion-invariants.md) — .js gate semantics, reduced-motion delay blind spot, nth-child stagger coupling
