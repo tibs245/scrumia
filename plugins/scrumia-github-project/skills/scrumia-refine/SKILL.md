@@ -82,8 +82,8 @@ One `scope/*` label, based on three objective questions: how many apps are touch
 
 | Label | Condition |
 |---|---|
-| `scope/S` | 1 app, and no rule changes — it is already written |
-| `scope/M` | 1 app, and a rule changes that nothing beyond it consumes, or the scope remains unclear |
+| `scope/S` | At most 1 app, and no rule changes — it is already written |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope remains unclear |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract |
 | `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
 
