@@ -6,6 +6,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 ### Changed
 - `scrumia-ticket` step 3 now asks for a line under a shipped module's `[Unreleased]`
   when the ticket changes that module, not only for the spec changelog entry.
+- `scrumia-ticket` no longer carries its own list of branch/commit types: it cites the
+  project's one vocabulary. A project whose composition decides no vocabulary falls back
+  to the prefixes its own history already uses.
+- `scrumia-ticket` writes commits as `<type>(<scope>): …` with a `Refs: #<n>` trailer on
+  every commit, and `Closes #<n>` exactly once in the PR body. Adopting this changes what
+  a project's history looks like from the first ticket run after the update; nothing
+  rewrites the commits already written.
 
 ## [0.4.0] - 2026-08-10
 ### Added
