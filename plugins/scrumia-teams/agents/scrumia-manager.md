@@ -53,7 +53,7 @@ Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, n
 | `scope/L` | ≥2 apps, a rule read beyond its feature, or interface contract | You + the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New value unit, pivot, data migration: back to scoping | Out of execution: send it back to the scoping module |
 
-Three questions are enough to settle it: *how many apps?*, *does a rule read beyond its feature change?*, *does an interface contract change?*
+Three questions are enough to settle it: *how many apps?*, *does a rule consumed beyond one feature or app change?*, *does an interface contract change?*
 
 The middle question measures **a rule's reach, not a file's location**: a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule has answered *no* — it is not `scope/L` on that clause, however many spec files its diff lists. That test is stated once, in [`features/business/execution-policy/business.md`](../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*; this table applies it and does not define it. The Condition cells are [ADR-0015](../../../docs/adr/0015-scope-measures-reach.md)'s, copied word for word — terse because the same wording has to fit a GitHub label description, and rewording one here would make a second definition of the test. The file-location reading this replaced is why a whole sprint's labels had to be overridden.
 
