@@ -134,7 +134,9 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
   by `features/business/execution-policy/`, not here.
 - The ceremonies (retrospective, refactor session, debt audit): trigger, cadence,
-  artefact — specified by #11, not here.
+  artefact — specified by `features/business/ceremonies/`, not here. That feature also
+  drops the refactor session, on its own artefact test; a gate is not a ceremony, and
+  the gates above stay this feature's.
 - The concrete artefacts the code cycle is traced through — the pull request, the
   board column, the milestone. This feature owns the process; whichever feature
   fills the tracker slot (today `features/business/github-tracking/`) specifies its

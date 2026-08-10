@@ -190,7 +190,10 @@ And the prohibition that matters: **never assume another module is present**. If
 
 ## Modules under consideration
 
-- **`scrumia-ceremonies`** — fact-fed retrospective, refactoring session, debt audit. Paced differently: one-off, human-triggered.
 - **`scrumia-migrate`** — convert an existing project to the specs format. Used only once.
 - **`scrumia-tracker-local`** — a file-based tracker for projects without a remote. Would fill the same slot as `scrumia-github-project`, with the opposite trade-off — and writing it is the real test that the `tracker` slot is replaceable.
 - **`scrumia-practice-hexagonal`** — ports-and-adapters as a practice module, refining "how the code is structured". A candidate third practice once the first two have survived a pilot.
+
+## Considered and not built
+
+- **`scrumia-ceremonies`** — the retrospective and the debt audit survived their specification; the module did not. Both read artefacts the `tracker` slot holds and write into what the `tracker`, `team` and `specs` slots already own, so there is no question left for a slot of their own to ask, and a module whose whole input is another slot's record could not degrade when that slot is empty. They are specified in `features/business/ceremonies/` and enacted through the plugged-in modules; if either is ever automated, it lands as one more skill in the module that owns its output. The refactor session was dropped outright — its only artefact is the pull request a ticket already produces.

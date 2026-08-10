@@ -43,6 +43,9 @@ exactly one side.
 - Traced by: `features/business/github-tracking/` — it binds this feature's abstract
   cycle to GitHub's concrete artefacts (a PR, a column, a milestone). Whichever
   feature fills the tracker slot plays that role; none of them redefines the process.
+- Defers to: `features/business/ceremonies/` for what happens beside the ticket path —
+  which occasions are admitted, on what trigger, and what each leaves behind. This
+  feature owns the gates, which are decision points inside the path and not ceremonies.
 
 ## Files present
 
@@ -55,7 +58,6 @@ exactly one side.
 ## Open issues
 
 - #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
-- #11 — Spec the human ceremonies: triggers, artefacts, cadence (this feature defers to it)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0
 - #20 — Sprint Step 3 describes the orchestration in prose instead of shipping it (carries this feature's worktree-ownership wording)
 - #118 — A ticket agent can lose its whole implementation by pausing for a review it was told to ask for

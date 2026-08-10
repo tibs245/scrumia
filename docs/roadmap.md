@@ -51,7 +51,7 @@ What the pilot must settle:
 ## Later — extend
 
 - [ ] **`scrumia-design`** — build on `DesignSync` and the `/design-sync` skill
-- [ ] **`scrumia-ceremonies`** — fact-fed retrospective, refactoring, debt audit
+- [x] **`scrumia-ceremonies`** — not built. The retrospective and the debt audit are specified in `features/business/ceremonies/` and enacted through the plugged-in modules; the refactor session is dropped, its only artefact being the PR a ticket already produces
 - [ ] **`scrumia-tracker-local`** — a file-based tracker, to prove that the `tracker` slot is actually replaceable
 - [ ] **`scrumia-practice-hexagonal`** — a third practice, once the first two survive the pilot
 - [ ] Re-examine [ADR-0002](adr/0002-standing-roles.md) if agent teams leave experimental status
