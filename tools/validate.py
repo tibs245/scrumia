@@ -12,6 +12,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_features_index as bfi  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 ERRORS: list[str] = []
 WARNINGS: list[str] = []
@@ -291,6 +294,102 @@ def check_composition_drift() -> None:
             )
 
 
+def check_feature_mandatory_files() -> None:
+    """Every leaf feature carries index.md, qa.md, CHANGELOG.md; business.md too at the Business stratum.
+
+    Per the catalog's existence categories (plugins/scrumia-specs/.../catalog.md):
+    these three are unconditional, business.md is mandatory per stratum.
+    """
+    features_root = ROOT / "features"
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        rel = feature_dir.relative_to(ROOT)
+        required = ["index.md", "qa.md", "CHANGELOG.md"]
+        if bfi.stratum_for(feature_dir, features_root) == "business":
+            required.append("business.md")
+        for name in required:
+            if not (feature_dir / name).exists():
+                error(f"{rel}: missing mandatory file {name}")
+
+
+def check_feature_index_sections() -> None:
+    """A leaf index.md's ## headings must be within the set the template declares.
+
+    The allowed set is parsed from the template, never a second hardcoded list —
+    so the two cannot drift from each other.
+    """
+    template_path = (
+        ROOT / "plugins" / "scrumia-specs" / "skills" / "scrumia-feature"
+        / "assets" / "index.template.md"
+    )
+    if not template_path.exists():
+        error(f"{template_path.relative_to(ROOT)}: missing — cannot determine the index section set")
+        return
+    heading_re = re.compile(r"^## (.+)$", re.MULTILINE)
+    allowed = set(heading_re.findall(template_path.read_text(encoding="utf-8")))
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        index_md = feature_dir / "index.md"
+        if not index_md.exists():
+            continue  # check_feature_mandatory_files already reports this
+        rel = index_md.relative_to(ROOT)
+        for heading in heading_re.findall(index_md.read_text(encoding="utf-8")):
+            if heading not in allowed:
+                error(f"{rel}: section '{heading}' is not in the template's set {sorted(allowed)}")
+
+
+def check_feature_files_present() -> None:
+    """The 'Files present' table's entries must match the feature's real files, both directions.
+
+    Only markdown table rows count — a line starting with '|' whose first cell is
+    backticked. A prose mention of a filename (including the "No `legal.md`: ..."
+    absence idiom) is not a row and must not be read as one.
+    """
+    section_re = re.compile(r"^## Files present\s*\n(.*?)(?=\n## |\Z)", re.MULTILINE | re.DOTALL)
+    row_re = re.compile(r"^\|\s*`([^`]+)`\s*\|")
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        index_md = feature_dir / "index.md"
+        if not index_md.exists():
+            continue  # check_feature_mandatory_files already reports this
+        rel = feature_dir.relative_to(ROOT)
+        section = section_re.search(index_md.read_text(encoding="utf-8"))
+        listed: set[str] = set()
+        if section:
+            for line in section.group(1).splitlines():
+                match = row_re.match(line.strip())
+                if match:
+                    listed.add(match.group(1))
+        actual = {p.name for p in feature_dir.iterdir() if p.is_file() and p.name != "index.md"}
+        for name in sorted(listed - actual):
+            error(f"{rel}/index.md: 'Files present' lists '{name}', which is not on disk")
+        for name in sorted(actual - listed):
+            error(f"{rel}/index.md: '{name}' is on disk but missing from 'Files present'")
+
+
+def check_global_index_drift() -> None:
+    """features/index.md must match tools/build_features_index.py's output, recomputed in memory.
+
+    Same pattern as check_composition_drift: nobody reads the generator's source to
+    know if the committed file is current, so the gate recomputes rather than trusts it.
+    """
+    index_path = ROOT / "features" / "index.md"
+    if not index_path.exists():
+        error(f"{index_path.relative_to(ROOT)}: missing — run python3 tools/build_features_index.py")
+        return
+    real = bfi.generate_index(ROOT)
+    committed = index_path.read_text(encoding="utf-8")
+    if real.strip() == committed.strip():
+        return
+    real_lines = real.splitlines()
+    committed_lines = committed.splitlines()
+    divergent = next(
+        (b for a, b in zip(real_lines, committed_lines) if a != b),
+        (committed_lines[len(real_lines):] or real_lines[len(committed_lines):] or [""])[0],
+    )
+    error(
+        f"{index_path.relative_to(ROOT)}: drifted from the generator's output at "
+        f"'{divergent}' — run python3 tools/build_features_index.py"
+    )
+
+
 def main() -> int:
     check_marketplace()
     check_skills()
@@ -301,6 +400,10 @@ def main() -> int:
     check_skill_scripts()
     check_french_leftovers()
     check_composition_drift()
+    check_feature_mandatory_files()
+    check_feature_index_sections()
+    check_feature_files_present()
+    check_global_index_drift()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")
