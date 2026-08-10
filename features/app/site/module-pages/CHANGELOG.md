@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — An unused i18n string fails the build like a missing one does
+- Issue: #114
+- PR: TBD
+- Breaking: no
+
 ## 2026-08-09 — The index's module cards link to their module pages
 - Issue: #70
 - PR: TBD

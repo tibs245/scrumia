@@ -130,7 +130,7 @@ def test_ac1_one_page_per_plugin_per_language() -> None:
 
 
 def test_ac2_guards() -> None:
-    print("AC-2 a missing string, an orphan file or a plugin without prose fails the build")
+    print("AC-2 a missing string, an unused string, an orphan file or a plugin without prose fails the build")
 
     code, errors, tmp = with_fixture()
     (tmp / "site" / "i18n" / "fr" / "modules" / "beta.json").unlink()
@@ -151,6 +151,12 @@ def test_ac2_guards() -> None:
     code, errors, tmp = with_fixture(prose={"title": "t"})  # responsibilities is missing
     check("a string the template needs and a language lacks fails",
           code == 1 and any("missing string 'responsibilities'" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(
+        prose={"title": "t", "responsibilities": "<p>r</p>", "ghost_key": "leftover"})
+    check("a page-level string no template reads fails the build (#114)",
+          code == 1 and any("unused string 'ghost_key'" in e for e in errors), str(errors))
     shutil.rmtree(tmp)
 
 

@@ -47,8 +47,11 @@ serves `site/` alone and the build has no staging step. It is data, not a page.
 
 The existing anti-divergence guard is reused, not reimplemented: module pages go through
 the same `load_strings` / `render` path as every other page, so a key present in English
-and absent in French fails the build exactly as it always has. Three guards are added
-around it:
+and absent in French fails the build exactly as it always has. That guard now covers both
+directions of the same gap: a page-level string an i18n file carries that no template
+reads fails the build too (#114) — previously a warning, which is how a leftover key
+(`composer_js_strings`, deleted by #114) sat unnoticed. Three more guards are added
+around it, specific to modules:
 
 - a plugin the manifest declares with no i18n file, in either language, fails
 - an i18n module file naming no plugin fails

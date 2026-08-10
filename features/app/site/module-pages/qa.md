@@ -12,11 +12,13 @@ languages = twenty-four pages today; neither number appears in the builder.
 
 ## AC-2 — a gap in the prose fails the build
 
-Three failures, each verified on a throwaway fixture rather than asserted:
+Four failures, each verified on a throwaway fixture rather than asserted:
 
 - a string the template needs, present in one language and absent in the other
 - a plugin the manifest declares with no i18n module file, in either language
 - an i18n module file naming no plugin of the marketplace
+- a page-level string a language carries that no template references — leftover prose
+  is a gap the same way a missing string is, just on the other side of the count
 
 ## AC-3 — exactly one file declares the emoji
 
