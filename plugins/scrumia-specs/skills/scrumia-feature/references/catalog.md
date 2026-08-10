@@ -152,9 +152,21 @@ Short. One entry per notable change, reverse-chronological.
 ```markdown
 ## YYYY-MM-DD — one-line title of the change
 - Issue: #NN
-- PR: #NN (filled at merge)
+- Category: Added | Changed | Deprecated | Removed
 - Breaking: yes | no
 ```
+
+The four categories are [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/)'s,
+minus the two that have no referent in a document: a spec rule that turns out wrong is a
+`Changed`, not a `Fixed`, and nothing in a spec is a `Security` issue. `Deprecated` is
+what a feature citing a rule needs before that rule goes.
+
+**An entry names only what exists when it is written.** The issue number does; a PR
+number does not, because the entry ships inside the PR. The tracker reaches the PR from
+the issue, so storing it here buys a placeholder and nothing else.
+
+**One entry, one category.** A change that both adds a rule and alters another is two
+entries — a single label on it would be false about half the change.
 
 **Never** contains the reasoning. The why is in the issue. An entry that explains
 turns into a parallel spec.

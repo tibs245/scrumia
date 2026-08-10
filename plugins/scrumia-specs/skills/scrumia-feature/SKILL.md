@@ -109,14 +109,20 @@ History lives in three places, and only one per use:
 - Commits — who changed what, when
 - Issues — **why**, which alternatives, which trade-offs
 
-Changelog entry format:
+The entry's format is stated once, in [`references/catalog.md`](references/catalog.md)
+§ `CHANGELOG.md`, which is this feature's authority on it. A worked entry:
 
 ```markdown
 ## 2026-09-12 — MFA required at login
 - Issue: #45
-- PR: #48 (filled at merge)
+- Category: Added
 - Breaking: yes — see the migration described in #45
 ```
+
+Two rules the catalog states and this example only shows. **Name nothing that does not
+exist yet**: the issue number is knowable while you write, a PR number is not, and a
+placeholder standing in for one reads as a filled field. **One entry, one category**: a
+change that adds one rule and alters another is two entries.
 
 The *why* is in `#45`, not here. A changelog entry that explains its reasoning is a spec starting to grow again.
 

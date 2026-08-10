@@ -1,53 +1,9 @@
 # Changelog — agent team
 
-Reverse-chronological. Short. The reasoning is in the issues, not here.
+Reverse-chronological. One entry per notable change, one category each.
+The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-10 — Value stated in business.md; ticket references leave the spec
-- Issue: #193
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-10 — The roles table and the composition rule move from the index into business.md; the index keeps a pointer
-- Issue: #193
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-10 — The manager's routing cites ADR-0015 instead of the superseded 0006, and the business role's trigger is tested on both its halves: AC-1 keeps the business-rule condition beside the reach one, and AC-14 guards the `scope/L` ticket that crosses an app boundary with no business rule at stake
-- Issue: #78
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-09 — Convening the team is specified as its own entry point, distinct from a sprint, and checks module installation rather than declaration
-- Issue: #132
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-09 — The roles reach the exit review through the diff, not the label; the entry triggers stop borrowing the exit gate's words
-- Issue: #130
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-09 — All standing roles run on opus, the ceiling assigned without being asked; the tier above is opted into by a human, never by a default
-- Issue: #120
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-08 — The model-per-ticket deferrals point at the execution-policy feature, and the business role's trigger reads the blast-radius test rather than a file path
-- Issue: #13
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-08 — Reaching a role requires a restart after installing or updating its module; a review that could not run as the role says so
-- Issue: #33
-- PR: #68
-- Breaking: no
-
-## 2026-08-08 — A fourth role, designer, provided by the `design` slot's module rather than by `scrumia-teams`
-- Issue: #44
-- PR: #45
-- Breaking: no
-
-## 2026-08-08 — Initial spec: three roles, their scope, refusal, triggers, escalation and the real sprint-loop constraint
-- Issue: #12
-- PR: #NN (filled at merge)
+## 2026-08-10 — Changelog rebuilt on Keep a Changelog's categories
+- Issue: #213
+- Category: Changed
 - Breaking: no
