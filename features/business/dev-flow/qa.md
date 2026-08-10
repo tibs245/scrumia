@@ -172,6 +172,15 @@ Then the criterion is reported as uncovered — the approximation may ship as a 
   and it does not stand in for the audit or checklist the subject calls for
 ```
 
+```gherkin
+Given a practice plugged in on an app through `apps[].practices`, and a criterion whose
+  subject is a rule's wording, on a ticket that also touches that app's paths
+When the reviewable proposal is reviewed
+Then the audit covers that criterion and no test is owed for it — a practice narrows the
+  umbrella for criteria whose subject is the code it covers, not for every criterion a
+  ticket touching its paths happens to carry
+```
+
 ### AC-12 — An execution answers for the criteria it touched, not for the whole file
 
 ```gherkin

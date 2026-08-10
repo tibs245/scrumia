@@ -78,9 +78,11 @@ self-check read as a review.
 **This umbrella is this feature's, and a practice may narrow it.** Where a practice
 plugged in through `apps[].practices` uses *test* in a narrower sense — a red test in
 `scrumia-practice-tdd` is code exercising code — that narrower sense governs inside the
-paths the practice covers, and a criterion there is not discharged by an audit or a
-checklist. The forms above say what covers a criterion at gate 2; they never lower a
-practice's own bar.
+paths the practice covers, and a criterion **whose subject is code the practice covers**
+is not discharged by an audit or a checklist. The narrowing reaches a criterion by its
+subject, like everything else in this section: a criterion about a rule's wording is not
+brought under a practice by the ticket also touching the practice's paths. The forms
+above say what covers a criterion at gate 2; they never lower a practice's own bar.
 
 ### Which form a criterion's subject calls for
 
@@ -96,15 +98,16 @@ how strong a form one could imagine building.
 
 **Whether a program can decide a property is settled by running the check, not by
 imagining inputs.** A check decides a property when, run over the project's actual
-content, it reports nothing a careful reader would not — which is exactly what makes it
-shippable as an error rather than a warning. `tools/validate.py` carries both channels
-and the choice between them *is* this distinction: `check_doc_links()` errors, because
-on this repository's real tree it flags only links that genuinely resolve nowhere;
-`check_french_leftovers()` warns, because it counts accented characters and flags a file
-past three, which catches leftover French and also catches a page full of proper nouns.
-A check that has to warn in order to stay quiet is an approximation: ship it where it
-helps, and the criterion still owes the form its subject calls for. Hunting for a
-pathological input some future check would mishandle is **not** this test — every
+content, it reports nothing a careful reader would not. `tools/validate.py` holds one of
+each: `check_doc_links()` flags only links that genuinely resolve nowhere on this
+repository's real tree; `check_french_leftovers()` counts accented characters and flags
+a file past three, which catches leftover French and also catches a page full of proper
+nouns, and it is shipped as a warning for exactly that reason. A severity is evidence,
+not the rule — `validate.py` also warns on a plugin/marketplace version mismatch, a
+decidable fact it reports advisorily — so read what the check does, not the channel it
+reports on. A check that has to warn in order to stay quiet is an approximation: ship it
+where it helps, and the criterion still owes the form its subject calls for. Hunting for
+a pathological input some future check would mishandle is **not** this test — every
 matcher has one, and treating that as disqualifying would empty this row.
 
 **No form is owed merely because it is conceivable.** The mapping is read by subject and
