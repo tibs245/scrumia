@@ -129,6 +129,42 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
   leaves behind carries that work rather than resolving to its base commit
 ```
 
+### AC-11 — A criterion is covered by what can fail, and a test is only one such thing
+
+```gherkin
+Given a ticket whose entire deliverable is a specification, with no executable code
+When its reviewable proposal is opened
+Then each of its acceptance criteria maps to the section that satisfies it, that
+  mapping is accepted with no test file, and a criterion that no concrete case could
+  contradict is refused as uncovered
+```
+
+```gherkin
+Given a ticket whose deliverable includes executable code — on its own or alongside a
+  spec change
+When its reviewable proposal is opened
+Then each of its acceptance criteria is covered by a test that can fail, and pointing
+  at a section does not stand in for one
+```
+
+### AC-12 — The two acceptance namespaces stay two lists, each citation carrying its own
+
+```gherkin
+Given a ticket that delivers its work order and also amends its feature's acceptance
+  file
+When its reviewable proposal states what it delivered
+Then it maps its delivery against the ticket's own criteria, cited bare, and lists the
+  feature criteria it added or amended in a separate list, each cited with its file
+```
+
+```gherkin
+Given a ticket carrying five acceptance criteria whose feature's acceptance file ends
+  at seven
+When the proposal is reviewed
+Then the difference in counts is not read as a defect, the two sets having different
+  lifetimes, and no 1:1 mapping is demanded
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified

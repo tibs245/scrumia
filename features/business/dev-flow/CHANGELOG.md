@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — Falsifiability, not a test file, is what covers a criterion; a deliverable carrying no code covers its criteria with the sections that satisfy them, and a proposal maps against the ticket's namespace while listing the feature's separately
+- Issue: #31
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — A label/diff gap is a scoping failure only when the axis would have answered higher: AC-6 splits the two cases now that ADR-0015 decouples the grids. Gate 2's own routing is unchanged
 - Issue: #78
 - PR: #NN (filled at merge)

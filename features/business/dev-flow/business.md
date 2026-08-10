@@ -43,6 +43,59 @@ for the bootstrap case, is what it produces — see #18).
   `guided` autonomy the human also validates each ticket's transition into
   execution — a second decision, before any agent starts.
 
+## Covering a criterion: falsifiability is the requirement, a test is one form of it
+
+An execution must show, for each acceptance criterion it touches, something that
+could have failed. **Falsifiability is the requirement; a test file is the form it
+takes when the deliverable is executable.**
+
+- **The deliverable includes code** — each criterion is covered by a test that can
+  fail. This holds unconditionally: a change carrying any code covers its criteria
+  with tests, whatever prose the same ticket also delivers.
+- **The deliverable carries no executable code** — a specification, a business rule,
+  a piece of agent-executed prose — each criterion is covered by the section that
+  satisfies it, and the criterion is written so that a concrete case could contradict
+  it. A criterion no case could contradict is not covered; pointing at a section does
+  not rescue it.
+
+The second case is not a softening of the first. It exists because a deliverable with
+no test runner cannot satisfy the first at all, and an execution meeting that wall
+invents a substitute of its own — five runs of one sprint invented the same one,
+independently and with no authority to.
+
+A ticket whose entire deliverable is the specification has no second half to sequence.
+"The spec before the code" is satisfied by such a ticket, not waived by it, and the
+implementation step finding no code to write is a legitimate outcome rather than a
+skipped one.
+
+## The ticket's criteria and the feature's are two namespaces
+
+A ticket carries acceptance criteria and so does the feature it belongs to. The two
+sets are complementary, and they are not interchangeable:
+
+- **A ticket's criteria are a work order.** They say what this ticket must deliver,
+  and they expire when it closes. "Remove the placeholder file" is a legitimate
+  delivery criterion and will never be a standing guarantee.
+- **A feature's criteria are a standing contract.** They say what the feature
+  guarantees from now on, and they must keep holding long after every ticket that
+  touched them is closed.
+
+Their counts therefore need not match, and a difference between them is not a defect:
+one delivery criterion can produce two standing guarantees, some standing guarantees
+predate the ticket, and some delivery acts produce none at all. A 1:1 mapping is not
+achievable and is not to be demanded.
+
+**A reviewable proposal maps its delivery against the ticket's criteria** — the first
+question a reviewer asks is whether the ticket delivered what it promised, and the work
+order is what it promised. **It states separately, in its own list, which of the
+feature's criteria it added or amended.** Two lists, two purposes, never merged.
+
+**A criterion is cited with its namespace.** Both sets are numbered in the same format,
+so a bare identifier means two different things depending on which document the reader
+has open. A feature criterion is cited with its file (`dev-flow/qa.md AC-3`); a ticket
+criterion is cited bare (`AC-3`). Naming a criterion without saying which namespace it
+belongs to is the defect, whichever document does it.
+
 ## Where the human gate sits (ADR-0005)
 
 The three-gate model governs the **execution** path. Brainstorming carries no gate
