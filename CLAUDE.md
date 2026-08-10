@@ -81,6 +81,10 @@ a finding, not an exception.
   `gh project` calls: a board read without a filter is silently truncated at 30 items.
 - Before executing a ticket, ask `scrumia-teams/scripts/pick-model.sh <n>` which model it
   runs on, and act on its `instruction` rather than re-reading the matrix.
+- A role's memory under `.claude/agent-memory/` holds pointers, never rules, and is one of
+  four channels with one home each. What an entry may carry, and what its frontmatter owes,
+  is `features/business/agent-team/business.md` § *What role memory may hold* —
+  `tools/validate.py` fails on an entry that skips it.
 <!-- scrumia:end -->
 
 ## Working on this repo

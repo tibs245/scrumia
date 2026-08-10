@@ -6,7 +6,7 @@ metadata:
   topic: commit-before-yield
   source: agent
   stale_when: features/business/dev-flow/ reconciles its pause shorthands with the yield rule, or #123's wording is rewritten
-  cites: features/business/dev-flow/business.md, #123
+  cites: features/business/dev-flow/business.md, #123, #195
 ---
 
 `features/business/dev-flow/` states the commit rule normatively as *"an execution
@@ -23,5 +23,5 @@ obligation than the feature actually states.
 
 **How to apply:** when reviewing or writing in dev-flow, treat the *Who decides, on each
 path* → **Execution** bullet as the governing statement and the two shorthands as
-labels. If asked to reconcile them, that is an unwritten decision — say so rather than
-picking. Related: [[vocab-scope-label-readers]].
+labels. If asked to reconcile them, that is an unwritten decision, now tracked as **#195** —
+say so and point there rather than picking. Related: [[vocab-scope-label-readers]].

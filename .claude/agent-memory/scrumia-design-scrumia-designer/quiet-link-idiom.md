@@ -6,7 +6,7 @@ metadata:
   topic: site-link-styling
   source: agent
   stale_when: a second instance appears and the idiom is promoted to design/identity.md, or .mod-name stops being the only text-coloured link in site/assets/style.css
-  cites: #70, design/components/module-card/spec.md
+  cites: #70, #197, design/components/module-card/spec.md
 ---
 
 `site/assets/style.css` styles every link as `a { color: var(--accent) }` plus the UA
@@ -21,7 +21,7 @@ two cyans two lines apart and the slot label would stop pointing.
 
 Note the reasoning recorded in `design/components/module-card/spec.md` and the CSS
 comment both credit `.mod-cmd` with the accent — `.mod-cmd` is `--text-soft` on
-`--surface-sunken`, it carries none. The conclusion is right, the element named is wrong.
+`--surface-sunken`, it carries none. The conclusion is right, the element named is wrong — **#197**.
 
 **How to apply:** a text-coloured underlined link is a legitimate ScrumIA idiom, but only
 where an adjacent element already holds the accent. Anywhere else, links are accent.

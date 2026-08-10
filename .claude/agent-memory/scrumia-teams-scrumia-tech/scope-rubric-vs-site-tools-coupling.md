@@ -6,7 +6,7 @@ metadata:
   topic: site-tools-app-split
   source: agent
   stale_when: .scrumia/config.yaml stops declaring site and tools as peer apps, or scrumia-refine's scope rubric gains a carve-out for an app and its build tooling
-  cites: #114, .scrumia/config.yaml
+  cites: #114, #196, .scrumia/config.yaml
 ---
 
 `.scrumia/config.yaml` declares `site` and `tools` as two peer apps, but
@@ -27,8 +27,8 @@ but the label was wrong on both clauses of `S`, and the refinement that set it
 had itself planned the spec edits.
 
 **Why:** the gap is not a one-off mislabel — it recurs for every site-prose
-ticket, because the two-app split does not match the real unit of change. Two
-honest fixes exist: model `tools` as the site's builder rather than a peer app,
+ticket, because the two-app split does not match the real unit of change. Tracked as **#196**, which owns the decision; two
+honest fixes are on the table there: model `tools` as the site's builder rather than a peer app,
 or give the scope rubric a carve-out for an app and its build tooling.
 **How to apply:** when refining or reviewing a ticket that touches site prose,
 expect the `scope/S` vs `≥2 apps` contradiction and judge by blast radius, not
