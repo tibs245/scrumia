@@ -18,6 +18,9 @@ take the whole composition to get one part of it.
   prints that same composition to a terminal through
   `plugins/scrumia-core/scripts/compose-status.sh`, which both its skills end by
   running. Each module named in the table owns its own slot's implementation.
+- Defers to: `features/business/release-versioning/` for how a module evolves once
+  adopted — what a version bump promises, the deprecation window, and when a project is
+  told. This feature establishes that a module can be composed, not what changing it costs.
 
 ## Files present
 
