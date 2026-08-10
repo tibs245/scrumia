@@ -22,7 +22,7 @@ None of them becomes a module: they read and write what existing slots already o
 The refactor session is dropped, and `business.md` says why rather than leaving its
 absence to be re-litigated: refactoring is work, work is a ticket, and a "session" is
 execution without the acceptance criterion that makes execution refusable. That drops the
-occasion, not the paired refactor skills, which resolve a finding already filed.
+occasion, not the paired refactor skills, which resolve one named finding.
 
 Two occasions the composition already ships are judged rather than left ambiguous: the
 debt audit's **reading** is already enacted per slot by the five audit skills, which end
