@@ -9,7 +9,10 @@ independent of configuration), **arbitration** (the manager surfacing a
 disagreement between the other two to the human, with its own recommendation,
 without settling it itself), **verdict** (a role's explicit answer:
 approved / blocked, compliant / non-compliant, or their "with reservations"
-variants).
+variants), **channel** (one of the four places this project writes durable
+content an agent later acts on — skills, indexes, specs/ADRs/tickets, memory),
+**entry** (one file of a role's memory), **index** (the file a channel is
+entered through, which names what is there and nothing else).
 
 ## Activation triggers
 
@@ -123,6 +126,107 @@ roles one blocker and nine.
 So a review that could not run as its role reports that it did not. A fallback
 that reads as the real thing is worse than no review, because nobody
 compensates for a gate they believe ran.
+
+## Four channels, one home each
+
+This project writes durable content — content an agent later reads and acts on —
+into four channels. Each answers a different question, and a given sentence
+belongs to exactly one:
+
+| Channel | Answers | Where it lives here |
+|---|---|---|
+| Skills | *when* to look, and *what* to check | `plugins/*/skills/` |
+| Indexes | *where* it lives | a feature's `index.md`, `docs/adr/README.md`, `CLAUDE.md`, a role's `MEMORY.md` |
+| Specs, ADRs, tickets | *what is true* | `features/`, `docs/adr/`, the tracker |
+| Memory | what no document owns and no index can point to | `.claude/agent-memory/<role>/` |
+
+**The membership test is one question: would a new human contributor need to know
+this?** If yes it belongs in the repo or the tracker — a spec, an ADR or a ticket,
+reachable from an index. Only what is useful solely to an agent doing its work,
+and would clutter a spec, is memory: a human's working preferences, an
+environment constraint, a pitfall that costs an hour to rediscover.
+
+Two rules fall out of the split, and they hold for **every** channel:
+
+- **An index navigates, it never rules.** A rule found in an index is misfiled by
+  construction, whichever index it is.
+- **A rule is stated in exactly one channel.** Another channel may point at it.
+  Pointing is not restating: what must live in one place is the rule's *normative*
+  half — the obligation and the trigger that fires it. A second copy of its
+  *premise* or its motivation creates no second rule, because no one can be judged
+  compliant against a reason. The drift test is whether two copies could ever
+  command different behaviour, and a text carrying zero motivation gets skipped by
+  an agent that never opens the link.
+
+This section is the split's single statement, for all four channels. A feature
+applying it to one channel — this one applies it to memory, below — **cites this
+section rather than restating it**: a second statement of the membership test is
+the defect the split exists to remove.
+
+## What role memory may hold
+
+Each role declares `memory: project` in its own frontmatter, and the harness gives
+it a directory under `.claude/agent-memory/<role>/`. Those files load at the start
+of every invocation of that role and steer what it believes. It is the only
+channel that writes durable, behaviour-steering content through **none** of
+ADR-0005's three gates, and each role reads only its own directory — so what it
+may hold is governed here rather than left to whoever wrote it.
+
+**Memory holds pointers, never rules.** An entry may name the spec, ADR or ticket
+that owns a rule and say what to watch for when applying it. It may not carry the
+rule. An entry a reader could act on without opening what it cites has restated a
+rule, and a rule nobody voted is what this channel keeps producing when nothing
+says otherwise.
+
+Five further properties govern the channel. Each is carried in the entry's own
+frontmatter, under `metadata:`, so that a check can see it rather than a reviewer
+having to remember:
+
+```yaml
+---
+name: scope-axis-entry-exit
+description: <one line — what this entry is about>
+metadata:
+  type: project
+  topic: scope-axis                                  # the question it speaks to
+  source: agent                                      # or: human @handle 2026-08-09
+  stale_when: ADR-0015 is superseded, or #191 closes
+  cites: docs/adr/0015-scope-measures-reach.md       # optional
+---
+```
+
+**The channel is tracked whole, or not at all.** `.claude/agent-memory/` is
+versioned like any other deliverable, and *uniformly*: one role's directory cannot
+be tracked while another's is not. A partially-tracked channel is worse than an
+untracked one — `git status` reads clean while two machines hold different beliefs
+about what the roles know, and nothing signals the gap.
+
+**An entry says what would make it obsolete.** `stale_when` states the condition
+under which it stops being true: a ticket closing, a spec rewritten, an ADR
+superseded. An entry that no stated condition can invalidate never expires, and a
+channel of never-expiring entries is a channel of beliefs nobody can retire.
+
+**A human's ruling and a role's own inference are marked apart.** `source` is
+`human`, with the handle and the date, for something a human decided; `agent` for
+something a role concluded on its own. Only the first is settled. An agent's
+inference is a working belief and the next role to look may re-open it — without
+the mark, "never re-litigate this" attaches to conclusions no human ever made.
+
+**Two roles on the same question are detectable.** `topic` names the question the
+entry speaks to. Two roles carrying the same topic is not forbidden — they often
+hold complementary halves of it — but it is reported, because a contradiction
+between two standing instructions is otherwise invisible: neither role ever reads
+the other's directory, and no gate sees both.
+
+**The index names exactly what is there.** A role's `MEMORY.md` is this channel's
+index and the role's only entry point into it. It must name every file present
+beside it, and name no file that is absent. A file the index omits is not stale
+and not wrong, it is *invisible*; a file the index names and that does not exist
+sends the role to nothing.
+
+These are checked, not merely stated: `tools/validate.py` walks the channel on
+every run and in CI. The index-versus-tree half takes **the tree it walks as an
+argument**, so the same check serves any indexed tree rather than this one alone.
 
 ## The sprint loop's real constraint
 

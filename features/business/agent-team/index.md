@@ -11,6 +11,10 @@ autonomous the project is configured to be. Three come from the `team` slot —
 manager, business, tech — and a fourth, designer, from whichever module fills the
 `design` slot. The roles are permanent through project memory and externalized
 board state, not through a live process (`docs/adr/0002-standing-roles.md`).
+That memory is one of the four channels this project writes durable content
+into, and the only one outside ADR-0005's gates: `business.md` states the split
+and its membership test once, for all four, then says what a role's memory may
+hold — pointers, never rules.
 A role can also be reached outside a ticket: convening brings the enabled
 roles up, hands the floor back to the human, and starts no sprint.
 
@@ -57,7 +61,7 @@ that module (`plugins/scrumia-design/agents/scrumia-designer.md`), not in
 
 | File | Why it exists |
 |---|---|
-| `business.md` | Activation triggers per role, and the escalation rules that hold regardless of the project's autonomy level |
+| `business.md` | Activation triggers per role, the escalation rules that hold regardless of the project's autonomy level, and the four-channel split with what role memory may hold |
 | `qa.md` | Acceptance criteria for role activation, convening as an entry point, arbitration and the sprint-loop constraint |
 | `CHANGELOG.md` | History of changes to this feature |
 
@@ -70,3 +74,6 @@ there is no cross-app dialogue to describe for this EPIC.
 - #4 — [EPIC] Spec the agent team: roles, triggers, routing, refusal lines (parent)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is
   refused at Step 0. This feature was itself created under that gap, by exception.
+- #193 — The same defect shape in the `features/` channel: indexes carrying rules.
+  It cites this feature's four-channel split rather than restating it, and reuses
+  the index-versus-tree check with `features/` as its argument.

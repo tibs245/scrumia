@@ -31,6 +31,27 @@ Then the enabled roles are convened and each states what it owns and what it
 And no sprint starts and no card moves
 ```
 
+### AC-15 — The four-channel split and its membership test are stated once
+
+```gherkin
+Given a feature needs to say what its own channel may hold
+When it applies the membership test — "would a new human contributor need to
+  know this?"
+Then it cites business.md § "Four channels, one home each" rather than restating
+  the split or the test
+And a second statement of the test anywhere in the repo is a defect, not a
+  convenience
+```
+
+### AC-16 — A memory entry points at a rule instead of carrying it
+
+```gherkin
+Given a role writes an entry to .claude/agent-memory/<role>/
+When the entry concerns a rule a spec, ADR or ticket owns
+Then it names that document and says what to watch for when applying it
+And a reader cannot act on the entry without opening what it cites
+```
+
 ## Edge cases
 
 ### AC-3 — Two roles disagree
@@ -138,6 +159,67 @@ Given a ticket labeled scope/L whose only change is an interface contract
   between two apps, with no business rule at stake
 When the manager routes it
 Then tech is asked at entry and the business role is not
+```
+
+### AC-17 — An existing entry that carries a rule is moved out of memory
+
+```gherkin
+Given an entry in .claude/agent-memory/ states a rule no spec, ADR or ticket owns
+When the channel is audited
+Then the rule is relocated to the channel the membership test names, and the
+  entry is reduced to a pointer to it — or, where relocating it is work of its
+  own, the entry names the ticket that will carry it
+And an entry whose rule has no home anywhere is not left as the rule's record
+```
+
+### AC-18 — One role's memory is tracked and another's is not
+
+```gherkin
+Given .claude/agent-memory/<role-a>/ is tracked by git and
+  .claude/agent-memory/<role-b>/ is not
+When the channel is validated
+Then it fails as partially tracked — git status reading clean while two machines
+  hold different beliefs is the failure, not "some files are in git"
+```
+
+### AC-19 — An entry that no condition can invalidate
+
+```gherkin
+Given a memory entry carries no metadata.stale_when, or an empty one
+When the channel is validated
+Then it fails, because nothing could ever retire the belief it holds
+```
+
+### AC-20 — A conclusion no human reached is marked as the role's own
+
+```gherkin
+Given a role writes an entry from its own inference rather than a human ruling
+When the entry is written
+Then metadata.source reads agent, and only an entry sourced to a named human on
+  a date may be treated as settled
+```
+
+### AC-21 — Two roles hold standing instructions on the same question
+
+```gherkin
+Given two roles' directories each carry an entry with the same metadata.topic
+When the channel is validated
+Then the pair is reported so the contradiction can be judged — neither role
+  reads the other's directory, so an unreported pair is undetectable
+And carrying the same topic is not itself a failure: two roles may hold
+  complementary halves of one question
+```
+
+### AC-22 — An index and the files beside it disagree
+
+```gherkin
+Given a role's MEMORY.md names a file that is not present, or a file is present
+  that MEMORY.md does not name
+When the channel is validated
+Then it fails in both directions — an unnamed file is invisible to the role, and
+  a named absent file sends it to nothing
+And the check takes the tree it walks as an argument, so it serves any indexed
+  tree rather than this one alone
 ```
 
 AC-1 and AC-14 are the two halves of one trigger. `scope/L` is reached by any of the

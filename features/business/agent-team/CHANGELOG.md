@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — Role memory becomes a governed channel: the four-channel split and its membership test are stated once for all four, memory holds pointers and never rules, and the channel is tracked whole with an index that must match the tree
+- Issue: #126
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — The manager's routing cites ADR-0015 instead of the superseded 0006, and the business role's trigger is tested on both its halves: AC-1 keeps the business-rule condition beside the reach one, and AC-14 guards the `scope/L` ticket that crosses an app boundary with no business rule at stake
 - Issue: #78
 - PR: #NN (filled at merge)
