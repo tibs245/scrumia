@@ -6,23 +6,28 @@ application code, since nothing computes a version today.
 
 ## Nominal
 
-### AC-1 — The bump is read off the commit, not chosen
+### AC-1 — The type is checked against the published surface, not against the files touched
 
 ```gherkin
-Given a commit whose type carries a level and whose scope names a module
-When the module's next version is decided
-Then it is the level that type maps to in the vocabulary's one definition, and the
-  person shipping it did not pick a level from an impression of how big the change felt
+Given a commit typed as one that moves nothing a consumer reads or runs — prose,
+  housekeeping, a reshaping — whose diff changes what one of the module's skills instructs
+  an agent to do
+When the commit is checked against this feature's rule
+Then the type is wrong and the commit is non-conforming, because in a module made of prose
+  an instruction is behaviour: the type had to be the one whose level matches what the
+  change does to the published surface
 ```
 
-### AC-2 — A patch that moves the published surface is a defect in the module
+### AC-2 — A bump that under-states what moved is a defect in the module
 
 ```gherkin
-Given a module released as a patch
+Given a module released at a level whose promise is "nothing owed"
 When a project that already used it takes the update and one of its config keys, skill
-  names, contract keys or invoked script paths no longer works
+  names, contract keys, invoked script paths, or the instructions one of its skills gives
+  no longer holds
 Then the module is at fault, not the project — the project owed no reading and no action,
-  and the release should have been a major
+  and the release should have carried the level that obliges one, read through the shift
+  that applies below `1.0.0`
 ```
 
 ## Edge cases
@@ -46,13 +51,20 @@ Then exactly those two modules bump, at the same level, and a module that change
   because it sits in the same repository does not move
 ```
 
-### AC-5 — Below `1.0.0`, a breaking change bumps the minor
+### AC-5 — Below `1.0.0`, a breaking change bumps the minor, and the minor obliges
 
 ```gherkin
 Given a module at `0.4.0` and a commit carrying the breaking signal
 When its next version is derived
 Then it is `0.5.0` — the mapping shifted by one — and not `1.0.0`, which is a per-module
   decision nothing about this change makes
+```
+
+```gherkin
+Given a project reading `0.5.0` where it had `0.4.0`, on a module below `1.0.0`
+When it decides what it owes
+Then it owes what a major obliges — the promise is read one row up below `1.0.0` — and a
+  project told it may take that minor without acting has been given the unshifted table
 ```
 
 ### AC-6 — A rename removed before the window closes is refused
@@ -109,8 +121,19 @@ Then it fails with a message naming the module, the version that removed the nam
 Given a change whose specs changelog entry says `Breaking: yes` while no commit behind it
   carries the breaking signal — or the reverse
 When the module's version is derived
-Then the commit's signal decides the number, and the disagreement is reported as a defect
-  to reconcile rather than resolved by preferring whichever was written later
+Then the commit's signal decides the number, and whoever notices the disagreement — the
+  reviewer at gate 2, or whoever prepares the release — reconciles the two rather than
+  preferring whichever was written later
+```
+
+### AC-12 — A change a project must act on carries the breaking signal, whatever its type
+
+```gherkin
+Given a commit that renames or removes something on the published surface, or changes what
+  a skill instructs in a way a project must adapt to — typed as anything at all
+When it is written without `!` on its type and without a `BREAKING CHANGE:` footer
+Then it is non-conforming: the signal is owed by the change, not offered by the type, and a
+  version derived from a commit that withheld it under-states what the project must do
 ```
 
 ## Out of scope
@@ -125,5 +148,6 @@ Then the commit's signal decides the number, and the disagreement is reported as
   derivation is ever automated — open, and deliberately not decided by the ADR behind this
   feature.
 - **The changelog file format** — the categories, the required fields, and what the gate
-  checks. This feature names which category a type proposes; the format is
-  `features/business/feature-format/`'s and the modules' own.
+  checks. A commit type proposes a category, and that mapping sits in the same table as the
+  type's level; the format itself is `features/business/feature-format/`'s and the modules'
+  own, and a module's six categories are not a spec changelog's four.

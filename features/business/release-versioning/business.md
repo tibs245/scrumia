@@ -23,9 +23,19 @@ What the number speaks about is the module's **published surface**:
 - the contract block it writes into `CLAUDE.md`
 - the names of the skills and commands it ships
 - the scripts other modules invoke by path
+- **what its skills instruct an agent to do, and the artefacts they produce**
+
+The last item is the one a module made of prose cannot leave out: here the deliverable *is*
+the instruction, so rewriting what a skill tells an agent changes what a project gets as
+surely as renaming a key does. A surface listing only names, keys and paths would let a
+module rewrite every instruction it ships under a number promising nothing moved.
 
 Not the content of a project's own specs, which the module never owns, and not the
 module's internals, which it may reshape freely.
+
+**A release is a version published to the marketplace** — a manifest whose number moved,
+reachable by a project that updates. Not a commit and not a merge; several merges land
+between two releases and none of them is one. The window below is counted in these.
 
 | Bump | Promise | What the project owes |
 |---|---|---|
@@ -42,30 +52,47 @@ promise, and it is what makes the number worth reading.
 Semver promises nothing below `1.0.0`, and every module ships there today. Rather than
 pretend otherwise, or let a prose fix ship `1.0.0`:
 
-| The mapping says | Below `1.0.0` it is |
-|---|---|
-| major | minor |
-| minor | patch |
-| patch | patch |
+| The mapping says | Below `1.0.0` the number moves | and the promise a project reads is |
+|---|---|---|
+| major | minor | major's: **act** |
+| minor | patch | minor's: nothing owed, read what you gained |
+| patch | patch | patch's: nothing owed |
 
-The consequence is honest and worth naming: below `1.0.0` a consumer cannot tell a
-feature from a fix by the number, and reads the changelog for anything finer than
-"something moved". Reaching `1.0.0` lifts the shift, per module, and is what buys the
-finer reading.
+**The obligation shifts with the number.** The promise table above is read one row up
+below `1.0.0`. A project that read it unshifted would take a minor "without acting" and
+break on a rename that shipped inside it — which is the exact failure the shift exists to
+prevent, not a footnote to it. Below `1.0.0`, a minor is where breakage lives.
+
+The rest of the consequence is honest and worth naming: below `1.0.0` a consumer cannot
+tell a feature from a fix by the number, and reads the changelog for anything finer than
+"something moved" — at both levels, not only at one. Reaching `1.0.0` lifts the shift, per
+module, and is what buys the finer reading.
 
 ## Which bump a change earns
 
-The bump is **derived from the commit**, not chosen. Two things decide it: the type,
-and whether the scope names a module.
+The bump is **read off the commit**, not chosen. Two things decide it: the type, and
+whether the scope names a module.
 
 - **The type's level** is `docs/adr/0017-version-bump-and-commit-signal.md`'s table,
   which is the vocabulary's one definition. It is cited here and enumerated nowhere:
   a second copy is a second definition, and the ADR is where a type is admitted.
-- **`!` on the type, or a `BREAKING CHANGE:` footer, overrides the level and bumps a
-  major.** Available on every type, not only the two the standard bumps from.
 - **A bump happens only where the scope names a module.** A commit scoped to an app, a
   feature or the repository moves no number, whatever its type — there is no number to
   move. This is why a change to a spec bumps nothing: a feature carries no version.
+
+Which leaves the type itself, which a human does choose — so the choice is constrained by
+what the number has to mean:
+
+- **The type is chosen against the published surface, not against the files touched.** A
+  change that adds something a project can use is a feature; one that makes existing
+  behaviour do what it was already meant to do is a fix; the types that move nothing a
+  consumer reads or runs are for changes that do exactly that and no more. In a module made
+  of prose, editing what a skill *instructs* is never one of those.
+- **A change to the published surface that a project must act on owes the breaking
+  signal**, whatever its type. Owed, not offered. Without this clause the level is a
+  judgement made after the fact, and the authority the breaking signal carries below is
+  authority over a signal nobody was told to send — which is why no commit in this
+  repository's history has ever carried one.
 
 **A commit naming several modules bumps every module it names, at the same level, and no
 other.** That is the rule the mandatory scope exists to make possible; the alternative —
@@ -82,6 +109,8 @@ keep reading in the old spelling for a window counted **in releases**:
 | **N** | renames. Both spellings work, the new one is preferred, and the changelog carries the old one under `Deprecated` **naming the version that removes it** |
 | **N+1** | both spellings still work |
 | **N+2** or later | the old spelling may be removed, under `Removed`, in a commit carrying the breaking signal |
+
+Counted in **releases** — versions published to the marketplace — not in commits or merges.
 
 Not "for a while", not "until the next major": two releases, counted. A rename and its
 removal in the same release is a breaking change wearing a deprecation notice.
