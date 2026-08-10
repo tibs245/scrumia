@@ -3,6 +3,10 @@ name: site-i18n-guard-invariants
 description: Why the build_site.py unused-key guard is scoped to page-level i18n keys and must not be naively extended to common.json — programmatic string reads are invisible to it
 metadata:
   type: project
+  topic: site-i18n-guard
+  source: agent
+  stale_when: tools/build_site.py's unused-key guard changes scope, or module_specials() stops reading mod_no_slot programmatically
+  cites: features/app/site/module-pages/qa.md, #114
 ---
 
 `tools/build_site.py`'s anti-divergence guard fails the build on a key a template

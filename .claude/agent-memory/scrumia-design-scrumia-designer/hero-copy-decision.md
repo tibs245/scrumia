@@ -3,6 +3,10 @@ name: hero-copy-decision
 description: Ticket #60 hero rulings — orbit placeholder promoted to final headline, counts cut 5→3, why
 metadata:
   type: project
+  topic: site-hero-copy
+  source: agent
+  stale_when: the hero copy or its stat row changes in site/i18n/{en,fr}/index.json, or #65's manifest enumerator stops deriving the three counts
+  cites: #60, site/i18n/en/index.json
 ---
 
 Hero (#60): orbit's "Every capability is a slot." was promoted from placeholder to final copy (FR "Chaque capacité est un slot."), and the stat row was cut from five counts to three (7 slots · 12 modules · 3 human touchpoints).

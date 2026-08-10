@@ -3,6 +3,10 @@ name: scope-axis-entry-exit
 description: The scope/* axis measures reach (ADR-0015, owned by execution-policy/business.md); label routes entry, diff routes exit — and a gap between them is a scoping failure only when the axis itself would have answered higher
 metadata:
   type: project
+  topic: scope-axis
+  source: agent
+  stale_when: ADR-0015 is superseded, or #190 and #191 close
+  cites: docs/adr/0015-scope-measures-reach.md, #78
 ---
 
 Two invariants that every routing/labelling review in this repo runs into.

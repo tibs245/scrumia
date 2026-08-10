@@ -3,6 +3,10 @@ name: vocab-scope-label-readers
 description: The scope/* label has entry readers and no exit reader — the vocabulary trap behind every routing contradiction in the business specs
 metadata:
   type: project
+  topic: scope-axis
+  source: agent
+  stale_when: ADR-0015 is superseded, or the entry/exit split in features/business/dev-flow/qa.md AC-6 changes
+  cites: docs/adr/0015-scope-measures-reach.md, #130
 ---
 
 `scope/*` is read at **entry** and never at **exit**. Since #130 (2026-08-09):

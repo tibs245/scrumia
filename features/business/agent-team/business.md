@@ -188,12 +188,18 @@ name: scope-axis-entry-exit
 description: <one line — what this entry is about>
 metadata:
   type: project
-  topic: scope-axis                                  # the question it speaks to
-  source: agent                                      # or: human @handle 2026-08-09
+  topic: scope-axis
+  source: agent
   stale_when: ADR-0015 is superseded, or #191 closes
-  cites: docs/adr/0015-scope-measures-reach.md       # optional
+  cites: docs/adr/0015-scope-measures-reach.md
 ---
 ```
+
+`topic` names the question the entry speaks to, `source` is `agent` or
+`human @<handle> <YYYY-MM-DD>`, `stale_when` is the condition that retires it, and
+`cites` — optional, since a working preference points at nothing — names what owns
+the rule. Values are read as plain text to the end of the line: a `#` in one is part
+of it, which is what lets `stale_when` name a ticket.
 
 **The channel is tracked whole, or not at all.** `.claude/agent-memory/` is
 versioned like any other deliverable, and *uniformly*: one role's directory cannot
@@ -225,8 +231,11 @@ and not wrong, it is *invisible*; a file the index names and that does not exist
 sends the role to nothing.
 
 These are checked, not merely stated: `tools/validate.py` walks the channel on
-every run and in CI. The index-versus-tree half takes **the tree it walks as an
-argument**, so the same check serves any indexed tree rather than this one alone.
+every run and in CI. The index-versus-tree half takes **the tree it walks, and the
+name of its index, as arguments** — a second indexed tree reuses that check rather
+than growing a second one. What each tree does not share is how its index *names*
+a file: a tree whose index names a file to record its absence needs a narrower
+reading than this channel's, and supplies it when it passes its root.
 
 ## The sprint loop's real constraint
 

@@ -3,6 +3,10 @@ name: site-motion-invariants
 description: The site's .js pre-paint motion gate, the reduced-motion blanket rule's animation-delay blind spot, and the fact that .summon fades every direct child including decoration
 metadata:
   type: project
+  topic: site-motion
+  source: agent
+  stale_when: the .js pre-paint gate leaves site/templates/partials/head.html, or the .summon rules in site/assets/style.css are restructured
+  cites: #60, #62
 ---
 
 Three invariants of `site/assets/style.css` motion system that reviews keep needing:

@@ -3,6 +3,10 @@ name: sky-tokens-derivation
 description: Sky tokens (#59) are color-mix() of themed tokens; per-theme strengths go through light-dark(color-mix(), color-mix()), never literals
 metadata:
   type: project
+  topic: site-sky-tokens
+  source: agent
+  stale_when: the four sky tokens stop being color-mix() derivations in design/tokens.css, or --halo-far gains its per-theme strengths
+  cites: #59, design/tokens.css
 ---
 
 The four sky tokens (--halo-near, --halo-far, --grid-line, --limb-glow) are single

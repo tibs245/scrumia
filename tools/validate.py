@@ -16,6 +16,13 @@ ROOT = Path(__file__).resolve().parent.parent
 ERRORS: list[str] = []
 WARNINGS: list[str] = []
 
+MEMORY_ROOT = ROOT / ".claude" / "agent-memory"
+MEMORY_INDEX = "MEMORY.md"
+# What every memory entry owes, per features/business/agent-team/business.md:
+# the question it speaks to, who decided it, and what would retire it.
+MEMORY_KEYS = ("topic", "source", "stale_when")
+SOURCE_RE = re.compile(r"^(agent|human @[\w-]+ \d{4}-\d{2}-\d{2})\b")
+
 
 def error(msg: str) -> None:
     ERRORS.append(msg)
@@ -49,6 +56,135 @@ def frontmatter(path: Path) -> dict[str, str] | None:
             key, _, value = line.partition(":")
             fields[key.strip()] = value.strip()
     return fields
+
+
+def nested_frontmatter(path: Path) -> dict:
+    """Frontmatter with its one level of nesting — the flat parser above drops it.
+
+    Memory entries carry their contract under `metadata:`, so a parser that skips
+    indented lines cannot see any of it.
+    """
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return {}
+    end = text.find("\n---", 4)
+    if end == -1:
+        return {}
+    fields: dict = {}
+    nested: dict | None = None
+    for line in text[4:end].splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        key, _, value = line.partition(":")
+        if line.startswith((" ", "\t")):
+            if nested is not None:
+                nested[key.strip()] = value.strip()
+            continue
+        if value.strip():
+            fields[key.strip()] = value.strip()
+            nested = None
+        else:
+            nested = {}
+            fields[key.strip()] = nested
+    return fields
+
+
+def index_names(index: Path) -> set[str]:
+    """The sibling filenames an index names, as links or as backticked cells.
+
+    Both spellings are in use — a role's MEMORY.md links its entries, a feature's
+    index.md lists them in a table — so reading either keeps this usable on more
+    than one tree. Anything carrying a slash points outside and is not ours to judge.
+
+    A tree whose index names a file to explain its *absence* ("No `legal.md`: this
+    feature governs no personal data") needs a narrower reading than this one, which
+    would call that a dangling name: features/ is such a tree.
+    """
+    text = index.read_text(encoding="utf-8")
+    names = set(re.findall(r"\]\(([^)#\s/]+\.md)(?:#[^)]*)?\)", text))
+    names |= set(re.findall(r"`([^`/\s]+\.md)`", text))
+    return names
+
+
+def check_index_covers_tree(root: Path, index_name: str) -> None:
+    """Every index under root names each .md beside it, and names no absent one.
+
+    The tree and its index filename are arguments rather than constants: the same
+    defect — an index drifted from what it indexes — is checked over
+    .claude/agent-memory/ here and over any other indexed tree by whoever passes it.
+    """
+    if not root.is_dir():
+        return
+    for index in sorted(root.rglob(index_name)):
+        rel = index.relative_to(ROOT)
+        present = {p.name for p in index.parent.glob("*.md")} - {index_name}
+        named = index_names(index) - {index_name}
+        for missing in sorted(present - named):
+            error(f"{rel}: does not name {missing}, which sits beside it — invisible to whoever reads the index")
+        for absent in sorted(named - present):
+            error(f"{rel}: names {absent}, which is not there")
+
+
+def check_memory_channel() -> None:
+    """Role memory is governed (features/business/agent-team/business.md § What role memory may hold).
+
+    Nothing else looks under .claude/: the channel loads into every role invocation
+    and passes none of ADR-0005's gates, so its four mechanical properties are
+    checked here.
+    """
+    if not MEMORY_ROOT.is_dir():
+        return
+    rel_root = MEMORY_ROOT.relative_to(ROOT)
+
+    check_index_covers_tree(MEMORY_ROOT, MEMORY_INDEX)
+
+    # Half a channel in git reads clean in `git status` while two machines diverge.
+    try:
+        listed = subprocess.run(
+            ["git", "ls-files", "--", str(rel_root)],
+            cwd=str(ROOT), capture_output=True, text=True, timeout=5, check=True,
+        ).stdout.split()
+    except (subprocess.SubprocessError, OSError) as e:
+        warn(f"{rel_root}: cannot read git's index, tracking unchecked — {e}")
+        listed = None
+    if listed is not None:
+        tracked = set(listed)
+        for md in sorted(MEMORY_ROOT.rglob("*.md")):
+            rel = md.relative_to(ROOT)
+            if str(rel) not in tracked:
+                error(f"{rel}: untracked — the memory channel is tracked whole or not at all")
+
+    topics: dict[str, list[Path]] = {}
+    for md in sorted(MEMORY_ROOT.rglob("*.md")):
+        if md.name == MEMORY_INDEX:
+            continue
+        rel = md.relative_to(ROOT)
+        meta = nested_frontmatter(md).get("metadata")
+        if not isinstance(meta, dict):
+            error(f"{rel}: no metadata: block in the frontmatter — a memory entry carries {', '.join(MEMORY_KEYS)}")
+            continue
+        for key in MEMORY_KEYS:
+            if not meta.get(key):
+                error(f"{rel}: frontmatter has no metadata.{key}")
+        source = meta.get("source", "")
+        if source and not SOURCE_RE.match(source):
+            error(
+                f"{rel}: metadata.source is '{source}' — expected 'agent', or "
+                f"'human @<handle> <YYYY-MM-DD>' when a human decided it"
+            )
+        topic = meta.get("topic")
+        if topic:
+            topics.setdefault(topic, []).append(rel)
+
+    # Warned, not refused: two roles on one question are as often two halves of it.
+    for topic, entries in sorted(topics.items()):
+        roles = sorted({e.parent.name for e in entries})
+        if len(roles) > 1:
+            warn(
+                f"{rel_root}: topic '{topic}' is held by {len(roles)} roles "
+                f"({', '.join(roles)}) — check they do not contradict: "
+                f"{', '.join(str(e) for e in entries)}"
+            )
 
 
 def check_marketplace() -> dict[str, dict]:
@@ -301,6 +437,7 @@ def main() -> int:
     check_skill_scripts()
     check_french_leftovers()
     check_composition_drift()
+    check_memory_channel()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")

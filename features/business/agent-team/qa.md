@@ -218,8 +218,8 @@ Given a role's MEMORY.md names a file that is not present, or a file is present
 When the channel is validated
 Then it fails in both directions — an unnamed file is invisible to the role, and
   a named absent file sends it to nothing
-And the check takes the tree it walks as an argument, so it serves any indexed
-  tree rather than this one alone
+And the check takes the tree and its index filename as arguments, so a second
+  indexed tree reuses it rather than growing a second check
 ```
 
 AC-1 and AC-14 are the two halves of one trigger. `scope/L` is reached by any of the

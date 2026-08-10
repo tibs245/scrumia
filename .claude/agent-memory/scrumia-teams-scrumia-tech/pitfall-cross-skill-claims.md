@@ -3,6 +3,10 @@ name: pitfall-cross-skill-claims
 description: In plugins/, skills assert what sibling skills do; nothing checks those claims, so a behaviour change must be swept for prose that becomes false
 metadata:
   type: feedback
+  topic: stale-cross-references
+  source: agent
+  stale_when: tools/validate.py gains a check that a skill's claim about a sibling is true, not merely linked
+  cites: tools/validate.py, #130
 ---
 
 When a rule changes in `plugins/`, grep the whole tree for prose in *other* skills and
