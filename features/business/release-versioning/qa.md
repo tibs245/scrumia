@@ -80,9 +80,10 @@ Then the removal is refused as premature: the window is two releases, counted, a
 
 ```gherkin
 Given a module deprecating a published name in its changelog
-When the entry says the name is deprecated without naming the version that removes it
+When the entry says the name is deprecated without naming the release that removes it
 Then the entry is incomplete — a project cannot plan against an adjective, and the window
-  is only a window once its end is written down
+  is only a window once its end is written down. The release, not a version number: at the
+  release that deprecates, the number the removal will carry is not yet derivable
 ```
 
 ### AC-8 — A project that never updates is told nothing, and that is correct
@@ -121,9 +122,9 @@ Then it fails with a message naming the module, the version that removed the nam
 Given a change whose specs changelog entry says `Breaking: yes` while no commit behind it
   carries the breaking signal — or the reverse
 When the module's version is derived
-Then the commit's signal decides the number, and whoever notices the disagreement — the
-  reviewer at gate 2, or whoever prepares the release — reconciles the two rather than
-  preferring whichever was written later
+Then the commit's signal decides the number, and the review at gate 2 reconciles the two
+  rather than preferring whichever was written later — that reviewer is the appointed one,
+  because no release run exists to catch it later
 ```
 
 ### AC-12 — A change a project must act on carries the breaking signal, whatever its type

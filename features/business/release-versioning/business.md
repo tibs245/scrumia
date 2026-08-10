@@ -40,7 +40,7 @@ between two releases and none of them is one. The window below is counted in the
 | Bump | Promise | What the project owes |
 |---|---|---|
 | **patch** | nothing on the published surface moved | nothing — take it without reading |
-| **minor** | something is available that was not; nothing the project already does stops working | nothing — read the changelog to learn what you gained |
+| **minor** | something is available that was not, or something the project sees changed; nothing it already does stops working | nothing — read the changelog to learn what moved |
 | **major** | something the project depends on changed shape | act; the changelog names the change and its replacement |
 
 A project that takes a patch or a minor and then breaks has found a **defect in the
@@ -58,10 +58,11 @@ pretend otherwise, or let a prose fix ship `1.0.0`:
 | minor | patch | minor's: nothing owed, read what you gained |
 | patch | patch | patch's: nothing owed |
 
-**The obligation shifts with the number.** The promise table above is read one row up
-below `1.0.0`. A project that read it unshifted would take a minor "without acting" and
-break on a rename that shipped inside it — which is the exact failure the shift exists to
-prevent, not a footnote to it. Below `1.0.0`, a minor is where breakage lives.
+**The obligation shifts with the number**, one level more severe and not uniformly — which
+is why the third column is spelled out. Below `1.0.0`: a **minor** means act; a **patch**
+means anything from a fix to a feature, so read the changelog. A project reading the table
+unshifted would take a minor "without acting" and break on a rename that shipped inside it,
+which is the failure the shift exists to prevent rather than a footnote to it.
 
 The rest of the consequence is honest and worth naming: below `1.0.0` a consumer cannot
 tell a feature from a fix by the number, and reads the changelog for anything finer than
@@ -75,7 +76,9 @@ whether the scope names a module.
 
 - **The type's level** is `docs/adr/0017-version-bump-and-commit-signal.md`'s table,
   which is the vocabulary's one definition. It is cited here and enumerated nowhere:
-  a second copy is a second definition, and the ADR is where a type is admitted.
+  a second copy is a second definition, and the ADR is where a type is admitted. The
+  changelog category that table carries beside each level is a **proposal**, not a
+  determination — the entry is a human's sentence to a consumer.
 - **A bump happens only where the scope names a module.** A commit scoped to an app, a
   feature or the repository moves no number, whatever its type — there is no number to
   move. This is why a change to a spec bumps nothing: a feature carries no version.
@@ -106,7 +109,7 @@ keep reading in the old spelling for a window counted **in releases**:
 
 | Release | What the module does |
 |---|---|
-| **N** | renames. Both spellings work, the new one is preferred, and the changelog carries the old one under `Deprecated` **naming the version that removes it** |
+| **N** | renames. Both spellings work, the new one is preferred, and the changelog carries the old one under `Deprecated` **naming the release that removes it** — the release, not a version number, which at N is unknowable because the number is derived from commits not yet written |
 | **N+1** | both spellings still work |
 | **N+2** or later | the old spelling may be removed, under `Removed`, in a commit carrying the breaking signal |
 

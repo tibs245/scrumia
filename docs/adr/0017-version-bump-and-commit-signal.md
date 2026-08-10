@@ -67,7 +67,7 @@ the module's internals, which it may reshape freely.
 | Bump | Promise | What the project owes |
 |---|---|---|
 | **patch** | Nothing on the published surface moved. A defect was fixed or prose was corrected | nothing — take it without reading |
-| **minor** | Something is available that was not, and nothing the project already does stops working | nothing — read the changelog to learn what you gained |
+| **minor** | Something is available that was not, or something the project sees changed — and nothing it already does stops working | nothing — read the changelog to learn what moved |
 | **major** | Something the project depends on changed shape: a key renamed, a skill removed, a contract's vocabulary changed | act. The changelog names the change and its replacement |
 
 A project that takes a patch or a minor and then breaks has found a defect in the module,
@@ -140,6 +140,8 @@ Three rules govern the whole table:
   consumer reads or runs. The trap in this repository is `docs`: prose that *instructs an
   agent* is the module's behaviour, so editing it is `feat` or `fix`, never `docs`. `docs`
   is for prose that describes without instructing — a README, a rationale, a changelog.
+  Where the scope names no module there is no published surface to check against and the
+  type is simply descriptive; nothing rides on it, because no number moves.
 - **A change to the published surface that a project must act on carries `!`, or a
   `BREAKING CHANGE:` footer, whatever its type.** Not only `feat` and `fix` may carry it,
   and it is **owed**, not offered: this is the sentence that turns §7's "the commit's signal
@@ -152,23 +154,32 @@ ticket's option B taken for `design` specifically, at the cost the *Rejected alt
 section prices: a stock parser, which ignores the type entirely, computes a lower number
 than we do.
 
-The changelog column names **a module's** categories. A commit changing a rule under the
-specs root writes a spec changelog instead, whose four categories are the specs module's
-own (`plugins/scrumia-specs/.../catalog.md`) and do not include `Fixed` — a rule that turns
-out wrong is a `Changed` there. `Deprecated`, `Removed` and `Security` are nobody's type:
-no commit type implies them, and they stay what a human writes when a change deserves one.
+The changelog column **proposes** a category; it does not fix one. The entry is a human's
+sentence to a consumer, and the type only says which category the change usually lands in.
+`Changed`, `Deprecated`, `Removed` and `Security` are in nobody's row for that reason: a
+correction to what a skill instructs is typed `fix` and filed under `Changed` as often as
+under `Fixed`, and no type implies the other three at all.
 
-**Both `design` and `specs` are admitted, not rejected.** `design` because five commits on
-`main` already use it for user-visible change and the repository ships a design module
-whose tokens are a consumer's surface; `specs` because the specs branch prefix at
-`docs/dev-flow.md` already uses it and rejecting it would leave a form in daily use
-outside every list.
+The column names **a module's** six categories. A commit changing a rule under the specs
+root writes a spec changelog instead, whose four are the specs module's own
+(`plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md`) and exclude `Fixed`
+— a rule that turns out wrong is a `Changed` there.
+
+**Both `design` and `specs` are admitted, not rejected.** `design` because the repository
+ships a design module whose tokens are a consumer's surface, so `design(design):` is a real
+and recurring case; `specs` because the specs branch prefix at `docs/dev-flow.md` already
+uses it and rejecting it would leave a form in daily use outside every list. The five
+`design:` commits on `main` are *not* evidence for either: every one of them touches root
+`design/` and `site/assets/`, so under §2 they scope to `repo` and `site` and move no
+number under this ADR either. They are what makes the type worth admitting as vocabulary,
+not what makes it worth a bump.
+
+**A `specs`-typed commit is scoped to a feature or to `repo`, never to a module** — which
+is what keeps `specs(specs):` from being both a bump and no bump. The module token `specs`
+and the type `specs` are different words in different positions.
 
 **The same vocabulary serves the branch prefix and the PR title.** One list, three uses.
 That is what makes the specs branch prefix conforming rather than an orphan.
-
-`Deprecated`, `Removed` and `Security` are nobody's type. No commit type implies them, and
-they stay what a human writes when they judge a change deserves one.
 
 ### 4. Below `1.0.0`, the mapping shifts by one
 
@@ -181,11 +192,13 @@ or let a doc rename ship `1.0.0`:
 | minor | patch | minor's: nothing owed, read what you gained |
 | patch | patch | patch's: nothing owed |
 
-**The obligation shifts with the number.** §1's table is read one row up below `1.0.0`, and
-that is the whole point of writing the shift down: a project that read the unshifted table
-would take a minor "without acting" and break on a rename that shipped inside it. Below
-`1.0.0` a minor is where breakage lives, and a patch is where a minor's news lives — which
-is why the changelog is not optional reading below `1.0.0`, for either level.
+**The obligation shifts with the number**, and it shifts one level more severe — not
+uniformly, which is why the third column is spelled out rather than summarised. Below
+`1.0.0`: a **minor** means act; a **patch** means anything from a fix to a feature, so read
+the changelog. That is the whole point of writing the shift down — a project reading the
+unshifted table would take a minor "without acting" and break on a rename that shipped
+inside it. Below `1.0.0`, a minor is where breakage lives, and the changelog is not
+optional reading at either level, because the number alone no longer separates them.
 
 Reaching `1.0.0` is what lifts the shift, and is a decision per module, not a release-wide
 event.
@@ -196,9 +209,11 @@ A module may rename or remove anything it does not publish. What it publishes �
 — it must keep reading in the old spelling for a stated window:
 
 **Release N** renames. Both spellings work; the module prefers the new one; its changelog
-carries the old one under `Deprecated`, **naming the version that removes it**.
-**Removal ships no earlier than release N+2** — so at least one whole release beyond the
-rename carries both.
+carries the old one under `Deprecated`, **naming the release that removes it** — "removed
+no earlier than the second release after this one". The *release* and not the version
+number, which at N is unknowable: §7 derives the number from the commits that have not been
+written yet. **Removal ships no earlier than release N+2**, so at least one whole release
+beyond the rename carries both.
 
 Not "for a while", not "until the next major": two releases, counted.
 
@@ -355,6 +370,14 @@ gate, which does gate, is deliberate and named here rather than discovered later
   lands this ADR.
 - *The convention ships unenforced.* Stated here rather than found later. Until a gate
   exists, conformance is a habit.
+- *A consuming project cannot read this vocabulary.* AC-3's "one definition" puts the list
+  here, and a marketplace install cannot follow a repository-relative link out of a plugin
+  — so `scrumia-ticket` now names five types to a foreign project where it used to name
+  five, and tells it to read its own history instead. The scope's four namespaces were
+  inlined in the skill for exactly that reason; the type list was not, because inlining it
+  would be the second definition AC-3 forbids. A module that ships a convention its
+  consumers cannot read is shipping a convention for this repository only, and that is the
+  trade taken.
 - *Below `1.0.0` the number says less than it will, and says it one row out.* A feature and
   a fix are the same patch bump until a module reaches `1.0.0`; worse, the level a project
   reads is not the level it owes, so every twelve modules shipping today require the shift
