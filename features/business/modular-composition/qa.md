@@ -125,10 +125,10 @@ territory and `scrumia-compose`'s job to diagnose around this output.
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor
-  or patch bump means for a project already using a module, and how that project
-  finds out about a breaking change. Left to the versioning decision, open; this
-  feature only establishes that a module exists and can be composed, not how it
-  evolves once adopted.
+  or patch bump means for a project already using a module, how long a renamed thing
+  keeps working, and when that project finds out. Specified by
+  `features/business/release-versioning/`; this feature only establishes that a module
+  exists and can be composed, not how it evolves once adopted.
 - **Any single module's own settings or file layout** — each module documents
   what it reads under `settings.<slot>` in its own `SKILL.md`; this feature does
   not duplicate any module's contract, only the shared rule that a contract must
