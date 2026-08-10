@@ -1,0 +1,28 @@
+# Tech — Hero
+
+## Structure
+
+Hop arrives once, and does not loop: `.hop-arrive` (the arrival animation) plays only
+on the `.js` class, and that class is set by the inline pre-paint script in
+`site/templates/partials/head.html` — the only code that runs before first paint. The
+script adds `.js` only when `IntersectionObserver` exists and
+`prefers-reduced-motion` is not set, so a reader with no JavaScript, a script that
+failed, or reduced motion never gets the class and sees Hop already assembled with its
+eye lit — nothing travels. This is the site-wide gate applied to Hop specifically; the
+gate's own mechanism, and its use for the rest of the hero's `.summon` elements, is
+`ground-and-shell`'s concern. The general "no loop on a real page" rule is
+`design/components/hop/spec.md`'s (`.hop-loop` is preview-only), cited rather than
+restated here.
+
+## Debt
+
+The three counts in `.counts` (slots, modules shipped, human touchpoints) are
+literals, not values computed from `.claude-plugin/marketplace.json` and
+`.scrumia/config.yaml`. Debt assumed 2026-08-09, exit condition named as "after #65
+lands" (`site/templates/index.html`, inline comment next to the numbers).
+
+#65 has since closed — it built the manifest enumerator and the per-module pages, not
+a recount of the hero's own counts. The debt is unpaid: the numbers are still
+literals, and no open issue currently tracks migrating them. This is a gap, not a
+resolved item — the comment in `site/templates/index.html` needs a live issue number
+in place of the closed one, or the derivation done outright.

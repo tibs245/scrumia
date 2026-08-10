@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The roles table and the composition rule move from the index into business.md; the index keeps a pointer
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — The manager's routing cites ADR-0015 instead of the superseded 0006, and the business role's trigger is tested on both its halves: AC-1 keeps the business-rule condition beside the reach one, and AC-14 guards the `scope/L` ticket that crosses an app boundary with no business rule at stake
 - Issue: #78
 - PR: #NN (filled at merge)

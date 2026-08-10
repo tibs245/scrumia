@@ -20,6 +20,33 @@ prevent. Paying for a 2024 browser floor with the exact defect the ticket remove
 is the wrong trade. If the floor ever has to drop, the answer is a build step
 that expands the pairs, not a hand-maintained second copy.
 
+## Token discipline this feature answers to
+
+`design/tokens.css` already states two of this feature's governing rules, so they
+are cited here rather than repeated: a theme is a token redefinition, written once
+per token as a `light-dark()` pair (top-of-file comment); the sky is scenery, not
+an actor, so `--halo-far` is mixed from `--sky` rather than from `--human` or
+`--agent` (the `--sky` comment). `design/identity.md` states the third: `--human`
+sits at least 35° of OKLab hue and ΔE 8 from `--accent`, enforced by
+`tools/check_contrast.py` — the corollary to identity decision 4, because the one
+thing marking a person's decision must never be read as the thing that points.
+
+This feature adds one more, not yet stated elsewhere: **no value is a literal
+restatement of another token.** A wash, a glow or a rim light derived from the
+accent is written as a `color-mix()` of `--accent` (`--glow-accent`, `--halo-near`,
+`--limb-glow`), never as that accent's hex spelled out again. A derivation copied
+by hand stops being a derivation the moment the source token moves — `--glow-accent`'s
+own comment names this as the reason it exists.
+
+## The theme is resolved before first paint
+
+The saved choice is applied by an inline script in `<head>`, not by `theme.js` —
+the deferred file only owns the toggle control afterward. `<head>` is the only
+point in the load before anything has painted, so it is the only point where the
+saved theme can be applied without a flash of the wrong one. `theme.js` documents
+the same split at the point where a reader could otherwise expect the deferred
+file to do this.
+
 ## Why a theme change freezes every transition
 
 `theme.js` sets `data-theme-switching` on the root, flips the theme, reads a
@@ -38,6 +65,13 @@ nothing. If a build step is ever introduced, that statement has to be protected
 from minification.
 
 ## Why nothing is hidden without an expiry
+
+**Nothing is hidden by CSS that JavaScript has to un-hide.** Every rule that hides
+something is gated on `.js`, a class the inline `<head>` script sets before first
+paint — the same script that can also un-hide, and only when the reader has not
+asked for reduced motion (`style.css`'s "Motion" comment). No JavaScript, a failed
+script, an old browser, or `prefers-reduced-motion`: the class is absent, nothing
+matches, and the page renders complete rather than blank.
 
 The `.js` gate proves that a script capable of un-hiding is running. It does not
 prove that `motion.js` will ever arrive — the HTML can be delivered and the

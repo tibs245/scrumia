@@ -1,6 +1,6 @@
 # Acceptance criteria — Hero
 
-One scenario per rule in `index.md`. Each scenario must be able to fail.
+One scenario per rule in `ux.md` and `tech.md`. Each scenario must be able to fail.
 
 ## Nominal
 
@@ -21,6 +21,15 @@ Given the rendered hero
 When every control inside it is inspected
 Then exactly one carries `.btn-primary`, and no other element in the hero's
   viewport is filled with the accent colour
+```
+
+### AC-5 — The hero spends only `--accent`, `--text` and the surfaces
+
+```gherkin
+Given the rendered hero
+When every element inside it is inspected for the colour it spends
+Then no element uses `--human`, `--human-surface`, `--agent` or `--agent-surface`
+And only `--accent`, `--text`, `--ground` and the surface tokens appear
 ```
 
 ## Edge cases

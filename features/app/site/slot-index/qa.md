@@ -1,6 +1,6 @@
 # Acceptance criteria — Slot index
 
-One scenario per rule in `index.md`. Each scenario must be able to fail.
+One scenario per rule in `ux.md` and `tech.md`. Each scenario must be able to fail.
 
 ## Nominal
 
@@ -14,7 +14,7 @@ And the activated row's answer opens, and the previously open row closes,
   entirely through the browser's native `<details name="slot">` behaviour
 ```
 
-### AC-2 — The empty state is stated in words, not only in stroke style
+### AC-2 — The empty state is stated in words, not only in stroke style (a11y)
 
 ```gherkin
 Given the `implementation` and `practices` rows, which are empty
@@ -37,7 +37,7 @@ And `slot-card/spec.md` no longer exists — migrated, not duplicated
 
 ## Edge cases
 
-### AC-4 — Keyboard-operable, focus visible, both themes
+### AC-4 — Keyboard-operable, focus visible, both themes (a11y)
 
 ```gherkin
 Given a reader operating by keyboard alone
@@ -52,4 +52,4 @@ Then the row opens, a visible focus ring is drawn around the summary in both
 - What the seven slots are, and their questions — owned by
   `features/business/modular-composition/index.md`.
 - Retiring `design/components/slot-card/preview.html` and its Claude Design
-  card — #57.
+  card — #57 (closed); the Claude Design side is tracked by #92.

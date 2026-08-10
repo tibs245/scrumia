@@ -5,32 +5,12 @@
 
 ## In brief
 
-Two paths, kept deliberately apart:
-
-- **Brainstorming** — human-led, agent-challenged. An idea gets questioned until it
-  becomes a ticket carrying a verifiable acceptance criterion.
-- **Execution** — agent-led. Once a ticket is scoped, agents implement and
-  self-review; the human validates at the end, not mid-flight.
-
-Mixing them is BMAD's failure mode: mobilizing the human uniformly, on the same
-terms, whether the decision is still open or already made. Kept apart, validation
-cost tracks where the decision actually happens — heavy while the idea is still
-soft, light once it is a scoped ticket.
-
-## This feature owns the code-cycle process
-
-The execution path's mechanics — one worktree per ticket, one branch per ticket,
-committing before the run yields control, review before merge, the three gates,
-`auto_merge` — are **this feature's**. Ownership is settled; the wording is not all
-here yet — worktree ownership lands through #20, and until it does, no other spec
-becomes its home. Committing before the run yields control is written down, in
-`business.md` § *Who decides, on each path*. A tracker feature *traces* that cycle:
-it says which concrete artefact each abstract step becomes on its tool, and it never
-redefines the step itself.
-
-`business.md` § *The code cycle* carries the ownership rule, the precedence when a
-tracker feature disagrees, and the replacement test that files any given rule on
-exactly one side.
+Two paths, kept deliberately apart: brainstorming turns an idea into a scoped
+ticket, human-led and agent-challenged; execution turns a scoped ticket into a
+reviewable PR, agent-led with the human validating at the end. This feature
+owns the code-cycle process that execution runs on; a tracker feature only
+traces it onto its own tool. `business.md` carries who decides on each path,
+the mechanics of the cycle, and the ownership rule against a tracker feature.
 
 ## Links
 
@@ -49,17 +29,15 @@ exactly one side.
 
 ## Files present
 
-| File | Why it exists |
+| File | Read it when |
 |---|---|
-| `business.md` | who decides what on each path, where the human gate sits, and who owns the code cycle |
-| `qa.md` | the refusal rule that keeps execution from running on a guessed intent, the autonomy gates, and what routes gate 2's review |
-| `CHANGELOG.md` | history of this feature's changes, one entry per notable change |
+| `business.md` | need who decides what on each path, where the human gate sits, or who owns the code cycle |
+| `qa.md` | need the refusal rule, the autonomy gates, or what routes gate 2's review, as falsifiable scenarios |
+| `CHANGELOG.md` | need history of this feature's changes |
 
 ## Open issues
 
 - #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0
-- #20 — Sprint Step 3 describes the orchestration in prose instead of shipping it (carries this feature's worktree-ownership wording)
-- #118 — A ticket agent can lose its whole implementation by pausing for a review it was told to ask for
 - #170 — A branch left behind by a stopped run is indistinguishable from a finished implementation
-- #191 — AC-6 states the narrowed rule and `scrumia-ticket` Step 6 now applies it; `scrumia-review` gate 2 and `scrumia-manager` still describe the label/diff gap without the carve-out, so a correct `scope/M` on a specs-only diff can still be reported as a scoping failure
+- #191 — `scrumia-review` gate 2 and `scrumia-manager` still describe the label/diff gap without the carve-out AC-6 states, so a correct `scope/M` on a specs-only diff can still be reported as a scoping failure

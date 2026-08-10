@@ -1,6 +1,6 @@
 # Acceptance criteria — Composer
 
-One scenario per rule in `index.md`. Each scenario must be able to fail.
+One scenario per rule in `ux.md`, `tech.md`, `business.md` and `api-contract.md`. Each scenario must be able to fail.
 
 ## Nominal
 
@@ -46,7 +46,7 @@ And with JavaScript disabled both artifacts still show the default
 
 ## Edge cases
 
-### AC-4 — Keyboard-operable end to end, both languages, both themes
+### AC-4 — Keyboard-operable end to end, both languages, both themes (a11y)
 
 ```gherkin
 Given a reader operating by keyboard alone
@@ -76,6 +76,26 @@ When any `composition:` key reads `null`
 Then a row of the composer offered that choice and the visitor or a preset
   selected it — in particular `design`, which has its own row rather than a
   silent default
+```
+
+### AC-7 — Choosing works with JavaScript disabled
+
+```gherkin
+Given a reader with JavaScript disabled
+When they open a row and pick an option
+Then the row's `<details>` opens on the native toggle, the option's radio or
+  checkbox is checked on click alone, and the row's fill updates to the
+  chosen option through CSS `:has()` — no state above the pre-rendered
+  default artifacts (AC-3) requires script to exist
+```
+
+### AC-8 — The composer's fills read as decisions, not reports
+
+```gherkin
+Given `#slots` and `#composer` on the same rendered page
+When a filled row is inspected in each
+Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
+  `--human`, in both the light and the dark theme
 ```
 
 ## Out of scope

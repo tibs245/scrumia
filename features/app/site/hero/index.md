@@ -10,65 +10,36 @@ one sentence of lead copy, one filled control, Hop's first appearance on the sit
 three counts that state the shape of the composition. Everything below the fold is a
 different feature's scope.
 
-## Where the authority sits
+## Links
 
-| Question | Answered by |
-|---|---|
-| What should someone feel? | `design/identity.md` |
-| Which values may be used? | `design/tokens.css` — the vocabulary |
-| What does Hop look like, and when may it move? | `design/components/hop/spec.md` |
-| Which direction is the hero built in? | `design/explorations/orbit.html`, adopted by #53 |
-
-`site/assets/tokens.css` is generated from `design/tokens.css` by `tools/build_site.py`
-and is never edited by hand. `site/assets/style.css` consumes those tokens; the hero
-section holds no literal colour, spacing or duration of its own.
-
-## The rules this feature owns
-
-**The headline breaks are authored, not computed.** At `--text-hero` scale a line
-break is a composition decision: `hero_title` carries `<br>` where the line should
-end, in both languages, and no CSS `text-wrap: balance` substitutes for that choice.
-
-**Exactly one filled control shows in the hero.** `.btn-primary` marks the one thing
-the page wants a reader to do; every other control in the hero is `.btn-ghost` or
-carries no fill at all.
-
-**The hero never spends `--human` or `--agent`.** Only `--accent`, `--text` and the
-surfaces — the human/agent colour rule is a different feature's decision (#52) and the
-hero does not anticipate it either way.
-
-**Hop arrives once, and does not loop.** `.hop-arrive` plays on the `.js` class alone —
-the same pre-paint gate the rest of the shell uses — so Hop is assembled and lit on
-the first frame for a reader with no JavaScript, a script that failed, or
-`prefers-reduced-motion`.
-
-**The ring is lit before anything is summoned, and the rest arrives into it.**
-`.hero-figure` is exempt from the arrival fade every other element in the hero gets:
-the ring reads as an already-waiting slot, and the eyebrow, headline and lead fade in
-after it — never the reverse. Motion stands for causality (`design/identity.md`,
-decision 2): Hop arriving before anything summoned it is the one order this page must
-never show.
-
-**A count in the hero is derived, or its debt is dated.** Today's three counts (slots,
-modules shipped, human touchpoints) are literals because #65 (the manifest enumerator)
-has not landed; the debt is written as a comment in `site/templates/index.html` next
-to the numbers, dated, and names the issue that resolves it.
+- Business parent: none beyond the epic. The copy decision itself is recorded in
+  `ux.md` and the ticket, not a dedicated `business.md`.
+- Authority: `design/identity.md` — what someone should feel in the first three
+  seconds, and decision 2 ("motion means causality") for the ring's arrival order.
+- Authority: `design/tokens.css` — the vocabulary; the hero holds no literal colour,
+  spacing or duration of its own.
+- Authority: `design/components/hop/spec.md` — Hop's states, sizes and what it
+  refuses.
+- Authority: `design/components/button/spec.md` — the one-primary rule: one
+  `.btn-primary` per screen, not per section.
+- Authority: `design/explorations/orbit.html` — the direction the hero is built in,
+  adopted by #53.
 
 ## Files present
 
-| File | Why it exists |
+| File | Read it when |
 |---|---|
-| `qa.md` | The criteria the hero must keep passing — both languages, every width |
-| `CHANGELOG.md` | History of changes to this spec |
+| `qa.md` | Checking or writing a test for the hero — both languages, every width |
+| `ux.md` | Touching what the hero shows, its reading order, or its arrival motion |
+| `tech.md` | Touching the Hop arrival gate or the counts' derivation/debt |
+| `CHANGELOG.md` | Checking what changed in this feature and when |
 
-No `business.md`: the copy decision is recorded here and in the ticket, and there is
-no business parent beyond the epic. No `ux.md`: `design/explorations/orbit.html` and
-`design/identity.md` already carry the interaction intent, and duplicating it here
-would drift the day one of them changes. No `api-contract.md`, `archi.md`, `legal.md`,
-`devx.md`: nothing here exposes an interface, touches personal data or changes how the
-project is built.
+No `business.md`: nothing here is specific to this app beyond what Links already
+states — there is no business parent beyond the epic. No `api-contract.md`,
+`archi.md`, `legal.md`, `devx.md`, `security.md`: nothing here exposes an interface,
+crosses an app boundary, touches personal data, is consumable by another app, or
+carries a rated risk.
 
 ## Open issues
 
-- #65 — Enumerate modules from the manifests and generate their pages. When it lands,
-  the hero's three counts stop being literals.
+None currently open.

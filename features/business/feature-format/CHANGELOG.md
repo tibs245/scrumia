@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — This feature's own index conforms to the new catalogue shape
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — The mandatory file set is the specs module's declaration
 - Issue: #25
 - PR: #NN (filled at merge)

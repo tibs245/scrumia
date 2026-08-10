@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — Conforms to the new catalog: lifecycle moves from index.md to business.md, business.md opens on why GitHub, stale #5/#23 drop from open issues
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — A deviation from the execution policy is recorded as a structured comment on its issue; the PR body becomes the echo
 - Issue: #32
 - PR: #NN (filled at merge)
