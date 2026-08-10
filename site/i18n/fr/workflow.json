@@ -41,12 +41,12 @@
   "step6_li1": "Charger le contexte par le module de specs",
   "step6_li2": "<strong>Mettre à jour la spec avant le code</strong>, si le comportement change",
   "step6_li3": "Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique bat générique",
-  "step6_li4": "Couvrir chaque <code>AC-n</code> avec quelque chose qui peut échouer — un test quand le livrable porte du code, la section qui le satisfait quand il n'en porte pas",
+  "step6_li4": "Couvrir chaque <code>AC-n</code> avec quelque chose qui peut échouer",
   "step6_li5": "Autorevue, puis revue par les rôles selon le périmètre d'impact",
   "step6_li6": "Ouvrir la PR",
 
   "step7_title": "L'humain revoit et fusionne",
-  "step7_p1": "La PR porte la correspondance critère par critère, les specs qu'elle a changées, les verdicts de revue, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.",
+  "step7_p1": "La PR porte la correspondance critère par critère face aux critères de <strong>l'issue</strong>, une liste distincte des critères de la <strong>feature</strong> qu'elle a ajoutés ou amendés, les specs qu'elle a changées, les verdicts de revue, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.",
 
   "spec_note_title": "Pourquoi la spec en premier",
   "spec_note_p": "Écrire la spec d'abord fait remonter les contradictions avant qu'elles ne soient codées — où les corriger coûte le moins. Si une surgit contre une autre feature, l'exécution s'arrête et demande au rôle métier. Elle ne résout jamais une règle d'elle-même : une règle inventée en vol devient la référence de tout le monde sans que personne ne l'ait décidée.",

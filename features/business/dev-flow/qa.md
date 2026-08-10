@@ -129,25 +129,41 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
   leaves behind carries that work rather than resolving to its base commit
 ```
 
-### AC-11 — A criterion is covered by what can fail, and a test is only one such thing
+### AC-11 — The criterion's own subject decides the form its coverage takes
 
 ```gherkin
-Given a ticket whose entire deliverable is a specification, with no executable code
-When its reviewable proposal is opened
-Then each of its acceptance criteria maps to the section that satisfies it, that
-  mapping is accepted with no test file, and a criterion that no concrete case could
-  contradict is refused as uncovered
+Given a criterion whose subject is prose, no runner the project has being able to
+  exercise it
+When the reviewable proposal is reviewed
+Then the section that satisfies the criterion is accepted as its coverage, and no
+  finding is raised for the absence of a test file
 ```
 
 ```gherkin
-Given a ticket whose deliverable includes executable code — on its own or alongside a
-  spec change
-When its reviewable proposal is opened
-Then each of its acceptance criteria is covered by a test that can fail, and pointing
-  at a section does not stand in for one
+Given a criterion whose subject is executable behaviour, on a ticket that also
+  delivers a spec change
+When the reviewable proposal is reviewed
+Then that criterion is blocked unless a test that can fail covers it, the prose half
+  of the same ticket buying it no exemption
 ```
 
-### AC-12 — The two acceptance namespaces stay two lists, each citation carrying its own
+```gherkin
+Given a criterion that no concrete case could contradict
+When the reviewable proposal is reviewed
+Then it is reported as uncovered, whichever section the proposal points at
+```
+
+### AC-12 — An execution answers for the criteria it touched, not for the whole file
+
+```gherkin
+Given a ticket that amends one criterion in its feature's acceptance file, that file
+  holding nine others it does not touch
+When gate 2 checks what the proposal covers
+Then it raises a finding only on the ticket's own criteria and the one amended, and
+  none on the nine standing criteria the ticket left alone
+```
+
+### AC-13 — The two acceptance namespaces stay two lists, each citation carrying its own
 
 ```gherkin
 Given a ticket that delivers its work order and also amends its feature's acceptance
@@ -161,8 +177,7 @@ Then it maps its delivery against the ticket's own criteria, cited bare, and lis
 Given a ticket carrying five acceptance criteria whose feature's acceptance file ends
   at seven
 When the proposal is reviewed
-Then the difference in counts is not read as a defect, the two sets having different
-  lifetimes, and no 1:1 mapping is demanded
+Then no finding is raised on the difference in counts
 ```
 
 ## Out of scope

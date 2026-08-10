@@ -2,7 +2,7 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
-## 2026-08-10 — Falsifiability, not a test file, is what covers a criterion; a deliverable carrying no code covers its criteria with the sections that satisfy them, and a proposal maps against the ticket's namespace while listing the feature's separately
+## 2026-08-10 — Falsifiability, not a test file, is what covers a criterion, and the criterion's own subject decides the form; an execution answers only for the criteria it touched; a proposal maps against the ticket's namespace and lists the feature's separately
 - Issue: #31
 - PR: #NN (filled at merge)
 - Breaking: no

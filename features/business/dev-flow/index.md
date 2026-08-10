@@ -21,8 +21,9 @@ soft, light once it is a scoped ticket.
 
 The execution path's mechanics — one worktree per ticket, one branch per ticket,
 committing before the run yields control, what covers an acceptance criterion, review
-before merge, the three gates, `auto_merge` — are **this feature's**. Ownership is settled; the wording is not all
-here yet — worktree ownership lands through #20, and until it does, no other spec
+before merge, the three gates, `auto_merge` — are **this feature's**. Ownership is
+settled; the wording is not all here yet — worktree ownership lands through #20, and
+until it does, no other spec
 becomes its home. Committing before the run yields control is written down, in
 `business.md` § *Who decides, on each path*. A tracker feature *traces* that cycle:
 it says which concrete artefact each abstract step becomes on its tool, and it never
@@ -48,7 +49,7 @@ exactly one side.
 
 | File | Why it exists |
 |---|---|
-| `business.md` | who decides what on each path, where the human gate sits, who owns the code cycle, what covering a criterion means, and which acceptance namespace a proposal maps against |
+| `business.md` | who decides what on each path, where the human gate sits, who owns the code cycle, what covers a criterion, and which acceptance namespace a reviewable proposal maps against |
 | `qa.md` | the refusal rule that keeps execution from running on a guessed intent, the autonomy gates, what routes gate 2's review, and how criteria are covered and cited |
 | `CHANGELOG.md` | history of this feature's changes, one entry per notable change |
 

@@ -43,25 +43,42 @@ for the bootstrap case, is what it produces — see #18).
   `guided` autonomy the human also validates each ticket's transition into
   execution — a second decision, before any agent starts.
 
-## Covering a criterion: falsifiability is the requirement, a test is one form of it
+## Covering a criterion
 
-An execution must show, for each acceptance criterion it touches, something that
-could have failed. **Falsifiability is the requirement; a test file is the form it
-takes when the deliverable is executable.**
+An execution must show, for each acceptance criterion it is answerable for, something
+that could have failed. **Falsifiability is the requirement; a test file is the form it
+takes where a runner can exercise the criterion.** The form follows the **criterion's
+own subject**, never the deliverable's overall nature:
 
-- **The deliverable includes code** — each criterion is covered by a test that can
-  fail. This holds unconditionally: a change carrying any code covers its criteria
-  with tests, whatever prose the same ticket also delivers.
-- **The deliverable carries no executable code** — a specification, a business rule,
-  a piece of agent-executed prose — each criterion is covered by the section that
-  satisfies it, and the criterion is written so that a concrete case could contradict
-  it. A criterion no case could contradict is not covered; pointing at a section does
-  not rescue it.
+- **A criterion whose subject is executable behaviour** — covered by a test that can
+  fail. A ticket carrying code never trades such a criterion for a section reference,
+  whatever prose it also delivers.
+- **A criterion whose subject is prose** — a rule, a specification, a piece of
+  agent-executed text — covered by the section that satisfies it, the criterion itself
+  written so that a concrete case could contradict it. A criterion no case could
+  contradict is not covered; pointing at a section does not rescue it.
 
-The second case is not a softening of the first. It exists because a deliverable with
-no test runner cannot satisfy the first at all, and an execution meeting that wall
-invents a substitute of its own — five runs of one sprint invented the same one,
-independently and with no authority to.
+A criterion's subject is prose where no runner the project has could exercise it. That
+is a question about the project's runners, not about a file's extension.
+
+Keying the form to the criterion rather than to the deliverable is what keeps a mixed
+ticket answerable. One shipping code *and* a spec change owes tests for its behaviour
+criteria and sections for its prose criteria, in the same proposal, with no reading
+under which either half escapes — where the deliverable decided the form, such a ticket
+would face an impossible instruction and pick its way out of it.
+
+The second form is not a softening of the first. It exists because a criterion no
+runner can exercise cannot satisfy the first at all, and an execution meeting that wall
+invents a substitute of its own.
+
+**This is what *verifiable* means** in § *The two paths*, what `qa.md` AC-1 calls "an
+acceptance criterion that can fail", and what ADR-0004 calls verifiable — one property
+under three names, not three requirements.
+
+**Which criteria an execution is answerable for**: the ticket's own, plus those it adds
+to or amends in the feature's acceptance file. A criterion already standing in that
+file and untouched by the ticket is not this execution's to re-cover; it was covered
+when it was written.
 
 A ticket whose entire deliverable is the specification satisfies the spec-before-code
 sequencing rather than waiving it: there is no second half to sequence against. Its

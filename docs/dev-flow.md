@@ -89,7 +89,7 @@ The outline:
 1. Load the context via the specs module
 2. **Update the spec before the code**, if the behavior changes
 3. Implement **per the app's implementation module**
-4. Cover each `AC-n` with something that can fail — a test where the deliverable carries code, the section that satisfies it where it carries none
+4. Cover each `AC-n` with something that can fail
 5. Self-review, then review by the roles according to the diff's actual scope
 6. Open the PR
 

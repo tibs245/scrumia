@@ -56,7 +56,7 @@ Each execution follows the same outline:
 1. Load the context via the specs module
 2. Update the spec if the behavior changes — before the code
 3. Implement per the implementation module of the app concerned
-4. Cover each acceptance criterion with something that can fail — a test where the deliverable carries code, the section that satisfies it where it carries none
+4. Cover each acceptance criterion with something that can fail
 5. Self-review, then review by the roles according to scope
 6. Open the PR
 

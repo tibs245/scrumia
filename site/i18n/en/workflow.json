@@ -41,12 +41,12 @@
   "step6_li1": "Load context through the specs module",
   "step6_li2": "<strong>Update the spec before the code</strong>, if behaviour changes",
   "step6_li3": "Implement <strong>following the app's implementation module and its practices</strong> — specific beats generic",
-  "step6_li4": "Cover each <code>AC-n</code> with something that can fail — a test where the deliverable carries code, the section that satisfies it where it carries none",
+  "step6_li4": "Cover each <code>AC-n</code> with something that can fail",
   "step6_li5": "Self-review, then role review based on blast radius",
   "step6_li6": "Open the PR",
 
   "step7_title": "Human reviews and merges",
-  "step7_p1": "The PR carries the criterion-by-criterion mapping, the specs it changed, review verdicts, and open reservations with their issues. <strong>Agents don't merge</strong>, except for categories explicitly listed in config.",
+  "step7_p1": "The PR carries the criterion-by-criterion mapping against the <strong>issue's</strong> criteria, a separate list of the <strong>feature</strong> criteria it added or amended, the specs it changed, review verdicts, and open reservations with their issues. <strong>Agents don't merge</strong>, except for categories explicitly listed in config.",
 
   "spec_note_title": "Why the spec goes first",
   "spec_note_p": "Writing the spec first surfaces contradictions before they get encoded — where fixing them is cheapest. If one shows up against another feature, execution stops and asks the business role. It never settles a rule on its own: a rule invented mid-flight becomes everyone's reference without anyone having decided it.",
