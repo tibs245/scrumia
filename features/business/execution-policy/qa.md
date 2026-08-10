@@ -53,7 +53,8 @@ Given a ticket whose scope label was set on the blast-radius test
 When the execution policy reads it for capability and the manager's entry routing reads
   it for who is asked while the ticket runs
 Then both apply the same reading of what "a business rule changes" means, and neither
-  restates the test in its own words
+  restates the test in words of its own — carrying the clause verbatim is applying it,
+  which is what AC-21 requires of every surface that instructs a labeller
 ```
 
 ### AC-6 — An oversized cell prefers a split, and the fallback is earned

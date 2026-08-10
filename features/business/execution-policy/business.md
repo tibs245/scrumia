@@ -5,7 +5,9 @@ Vocabulary: **scope** (how far a change reaches, carried by a `scope/*` label),
 **cell** (the grid entry the two axes cross at), **decision** (what the policy
 returns for a ticket: a model to run on, or a preference to split carrying a
 fallback model), **deviation** (a run that did not happen the way the policy
-preferred — a human override, or a split the executor refused).
+preferred — a human override, or a split the executor refused), **blast radius**
+(how far a rule reaches — the same thing the scope axis calls *reach*; the two words
+name one test, and the section below is where it is stated).
 
 ## Two axes, and their independence is the point
 
@@ -59,9 +61,9 @@ skill's table, the manager's routing table and the description carried by the `s
 label itself each apply this test and name this section as where it is defined; none
 re-words it. A labeller must still be able to decide from the surface in front of them —
 a pointer that leaves them unable to answer is as broken as a fourth paraphrase — so
-what those surfaces carry is this section's own wording, not a variant of it. Four
-independent renderings of one test are what produced #78, and they drifted precisely
-because each was free to say it differently.
+what those surfaces carry is the clause in this section's words and the tiers in
+ADR-0015's, neither of them a variant. Four independent renderings of one test are what
+produced #78, and they drifted precisely because each was free to say it differently.
 
 ## The grid is project data; what it must satisfy is not
 
