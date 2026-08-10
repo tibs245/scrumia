@@ -94,7 +94,7 @@ up to three times, a few seconds apart. If it still fails after that, the lock i
 its owner died holding it. Report the lock file's path and stop; never delete a lock file
 in a shared `.git` yourself: four siblings may be live inside it.
 
-`<type>`: `feat`, `fix`, `refactor`, `docs`, `chore`.
+`<type>` comes from the project's commit-type vocabulary — one list serving the branch prefix, the commit and the PR title. It is defined once, in [`docs/adr/0017-version-bump-and-commit-signal.md`](../../../../docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*; read it there rather than from a copy, and add nothing to it here. A project whose composition carries no such decision falls back to the neighbouring commits' own prefixes.
 
 Inside the project directory, not `../<repo>-<n>`: Claude Code's permissions are scoped to the project directory, and a worktree created outside it triggers extra prompts or fails outright in restricted modes. The cost is a folder to keep out of the diff — `.worktrees/` is gitignored by `scrumia-project-setup`.
 
@@ -115,8 +115,12 @@ The flow step maps to this board's actual column name through the config ([`proj
 From here on, what carries this run's output is the branch created in Step 2 — not the working tree. The working tree belongs to whatever process happens to hold it, and that process can vanish while the run is paused. So commit to the ticket's branch before the run hands control to anyone else:
 
 ```bash
-git add -A && git commit -m "<type>: <what changed>"
+git add -A && git commit -m "<type>(<scope>): <what changed>
+
+Refs: #<n>"
 ```
+
+The scope is not optional, and the `Refs:` trailer goes on **every** commit of the branch — a lookup returning some of a ticket's commits reads exactly like one returning all of them. Both, and what a scope may name, are stated in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *What a commit carries*; the GitHub spelling is `features/business/github-tracking/`'s.
 
 The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
 
@@ -204,10 +208,12 @@ The same holds when the role itself could not be reached. Handing your own gener
 ## Step 7 — Open the PR
 
 ```bash
-gh pr create --title "<type>: <expected outcome>" --body "..."
+gh pr create --title "<type>(<scope>): <expected outcome>" --body "..."
 ```
 
-The description contains: what was done, the `Closes #<n>` link, the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
+Same `<type>` vocabulary as the branch and the commits, same mandatory scope.
+
+The description contains: what was done, `Closes #<n>` **exactly once** — the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
 
 If Step 0 recorded a deviation, echo it here — kind, cell, what the policy chose, what ran, why — for a human reading the diff. The echo, not the record: the comment on the issue is what a later reader queries, and the PR body is a copy of it.
 
