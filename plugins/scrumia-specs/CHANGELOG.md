@@ -3,6 +3,9 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- The changelog entry drops its `PR:` field and gains a `Category:` — an entry names
+  only what exists when it is written. The catalog and the template state the new shape.
 
 ## [0.4.0] - 2026-08-10
 ### Added

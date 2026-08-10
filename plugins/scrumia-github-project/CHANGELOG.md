@@ -3,6 +3,9 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- `scrumia-ticket` step 3 now asks for a line under a shipped module's `[Unreleased]`
+  when the ticket changes that module, not only for the spec changelog entry.
 
 ## [0.4.0] - 2026-08-10
 ### Added
