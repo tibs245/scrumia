@@ -41,7 +41,7 @@
   "step6_li1": "Charger le contexte par le module de specs",
   "step6_li2": "<strong>Mettre à jour la spec avant le code</strong>, si le comportement change",
   "step6_li3": "Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique bat générique",
-  "step6_li4": "Couvrir chaque <code>AC-n</code> avec quelque chose qui peut échouer",
+  "step6_li4": "Couvrir chaque <code>AC-n</code> par un test qui peut échouer — la forme suit le sujet du critère",
   "step6_li5": "Autorevue, puis revue par les rôles selon le périmètre d'impact",
   "step6_li6": "Ouvrir la PR",
 

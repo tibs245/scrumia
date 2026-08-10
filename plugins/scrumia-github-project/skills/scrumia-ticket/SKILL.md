@@ -151,12 +151,22 @@ Precedence, once the relevant guides are loaded: the implementation module is au
 
 **This step can resolve to nothing to implement.** Where Step 3 was the whole deliverable, there is no app to resolve and no module to route to, and the procedure above returns nothing; only the coverage rule below still applies. Say in the PR that it did, so a reviewer knows the step was empty rather than skipped.
 
-Whether an implementation module is plugged in or not, cover every acceptance criterion this ticket is answerable for with something that could have failed. **Falsifiability is the requirement; a test file is the form it takes where the criterion's subject is executable behaviour** — the form follows the criterion's own subject, not the deliverable's overall nature. The authoritative statement, with which criteria you are answerable for and what makes one falsifiable, is [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Covering a criterion*. What it asks of you here:
+Whether an implementation module is plugged in or not, cover every acceptance criterion this ticket is answerable for with **a test** — an act of checking that could have come out the other way. A unit test is one form of test. So are an automated check over the project's own prose, an audit by a role at Step 6, and a checklist walked case by case. **The form follows the criterion's own subject, not the deliverable's overall nature.** The authoritative statement — the five forms, what makes each one fail, and a worked example of each — is [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Covering a criterion*. Its mapping, read from here:
 
-- **A criterion about executable behaviour** — a test that can fail. Shipping prose in the same ticket buys it no exemption, and neither does an absent harness: where there is no test runner to run it yet, writing one is part of the work.
-- **A criterion about prose**, with nothing to execute — the section that satisfies it. If you cannot name the concrete case that would contradict the criterion, it is not covered, and pointing at a section does not make it so.
+| The criterion's subject | What you owe it |
+|---|---|
+| Behaviour of code the project runs | a unit or integration test that fails when the behaviour does |
+| A property of the project's own text that a program decides — a link resolves, a file exists, a generated file is in sync | an automated check in the harness CI already runs, **written if none exists** |
+| A judgement about a rule — is it consistent with another spec, is it ambiguous, would an agent reading it do the intended thing | the verdict of the role that owns that judgement, obtained at Step 6 |
+| A property whose cases a reader must walk, because no program decides them | a checklist: the cases written out, walked, each outcome reported — your Step 5 at minimum |
 
-A mixed ticket owes both, criterion by criterion. The set you answer for is the ticket's own criteria plus — if a specs module is documented — those you add to or amend in the file named by `acceptance_file`; a criterion already standing there and untouched is not yours to re-cover. Step 7 says how each set is cited. In every case, run the project's tests and linter.
+Three things this does not license:
+
+- **A section reference is not coverage.** Naming the section that satisfies a criterion says where it lives, and the same pointer gets written whether the section says what the criterion demands or the opposite. Step 7's mapping needs that location — it is not what covers the criterion.
+- **Absence of tooling reclassifies nothing.** Where the subject calls for a test or a check and none exists, writing it is part of the work — for behaviour first of all, and equally for a decidable property of the project's text. Shipping prose in the same ticket buys a behaviour criterion no exemption either.
+- **Do not reach for the strongest form imaginable.** The mapping is read by subject and returns one form. An approximate check — one that would pass on a case the criterion forbids — may ship as a warning, and it does not replace the audit or checklist the subject calls for.
+
+A mixed ticket owes each criterion its own form, in the same proposal. The set you answer for is the ticket's own criteria plus — if a specs module is documented — those you add to or amend in the file named by `acceptance_file`; a criterion already standing there and untouched is not yours to re-cover. Step 7 says how each set is cited. In every case, run the project's tests and linter.
 
 Stay within the ticket's scope. What you notice in passing that exceeds it becomes an issue, not an extra line of diff. A PR that overflows is hard to validate — and human validation is the system's bottleneck.
 
@@ -218,7 +228,7 @@ The description contains: what was done, the `Closes #<n>` link, the two criteri
 
 **Two acceptance namespaces, so two lists.** The issue's criteria and the feature's are numbered in the same `ac_id_format` and are not the same set — their counts need not match, and a difference between them is not a defect. [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *The ticket's criteria and the feature's are two namespaces* states which one a proposal maps against and how each is cited. In this PR body:
 
-- **The criterion-by-criterion mapping, against the issue's own criteria** — one line per identifier as the *issue* numbers them, cited bare (`AC-3`), each pointing at what covers it per Step 4: a test where the criterion's subject is executable behaviour, the section that satisfies it where its subject is prose.
+- **The criterion-by-criterion mapping, against the issue's own criteria** — one line per identifier as the *issue* numbers them, cited bare (`AC-3`). Each line carries **two** things: where what satisfies the criterion lives, and **which form checked it, with its outcome** — the test that runs it, the check in the harness, the role that audited it at Step 6 and its verdict, or the checklist you walked and what each case returned. A location on its own is not coverage; a form on its own leaves the reviewer hunting.
 - **Separately, the feature criteria this PR added or amended** — each cited with its file (`dev-flow/qa.md AC-11`), never folded into the list above. This list exists only where a specs module is documented; Step 1's degraded case has no acceptance file to amend.
 
 Never write a bare identifier for a feature criterion: `AC-3` on its own means two different things depending on which document the reader has open.

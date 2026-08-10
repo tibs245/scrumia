@@ -132,11 +132,20 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
 ### AC-11 — The criterion's own subject decides the form its coverage takes
 
 ```gherkin
-Given a criterion whose subject is prose — a rule, a wording, a document, with nothing
-  to execute
+Given a criterion whose subject is a judgement about a rule's wording, which no program
+  decides — is it consistent with another spec, is it ambiguous
 When the reviewable proposal is reviewed
-Then the section that satisfies the criterion is accepted as its coverage, and no
+Then the audit that returned a verdict on it is accepted as its coverage — the gate 2
+  role review, or an executed checklist where no role owns the judgement — and no
   finding is raised for the absence of a test file
+```
+
+```gherkin
+Given a criterion whose subject is a property of the project's own text that a program
+  decides — a link that resolves, a file that exists, a generated file in sync
+When the reviewable proposal is reviewed
+Then it owes an automated check in the harness CI runs, written if none exists, and the
+  deliverable carrying no code buys it no exemption
 ```
 
 ```gherkin
@@ -153,6 +162,14 @@ Given a criterion whose subject is executable behaviour, the project having no h
 When the reviewable proposal is reviewed
 Then the criterion still owes a test and writing the harness is part of the work — the
   absence of a runner does not reclassify its subject as prose
+```
+
+```gherkin
+Given a criterion whose subject no program decides exactly, and a proposal offering an
+  approximate check that would pass on a case the criterion forbids
+When the reviewable proposal is reviewed
+Then the criterion is reported as uncovered — the approximation may ship as a warning,
+  and it does not stand in for the audit or checklist the subject calls for
 ```
 
 ```gherkin
@@ -186,6 +203,23 @@ Given a ticket carrying five acceptance criteria whose feature's acceptance file
   at seven
 When the proposal is reviewed
 Then no finding is raised on the difference in counts
+```
+
+### AC-14 — A section reference locates what satisfies a criterion; it never covers it
+
+```gherkin
+Given a proposal whose mapping answers a criterion with a section reference and nothing
+  else
+When the reviewable proposal is reviewed
+Then the criterion is reported as uncovered: the reference says where what satisfies it
+  lives, and names no act that could have come out otherwise
+```
+
+```gherkin
+Given a criterion covered by an agent audit at gate 2
+When the proposal writes its line in the criterion-by-criterion mapping
+Then that line carries both the location of what satisfies the criterion and the form
+  that checked it with its outcome, rather than either one alone
 ```
 
 ## Out of scope

@@ -45,37 +45,92 @@ for the bootstrap case, is what it produces — see #18).
 
 ## Covering a criterion
 
-An execution must show, for each acceptance criterion it is answerable for, something
-that could have failed. **Falsifiability is the requirement; a test file is the form it
-takes where the criterion's subject is executable behaviour.** The form follows the
-**criterion's own subject**, never the deliverable's overall nature:
+An execution must show, for each acceptance criterion it is answerable for, **a test**:
+an act of checking that could have come out the other way. A unit test is one form of
+test. So are an automated check over the project's own prose, an audit by an external
+agent, and a checklist walked case by case. What varies between them is the executor and
+the failure mode — a failing assertion, a red CI check, a **Blocked** verdict, a case
+that comes out wrong. The requirement never varies.
 
-- **A criterion whose subject is executable behaviour** — covered by a test that can
-  fail. A ticket carrying code never trades such a criterion for a section reference,
-  whatever prose it also delivers.
-- **A criterion whose subject is prose** — a rule, a specification, a piece of
-  agent-executed text — covered by the section that satisfies it, the criterion itself
-  written so that a concrete case could contradict it. A criterion no case could
-  contradict is not covered; pointing at a section does not rescue it.
+**The form follows the criterion's own subject, never the deliverable's overall
+nature.** A ticket shipping code *and* a spec change owes each of its criteria the form
+that criterion's subject calls for, in the same proposal, with no reading under which
+either half escapes. Keying the form to the deliverable is what makes a mixed ticket
+unsatisfiable: it would demand a unit test of a criterion whose subject is one sentence
+in a markdown table.
 
-**Which side a criterion falls on is decided by its subject, not by the tooling that
-happens to exist.** Its subject is prose where there is nothing to execute: a rule, a
-wording, a document. Its subject is executable behaviour where something the project
-runs would behave differently depending on whether the criterion holds. **An absent
-harness does not make a criterion prose** — where a behaviour criterion has no test to
-run yet, writing that test is part of the work, not a reason to reclassify it. Asking
-which runner could exercise an artefact settles a borderline case; it never settles
-whether a behaviour owes a test.
+### The forms, and what makes each fail
 
-Keying the form to the criterion rather than to the deliverable is what keeps a mixed
-ticket answerable. One shipping code *and* a spec change owes tests for its behaviour
-criteria and sections for its prose criteria, in the same proposal, with no reading
-under which either half escapes — where the deliverable decided the form, such a ticket
-would face an impossible instruction and pick its way out of it.
+| Form | What it is | It fails when | Worked example in this repo |
+|---|---|---|---|
+| **Unit or integration test** | code exercising code | an assertion does not hold | `tools/test_build_site.py`'s `test_ac8_index_links_to_every_module` — it rebuilds the index and asserts every plugin in the marketplace is linked from it |
+| **Automated check over the prose itself** | a program reading the project's own text and refusing a structure the rule forbids | the check reports an error and CI goes red | `tools/validate.py`'s `check_doc_links()` — it walks every relative markdown link under `docs/`, `plugins/` and `features/` and errors on one that resolves nowhere, on every push |
+| **Audit by an external agent** | a role reading the change against the question that role owns, and returning a verdict | the verdict is **Blocked**, with the failing case named | gate 2 on this very section: `scrumia-business` blocked its first wording, naming the case that wording made unsatisfiable — a mixed ticket owing a unit test for a sentence in a table ([#31](https://github.com/tibs245/scrumia/issues/31#issuecomment-5240730278)) |
+| **External validation checklist** | the cases written out and walked one by one, by someone who did not write the change, each outcome reported and signed | a case comes out wrong | gate 3 on this very section: its claim that a rule is something *"where there is nothing to execute"* was walked against two mechanisms this repo runs daily — `tools/validate.py` and the gate 2 reviews — and came out false, which is what sent it back |
+| **Self-validation checklist** | the same walk, run by the execution over its own diff, against a list stated in advance | a case comes out wrong | the execution's own self-review step, over its enumerated list: an uncovered criterion, an ignored error case, a contract changed without its file, an out-of-scope file |
 
-The second form is not a softening of the first. It exists because a criterion with
-nothing to execute cannot satisfy the first at all, and an execution meeting that wall
-invents a substitute of its own.
+The last is the weakest, because the author is the checker — and it is still a test: it
+has cases stated in advance and a case can come out wrong. It is what remains when no
+team module is plugged in, and a proposal says which one ran rather than letting a
+self-check read as a review.
+
+### Which form a criterion's subject calls for
+
+Read this by the criterion's subject. Not by what tooling happens to exist, and not by
+how strong a form one could imagine building.
+
+| The criterion's subject | The form it calls for | Worked example |
+|---|---|---|
+| Behaviour of code the project runs | a unit or integration test | `app/site/module-pages/qa.md AC-8` — *every module is reachable from the site's navigation* — is behaviour of `tools/build_site.py`; `test_ac8_index_links_to_every_module` fails the moment a module page stops being linked |
+| A property of the project's own text that a program can decide | an automated check over the prose, in the harness CI already runs | *every relative link resolves* is decidable by reading the tree, and `check_doc_links()` decides it — the artefact under test is markdown, and it is executed against |
+| A judgement about a rule — is this wording consistent with another spec, is it ambiguous, would an agent reading it do the intended thing | an audit by the role that owns that judgement, at gate 2, returning a verdict | `qa.md` AC-13 — *the two acceptance namespaces stay two lists* — is a judgement about wording; `scrumia-business` owns spec vocabulary, and its verdict on the diff is the test |
+| A property with finitely many cases that a reader must walk, because no program decides them | a validation checklist: the cases written out, walked, each outcome reported — external where the stakes justify it, the execution's own at minimum | `qa.md` AC-5's two `auto_merge` scenarios, walked against `.scrumia/config.yaml` (`auto_merge: none`) and reported case by case |
+
+**"A program can decide it" is a strict test, not an aspiration.** A program decides a
+property when it returns the verdict a careful reader would return, on every case the
+criterion covers. Where it would pass on something the criterion forbids, or fail on
+something the criterion allows, it approximates the property and does not cover the
+criterion. `tools/validate.py`'s `check_french_leftovers()` is exactly that: it counts
+accented characters and flags a file past three, which catches leftover French and also
+catches a page full of proper nouns. It is shipped as a warning for that reason, and a
+warning is not coverage. Ship the approximation where it helps; the criterion still owes
+the form its subject calls for.
+
+**No form is owed merely because it is conceivable.** The mapping is read by subject and
+returns one form; *"an automated check could be written for this"* is not a subject.
+Read as "always take the strongest form imaginable", it would put a new checker in every
+ticket — a cost this rule does not ask for and would not repay.
+
+**Absence of tooling never reclassifies a subject.** Where the subject calls for a test
+or a check and none exists, writing it is part of the work — for a behaviour criterion
+first of all, and equally for a decidable property of the project's text. What a subject
+*is* does not depend on what has been built.
+
+### A section reference is not a form of coverage
+
+Pointing at the section that satisfies a criterion is a claim of **location**, not an
+act of verification. The same pointer gets written whether the section says what the
+criterion demands or the opposite of it; nothing about it can come out the other way, so
+it is not a test.
+
+The location is still required, and the criterion-by-criterion mapping is where it
+belongs — a reviewer has to be told where to look. So each line of that mapping carries
+**both**: where what satisfies the criterion lives, *and* which form checked it, with
+its outcome. "`business.md` § *Covering a criterion*" is half a line; "`business.md`
+§ *Covering a criterion* — audited by `scrumia-business` at gate 2, Approved" is the
+line.
+
+### No criterion is uncoverable
+
+Where the first two rows of the mapping do not apply, the third or the fourth does. A
+criterion whose subject is prose is not thereby exempt from being tested: it is tested
+by an agent at gate 2 or by an executed checklist, and the mapping names **that form and
+its verdict** — never a section standing in for one.
+
+What is left over is a criterion no form can be applied to at all, because no concrete
+case could contradict it. That is a defect in the criterion, not a gap in this list: it
+is reworded, or reported as uncovered, whichever section it points at. It is the same
+thing `qa.md` AC-1 refuses at the door.
 
 **This is what *verifiable* means** in § *The two paths*, what `qa.md` AC-1 calls "an
 acceptance criterion that can fail", and what ADR-0004 calls verifiable — one property
