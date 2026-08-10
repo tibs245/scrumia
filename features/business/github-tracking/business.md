@@ -168,6 +168,35 @@ deviation restates it for a human reading the diff, and that echo is a courtesy.
 bodies were the whole record once, in the sprint whose repeated overrides on the same
 cell went uncounted for it; the comment is now the record and the PR is its copy.
 
+## The reference is on every commit; the close is on the pull request, once
+
+`features/business/dev-flow/` states the abstract rule — every commit references the work
+item it belongs to, and exactly one closing statement per change, carried by the reviewable
+proposal. Here is what it becomes on GitHub.
+
+| Form | Where | What it does |
+|---|---|---|
+| `Refs: #<n>` | a trailer on **every commit** of the branch | nothing to GitHub. It is the lookup path: `git log --grep '#<n>'` |
+| `Closes #<n>` | **exactly once**, in the pull request body | GitHub closes the issue when the pull request merges |
+
+The keywords GitHub acts on are `close`, `closes`, `closed`, `fix`, `fixes`, `fixed`,
+`resolve`, `resolves`, `resolved`. **The closing is GitHub's act, not a skill's:** no skill
+calls `gh issue close` for a ticket a pull request delivers, because a second closer is a
+second source of truth about when the work landed.
+
+**A closing keyword works wherever GitHub finds it**, a commit message reaching the default
+branch included. That is exactly why repeating it per commit is a defect rather than
+harmless redundancy: several artefacts each claim the close, which one performed it stops
+being answerable, and a commit cherry-picked or merged outside its pull request closes a
+ticket its change does not deliver. A `Refs:` trailer, conversely, closes nothing and must
+never be written as though it might.
+
+What the trailer buys is measurable, and its absence is what the lookup costs while it is
+missing. Measured on one already-merged ticket of this repository before the rule existed,
+`git log --grep` returned five commits: one of the four its pull request delivered, and
+four belonging to other tickets — 25% recall, 20% precision, from a search whose output
+reads complete. Redundant references are fine; incomplete ones are what break the lookup.
+
 ## Reading discipline: a board is read through a filter, never whole
 
 This is a product rule, not an implementation footnote. `gh project item-list` returns

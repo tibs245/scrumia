@@ -119,14 +119,40 @@ Then they are returned by a search over comment text on the cell token, without
   prose in a PR body is what fails it
 ```
 
+### AC-12 — GitHub closes the ticket, from one keyword in the pull request body
+
+```gherkin
+Given a branch whose commits each carry a `Refs: #<n>` trailer, and whose pull request
+  body carries `Closes #<n>` exactly once
+When the pull request merges
+Then GitHub closed the issue and no skill called `gh issue close` — and the trailer closed
+  nothing, having no such effect
+```
+
+```gherkin
+Given a branch whose commits each repeat `Closes #<n>` in their message
+When the branch reaches the default branch
+Then it is non-conforming: GitHub acts on the keyword wherever it appears, so several
+  artefacts each claim the close and which one performed it is no longer answerable — and
+  a commit merged outside its pull request would close a ticket its change does not deliver
+```
+
+```gherkin
+Given a merged ticket whose commits each carry the reference trailer
+When its commits are looked up by `git log --grep` on the ticket's number
+Then every commit of that ticket is returned — a lookup that returns only some of them is
+  the failure the trailer exists to remove, because a partial answer reads as a complete one
+```
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.
   This feature materialises the record and makes the search possible; it appoints nobody.
 - Creating the board's columns and the project itself (`scrumia-project-setup`) —
   setup-time, not the ongoing reading and moving this feature specifies.
-- The code cycle's **process** — isolation per ticket, when work is committed, what
-  is reviewed when, what may merge. `features/business/dev-flow/` owns those rules and
+- The code cycle's **process** — isolation per ticket, when work is committed, what a
+  commit must carry, what is reviewed when, what may merge.
+  `features/business/dev-flow/` owns those rules and
   is where they are stated in full. What stays in scope here is their
   **materialisation** on GitHub: that the reviewable proposal is a pull request,
   opened and linked to its issue this way, and that its progress shows as a column
