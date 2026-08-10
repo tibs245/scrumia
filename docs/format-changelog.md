@@ -54,8 +54,13 @@ the repository published — a project pinning one module should never take a bu
 another it does not use.
 
 **`plugin.json` is the single authority on a module's version.** `marketplace.json` and
-the changelog header cite it. Where two files disagree, `plugin.json` is right and the
-other is the one to fix.
+the changelog's newest section cite it. Where two files disagree, `plugin.json` is right
+and the other is the one to fix.
+
+`marketplace.json` also carries a top-level `version`. It numbers **the marketplace
+listing itself**, not any module in it, and no module is expected to match it — that
+expectation was the lockstep this repo dropped. Nothing derives a module's version from
+it.
 
 ## What enforces this
 
