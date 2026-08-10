@@ -39,7 +39,9 @@ show.
 
 - The headline breaks are authored, not computed: `hero_title` carries `<br>` where
   the line should end, in both languages, and no CSS `text-wrap: balance` substitutes
-  for that choice.
+  for that choice. A copy change re-checks the line silhouettes in both languages.
+- "Slot" stays untranslated in the French copy — it is the FR site's own term, not a
+  word awaiting translation.
 - The hero never spends `--human` or `--agent`. Only `--accent`, `--text` and the
   surfaces — the human/agent colour rule is a different feature's decision and
   the hero does not anticipate it either way. Tested by `qa.md` AC-5.
