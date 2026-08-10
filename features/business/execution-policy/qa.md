@@ -234,9 +234,9 @@ Then the surface carries them below scope/L on the spec clause and names this fe
   where the test is defined; a surface stating its own condition without pointing here
   fails this, and so does one that points here but leaves the labeller unable to decide
   without opening it
-And the words it decides on are carried verbatim — the clause in this feature's wording,
-  the four tier conditions in ADR-0015's — so that the same string appears on every
-  surface; a rendering of its own fails this even where it means the same thing
+And whichever of the two it shows is carried verbatim — the clause in this feature's
+  wording, the tier conditions in ADR-0015's — so that the same string appears wherever
+  it appears; a rendering of its own fails this even where it means the same thing
 ```
 
 The seeded label description is in the list on purpose: it is the one surface that
