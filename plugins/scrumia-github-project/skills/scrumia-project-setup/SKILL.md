@@ -50,11 +50,11 @@ If absent, propose these values and write them. The columns reflect the real flo
 
 ### The scope and risk descriptions are seeded verbatim, not improvised
 
-A label's description is the only statement of the axis a labeller gets without leaving GitHub, and it outlives the repository it was copied from. Seed these exactly — a description typed from memory at install time becomes one more independent rendering of a test, which is precisely how the scope axis came to say four different things in four places (#78):
+A label's description is the only statement of the axis a labeller gets without leaving GitHub, and it outlives the repository it was copied from. Seed these exactly — a description typed from memory at install time becomes one more independent rendering of a test, and a test rendered independently in four places is how this axis came to say four different things:
 
 ```bash
-gh label create "scope/S"  --color c2e0c6 --description "1 app, and no rule changes: it is already written"
-gh label create "scope/M"  --color fef2c0 --description "1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear"
+gh label create "scope/S"  --color c2e0c6 --description "At most 1 app, and no rule changes: it is already written"
+gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond it consumes, or scope unclear"
 gh label create "scope/L"  --color f9d0c4 --description "2+ apps, a rule consumed beyond one feature or app, or an interface contract"
 gh label create "scope/XL" --color e99695 --description "New unit of value, pivot, migration — belongs to scoping"
 gh label create "risk/low"      --color 0e8a16 --description "Reversible in a commit, no data, no user-visible behaviour"

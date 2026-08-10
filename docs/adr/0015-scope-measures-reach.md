@@ -25,8 +25,8 @@ The three questions, with the second and third re-stated:
 
 | Label | Condition | Asked at entry |
 |---|---|---|
-| `scope/S` | 1 app, and no rule changes — it is already written | executes alone |
-| `scope/M` | 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | + the tech role |
+| `scope/S` | At most 1 app, and no rule changes — it is already written | executes alone |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | + the tech role |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | + the manager and the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New unit of value, pivot, data migration | leaves execution: sent back to scoping |
 

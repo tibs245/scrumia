@@ -48,8 +48,8 @@ Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, n
 
 | Label | Condition | Handling |
 |---|---|---|
-| `scope/S` | 1 app, and no rule changes — it is already written | Autonomous execution alone |
-| `scope/M` | 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | Autonomous execution + review by the tech role |
+| `scope/S` | At most 1 app, and no rule changes — it is already written | Autonomous execution alone |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | Autonomous execution + review by the tech role |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if business is touched |
 | `scope/XL` | New value unit, pivot, data migration | Out of execution: send it back to the scoping module |
 
@@ -57,7 +57,7 @@ Three questions are enough to settle it: *how many apps?*, *does a rule consumed
 
 The middle question measures **a rule's reach, not a file's location**: a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule has answered *no* — it is not `scope/L` on that clause, however many spec files its diff lists. That test is stated once, in [`features/business/execution-policy/business.md`](../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*; this table applies it, in that section's own words, and does not define it. The file-location reading it replaced is why a whole sprint's labels had to be overridden ([`docs/adr/0015-scope-measures-reach.md`](../../../docs/adr/0015-scope-measures-reach.md)).
 
-When hesitating between two levels, take the higher one. One review too many costs a few minutes; a missing review costs a revert.
+When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 
 That "Handling" column is **entry** routing — who is asked before and during execution. It does not decide who reviews the PR at the end: gate 2 routes that by the diff's actual scope (ADR-0005), so a ticket whose diff outgrows the label you set still gets the review its diff calls for, and the gap comes back to you as a scoping signal rather than as a skipped review.
 
