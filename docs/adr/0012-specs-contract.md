@@ -1,6 +1,6 @@
 # ADR-0012 — The specs contract: documented, not hard-coded
 
-**Status**: accepted — 2026-08-07
+**Status**: superseded by [0016](0016-global-feature-index.md) — 2026-08-10
 
 ## Context
 

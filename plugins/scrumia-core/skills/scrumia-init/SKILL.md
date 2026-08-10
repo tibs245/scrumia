@@ -188,15 +188,17 @@ module has nothing to say and neighboring conventions apply.
 
 `scrumia-specs` — this project's specs module — describes itself with the block below.
 Read the file named by `acceptance_file` for its acceptance criteria, identifiers in
-`ac_id_format`; the other per-feature files it may carry are listed under `catalog`.
+`ac_id_format`; the file named by `global_index` at the root of `specs_root` lists every
+feature; the other per-feature files it may carry are listed under `catalog`.
 
 ```
 specs_root: features/
 feature_index: index.md
+global_index: index.md
 acceptance_file: qa.md
 ac_id_format: AC-<n>
 changelog: CHANGELOG.md
-catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, a11y.md, devx.md
+catalog: business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, security.md, devx.md
 ```
 
 ### Design contract

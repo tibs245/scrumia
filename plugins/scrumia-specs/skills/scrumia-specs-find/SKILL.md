@@ -15,9 +15,12 @@ Reading all of `features/` cancels the entire benefit of the splitting. If you c
 
 ## Finding the feature that owns a rule
 
-1. `grep` on the `index.md` files only — they carry the summary, so most searches resolve there.
-2. If nothing comes up, widen to `business.md`.
-3. Only as a last resort, search all files.
+1. Read the global index first — the file named by the contract's `global_index` key, at the root of `specs_root` (`features/index.md` in this project). One line per feature: stratum, status, brief. It narrows the search before any per-feature file is opened.
+2. `grep` on the `index.md` files of the candidates it surfaces — they carry the summary, so most searches resolve there.
+3. If nothing comes up, widen to `business.md`.
+4. Only as a last resort, search all files.
+
+If the global index is missing, fall back to walking the tree from step 2 and report the gap — it is generated state, and its absence is worth flagging rather than silently working around.
 
 When several features seem to own the same rule, that's a signal to report back: a business rule should have only one authority. Report it rather than picking the most plausible one.
 

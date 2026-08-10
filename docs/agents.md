@@ -100,6 +100,6 @@ Either way it is the role that runs — its own system prompt, model and forbidd
 
 **QA** — the acceptance criteria live in `qa.md`, written at scoping and verified at execution. A separate QA role would arrive too late: after the code, when the cost of fixing is at its maximum.
 
-**UX** — not a role *of this module*. `ux.md` and `a11y.md` are produced during scoping, and a project whose `design` slot is empty has no design system for such a role to guard: it would judge on taste, which is the one thing a role must not do. A project that plugs in `scrumia-design` gets `scrumia-designer` from that module, registered in the same `settings.team.roles` list the Manager routes on. See [ADR-0014](adr/0014-roles-ship-with-their-capability.md).
+**UX** — not a role *of this module*. `ux.md` is produced during scoping, and a project whose `design` slot is empty has no design system for such a role to guard: it would judge on taste, which is the one thing a role must not do. A project that plugs in `scrumia-design` gets `scrumia-designer` from that module, registered in the same `settings.team.roles` list the Manager routes on. See [ADR-0014](adr/0014-roles-ship-with-their-capability.md).
 
 **Dev** — that is the tracker module's `scrumia-ticket` skill, complemented by the app's implementation module, not a role. Execution does not need a personality: it needs a procedure and an isolated worktree.
