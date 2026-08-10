@@ -152,7 +152,7 @@ And a risk assumed rather than mitigated records its rating, the reason it
 Given any file of a feature except its changelog
 When it references an issue or a PR by number
 Then automated validation reports it as an error — tracker state lives in
-  the tracker, and only the changelog points at it
+  the tracker, and only the changelog points at it, by its issue number alone
 And the fact or open question the reference carried is stated in words
   instead, so nothing is lost with the number
 ```
@@ -175,8 +175,9 @@ And a feature whose value cannot be stated is reported as a splitting or
 Given a changelog entry being written as part of the change it describes
 When the entry is added to `CHANGELOG.md`
 Then it carries the issue number, which is knowable at that moment
-And it carries no PR number and no placeholder standing in for one — the
-  tracker reaches the PR from the issue
+And it carries no PR number — the tracker reaches the PR from the issue
+And no field of the entry stands in for a value with a placeholder, whichever
+  field it is: a placeholder reads as a filled one
 ```
 
 ### AC-17 — A change spanning two categories is two entries

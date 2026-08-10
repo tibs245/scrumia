@@ -8,9 +8,7 @@ is what turns a rename into a checked one.
 The decisions behind them are [D-12](../decisions/D-12-as-const-simplification.md) and
 [D-13](../decisions/D-13-query-key-naming-conventions.md).
 
-If your codebase was written before these changes, here is a migration checklist:
-
-### 1. Simplify `as const` in `queryKeys.ts`
+## 1. Simplify `as const` in `queryKeys.ts`
 
 **Effort**: Low — mechanical find-and-replace.
 
@@ -32,7 +30,7 @@ If your codebase was written before these changes, here is a migration checklist
 - Verify `strict: true` is set in your `tsconfig.json`.
 - Run `tsc --noEmit` to confirm no type regressions.
 
-### 2. Remove `lists()` / `details()` scope functions
+## 2. Remove `lists()` / `details()` scope functions
 
 **Effort**: Low to Medium — remove scope functions and update consumers.
 
@@ -54,7 +52,7 @@ If your codebase was written before these changes, here is a migration checklist
 - `list` and `detail` now spread from `all` directly.
 - Run `tsc --noEmit` to catch all broken references.
 
-### 3. Rename non-standard query key methods
+## 3. Rename non-standard query key methods
 
 **Effort**: Medium — requires renaming + updating all consumers.
 
@@ -73,7 +71,7 @@ If your codebase was written before these changes, here is a migration checklist
 4. Run `tsc --noEmit` to catch all broken references.
 5. Run tests to verify behavior is unchanged.
 
-### 4. Replace hardcoded key strings
+## 4. Replace hardcoded key strings
 
 **Effort**: Low — search for string array patterns in `invalidateQueries`, `setQueryData`, `getQueryData`.
 

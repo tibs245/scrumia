@@ -581,6 +581,70 @@ def test_plugin_foreign_category_is_caught() -> None:
         shutil.rmtree(tmp)
 
 
+def test_plugin_entry_with_placeholder_is_caught() -> None:
+    print("a #NN placeholder in a plugin changelog is an error too")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, PLUGIN_CHANGELOG.replace("- The widget slot.", "- The widget slot, per #NN."))
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("#NN is reported", any("#NN" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_without_version_section_is_caught() -> None:
+    print("a plugin changelog with no version section at all is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, "# Changelog — scrumia-widget\n")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the empty changelog is reported",
+              any("no version section" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_release_without_category_is_caught() -> None:
+    print("a released version with bullets but no ### category is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, "# Changelog — scrumia-widget\n\n## [Unreleased]\n\n"
+                          "## [0.4.0] - 2026-08-10\n- did a thing\n")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the uncategorised release is reported",
+              any("no category section" in e for e in errors), str(errors))
+        check("[Unreleased] is not reported for being empty",
+              not any("Unreleased" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_version_without_date_is_caught() -> None:
+    print("a released version with no date is an error — Keep a Changelog requires one")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, PLUGIN_CHANGELOG.replace("## [0.4.0] - 2026-08-10", "## [0.4.0]"))
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the undated release is reported",
+              any("[<version>]" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_banned_field_outside_an_entry_is_caught() -> None:
+    print("a PR: line or a #NN in the preamble is on disk too, so it is an error")
+    for preamble, needle in (("- PR: #48\n", "PR:"), ("Tracked in #NN.\n", "#NN")):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            write_spec_changelog(tmp, SPEC_ENTRY.replace(
+                "\n## 2026-08-10", f"\n{preamble}\n## 2026-08-10"))
+            errors = run_check(tmp, "check_spec_changelogs")
+            check(f"'{needle}' before the first entry is reported",
+                  any(needle in e for e in errors), str(errors))
+        finally:
+            shutil.rmtree(tmp)
+
+
 def test_plugin_keeps_fixed_and_security() -> None:
     print("Fixed and Security are legitimate for a module, unlike for a spec")
     tmp = Path(tempfile.mkdtemp())
@@ -604,8 +668,7 @@ def test_template_placeholders_are_not_reached() -> None:
             PLUGIN_CHANGELOG, encoding="utf-8")
         write_spec_changelog(tmp, SPEC_ENTRY)
         errors = run_check(tmp, "check_spec_changelogs") + run_check(tmp, "check_plugin_changelogs")
-        check("the template is not reported",
-              not any("template" in e for e in errors), str(errors))
+        check("no findings at all — the fixture is conformant", errors == [], str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -644,6 +707,11 @@ def main() -> int:
                  test_plugin_second_changelog_is_caught,
                  test_plugin_bad_version_heading_is_caught,
                  test_plugin_foreign_category_is_caught,
+                 test_plugin_entry_with_placeholder_is_caught,
+                 test_plugin_without_version_section_is_caught,
+                 test_plugin_release_without_category_is_caught,
+                 test_plugin_version_without_date_is_caught,
+                 test_banned_field_outside_an_entry_is_caught,
                  test_plugin_keeps_fixed_and_security,
                  test_template_placeholders_are_not_reached):
         test()

@@ -60,6 +60,9 @@ Everything else follows from it: one factory reused by `useQuery`, `useSuspenseQ
 "I need to unit test my queries or page components"
   → 09-testing (assumes 02 + 04)
 
+"I have an existing codebase on the older key vocabulary (byUser, lists(), listByCategory)"
+  → 10-migrating-an-existing-codebase
+
 "I need to scaffold a whole new query feature from an API schema"
   → the sibling skill scrumia-tanstack-query-scaffold, which walks all of the above
     in order, one artifact at a time
