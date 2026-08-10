@@ -12,7 +12,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `scrumia-ticket` writes commits as `<type>(<scope>): …` with a `Refs: #<n>` trailer on
   every commit, and `Closes #<n>` exactly once in the PR body. Adopting this changes what
   a project's history looks like from the first ticket run after the update; nothing
-  rewrites the commits already written.
+  rewrites the commits already written. The scope's four namespaces are stated in the
+  skill itself, so a project reaches no repository-relative file to write one.
 
 ## [0.4.0] - 2026-08-10
 ### Added
