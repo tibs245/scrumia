@@ -50,8 +50,15 @@ the same `load_strings` / `render` path as every other page, so a key present in
 and absent in French fails the build exactly as it always has. That guard now covers both
 directions of the same gap: a page-level string an i18n file carries that no template
 reads fails the build too (#114) — previously a warning, which is how a leftover key
-(`composer_js_strings`, deleted by #114) sat unnoticed. Three more guards are added
-around it, specific to modules:
+(`composer_js_strings`, deleted by #114) sat unnoticed.
+
+The unused half stops at page-level keys: chrome strings are shared across pages, and
+some are read programmatically rather than through a `{{token}}` — `mod_no_slot`, which
+`module_specials` pulls from `labels` — so an unused-key check over `common.json` would
+fail on a string that is in fact used. This is the same shape of asymmetry #114 just
+closed, left open on purpose rather than left unnoticed.
+
+Three more guards are added around it, specific to modules:
 
 - a plugin the manifest declares with no i18n file, in either language, fails
 - an i18n module file naming no plugin fails
