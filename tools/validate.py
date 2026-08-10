@@ -70,12 +70,19 @@ def nested_frontmatter(path: Path) -> dict:
     end = text.find("\n---", 4)
     if end == -1:
         return {}
+
+    def unquote(v: str) -> str:
+        v = v.strip()
+        # A value opening on '#' has to be quoted to survive a real YAML reader.
+        return v[1:-1] if len(v) > 1 and v[0] == v[-1] and v[0] in "\"'" else v
+
     fields: dict = {}
     nested: dict | None = None
     for line in text[4:end].splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         key, _, value = line.partition(":")
+        value = unquote(value)
         if line.startswith((" ", "\t")):
             if nested is not None:
                 nested[key.strip()] = value.strip()

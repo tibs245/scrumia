@@ -1,26 +1,21 @@
 ---
 name: pitfall-rule-placement-in-skills
-description: A cross-cutting rule nested under a numbered Step in a SKILL.md only binds from that step onward — earlier yield points stay uncovered even when the prose says "general case"
+description: A rule nested under Step N of a SKILL.md binds only from Step N — the observation; the review step it implies is #205
 metadata:
   type: feedback
   topic: rule-placement-in-skills
   source: agent
-  stale_when: a SKILL.md stops being read top to bottom, or a check enforces where a cross-cutting rule sits
-  cites: #118
+  stale_when: "#205 lands the check in the review skill, or a SKILL.md stops being read top to bottom"
+  cites: "#205, #118"
 ---
 
-In this repo the deliverable is prose an agent executes top to bottom. A rule written as a
-`###` subsection inside `## Step N` binds only from Step N onward, no matter how strongly the
-prose claims to state "the general case". An agent reaching an earlier step has not read it yet.
+**The observation.** The deliverable here is prose an agent executes top to bottom, so a
+rule written as a `###` subsection inside `## Step N` binds only from Step N onward, no
+matter how strongly it claims to state "the general case". An agent reaching an earlier
+step has not read it yet. Found on #118: the commit-before-yield rule sat under Step 4 of
+`scrumia-ticket` while the skill's earliest yield point — Step 3's spec-contradiction
+escalation — sits above it.
 
-**Why:** found reviewing #118 (commit-before-yield). The rule was placed under Step 4 of
-`scrumia-ticket`, but the skill's earliest yield point — Step 3's "call on the business role"
-on a spec contradiction — sits above it. The general-case wording could not reach backwards.
-
-**How to apply:** when reviewing a SKILL.md change that introduces a cross-cutting rule, list
-every point in the file where the run hands control to someone else (role spawn, human
-escalation, `When you're blocked`, a wait on a check) and check each one is *after* the rule's
-heading. A cross-cutting rule belongs at its own `##` level, placed at the earliest step where
-it becomes applicable — not inside the step that motivated it.
-
-Related: [[pitfall-cross-skill-claims]] — same family, prose that reads true and is not.
+**The rule it implies — where a cross-cutting rule belongs, and the obligation to list a
+skill's yield points when reviewing one — is #205's, for the review skill.** Related:
+[[pitfall-cross-skill-claims]].

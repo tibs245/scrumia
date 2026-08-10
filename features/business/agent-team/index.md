@@ -73,6 +73,7 @@ there is no cross-app dialogue to describe for this EPIC.
 - #4 — [EPIC] Spec the agent team: roles, triggers, routing, refusal lines (parent)
 - #18 — The bootstrap case: a ticket whose deliverable is the parent feature is
   refused at Step 0. This feature was itself created under that gap, by exception.
+- #208 — The quiet-link idiom has one instance and no home in the design system.
 - #205 — Review reflexes filed in one role's memory instead of the review skill; one
   was lost before #126 tracked the channel.
 - #206 — Finishing the migration in the working tree, and hardening the gate.
