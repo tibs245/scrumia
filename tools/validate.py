@@ -162,7 +162,7 @@ def check_hooks() -> None:
 
 
 def check_doc_links() -> None:
-    """Relative markdown links in docs/ and plugins/ must resolve.
+    """Relative markdown links in docs/, plugins/ and features/ must resolve.
 
     Links may use ${CLAUDE_SKILL_DIR} (the only variable Claude Code substitutes
     inside skill content — ${CLAUDE_PLUGIN_ROOT} works in hooks.json/MCP configs
@@ -171,7 +171,12 @@ def check_doc_links() -> None:
     unsubstituted.
     """
     link_re = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
-    for md in sorted([*ROOT.glob("docs/**/*.md"), *ROOT.glob("plugins/**/*.md"), ROOT / "README.md"]):
+    for md in sorted([
+        *ROOT.glob("docs/**/*.md"),
+        *ROOT.glob("plugins/**/*.md"),
+        *ROOT.glob("features/**/*.md"),
+        ROOT / "README.md",
+    ]):
         rel = md.relative_to(ROOT)
         skill_dir = None
         if rel.parts[0] == "plugins" and len(rel.parts) >= 4 and rel.parts[2] == "skills":
