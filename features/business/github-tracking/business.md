@@ -191,6 +191,12 @@ being answerable, and a commit cherry-picked or merged outside its pull request 
 ticket its change does not deliver. A `Refs:` trailer, conversely, closes nothing and must
 never be written as though it might.
 
+The same trap has a quieter form: **a keyword and an issue number in a subject line close
+the issue too**, whether or not that was the intent — and `fix`, `fixes` and `fixed` are
+both closing keywords and a commit type. `fix(core): fixes #<n>'s lock contention` closes
+that ticket the moment it reaches the default branch. A commit that mentions another
+ticket names it without a keyword, or in the `Refs:` trailer, which has none.
+
 What the trailer buys is measurable, and its absence is what the lookup costs while it is
 missing. Measured on one already-merged ticket of this repository before the rule existed,
 `git log --grep` returned five commits: one of the four its pull request delivered, and

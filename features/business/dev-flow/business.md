@@ -93,6 +93,12 @@ what they are worth; this feature states that they are written.
 **The same vocabulary names the branch and titles the reviewable proposal.** One list,
 three uses, so a branch prefix that appears in no type list cannot exist.
 
+A commit's **scope** and a ticket's `scope/*` label are different words that happen to
+match. The label measures how far a change reaches and decides which model runs it
+(`features/business/execution-policy/`); a commit's scope names *what* the change touches
+and carries no size judgement. Neither is derivable from the other, and neither is read
+where the other is expected.
+
 **Every commit of a branch references the work item it belongs to.** Redundant is fine;
 incomplete is not — a lookup that returns some of a ticket's commits is worse than one
 that returns none, because it reads complete. **Exactly one closing statement per change,
