@@ -25,14 +25,17 @@ The three questions, with the second and third re-stated:
 
 | Label | Condition | Asked at entry |
 |---|---|---|
-| `scope/S` | At most 1 app, and no rule changes — it is already written | executes alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond its feature consumes, or the scope is unclear | + the tech role |
-| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | + the manager and the tech role, + the business role if a business rule is at stake |
-| `scope/XL` | New unit of value, pivot, data migration | leaves execution: sent back to scoping |
+| `scope/S` | ≤1 app, no rule changes: it is already written | executes alone |
+| `scope/M` | ≤1 app, a rule changes, read only in its feature, or unclear | + the tech role |
+| `scope/L` | ≥2 apps, a rule read beyond its feature, or interface contract | + the manager and the tech role, + the business role if a business rule is at stake |
+| `scope/XL` | New value unit, pivot, data migration: back to scoping | leaves execution: sent back to scoping |
 
-Three application rules:
+The Condition column is deliberately terse. It is the one column every other surface reproduces verbatim, and the narrowest of those surfaces is a GitHub label description, which stops at 100 characters with 38 already spent on naming the feature that owns the test. Written any longer, the condition could not fit there, and the label would carry a shortened variant — which is the drift this ADR exists to end. The tiers are compressed so that one wording fits everywhere; nothing is dropped from what 0006 decided.
+
+Four application rules:
 
 - **The live statement of question 2 is the spec's, not this table's.** `features/business/execution-policy/business.md` § *The scope axis measures reach, not medium* owns the test; this ADR records the decision to adopt it, and the surfaces that route a labeller cite the spec rather than paraphrasing it. That is what keeps the next drift to one place to fix instead of five.
+- **The Condition column is copied, never restated.** A surface that tells a labeller what a tier means carries these cells word for word and names the owning feature beside them. Rewording a cell — even into something that means the same — makes a second definition, and two definitions of one test is what #78 was opened about. `features/business/execution-policy/qa.md` AC-21 is where that is verifiable.
 - **When hesitating between two levels, take the higher one.** One tier too high costs a stronger model than the ticket needed; one tier too low costs a botched ticket. Round up for capability — not to buy a reviewer, because the label buys none.
 - **The label conditions the entry, the diff conditions the exit.** Who is asked *while* the ticket runs comes from the label; who reviews the PR comes from the diff's actual scope ([ADR-0005](0005-validation-gates.md)), which reads no label at all. Where the diff calls for more review than the label implied, that gap is worth a line in the PR — but it is a signal of failed scoping only when the axis's own questions would have answered higher. Decoupling the two grids means they now disagree routinely and correctly: a specs-only diff whose rule nothing else consumes is `scope/M` on this axis and still meets a path-based exit grid, and reporting that as a mislabel would fire on a whole class of correctly-labelled ticket. `features/business/dev-flow/` AC-6 carries both cases. 0006 stated this rule with a "Handling" column that read as though the label bought a reviewer; it does not, and has not since #130.
 

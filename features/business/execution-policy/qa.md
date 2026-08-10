@@ -234,11 +234,20 @@ Then the surface carries them below scope/L on the spec clause and names this fe
   where the test is defined; a surface stating its own condition without pointing here
   fails this, and so does one that points here but leaves the labeller unable to decide
   without opening it
+And the words it decides on are carried verbatim — the clause in this feature's wording,
+  the four tier conditions in ADR-0015's — so that the same string appears on every
+  surface; a rendering of its own fails this even where it means the same thing
 ```
 
 The seeded label description is in the list on purpose: it is the one surface that
 outlives the repository it was copied from, so a fresh install that seeds the old wording
-reintroduces the drift with nothing in the diff to show for it.
+reintroduces the drift with nothing in the diff to show for it. It is also the narrowest:
+a GitHub label description stops at 100 characters, and naming this feature spends 38 of
+them. That is why the tier conditions are written as tightly as they are — the verbatim
+requirement is only satisfiable if the shared wording fits the surface with the least
+room, so the narrowest surface sets the wording for all of them. Shortening the
+conditions is how this criterion is met; dropping the owner reference from a surface to
+make room is how it is failed.
 
 ## Out of scope
 

@@ -48,14 +48,14 @@ Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, n
 
 | Label | Condition | Asked at entry |
 |---|---|---|
-| `scope/S` | At most 1 app, and no rule changes — it is already written | Autonomous execution alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond its feature consumes, or the scope is unclear | Autonomous execution + the tech role |
-| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if a business rule is at stake |
-| `scope/XL` | New value unit, pivot, data migration | Out of execution: send it back to the scoping module |
+| `scope/S` | ≤1 app, no rule changes: it is already written | Autonomous execution alone |
+| `scope/M` | ≤1 app, a rule changes, read only in its feature, or unclear | Autonomous execution + the tech role |
+| `scope/L` | ≥2 apps, a rule read beyond its feature, or interface contract | You + the tech role, + the business role if a business rule is at stake |
+| `scope/XL` | New value unit, pivot, data migration: back to scoping | Out of execution: send it back to the scoping module |
 
-Three questions are enough to settle it: *how many apps?*, *does a rule consumed beyond one feature or app change?*, *does an interface contract change?*
+Three questions are enough to settle it: *how many apps?*, *does a rule read beyond its feature change?*, *does an interface contract change?*
 
-The middle question measures **a rule's reach, not a file's location**: a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule has answered *no* — it is not `scope/L` on that clause, however many spec files its diff lists. That test is stated once, in [`features/business/execution-policy/business.md`](../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*; this table applies it, in that section's own words, and does not define it. The file-location reading it replaced is why a whole sprint's labels had to be overridden ([`docs/adr/0015-scope-measures-reach.md`](../../../docs/adr/0015-scope-measures-reach.md)).
+The middle question measures **a rule's reach, not a file's location**: a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule has answered *no* — it is not `scope/L` on that clause, however many spec files its diff lists. That test is stated once, in [`features/business/execution-policy/business.md`](../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*; this table applies it and does not define it. The Condition cells are [ADR-0015](../../../docs/adr/0015-scope-measures-reach.md)'s, copied word for word — terse because the same wording has to fit a GitHub label description, and rewording one here would make a second definition of the test. The file-location reading this replaced is why a whole sprint's labels had to be overridden.
 
 When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 

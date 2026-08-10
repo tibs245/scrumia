@@ -58,12 +58,21 @@ of (`docs/adr/README.md`).
 
 **Every surface that tells a labeller what a tier means points here.** The refinement
 skill's table, the manager's routing table and the description carried by the `scope/*`
-label itself each apply this test and name this section as where it is defined; none
-re-words it. A labeller must still be able to decide from the surface in front of them —
-a pointer that leaves them unable to answer is as broken as a fourth paraphrase — so
-what those surfaces carry is the clause in this section's words and the tiers in
+label itself each apply this test and name this feature as where it is defined — this
+section too, wherever the surface has room for a section title; none re-words the test.
+A labeller must still be able to decide from the surface in front of them — a pointer
+that leaves them unable to answer is as broken as a fourth paraphrase — so what those
+surfaces carry is the clause in this section's words and the four tier conditions in
 ADR-0015's, neither of them a variant. Four independent renderings of one test are what
 produced #78, and they drifted precisely because each was free to say it differently.
+
+That is only satisfiable if one wording fits every surface, and the surfaces are not
+equally roomy: a GitHub label description stops at 100 characters, 38 of which go on
+naming this feature. **The narrowest surface therefore sets the wording for all of
+them** — the tier conditions are compressed until they fit there, and the tables that
+have room carry the compressed form anyway rather than a comfortable variant of it. The
+compression shortens; it never narrows. A surface short of room drops words, never
+conditions, and never the reference that says whose test this is.
 
 ## The grid is project data; what it must satisfy is not
 

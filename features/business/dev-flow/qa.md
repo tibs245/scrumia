@@ -77,13 +77,15 @@ Then the gap between the label and the diff is flagged as a scoping failure per
 ```
 
 ```gherkin
-Given the same ticket, but the rule its diff changes is consumed by nothing beyond
-  its own feature
+Given a ticket labelled `scope/M` whose diff touches `features/business/**`, and the
+  rule it changes is consumed by nothing beyond its own feature — so the axis's own
+  second question answers no
 When the PR is written
 Then the extra review still happens and the gap is not reported as a scoping
-  failure — `scope/S` was the correct label (`features/business/execution-policy/`
-  AC-3), and the two grids disagreeing here is them measuring different things,
-  not the manager having mislabelled
+  failure — `scope/M` was the correct label, a rule having changed, and the axis's
+  spec clause keeps it below `scope/L` (`features/business/execution-policy/` AC-3);
+  the two grids disagreeing here is them measuring different things, not the manager
+  having mislabelled
 ```
 
 ### AC-7 — Where a tracker feature and this one disagree on the process, this one governs
