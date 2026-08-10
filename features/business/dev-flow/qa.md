@@ -129,6 +129,34 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
   leaves behind carries that work rather than resolving to its base commit
 ```
 
+### AC-11 — A commit carries a type, a scope, and a reference to its work item
+
+```gherkin
+Given a commit written as `feat: <subject>`, with no scope
+When it is checked against this feature's commit rule
+Then it is non-conforming — the scope is mandatory here even though the standard makes it
+  optional, because which modules a change touches must be readable from history alone
+```
+
+```gherkin
+Given a branch delivering one work item, where some of its commits reference that item
+  and some do not
+When the item's commits are looked up from history
+Then the lookup is incomplete and the branch is non-conforming — a partial answer that
+  reads as a complete one is the failure the per-commit reference exists to remove, and
+  referencing every commit is redundant rather than wrong
+```
+
+### AC-12 — Rewriting history stops at the branch boundary
+
+```gherkin
+Given a correction squashed into an earlier commit with a force push
+When the target is the ticket's own branch, and the executor that owns it runs the rewrite
+Then it is allowed; and when the target is the default branch, or a branch another run is
+  reading, it is refused — the force push would destroy work a sibling worktree already
+  fetched
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
@@ -138,6 +166,10 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
   `features/business/ceremonies/`, not here. A gate is not a ceremony: the gates above
   stay this feature's.
 - The concrete artefacts the code cycle is traced through — the pull request, the
-  board column, the milestone. This feature owns the process; whichever feature
-  fills the tracker slot (today `features/business/github-tracking/`) specifies its
-  materialisation.
+  board column, the milestone, and the spellings of a commit's reference and of the
+  closing keyword. This feature owns the process; whichever feature fills the tracker
+  slot (today `features/business/github-tracking/`) specifies its materialisation.
+- What a commit's type and scope are *worth* — which version bump each earns, what a
+  bump promises, and how long a renamed thing keeps working. Specified by
+  `features/business/release-versioning/`, not here: this feature says a commit carries
+  them, that one says what they buy.

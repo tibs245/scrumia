@@ -80,6 +80,36 @@ not re-decided here.
 nothing else), or `all`. What exactly counts as docs-only, and what happens to a
 PR mixing docs and code, is not yet pinned down.
 
+## What a commit carries, and who may rewrite one
+
+**Every commit carries a type and a scope**: `<type>(<scope>): <subject>`. The scope is
+mandatory here, on top of a standard that makes it optional, because which modules a
+change touches has to be readable from history without opening a diff. Which types exist,
+which namespaces a scope may draw its token from, and what each is worth for a version
+are `docs/adr/0017-version-bump-and-commit-signal.md`'s — defined there once and
+enumerated in no spec, this one included. `features/business/release-versioning/` states
+what they are worth; this feature states that they are written.
+
+**The same vocabulary names the branch and titles the reviewable proposal.** One list,
+three uses, so a branch prefix that appears in no type list cannot exist.
+
+**Every commit of a branch references the work item it belongs to.** Redundant is fine;
+incomplete is not — a lookup that returns some of a ticket's commits is worse than one
+that returns none, because it reads complete. **Exactly one closing statement per change,
+carried by the reviewable proposal rather than by a commit**, so that what closed a work
+item stays answerable. The concrete spellings of both — the trailer, the keyword, and
+which of them the tool acts on — belong to whichever feature fills the tracker slot;
+neither survives a tracker with no issues, and neither is restated here.
+
+**Rewriting a branch's own history is allowed; rewriting the default branch's is not.**
+Squashing a correction into the commit it fixes is blessed on epic and ticket branches
+and banned on the default branch, and only the executor that owns a branch may do it
+there. The cost is why the boundary exists: the targets are commits that are already
+pushed, so the rewrite needs a force push — and during a sprint several worktrees share
+one `.git`, where a sibling may already have fetched the branch. A force push on anything
+a sibling reads destroys work that was committed precisely so it could not be lost, which
+is the same failure the commit-before-yield rule above exists to prevent.
+
 ## The code cycle: this feature is the process, a tracker feature is its trace
 
 **This feature owns the code cycle.** How a scoped ticket becomes a reviewable
@@ -114,11 +144,13 @@ reviewing a spec change. Replace the tracker with a hypothetical
 
 - **The rule stays true, word for word → it belongs here.** One worktree per ticket,
   one branch per ticket, commit before the run yields control, review before merge,
-  the three gates, `auto_merge`. None of them mentions a tracker to be stated.
+  the three gates, `auto_merge`, a commit's mandatory type and scope, one reference per
+  commit to its work item, the branch boundary on rewriting history. None of them
+  mentions a tracker to be stated.
 - **The rule becomes meaningless → it belongs to the tracker feature.** Opening a PR
   and linking it to its issue, column transitions, milestone-as-sprint,
-  epic-as-native-sub-issues, board reading discipline. Each names an artefact that
-  ceases to exist.
+  epic-as-native-sub-issues, board reading discipline, the spelling of the reference
+  trailer and of the closing keyword. Each names an artefact that ceases to exist.
 
 Apply it to one atomic statement at a time. A rule that returns both answers is two
 rules — splitting it is the first step, not a sign the test failed.
