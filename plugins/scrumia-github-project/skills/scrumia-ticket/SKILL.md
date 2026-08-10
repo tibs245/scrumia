@@ -134,6 +134,8 @@ Otherwise, if the ticket changes a behavior, the spec changes **before** the cod
 
 Writing the spec first surfaces contradictions before they get encoded in code. That's where the cost is lowest.
 
+**If the ticket also changes a shipped module**, that module's own changelog gets a line under its `[Unreleased]` heading — one line per change, in the words of someone deciding whether to take it, never the commit subject. A module whose entries are written only at release time is a module whose entries are reconstructed from the log, which is the practice the format refuses. This is a different file from the spec changelog above and answers to a different reader; if the composition ships no module of its own, there is nothing to do here.
+
 If while writing the spec you discover a contradiction with another feature: stop, commit the spec changes you have — calling the role is a yield, and it is your spec edits that expose the contradiction — then comment on the issue and call on the business role. Do not decide a business rule yourself.
 
 ## Step 4 — Implement according to the app's module
