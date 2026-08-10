@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The ceremonies deferral now points at the `ceremonies` feature instead of the ticket that created it, and states that a gate is not one
+- Issue: #11
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — A label/diff gap is a scoping failure only when the axis would have answered higher: AC-6 splits the two cases now that ADR-0015 decouples the grids. Gate 2's own routing is unchanged
 - Issue: #78
 - PR: #NN (filled at merge)
