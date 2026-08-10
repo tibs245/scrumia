@@ -32,7 +32,3 @@ No `ux.md` or `api-contract.md`: this feature has no interface and no API of its
 own — it governs how modules declare and read configuration, not something a user
 or another app calls.
 
-## Open issues
-
-- #7 — module versioning and breaking-change migration: left open by this feature,
-  deliberately. See "Out of scope" in `qa.md`.

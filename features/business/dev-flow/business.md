@@ -1,11 +1,25 @@
 # Dev flow — business rules
 
+## Value
+
+For the humans steering brainstorming and the agents executing tickets — everyone
+whose next move depends on which of the two paths they are on. It brings a clean split
+of who decides what, plus the code-cycle rules (branch per ticket, commit before every
+yield, the three gates) that any tracker must trace rather than redefine. It matters
+because a ticket with no verifiable acceptance criterion, or a run whose in-flight work
+is not committed before it yields, is exactly the drift this feature refuses — and a
+tracker feature restating the process instead of tracing it is the same drift one plane
+over. Not instrumented today: no measure counts refused executions or commit-before-
+yield compliance; both are read from the ticket and the branch, not from a dashboard.
+
 ## The two paths
 
 **Brainstorming** — from an idea to a scoped ticket. **Execution** — from a scoped
 ticket to a PR. A ticket is the boundary between them: it exists once it carries at
 least one verifiable acceptance criterion and names the feature it belongs to (or,
-for the bootstrap case, is what it produces — see #18).
+for the bootstrap case — a ticket whose deliverable is the parent feature itself,
+normally refused at Step 0 and admitted only by a stated exception — is what it
+produces).
 
 ## Who decides, on each path
 
@@ -64,15 +78,15 @@ not re-decided here.
 `auto_merge` is one scalar for the whole project, not a per-ticket category:
 `none` (nothing merges unattended), `docs-only` (a PR touching documentation and
 nothing else), or `all`. What exactly counts as docs-only, and what happens to a
-PR mixing docs and code, is #17's to pin down.
+PR mixing docs and code, is not yet pinned down.
 
 ## The code cycle: this feature is the process, a tracker feature is its trace
 
 **This feature owns the code cycle.** How a scoped ticket becomes a reviewable
 change — isolation per ticket, when work is committed, what must be reviewed and
 when, what may merge unattended — is specified here, and only here. Not all of it is
-written down yet: worktree ownership lands in this file through #20. When work is
-committed is written above, under § *Who decides, on each path* → **Execution**.
+written down yet: worktree ownership is not yet written down in this file. When work
+is committed is written above, under § *Who decides, on each path* → **Execution**.
 Ownership is settled; the wording of what remains follows.
 
 **A tracker feature owns the tracing and relaying of that cycle.** It states which

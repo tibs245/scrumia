@@ -85,7 +85,7 @@ And at no point are the rail and the static current-page underline both showing
 Given a reader on a touch device, or one whose script never ran
 When they load a page with a current nav link
 Then the header renders the current page with a static accent underline,
-  exactly as #59 shipped it, and no rail element ever activates
+  unchanged since the feature's first version, and no rail element ever activates
 ```
 
 ## Edge cases
@@ -113,5 +113,7 @@ Then the rail is at the correct position at every point — home on load, under
 
 ## Out of scope
 
-- The hero, the slot index and the run (#60, #61, #62). This feature lands the
-  ground they stand on and nothing that stands on it.
+- The hero, the slot index and the run — owned by `features/app/site/hero/`,
+  `features/app/site/slot-index/` and `features/app/site/run-horizon/`
+  respectively. This feature lands the ground they stand on and nothing that
+  stands on it.

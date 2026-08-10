@@ -42,10 +42,10 @@ ScrumIA adopt a board that already exists — columns renamed, vocabulary alread
 |---|---|---|
 | (no status) → `Backlog` | a ticket is filed | none — the column name is used directly, once |
 | `Backlog` → `Ready for dev` | `scrumia-refine` judges its four readiness conditions met | `ready` |
-| `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — see #23 |
+| `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — not automated today |
 | `To dev` → `In progress` | execution starts on the ticket | `in_progress` |
 | `In progress` → `In review` | the PR opens | `in_review` |
-| `In review` → `Done` | the PR merges | `done` — not automated today either, see #23 |
+| `In review` → `Done` | the PR merges | `done` — not automated today either |
 
 Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
 `done`). `Backlog` is entered by its literal column name, once, at filing. `To dev`
@@ -94,11 +94,11 @@ the label is a signal, not the source of truth.
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
 `scope/*` has exactly one programmatic reader, `pick-model.sh`, and what its cell means
-is specified once, in `features/business/execution-policy/`. It had a second until
-#130 — `scrumia-ticket` Step 6, which gated the required review on the tier. Gate 2
-routes by the diff's actual scope instead (`docs/adr/0005-validation-gates.md`), because
-a wrong label is precisely the failure a review guards against, and a label cannot guard
-against itself. The manager still reads the label at entry, to route who is asked while
+is specified once, in `features/business/execution-policy/`. It had a second —
+`scrumia-ticket` Step 6, which gated the required review on the tier — a review gate
+that has since been retired. Gate 2 routes by the diff's actual scope instead
+(`docs/adr/0005-validation-gates.md`), because a wrong label is precisely the failure a
+review guards against, and a label cannot guard against itself. The manager still reads the label at entry, to route who is asked while
 the ticket runs (`features/business/agent-team/business.md`), and at exit it still says
 which review to *expect* — a reader's convenience, not a gate. A label read two ways is
 two labels, and the second one drifts without anyone naming it.
@@ -166,12 +166,12 @@ not findable this way. That is consistent — the venue is the issue — but it 
 written in the wrong place is not merely misfiled, it is invisible.
 
 Nothing runs any of this on a schedule; per `execution-policy`, whose job that is remains
-#167's.
+open.
 
 **The PR body echoes it, and stops being the record.** A PR whose ticket carries a
 deviation restates it for a human reading the diff, and that echo is a courtesy. Five PR
-bodies were the whole record once, in the sprint that produced #32; the comment is now the
-record and the PR is its copy.
+bodies were the whole record once, in the sprint whose repeated overrides on the same
+cell went uncounted for it; the comment is now the record and the PR is its copy.
 
 ## Reading discipline: a board is read through a filter, never whole
 

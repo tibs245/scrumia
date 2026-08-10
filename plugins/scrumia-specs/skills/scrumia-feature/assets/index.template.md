@@ -35,11 +35,7 @@ which question — never the answer itself.>
 <List only the files actually present. The mandatory files are always among
 them; `index.md` does not list itself. For the rest, an absent file is an
 assertion: nothing to say on this subject. The column answers "when do I need
-to open this?" — the agent deciding what to load is this table's reader.>
+to open this?" — the agent deciding what to load is this table's reader.
 
-## Open issues
-
-- #NN — <title>
-
-<Only issues that survive the PR that touches this feature — never its
-founding issue, which the merge itself closes.>
+No ticket number anywhere in this file: the tracker owns which issues concern
+a feature, and is searched, not cached here.>

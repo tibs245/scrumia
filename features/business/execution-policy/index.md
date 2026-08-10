@@ -47,12 +47,3 @@ user content or regulated sector. No `archi.md`: it touches neither `site` nor
 deliberately out of this spec, and stating them here would be the second statement
 `business.md` forbids.
 
-## Open issues
-
-- #167 — the record has no reader: who counts repetition on a cell, and when. This
-  feature requires the count to be possible and stops there, on purpose
-- #18 — the bootstrap gate refuses a ticket whose deliverable is its own parent
-  feature; this feature was created under that gap, by the exception #12 set
-- #190 — the axis's second question asks who consumes a rule, and a feature's
-  `index.md` names its consumers only where someone thought to write them down;
-  until that is a stated part of the format, the question is answered unevenly

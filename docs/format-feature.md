@@ -36,11 +36,9 @@ Three boundaries carry most of the collisions, and each is settled by one member
 
 This document explains why the boundary exists; the operational reference — the full three-part entry for every file — is the catalog linked above.
 
-## The three existence categories
+## The two existence categories
 
-**Mandatory in every feature**: `index.md`, `qa.md`, `CHANGELOG.md`. A feature has to be findable, has to be possible to follow over time, and has to be possible to test — their absence asserts nothing, it is a gap.
-
-**Mandatory per stratum**: `business.md`, at the Business stratum only. A Business feature that cannot say who it serves and why it is worth building is not a unit of value; at the App stratum the same file stays optional and holds only what is specific to that app.
+**Mandatory in every feature**: `index.md`, `qa.md`, `CHANGELOG.md`, `business.md`. A feature has to be findable, has to be possible to follow over time, has to be possible to test — and has to be worth building: every feature states its value, at both strata, so `business.md` is mandatory everywhere too. Their absence asserts nothing, it is a gap.
 
 **Content-tested**: everything else. A file is created only when it has content; its absence is the assertion "nothing to say on this subject", not an oversight and not a placeholder.
 
@@ -61,7 +59,7 @@ An App feature without a Business parent is acceptable if it is purely technical
 | File | Business | App Backend | App Frontend |
 |---|---|---|---|
 | `index.md` | **mandatory** | **mandatory** | **mandatory** |
-| `business.md` | **mandatory** — rules, personas, value, journey-as-intent | reference to the parent | reference to the parent |
+| `business.md` | **mandatory** — value, rules, personas, journey-as-intent | **mandatory** — value + reference to the parent | **mandatory** — value + reference to the parent |
 | `qa.md` | **mandatory** | **mandatory** | **mandatory** |
 | `CHANGELOG.md` | **mandatory** | **mandatory** | **mandatory** |
 | `legal.md` | if personal data, payment, user content, regulated | same | same |
@@ -72,15 +70,17 @@ An App feature without a Business parent is acceptable if it is purely technical
 | `ux.md` | no | no | often |
 | `devx.md` | no | if it exposes a lib | if it exposes components |
 
-**mandatory** marks the files `scrumia-specs` requires — of every feature for `index.md`, `qa.md` and `CHANGELOG.md`, of the Business stratum only for `business.md`; every other row is subject to the content test. `api-contract.md` covers any shared interface between features, not only an HTTP API — a file format or a CLI's output shape counts the moment another feature parses it.
+**mandatory** marks the files `scrumia-specs` requires of every feature, at every stratum: `index.md`, `business.md`, `qa.md`, `CHANGELOG.md`; every other row is subject to the content test. `api-contract.md` covers any shared interface between features, not only an HTTP API — a file format or a CLI's output shape counts the moment another feature parses it.
 
 The catalog is open. Two rules so it does not sprawl: a new file must have a **distinct reader** (otherwise it is a section, not a file), and its addition must be documented in the catalog — otherwise the next feature will invent another name for the same thing, and the format will lose what makes it useful: its predictability.
 
 ## The special role of `index.md`
 
-It is the only file read systematically. Its section set is fixed by the template — `In brief`, `Links`, `Files present`, `Open issues`, those four and no others — so a section outside the set is detectable rather than a matter of taste. `Files present` carries **one line per file, stating when to read it**: not why it exists, but the situation that makes an agent open it.
+It is the only file read systematically. Its section set is fixed by the template — `In brief`, `Links`, `Files present`, those three and no others — so a section outside the set is detectable rather than a matter of taste. `Files present` carries **one line per file, stating when to read it**: not why it exists, but the situation that makes an agent open it.
 
 That last point is not decorative: it is what lets an agent load `legal.md` only when the situation calls for it, rather than as a precaution.
+
+Two more rules keep the index from re-growing what it just shed: a spec cites no ticket anywhere — `CHANGELOG.md` excepted — the fact or the open question is stated in words instead; and every feature opens `business.md` with its value stated in four answers — who it is for, what it brings, why it matters, and whether that can be measured.
 
 ## The global index
 

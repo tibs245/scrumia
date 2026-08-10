@@ -1,5 +1,17 @@
 # Ceremonies — business rules
 
+## Value
+
+For the humans and standing roles deciding whether an occasion beside the ticket path
+is worth holding, and for whoever is checking a candidate against this feature before
+proposing it. It brings a filter — three admission tests — that keeps such an occasion
+from becoming calendar-driven busywork: no ceremony fires on a date alone, reads facts
+that do not already exist, or produces nothing that outlives it. It matters because the
+founding note dropped BMAD's mandatory ceremonies for exactly that failure — uniform
+cost against non-uniform value — and this feature is what stops them creeping back in
+under a new name. Not instrumented today: nothing counts how many candidate occasions
+were admitted versus refused; the three tests are applied by reading, not by a tool.
+
 ## What a ceremony is here
 
 A **ceremony** is a named occasion that sits beside the ticket path and looks at
@@ -83,7 +95,7 @@ has opened, and the safe reading of that ambiguity is to read everything again, 
 time. Which venue holds the mark is the tracker's to say, as with the deviation record
 itself; this feature requires only that it be queryable. The parallel is not yet true in
 practice — the deviation record's venue and shape are written down, the mark's are not.
-That gap is #198, and until it closes BR-6 states an obligation no venue yet accepts.
+That gap is open, and until it closes BR-6 states an obligation no venue yet accepts.
 
 **Async.** Its whole input is already written down, so nothing in it needs two people
 present at the same moment: an agent prepares the reading and proposes the edits, the
@@ -97,13 +109,13 @@ override because a decision has an author, and the retrospective reads it to fin
 the grid gets wrong, not a person who gets it wrong.
 
 `features/business/execution-policy/` requires the deviation record to be countable and
-leaves open — in #167 — *who* counts, *at what threshold*, and whether anything surfaces
+leaves open *who* counts, *at what threshold*, and whether anything surfaces
 the record unprompted. This feature closes none of those three: it names a venue where
 the reading happens when it happens, makes nobody accountable for it happening, and sets
 no threshold at which a cell should be edited. It does narrow the fourth part of that
-question, the *when*: of the three candidates #167 lists — a sprint boundary, a
-retrospective, a status pass — this feature specifies the retrospective's own timing, and
-leaves the other two as venues it does not speak for.
+question, the *when*: of the three candidates named against that open question — a sprint
+boundary, a retrospective, a status pass — this feature specifies the retrospective's own
+timing, and leaves the other two as venues it does not speak for.
 
 ## Debt audit — admitted
 
@@ -238,9 +250,9 @@ first:
 
 Those three reasons are the refusal, and they carry no stated cost or reopen condition —
 which is what an ADR is for, and what `docs/adr/0013-tracker-stays-one-slot.md` does for
-the neighbouring negative decision. That the argument lives here instead is #199. Until it
-closes, this section is the decision's only home, and a spec carries only its current
-version.
+the neighbouring negative decision. Whether this decision belongs in an ADR of its own
+instead of here, like that neighbouring one, is an open question. Until it is settled,
+this section is the decision's only home, and a spec carries only its current version.
 
 **Where automation lands, if it is ever written.** "One more skill in an existing module"
 is [`docs/modules.md`](../../../docs/modules.md)'s own default for a capability that fills

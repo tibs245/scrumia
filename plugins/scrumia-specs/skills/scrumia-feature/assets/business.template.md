@@ -1,14 +1,18 @@
 # Business rules — <feature>
 
 <Business feature: the reference — value, personas, use cases, the journey as
-intent, the rules, the vocabulary. App feature: does not copy the parent's
-rules — references it and records only what is specific to this app. Omit
-any section with nothing to say.>
+intent, the rules, the vocabulary. App feature: this app's value, plus a
+reference to the parent — never a copy of its rules — and only what is
+specific to this app. Omit any section with nothing to say, except Value,
+which every feature states.>
 
-## Value and impact
+## Value
 
-<Who this serves and what it brings. App stratum: reference the parent
-Business feature; record only what is specific to this app.>
+<Four answers, in order: who this is for; what it brings them; why it
+matters; whether that contribution can be measured — name the measure, or
+say plainly it is not instrumented today. Business stratum: the feature's
+value. App stratum: this app's share of the value, then a reference to the
+parent Business feature — never a copy of its rules.>
 
 ## Personas
 

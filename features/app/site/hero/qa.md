@@ -62,7 +62,9 @@ Then Hop is already assembled and its eye is already lit — nothing travels
 
 ## Out of scope
 
-- The slot index and the run, and everything below the hero (#61, #62). This
+- The slot index and the run, and everything below the hero — owned by
+  `features/app/site/slot-index/` and `features/app/site/run-horizon/`. This
   feature lands only the hero.
 - Which of the three `site-header` candidates wins, and the human/agent colour
-  rule (#52) — the hero uses neither `--human` nor `--agent`.
+  rule — owned by `features/app/site/ground-and-shell/` — the hero uses
+  neither `--human` nor `--agent`.

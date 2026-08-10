@@ -103,8 +103,7 @@ def make_template(root: Path) -> None:
         "# <Feature name>\n\n"
         "## In brief\n\n<...>\n\n"
         "## Links\n\n<...>\n\n"
-        "## Files present\n\n<...>\n\n"
-        "## Open issues\n\n<...>\n",
+        "## Files present\n\n<...>\n",
         encoding="utf-8",
     )
 
@@ -174,8 +173,7 @@ def test_feature_index_conformant_sections_pass() -> None:
         feature = tmp / "features" / "business" / "widget"
         write_feature_index(
             feature,
-            "## Links\n\n- none\n\n## Files present\n\n| File | Read it when |\n|---|---|\n\n"
-            "## Open issues\n\n- none\n",
+            "## Links\n\n- none\n\n## Files present\n\n| File | Read it when |\n|---|---|\n",
         )
         errors = run_check(tmp, "check_feature_index_sections")
         check("no findings", errors == [], str(errors))
@@ -304,6 +302,49 @@ def test_global_index_itself_is_not_a_leaf() -> None:
         shutil.rmtree(tmp)
 
 
+def test_app_feature_missing_business_md_is_caught() -> None:
+    print("an app-stratum leaf without business.md is an error — every feature states its value")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "app" / "site" / "widget"
+        write_feature_index(feature)
+        (feature / "qa.md").write_text("# QA\n", encoding="utf-8")
+        (feature / "CHANGELOG.md").write_text("# Changelog\n", encoding="utf-8")
+        errors = run_check(tmp, "check_feature_mandatory_files")
+        check("missing business.md is reported",
+              any("missing mandatory file business.md" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_ticket_reference_in_a_spec_is_caught() -> None:
+    print("a #NN ticket reference outside CHANGELOG.md is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "qa.md").write_text("# QA\n\nFixed in #26.\n", encoding="utf-8")
+        errors = run_check(tmp, "check_no_tracker_refs")
+        check("ticket reference is reported",
+              any("ticket reference #26" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_hex_colour_and_changelog_refs_are_not_tickets() -> None:
+    print("hex colours (#9E4517) and CHANGELOG.md issue refs produce zero findings")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "legal.md").write_text("# Legal\n\nThe hue pair (`#9E4517` / `#F0996F`).\n", encoding="utf-8")
+        (feature / "CHANGELOG.md").write_text("## 2026-08-10 — x\n- Issue: #193\n", encoding="utf-8")
+        errors = run_check(tmp, "check_no_tracker_refs")
+        check("zero findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_broken_link_under_features_is_caught,
                  test_valid_link_under_features_passes,
@@ -319,7 +360,10 @@ def main() -> int:
                  test_global_index_stale_is_caught,
                  test_global_index_current_passes,
                  test_index_without_in_brief_yields_empty_brief,
-                 test_global_index_itself_is_not_a_leaf):
+                 test_global_index_itself_is_not_a_leaf,
+                 test_app_feature_missing_business_md_is_caught,
+                 test_ticket_reference_in_a_spec_is_caught,
+                 test_hex_colour_and_changelog_refs_are_not_tickets):
         test()
     print()
     if FAILURES:

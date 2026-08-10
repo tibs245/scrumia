@@ -38,15 +38,3 @@ enactment touches neither `site` nor `tools`. No `tech.md`, `api-contract.md`, `
 or `devx.md`: it specifies occasions and their artefacts, with no interface, no exposed
 library and no implementation of its own.
 
-## Open issues
-
-- #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
-- #167 — who counts deviations on a cell, at what threshold, and whether anything
-  surfaces the record unprompted. This feature names the retrospective as a venue where
-  the record is read and settles none of those three
-- #198 — BR-6 requires a queryable mark of how far a retrospective read, and no venue
-  holds one yet; until it closes, that rule states an obligation nothing accepts
-- #199 — the decision not to open a `ceremonies` slot has no ADR, so no stated cost and
-  no reopen condition, unlike the negative slot decision in ADR-0013
-- #18 — the bootstrap gate refuses a ticket whose deliverable is its own parent feature;
-  this feature was created under that gap, by the exception the sprint set

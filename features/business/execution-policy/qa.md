@@ -194,7 +194,7 @@ Then the records are queried on the cell they name and returned together; a reco
 
 Nothing is required to raise this on its own. Automatic surfacing is explicitly not owed
 here — a human running the query is what this criterion asks for. Who runs it and when is
-#167's, per `business.md` § *Reading the record is a human's job*.
+tracked elsewhere and open, per `business.md` § *Reading the record is a human's job*.
 
 ### AC-19 — The record is written, never read back to choose a model
 
@@ -219,8 +219,9 @@ Then it is not filed as a human override — the override kind names the human w
 Only the negative half is a criterion. What *should* happen to such a run — who is told,
 and in what shape — is not specified here, because nothing today can tell an agent's
 unilateral departure from a human's override in the first place: both arrive as the same
-comment. Attribution that a machine can check is #42's, and until it lands this criterion
-guards the vocabulary rather than the behaviour.
+comment. Attribution that a machine can check does not exist yet, and until
+machine-checkable attribution lands this criterion guards the vocabulary rather than the
+behaviour.
 
 ### AC-21 — Every surface a labeller reads applies the test and names its owner
 
@@ -253,7 +254,7 @@ make room is how it is failed.
 
 - Who reads the accumulated records, and on what occasion. This feature requires that
   repetition be countable (AC-18) and states that counting it is a human's job; the reader
-  and the moment are #167's.
+  and the moment are tracked elsewhere and open.
 - The grid's cells, the capability order they climb, and the ceiling they stop below:
   project data, declared in `.scrumia/config.yaml` under `settings.team.execution`,
   beside each other. Restating any of them here would create the second statement AC-2

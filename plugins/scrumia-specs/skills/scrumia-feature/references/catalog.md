@@ -5,20 +5,26 @@ it **may hold**, what it **must not hold** — and every exclusion names the fil
 that content goes instead. An entry that only described its subject would leave the
 boundary to taste; these entries do not.
 
-## The three existence categories
+## The two existence categories
 
-**Mandatory in every feature** — `index.md`, `qa.md`, `CHANGELOG.md`. A feature has to
-be findable, has to be possible to follow over time, and has to be possible to test.
-Their absence asserts nothing; it is a gap.
-
-**Mandatory per stratum** — `business.md`, at the Business stratum only. A Business
-feature that cannot say who it serves and why it is worth building is not a unit of
-value; at the App stratum the same file stays optional and holds only what is specific
-to that app.
+**Mandatory in every feature** — `index.md`, `qa.md`, `CHANGELOG.md`, `business.md`.
+A feature has to be findable, has to be possible to follow over time, has to be
+possible to test — and has to be worth building: every feature states its value, so
+`business.md` exists at both strata. Their absence asserts nothing; it is a gap.
 
 **Content-tested** — everything else. A file is created only when it has content; its
 absence is the assertion "nothing to say on this subject", not an oversight and not a
 placeholder. This is what lets an agent decide what to read without reading everything.
+
+## No ticket in a spec
+
+A spec cites no issue and no PR. Tracker state lives in the tracker; a spec that
+carries a ticket number is caching state that goes stale the day the ticket closes —
+fourteen stale references were measured across twelve indexes before this rule.
+**`CHANGELOG.md` is the one exception**: history's job is to point at the tickets
+that carry the why. Everywhere else, state the fact or the open question in words —
+"not automated today", "who counts, and at what threshold, is open" — and let the
+tracker be searched for the ticket that tracks it. `tools/validate.py` enforces this.
 
 These categories are **this module's** declaration, not a property of the format as
 such: whichever module fills the `specs` slot declares its own set, and this file is
@@ -60,37 +66,42 @@ Holds:
   or `docs/` file that answers a question this feature defers, one line of key info each
 - The list of files present, one line per file saying **when to read it** — the agent
   deciding what to load is this table's reader
-- The open GitHub issues that concern it — issues that survive the PR that touches
-  this feature, never its founding issue, which the merge itself closes
 
 May hold: a one-line pointer to the file that elaborates a claim ("the persona is in
 `business.md`").
 
 Must not hold: a rule → the file its subject names below; a decision or its rationale →
-the issue or the ADR that carries it; a fact a `design/` file or a component spec
-already states → cite it, one line; history → `CHANGELOG.md`. **A rule, a decision or
-a rationale in an index is a defect**, whatever heading it hides under.
+the ADR or the tracker; a ticket number → the tracker (see *No ticket in a spec*); a
+fact a `design/` file or a component spec already states → cite it, one line; history →
+`CHANGELOG.md`. **A rule, a decision or a rationale in an index is a defect**, whatever
+heading it hides under.
 
 The section set is declared by the template (`assets/index.template.md`): `In brief`,
-`Links`, `Files present`, `Open issues` — those four, no others. `tools/validate.py`
-enforces the set; what it cannot read — a rule smuggled under a conformant heading —
-review owns.
+`Links`, `Files present` — those three, no others. `tools/validate.py` enforces the
+set; what it cannot read — a rule smuggled under a conformant heading — review owns.
 
 Read by: everyone, first.
 
 ---
 
-## `business.md` — mandatory at the Business stratum
+## `business.md` — mandatory in every feature
 
-**Business feature**: the reference. The business rules, the domain vocabulary, the
-invariants — and what makes the feature worth building: the personas, the use cases,
-the value it delivers, its impact on the business, and the user journey **as intent**
-(per the membership test above). A reader understands immediately what is expected and
-what it brings, before any screen or line of code exists.
+Every feature states its value, in four answers a reader gets before anything else:
+**who** the feature is for, **what it brings** them, **why it matters** — and whether
+that contribution **can be measured**, with the measure named, or the honest note that
+it is not instrumented today. A feature whose value cannot be stated is a splitting or
+deletion candidate, not a feature missing a paragraph.
 
-**App feature** (content-tested): *does not copy* the rules. References the parent
-Business feature and records only what is specific to this app — a local restriction,
-an interpretation, a case this app alone encounters.
+**Business feature**: the reference. The value statement above, then the business
+rules, the domain vocabulary, the invariants, the personas, the use cases, and the
+user journey **as intent** (per the membership test above). A reader understands
+immediately what is expected and what it brings, before any screen or line of code
+exists.
+
+**App feature**: the value statement for *this app's* share of the work, a reference
+to the parent Business feature — *never* a copy of its rules — and only what is
+specific to this app: a local restriction, an interpretation, a case this app alone
+encounters.
 
 May hold: an open business question, clearly marked as open rather than resolved by
 assertion.

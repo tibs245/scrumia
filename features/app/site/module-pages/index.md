@@ -26,13 +26,9 @@ knows either number.
 |---|---|
 | `tech.md` | tracing where a fact comes from, how the guards catch a missing string or a manifest mismatch, or where the emoji lives |
 | `qa.md` | writing or running the acceptance criteria for the generation and its failure modes |
+| `business.md` | checking the value a module page brings, or what this app's share of `modular-composition` covers |
 | `CHANGELOG.md` | checking history of changes to this spec |
 
-No `business.md`: the parent feature is named above and this feature adds no rule of
-its own. No `ux.md`: the page's design is the redesign epic's, not this feature's — the
+No `ux.md`: the page's design is the redesign epic's, not this feature's — the
 template here is deliberately a stub. No `api-contract.md`, `legal.md`, `devx.md`: no
 exposed interface, no personal data, no published library.
-
-## Open issues
-
-- #171 — `reference.html`'s module sections don't link to their module pages

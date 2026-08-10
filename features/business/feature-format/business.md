@@ -1,5 +1,15 @@
 # Feature format — business rules
 
+## Value
+
+For everyone who writes or reads a spec — the humans steering the project and
+the agents executing its tickets. It brings bounded reading: targeted files
+with declared boundaries, so a reader loads only what its task needs and an
+absence is an assertion rather than an oversight. It matters because the spec
+channel is what execution runs on — a format that drifts turns every ticket
+into archaeology. Measured: the validation gate's finding count over the
+specs tree, which CI holds at zero.
+
 ## The two strata
 
 **Business** (`features/business/<feature>/`) — the *what*. Business value,
@@ -63,12 +73,28 @@ membership test, stated once and applied by the catalogue's entries:
 
 The feature's index is the entry point, and nothing else: the brief, the
 links with one line of key info each, the file table saying when to read
-each file, the open issues. **A rule, a decision or a rationale in an index
-is a defect**, whatever heading it hides under — its home is the file whose
-subject it is, and the catalogue's boundary entries name that home. The
-section set an index may carry is declared in exactly one place, the specs
-module's index template, so a section outside the set is detectable rather
-than a matter of taste.
+each file. **A rule, a decision or a rationale in an index is a defect**,
+whatever heading it hides under — its home is the file whose subject it is,
+and the catalogue's boundary entries name that home. The section set an
+index may carry is declared in exactly one place, the specs module's index
+template, so a section outside the set is detectable rather than a matter
+of taste.
+
+## Absolute rule — a spec cites no ticket
+
+Issues and PRs are the tracker's; a spec that carries a ticket number is
+caching tracker state, and it goes stale the day the ticket closes. The
+changelog is the one exception — pointing at the tickets that carry the why
+is its job. Everywhere else the fact or the open question is stated in
+words, and the tracker is searched for whatever tracks it.
+
+## Absolute rule — every feature states its value
+
+`business.md` exists in every feature, and opens with four answers: who the
+feature is for, what it brings them, why it matters, and whether that
+contribution can be measured — the measure named, or the honest note that it
+is not instrumented today. A feature whose value cannot be stated is a
+splitting or deletion candidate, not a feature missing a paragraph.
 
 ## Findability — the global index
 
@@ -111,20 +137,19 @@ gives a consumer the *names* a module uses, so it can say "the file named by
 as required. Until the contract carries the set, a consumer treats it as
 undeclared rather than inferring one.
 
-`scrumia-specs`, the module currently in the slot, declares three existence
+`scrumia-specs`, the module currently in the slot, declares two existence
 categories, and declares them together where its catalogue lives. **Mandatory
 in every feature**: `index.md`, because a feature needs a single entry point
 to be found and understood before anything else is opened; `qa.md`, because a
 feature nobody can test is not verifiable — and ADR-0004 already makes at
 least one independently verifiable scenario constitutive of a feature;
 `CHANGELOG.md`, because a feature nobody can follow over time is not
-maintainable. **Mandatory per stratum**: `business.md` at the Business
-stratum, because a Business feature that cannot say who it serves and why it
-is worth building is not a unit of value — at the App stratum the same file
-stays optional and holds only what is specific to that app. **Content-tested**:
-every other file in the catalogue. The third category is declared explicitly,
-not inferred from a table cell — a consumer must be able to read which
-category a file is in.
+maintainable; `business.md`, because a feature that cannot say who it serves
+and why it is worth building is not a unit of value — at the App stratum it
+carries the value of this app's share and a reference to the parent, never a
+copy of its rules. **Content-tested**: every other file in the catalogue. The
+categories are declared explicitly, not inferred from a table cell — a
+consumer must be able to read which category a file is in.
 
 ## Absolute rule — no inline history
 

@@ -31,7 +31,3 @@ which artefact each step becomes here, and redefines none of them.
 | `qa.md` | checking the board-reading discipline against a falsifiable scenario |
 | `CHANGELOG.md` | tracing when a rule above last changed and under which issue/PR |
 
-## Open issues
-
-- #18 — the bootstrap gate refuses a ticket whose deliverable is its own parent
-  feature; this ticket was executed by exception, tracked there

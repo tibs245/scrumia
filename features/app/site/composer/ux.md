@@ -6,7 +6,7 @@
 own slot. It reuses `slot-index`'s row — `sign · name · question · leader ·
 fill` — and adds *choosable* as a third state alongside filled and empty,
 per `design/components/slot-index/spec.md`. A second drawing of a slot would
-undo the ruling #61 landed on.
+undo the ruling that gave `slot-index` its one authoritative drawing.
 
 **The two indexes are told apart by colour, not by shape.** `#slots` reports
 this repo's composition and its fills are `--text-soft`; `#composer` records

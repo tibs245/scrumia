@@ -23,7 +23,7 @@ different feature's scope.
 - Authority: `design/components/button/spec.md` — the one-primary rule: one
   `.btn-primary` per screen, not per section.
 - Authority: `design/explorations/orbit.html` — the direction the hero is built in,
-  adopted by #53.
+  adopted during the redesign.
 
 ## Files present
 
@@ -32,14 +32,9 @@ different feature's scope.
 | `qa.md` | Checking or writing a test for the hero — both languages, every width |
 | `ux.md` | Touching what the hero shows, its reading order, or its arrival motion |
 | `tech.md` | Touching the Hop arrival gate or the counts' derivation/debt |
+| `business.md` | Checking the value the hero brings, or why it carries no rule beyond the epic |
 | `CHANGELOG.md` | Checking what changed in this feature and when |
 
-No `business.md`: nothing here is specific to this app beyond what Links already
-states — there is no business parent beyond the epic. No `api-contract.md`,
-`archi.md`, `legal.md`, `devx.md`, `security.md`: nothing here exposes an interface,
-crosses an app boundary, touches personal data, is consumable by another app, or
-carries a rated risk.
-
-## Open issues
-
-None currently open.
+No `api-contract.md`, `archi.md`, `legal.md`, `devx.md`, `security.md`: nothing
+here exposes an interface, crosses an app boundary, touches personal data, is
+consumable by another app, or carries a rated risk.

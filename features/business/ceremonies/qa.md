@@ -151,15 +151,15 @@ Then none of them refuses it, and the answer to "module or practice" is reopened
   than settled by this feature's precedent
 ```
 
-### AC-13 — Naming the retrospective as a reader does not close #167
+### AC-13 — Naming the retrospective as a venue settles none of the three open questions
 
 ```gherkin
 Given `features/business/execution-policy/` leaves open who counts deviations on a cell,
   at what threshold, and whether anything surfaces the record unprompted
 When this feature names the retrospective as a venue where that record is read
-Then #167 stays open on all three, because a venue is not an accountable reader and this
+Then all three stay open, because a venue is not an accountable reader and this
   feature sets no threshold — it specifies only the retrospective's own timing, and
-  speaks for neither of #167's other two candidate venues
+  speaks for neither of the other two candidate venues
 ```
 
 ## Out of scope
@@ -171,6 +171,6 @@ Then #167 stays open on all three, because a venue is not an accountable reader 
   and, for its venue on this tracker, `features/business/github-tracking/`. This feature
   reads that record; it does not shape it.
 - The venue and shape of the retrospective's read-mark — required by BR-6, owned by
-  whichever feature fills the tracker slot, and open in #198.
+  whichever feature fills the tracker slot, and open.
 - Building either ceremony as a skill. The spec says where a skill for each would land if
   it is ever written, and stops there.

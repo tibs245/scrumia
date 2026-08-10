@@ -19,7 +19,7 @@ warm accent colour of ScrumIA's own choosing, each sit well inside fair use. The
 risk in this feature is the **stack**: a Claude-adjacent warm accent, on the
 site's mascot, on a marketplace that distributes Claude Code plugins. Read
 together, that combination signals "official" more than any one part does on its
-own — the exact affiliation implication the redesign epic (#40) already flagged
+own — the exact affiliation implication the redesign epic already flagged
 about itself.
 
 `design/identity.md` and `design/components/hop/spec.md` are the files that carry
@@ -28,8 +28,8 @@ are recorded, since neither of those is a legal file.
 
 ## The mitigations
 
-Required by the business role's review of #52 ("compliant with reservations" —
-the role declined to sign the residual risk alone):
+Required by the business role's review ("compliant with reservations" — the
+role declined to sign the residual risk alone):
 
 1. **The accent is ScrumIA's own token value, not Anthropic's identifiable brand
    hex.** `design/tokens.css`'s `--human` / `--agent` pair is not
@@ -37,15 +37,15 @@ the role declined to sign the residual risk alone):
    `design/tokens.css` on this branch already carries distinct values
    (`#9E4517` / `#F0996F`). One remaining loose end is not this feature's to fix:
    `design/identity.md` still quotes `#D97757` in prose, as the *inspiration*
-   for the palette rather than its value — out of this ticket's scope (owned by
-   #52, which is already rewriting that exact paragraph). Flagged in the PR, not
-   edited here.
+   for the palette rather than its value — out of this feature's scope: a
+   different feature is already rewriting that exact paragraph. Flagged in
+   the PR, not edited here.
 2. **A plain non-affiliation statement on the site.** Delivered by this feature:
    the footer, present on every page in both languages — `qa.md` AC-5 verifies
    it. The string lives in `site/i18n/{en,fr}/common.json` as
    `footer_non_affiliation`.
-3. **No Anthropic marks, wordmarks, or mascot likeness.** Already settled in #40
-   and reaffirmed by `design/components/hop/spec.md`'s "What it refuses" — Hop
+3. **No Anthropic marks, wordmarks, or mascot likeness.** Already settled by
+   the redesign epic and reaffirmed by `design/components/hop/spec.md`'s "What it refuses" — Hop
    carries no anthropomorphism and belongs to the Claude Code ecosystem through
    colour only. Verified at the time of writing: no Anthropic-branded asset, logo
    or wordmark exists anywhere in the repository.

@@ -1,5 +1,16 @@
 # Modular composition — business rules
 
+## Value
+
+For whoever adopts or extends ScrumIA — a project choosing a module per slot, and the
+modules themselves, written to be pluggable. It brings seven named questions a project
+answers independently, so adopting one slot's module never requires taking the whole
+method. It matters because a project that forks a monolithic method to adapt one part
+of it stops receiving updates to the rest; slots are what let the reference answers
+change without breaking a project's own choices. Not instrumented today: nothing counts
+how many projects run with a given slot empty versus filled; the composition's shape is
+read from `.scrumia/config.yaml`, not aggregated.
+
 ## The slots
 
 A slot is a question a project-steering method has to answer, named so a module can
