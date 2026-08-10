@@ -35,7 +35,7 @@ In order of decreasing cost. Don't start with style: if the architecture is wron
 1. **Correctness** — does the code do what the ticket asks? Are error cases handled? Is there a path where state stays inconsistent?
 2. **Contract** — does an API contract change without updating its contract file (if the `catalog` includes one) and the consumers following? That's the defect that breaks the other apps.
 3. **Coupling** — does this change create a dependency that didn't exist? Does an app call another app directly instead of going through its contract?
-4. **Testability** — are the acceptance criteria in the acceptance file named in the Specs contract covered? A test that cannot fail tests nothing.
+4. **Coverage** — is every acceptance criterion the change touches backed by something that could have failed? A test that cannot fail tests nothing — and where the deliverable carries no code, a section no concrete case could contradict covers nothing either. Which form each case owes is in [`features/business/dev-flow/business.md`](../../../features/business/dev-flow/business.md) § *Covering a criterion*; do not demand a test file from a deliverable that has no runner.
 5. **Consistency** — same style, same patterns, same names as the neighboring code.
 6. **Debt** — if this code takes a shortcut, is it named and dated? Unwritten debt exists for no one and gets paid twice.
 

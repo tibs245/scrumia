@@ -39,7 +39,7 @@ Run the reviewers in parallel when there are two: they don't depend on each othe
 
 These gaps are invisible to a reviewer who only looks at the code:
 
-- An identifier in `ac_id_format` in the file named by `acceptance_file` with no matching test
+- An identifier in `ac_id_format` in the file named by `acceptance_file` with nothing covering it — a test that can fail where the deliverable carries code, the section that satisfies it where it carries none ([`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Covering a criterion*). On a deliverable with no code, a missing test file is not this defect; a criterion no concrete case could contradict is.
 - An API contract changed without updating its interface-contract file from `catalog`, or without updating the consumers
 - A behavior changed with no entry in the file named by `changelog`
 - A spec modified without code, or the reverse, when the ticket asked for both

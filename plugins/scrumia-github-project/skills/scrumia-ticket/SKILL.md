@@ -134,20 +134,29 @@ Otherwise, if the ticket changes a behavior, the spec changes **before** the cod
 
 Writing the spec first surfaces contradictions before they get encoded in code. That's where the cost is lowest.
 
+**When the spec is the whole deliverable** — the ticket produces a rule, a criterion, or a piece of agent-executed prose, and no code — this step *is* the ticket rather than its first half. It has no second half to sequence against, which [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Covering a criterion* settles: such a ticket satisfies "the spec before the code", it does not waive it. Operationally: the bullets above apply unchanged, the `changelog` entry included, and Step 4 finds no code to write — a legitimate outcome, not a skipped step.
+
 If while writing the spec you discover a contradiction with another feature: stop, commit the spec changes you have — calling the role is a yield, and it is your spec edits that expose the contradiction — then comment on the issue and call on the business role. Do not decide a business rule yourself.
 
 ## Step 4 — Implement according to the app's module
 
 **Before writing code, resolve which implementation module and which practices cover the file you're about to touch.** The procedure:
 
-1. **Resolve the app by path** — match the file against `apps[].path` in `.scrumia/config.yaml`. No match, no module: follow the conventions of the neighboring code. That's normal behavior, not a gap.
+1. **Resolve the app by path** — match the file against `apps[].path` in `.scrumia/config.yaml`. No match, no module: follow the conventions of the neighboring code. That's normal behavior, not a gap. A file that matches nothing because the **product itself is not one of the apps** — a project whose deliverable is its own specs, prose or plugins — resolves the same way and deliberately: `CLAUDE.md` says which paths no implementation module speaks for, and read it there rather than concluding the table has a hole. "Neighboring code" then means the neighboring prose: match its voice, its structure and its vocabulary as strictly as you would match a language's.
 2. **Open the index, not the whole module** — for the app's `implementation` module and each of its `practices`, read only the skill's `SKILL.md`. If the app carries a per-app `CLAUDE.md` stub at its path, it points straight there.
 3. **Load only the routed guides** — the index's routing table tells you which reference guide(s) apply to the kind of change you're making (tests, structure, a specific pattern). Load those, not the module's full reference set.
 4. **Respect each module's `section.json` globs** — a module only speaks for the files it claims within the app; outside its globs, it has nothing to say and neighboring conventions apply.
 
 Precedence, once the relevant guides are loaded: the implementation module is authoritative on the "how" — its way of writing tests, its design principles, its file structure — including against your preferences. Where a practice (`scrumia-practice-tdd`, `scrumia-practice-solid`, …) and the implementation module disagree, the implementation module wins — **specific beats generic**. A project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both.
 
-Whether an implementation module is plugged in or not: if a specs module is documented, cover each criterion in `ac_id_format` from the file named by `acceptance_file` with a test that can fail; in every case, run the project's tests and linter.
+**Steps 1–4 can resolve to nothing to implement.** Where Step 3 was the whole deliverable, there is no app to resolve and no module to route to; this step reduces to the coverage rule below. Say in the PR that it did, so a reviewer knows the step was empty rather than skipped.
+
+Whether an implementation module is plugged in or not, every acceptance criterion this ticket touches is covered by something that could have failed. **Falsifiability is the requirement; a test file is the form it takes when the deliverable is executable.** The rule, both its cases and what makes a criterion falsifiable are stated once in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Covering a criterion* — read the obligation there. What it asks of you at this step:
+
+- **Code in the deliverable** — a test that can fail, per criterion. A ticket shipping any code covers its criteria with tests, whatever prose it also ships.
+- **No executable code in the deliverable** — the section that satisfies the criterion. If you cannot name the concrete case that would contradict it, it is not covered, and pointing at a section does not make it so.
+
+Two sets of criteria are in play and each is covered on its own terms: **the ticket's own**, and — if a specs module is documented — **those this ticket adds to or amends in the file named by `acceptance_file`**. Step 7 says how each is cited. In every case, run the project's tests and linter.
 
 Stay within the ticket's scope. What you notice in passing that exceeds it becomes an issue, not an extra line of diff. A PR that overflows is hard to validate — and human validation is the system's bottleneck.
 
@@ -205,7 +214,14 @@ The same holds when the role itself could not be reached. Handing your own gener
 gh pr create --title "<type>: <expected outcome>" --body "..."
 ```
 
-The description contains: what was done, the `Closes #<n>` link, the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
+The description contains: what was done, the `Closes #<n>` link, the two criterion lists below, the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
+
+**Two acceptance namespaces, so two lists.** The issue's criteria and the feature's are numbered in the same `ac_id_format` and are not the same set — their counts need not match, and a difference between them is not a defect. [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *The ticket's criteria and the feature's are two namespaces* states which one a proposal maps against and how each is cited. In this PR body:
+
+- **The criterion-by-criterion mapping, against the issue's own criteria** — one line per identifier as the *issue* numbers them, cited bare (`AC-3`), each pointing at what covers it per Step 4: its test where the deliverable carries code, the section that satisfies it where it does not.
+- **Separately, the feature criteria this PR added or amended** — each cited with its file (`dev-flow/qa.md AC-11`), never folded into the list above. This list exists only where a specs module is documented; Step 1's degraded case has no acceptance file to amend.
+
+Never write a bare identifier for a feature criterion: `AC-3` on its own means two different things depending on which document the reader has open.
 
 If Step 0 recorded a deviation, echo it here — kind, cell, what the policy chose, what ran, why — for a human reading the diff. The echo, not the record: the comment on the issue is what a later reader queries, and the PR body is a copy of it.
 

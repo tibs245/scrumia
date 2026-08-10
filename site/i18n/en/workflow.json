@@ -41,7 +41,7 @@
   "step6_li1": "Load context through the specs module",
   "step6_li2": "<strong>Update the spec before the code</strong>, if behaviour changes",
   "step6_li3": "Implement <strong>following the app's implementation module and its practices</strong> — specific beats generic",
-  "step6_li4": "Cover each <code>AC-n</code> with a test that can fail",
+  "step6_li4": "Cover each <code>AC-n</code> with something that can fail — a test where the deliverable carries code, the section that satisfies it where it carries none",
   "step6_li5": "Self-review, then role review based on blast radius",
   "step6_li6": "Open the PR",
 

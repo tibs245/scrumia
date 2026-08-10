@@ -89,7 +89,7 @@ The outline:
 1. Load the context via the specs module
 2. **Update the spec before the code**, if the behavior changes
 3. Implement **per the app's implementation module**
-4. Cover each `AC-n` with a test that can fail
+4. Cover each `AC-n` with something that can fail — a test where the deliverable carries code, the section that satisfies it where it carries none
 5. Self-review, then review by the roles according to the diff's actual scope
 6. Open the PR
 
@@ -99,7 +99,7 @@ The outline:
 
 ## 7. The human validates and merges
 
-The PR carries the criterion-by-criterion mapping, the modified specs, the review verdicts, and the open reservations with their issues.
+The PR carries the criterion-by-criterion mapping against the **issue's** criteria, a separate list of the **feature** criteria it added or amended — each cited with its file, the two sets being numbered alike and never merged — the modified specs, the review verdicts, and the open reservations with their issues.
 
 **Agents do not merge**, except for a category explicitly listed in `settings.autonomy.auto_merge`.
 

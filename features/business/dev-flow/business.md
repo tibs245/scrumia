@@ -63,10 +63,10 @@ no test runner cannot satisfy the first at all, and an execution meeting that wa
 invents a substitute of its own — five runs of one sprint invented the same one,
 independently and with no authority to.
 
-A ticket whose entire deliverable is the specification has no second half to sequence.
-"The spec before the code" is satisfied by such a ticket, not waived by it, and the
-implementation step finding no code to write is a legitimate outcome rather than a
-skipped one.
+A ticket whose entire deliverable is the specification satisfies the spec-before-code
+sequencing rather than waiving it: there is no second half to sequence against. Its
+implementation step finding no code to write is a legitimate outcome, not a skipped
+step.
 
 ## The ticket's criteria and the feature's are two namespaces
 
