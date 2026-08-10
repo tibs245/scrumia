@@ -127,6 +127,7 @@ One repo per project. The feature lives next to the code it describes, so the ag
 - [`modules-implementation.md`](modules-implementation.md) — the contract of an implementation module
 - [`agents.md`](agents.md) — the three roles
 - [`format-feature.md`](format-feature.md) — the chosen spec format
+- [`format-changelog.md`](format-changelog.md) — what a changelog owes its reader
 - [`dev-flow.md`](dev-flow.md) — the end-to-end flow
 - [`roadmap.md`](roadmap.md) — the current progress
 - [`adr/`](adr/) — the decisions, with their rejected alternatives

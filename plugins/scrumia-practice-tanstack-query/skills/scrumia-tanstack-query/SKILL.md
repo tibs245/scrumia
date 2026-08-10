@@ -28,6 +28,7 @@ Everything else follows from it: one factory reused by `useQuery`, `useSuspenseQ
 | [07-dependent-queries](guides/07-dependent-queries.md) | Chain queries where B depends on A's result |
 | [08-mutations](guides/08-mutations.md) | Create, update, or delete server data |
 | [09-testing](guides/09-testing.md) | Unit test select functions and page components |
+| [10-migrating-an-existing-codebase](guides/10-migrating-an-existing-codebase.md) | Bring a codebase written against the older key vocabulary up to these guides |
 
 ## Routing table
 
