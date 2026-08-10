@@ -62,9 +62,10 @@ label itself each apply this test and name this feature as where it is defined �
 section too, wherever the surface has room for a section title; none re-words the test.
 A labeller must still be able to decide from the surface in front of them — a pointer
 that leaves them unable to answer is as broken as a fourth paraphrase — so what those
-surfaces carry is the clause in this section's words and the four tier conditions in
-ADR-0015's, neither of them a variant. Four independent renderings of one test are what
-produced #78, and they drifted precisely because each was free to say it differently.
+surfaces carry is the clause in this section's words, the four tier conditions in
+ADR-0015's, or, where there is only room for one of the two, the conditions: never a
+variant of either. Four independent renderings of one test are what produced #78, and
+they drifted precisely because each was free to say it differently.
 
 That is only satisfiable if one wording fits every surface, and the surfaces are not
 equally roomy: a GitHub label description stops at 100 characters, 38 of which go on
