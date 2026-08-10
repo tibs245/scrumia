@@ -1,7 +1,6 @@
 # GitHub tracking
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 
@@ -29,5 +28,6 @@ which artefact each step becomes here, and redefines none of them.
 |---|---|
 | `business.md` | the ticket lifecycle, the milestone/epic vocabulary, label consumers, where a deviation from the execution policy is recorded, the slot's scope per ADR-0013 |
 | `qa.md` | checking the board-reading discipline against a falsifiable scenario |
+| `tech.md` | how `board.sh` and `gh` carry out a rule stated in `business.md` — a retry, a field shape, a search command |
 | `CHANGELOG.md` | tracing when a rule above last changed and under which issue/PR |
 

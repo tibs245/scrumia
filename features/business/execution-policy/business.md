@@ -24,6 +24,9 @@ name one test, and the section below is where it is stated).
 ## Two axes, and their independence is the point
 
 Scope and risk answer different questions and are never collapsed into one number.
+This is the answer to the founding note's open question, *"who decides big-context
+versus small-context?"*: a label set at refinement on verifiable questions, not a
+judgement improvised when execution starts.
 
 **A one-line change to a payment rule is `scope/S risk/critical`.** Nothing about how
 much code moves predicts what it costs to get wrong, and the ticket small enough to
@@ -59,7 +62,11 @@ for who is asked while the ticket runs (`features/business/agent-team/business.m
 It had a third, the review owed at exit, until that routing was retired — it now routes
 by the diff's actual scope and reads no label at all (`docs/adr/0005-validation-gates.md`).
 One label read two ways is two labels, and the second one drifts unobserved because
-nothing names it.
+nothing names it. This section is itself consumed beyond this feature — by
+`features/business/agent-team/`'s entry routing and by the plugin prose and label
+descriptions a labeller works from — so a change to it is a change other features and
+a tracker artefact feel, which is what makes such a change `scope/L` under the test
+itself.
 
 `docs/adr/0015-scope-measures-reach.md` decided the axis and its three verifiable
 questions — how many apps, does a rule consumed beyond one feature or app change, and

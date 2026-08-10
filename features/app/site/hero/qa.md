@@ -44,7 +44,7 @@ Then either they are computed from `.claude-plugin/marketplace.json` and
   them sits next to the numbers in `site/templates/index.html`
 ```
 
-### AC-4 — Hop arrives once and respects reduced motion
+### AC-4 — Hop arrives once and respects reduced motion (a11y)
 
 ```gherkin
 Given a reader with JavaScript enabled and no reduced-motion preference

@@ -345,6 +345,77 @@ def test_hex_colour_and_changelog_refs_are_not_tickets() -> None:
         shutil.rmtree(tmp)
 
 
+def test_business_without_value_heading_is_caught() -> None:
+    print("a business.md with no '## Value' content is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "business.md").write_text("# Widget rules\n\n## Rules\n\nA rule.\n", encoding="utf-8")
+        errors = run_check(tmp, "check_business_value_heading")
+        check("missing Value section is reported",
+              any("no '## Value' section" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_ticket_url_reference_is_caught() -> None:
+    print("a GitHub issue URL in a spec is a ticket reference too")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "tech.md").write_text(
+            "# Tech\n\nSee https://github.com/acme/repo/issues/42 for the story.\n", encoding="utf-8")
+        errors = run_check(tmp, "check_no_tracker_refs")
+        check("URL reference is reported",
+              any("github.com/acme/repo/issues/42" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_long_digit_run_is_not_a_ticket() -> None:
+    print("a six-digit colour literal (#000000) is not a ticket number")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "tech.md").write_text("# Tech\n\nThe ink is `#000000` everywhere.\n", encoding="utf-8")
+        errors = run_check(tmp, "check_no_tracker_refs")
+        check("zero findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_qa_without_criterion_shape_is_caught() -> None:
+    print("a qa.md with prose criteria and no '### AC-<n>' heading is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "qa.md").write_text("# QA\n\n## AC-1\n\nIt should work well.\n", encoding="utf-8")
+        errors = run_check(tmp, "check_qa_shape")
+        check("shape violation is reported",
+              any("no '### AC-<n>' criterion heading" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_qa_with_fenced_criteria_passes() -> None:
+    print("a qa.md of '### AC-<n>' headings each with a fenced scenario passes")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        feature = tmp / "features" / "business" / "widget"
+        write_feature_index(feature)
+        (feature / "qa.md").write_text(
+            "# QA\n\n### AC-1 — It fails when it should\n\n```gherkin\nGiven x\nWhen y\nThen z\n```\n",
+            encoding="utf-8")
+        errors = run_check(tmp, "check_qa_shape")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_broken_link_under_features_is_caught,
                  test_valid_link_under_features_passes,
@@ -363,7 +434,12 @@ def main() -> int:
                  test_global_index_itself_is_not_a_leaf,
                  test_app_feature_missing_business_md_is_caught,
                  test_ticket_reference_in_a_spec_is_caught,
-                 test_hex_colour_and_changelog_refs_are_not_tickets):
+                 test_hex_colour_and_changelog_refs_are_not_tickets,
+                 test_business_without_value_heading_is_caught,
+                 test_ticket_url_reference_is_caught,
+                 test_long_digit_run_is_not_a_ticket,
+                 test_qa_without_criterion_shape_is_caught,
+                 test_qa_with_fenced_criteria_passes):
         test()
     print()
     if FAILURES:

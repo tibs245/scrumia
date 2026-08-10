@@ -5,14 +5,14 @@
 Hop arrives once, and does not loop: `.hop-arrive` (the arrival animation) plays only
 on the `.js` class, and that class is set by the inline pre-paint script in
 `site/templates/partials/head.html` — the only code that runs before first paint. The
-script adds `.js` only when `IntersectionObserver` exists and
-`prefers-reduced-motion` is not set, so a reader with no JavaScript, a script that
-failed, or reduced motion never gets the class and sees Hop already assembled with its
-eye lit — nothing travels. This is the site-wide gate applied to Hop specifically; the
-gate's own mechanism, and its use for the rest of the hero's `.summon` elements, is
-`ground-and-shell`'s concern. The general "no loop on a real page" rule is
-`design/components/hop/spec.md`'s (`.hop-loop` is preview-only), cited rather than
-restated here.
+script adds `.js` only when `IntersectionObserver` exists and `prefers-reduced-motion`
+is not set. What a reader sees when the class is withheld — no JavaScript, a failed
+script, or reduced motion — is `ux.md`'s States, tested by `qa.md` AC-4 (a11y); this
+file stops at the gate's mechanism. This is the site-wide gate applied to Hop
+specifically; the gate's own mechanism, and its use for the rest of the hero's
+`.summon` elements, is `ground-and-shell`'s concern. The general "no loop on a real
+page" rule is `design/components/hop/spec.md`'s (`.hop-loop` is preview-only), cited
+rather than restated here.
 
 ## Debt
 

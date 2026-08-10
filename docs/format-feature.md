@@ -24,25 +24,21 @@ This seemingly innocuous rule is the heart of the format. With a fixed template,
 
 Direct consequence: an agent can decide what to read without reading everything. That is what keeps the context cost contained.
 
-## The three-part boundary
+## The boundary
 
-The catalog doesn't just name each file's subject — for every file it states what the file **holds**, what it **may hold**, and what it **must not hold**, and every exclusion names the file where that content goes instead. A scope that only described its subject would leave the boundary to taste; taste is how nine indexes grew sections no template defined.
+A subject alone does not make a scope: taste is how nine indexes grew sections no
+template defined. So the catalog states, for every file, a three-part boundary —
+holds, may hold, must not hold, every exclusion naming its destination — and settles
+the collision-prone edges with membership tests instead of case-by-case debate. The
+tests, the boundaries and the existence categories (which files are mandatory, which
+are content-tested) live **once**, in the catalog linked above — this document does
+not restate them, because a second copy is how they would drift.
 
-Three boundaries carry most of the collisions, and each is settled by one membership test rather than restated case by case:
-
-- **business vs ux, on the journey.** A step stated as actor intent and the value delivered, naming no screen, no control, no click path, belongs to `business.md`. The moment it names one, it belongs to `ux.md`.
-- **tech vs archi, on data flow.** Flow that never leaves the app's own boundary belongs to `tech.md`. Flow that crosses apps, scoped to an EPIC, belongs to `archi.md`.
-- **ux vs qa, on accessibility.** A property the journey must have, stated in prose, belongs to `ux.md`. Anything testable against a named technical criterion — a contrast ratio, a keyboard-trap check, an announcement — is a tagged `qa.md` criterion.
-
-This document explains why the boundary exists; the operational reference — the full three-part entry for every file — is the catalog linked above.
-
-## The two existence categories
-
-**Mandatory in every feature**: `index.md`, `qa.md`, `CHANGELOG.md`, `business.md`. A feature has to be findable, has to be possible to follow over time, has to be possible to test — and has to be worth building: every feature states its value, at both strata, so `business.md` is mandatory everywhere too. Their absence asserts nothing, it is a gap.
-
-**Content-tested**: everything else. A file is created only when it has content; its absence is the assertion "nothing to say on this subject", not an oversight and not a placeholder.
-
-Which files fall in which category is declared by whichever module fills the `specs` slot — this three-way split is `scrumia-specs`'s own declaration, made in its own catalog, and another module may declare a different set. A consumer does not resolve that set for itself — it delegates the writing to the specs module's own writing skill. Note what does *not* declare it: `CLAUDE.md`'s `## Specs contract` block names a module's files so consumers need not hard-code them, and marks none of them required ([ADR-0012](adr/0012-specs-contract.md)).
+Which files are mandatory is the plugged specs module's own declaration, made where
+its catalog lives; another module may declare a different set. A consumer delegates
+the writing to that module's writing skill, and does not infer the set from
+`CLAUDE.md`'s `## Specs contract` block, which names files without marking any of
+them required ([ADR-0016](adr/0016-global-feature-index.md)).
 
 ## Two strata
 
@@ -54,25 +50,11 @@ The rule that matters: **an App feature never copies a business rule**. It refer
 
 An App feature without a Business parent is acceptable if it is purely technical, and its `index.md` must say so. Otherwise, the Business feature is missing.
 
-## The catalog
-
-| File | Business | App Backend | App Frontend |
-|---|---|---|---|
-| `index.md` | **mandatory** | **mandatory** | **mandatory** |
-| `business.md` | **mandatory** — value, rules, personas, journey-as-intent | **mandatory** — value + reference to the parent | **mandatory** — value + reference to the parent |
-| `qa.md` | **mandatory** | **mandatory** | **mandatory** |
-| `CHANGELOG.md` | **mandatory** | **mandatory** | **mandatory** |
-| `legal.md` | if personal data, payment, user content, regulated | same | same |
-| `security.md` | if the feature has a meaningful risk on availability, integrity, confidentiality or traceability | same | same |
-| `archi.md` | if the EPIC touches ≥2 apps | no | no |
-| `api-contract.md` | no | if another feature or app parses what it exposes | if it consumes another feature's contract |
-| `tech.md` | no | often | sometimes |
-| `ux.md` | no | no | often |
-| `devx.md` | no | if it exposes a lib | if it exposes components |
-
-**mandatory** marks the files `scrumia-specs` requires of every feature, at every stratum: `index.md`, `business.md`, `qa.md`, `CHANGELOG.md`; every other row is subject to the content test. `api-contract.md` covers any shared interface between features, not only an HTTP API — a file format or a CLI's output shape counts the moment another feature parses it.
-
-The catalog is open. Two rules so it does not sprawl: a new file must have a **distinct reader** (otherwise it is a section, not a file), and its addition must be documented in the catalog — otherwise the next feature will invent another name for the same thing, and the format will lose what makes it useful: its predictability.
+The catalog is open. Two rules so it does not sprawl: a new file must have a
+**distinct reader** (otherwise it is a section, not a file), and its addition must be
+documented in the catalog, boundary included — otherwise the next feature will invent
+another name for the same thing, and the format will lose what makes it useful: its
+predictability.
 
 ## The special role of `index.md`
 
@@ -92,33 +74,18 @@ It is generated, never hand-written: `python3 tools/build_features_index.py` bui
 
 A spec contains only its current version. No "formerly", no "since v2", no struck-through section.
 
-History lives in three places, one per use:
-
-- **The feature's `CHANGELOG.md`** — short, one entry per change, with pointers
-- **The commits** — who changed what, when
-- **The issues** — *why*, which alternatives, which trade-offs
-
-```markdown
-## 2026-09-12 — MFA required at login
-- Issue: #45
-- PR: #48 (filled at merge)
-- Breaking: yes — see the migration described in #45
-```
-
-The reasoning is in `#45`. A changelog entry that explains is a spec that starts growing again — this is exactly how monolithic PRDs re-form.
+History lives in three places, one per use: the feature's `CHANGELOG.md` — short, one
+entry per change, with pointers, and the **only** spec file allowed to cite an issue
+or a PR; the commits — who changed what, when; the issues — *why*, which
+alternatives, which trade-offs. A changelog entry that explains its reasoning is a
+spec that starts growing again — this is exactly how monolithic PRDs re-form. The
+entry's exact shape is the catalog's and the template's to state, once.
 
 ## Splitting
 
-A feature is a **unit of value verifiable independently**. The test: can you write a Given/When/Then scenario that validates it without depending on another feature in progress?
-
-Thresholds, as guardrails and not as laws: ~200 lines of `business.md`, ~12 scenarios in `qa.md`. In the other direction: no rule of its own and a single scenario means it is a **ticket**, not a feature.
-
-Details and justification in [ADR-0004](adr/0004-feature-splitting.md).
-
-## Writing a `qa.md` that serves its purpose
-
-Given/When/Then, one scenario per case. **A criterion must be able to fail**: "the user must have a good experience" can neither pass nor fail, so it says nothing.
-
-Systematically cover the nominal case, then zero, limit, duplicate, concurrency, cancellation, expiration, insufficient rights. Those are the cases that produce bug tickets.
-
-The "out of scope" section is worth the detour: it prevents bug tickets on behaviors that were never promised.
+A feature is a **unit of value verifiable independently**. The test: can you write a
+Given/When/Then scenario that validates it without depending on another feature in
+progress? In the other direction: no rule of its own and a single scenario means it
+is a **ticket**, not a feature. The numeric guardrails and their justification are
+[ADR-0004](adr/0004-feature-splitting.md)'s; validation surfaces a breach as a
+warning so the fourth one is not silent.

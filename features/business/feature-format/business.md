@@ -64,6 +64,10 @@ membership test, stated once and applied by the catalogue's entries:
 - **tech vs archi, on data flow.** Flow that never leaves the app's own
   boundary belongs to the tech file. Flow that crosses apps, scoped to an
   EPIC, belongs to `archi.md`.
+- **business vs tech, on mechanisms.** A rule that constrains what the
+  product promises — whatever tool enacts it — belongs to the business file.
+  How a tool, command or flag achieves it, and what happens when it is
+  misused, belongs to the tech file.
 - **ux vs qa, on accessibility.** A property the journey must have, stated
   in prose, belongs to the UX file. Anything testable against a named
   technical criterion is an acceptance criterion, tagged as such. A rule the

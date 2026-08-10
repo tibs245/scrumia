@@ -1,17 +1,22 @@
 # GitHub tracking — business rules
 
-## Why GitHub
+## Value
 
-Whoever runs a ticket — a human or one of the standing roles — needs one place to see
-what is ready, what is running, and what already shipped, without reconciling a second
-system against the code. GitHub is that place: issues, pull requests and reviews live
-next to the diff itself, so a ticket's status and its code never drift apart from being
-tracked in two tools that someone has to keep in sync by hand. That issues and PRs
-travel together is also, today, a constraint the `tracker` slot accepts rather than a
-free choice —
+For whoever runs or reviews a ticket — a human or one of the standing roles. It brings
+one place to see what is ready, what is running, and what already shipped, without
+reconciling a second system against the code — issues, pull requests and reviews live
+next to the diff itself. It matters because a ticket's status and its code never drift
+apart from being tracked in two tools that someone has to keep in sync by hand.
+Measured: every state transition — a card entering a column, an issue closing, a PR
+opening — is a timestamped event on the board or the issue itself, so tracking quality
+is queryable: how long a ticket sat in each column, how many tickets closed without a
+PR ever opening, how many deviations landed on which cell — read straight off the
+record, not estimated.
+
+That issues and PRs travel together is also, today, a constraint the `tracker` slot
+accepts rather than a free choice —
 [ADR-0013](../../../docs/adr/0013-tracker-stays-one-slot.md) records it, with the
-condition that would split the slot. The vocabulary and rules below make the tracking
-precise.
+condition that would split the slot.
 
 ## Ticket lifecycle
 
@@ -143,27 +148,17 @@ reason, lives beside the ticket, survives the executor, and reuses a carrier the
 already writes to rather than inventing a third.
 
 **How it is read back.** One ticket: `gh issue view <n> --json comments`, the same read a
-role-signed verdict uses. Across the project — which is what the record exists for:
+role-signed verdict uses. Across the project — which is what the record exists for — by
+the **`cell` token**, not by the `Deviation:` prefix: the prefix matches prose about
+deviations as readily as records, so counting one cell means trusting the cell token and
+reading what comes back, not the label. A search that folds the qualifier into the query
+silently returns everything — reads are filtered or they lie, the same rule this file
+states below for the board itself; the command and the exact failure mode are in
+`tech.md`.
 
-```bash
-gh search issues --repo <owner>/<repo> --match comments 'Deviation:' 'cell L/low'
-```
-
-`--match comments` is not optional and not a convenience. Folding the qualifier into the
-query string instead — `'in:comments "Deviation:" …'` — makes `gh` send the whole rest of
-the string as the qualifier's *value*; GitHub discards what it cannot parse and answers
-with **every issue in the repository**, exit code 0, no warning. A filter that silently
-stops filtering is the board-reading trap of this file's own § *Reading discipline*, one
-API over.
-
-What discriminates is the **`cell` token**, not the `Deviation:` prefix: the search index
-strips the colon, so the prefix matches prose about deviations as readily as records. The
-two terms are ANDed, and `L/low` does not collide with `XL/low` — adjacency is preserved.
-Counting one cell means trusting the cell token and reading what comes back.
-
-`gh search issues` restricts itself to issues, so a deviation posted on a pull request is
-not findable this way. That is consistent — the venue is the issue — but it means a record
-written in the wrong place is not merely misfiled, it is invisible.
+The search reaches issues only, so a deviation posted on a pull request is not findable
+this way. That is consistent — the venue is the issue — but it means a record written in
+the wrong place is not merely misfiled, it is invisible.
 
 Nothing runs any of this on a schedule; per `execution-policy`, whose job that is remains
 open.

@@ -1,7 +1,6 @@
 # Agent team
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 
