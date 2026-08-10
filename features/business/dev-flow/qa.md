@@ -62,15 +62,17 @@ Then nothing merges without the human, whatever `settings.autonomy.level` says
 ### AC-6 — A label that under-states the diff does not shrink the review
 
 ```gherkin
-Given a ticket labelled `scope/S` whose diff touches `features/business/**`
+Given a ticket labelled `scope/S` whose diff touches `features/business/**` and
+  changes no rule — so `scope/S` is the correct label
 When gate 2 runs
 Then the business role reviews it, alongside tech, because the diff routes the
   review and the label does not
 ```
 
 ```gherkin
-Given the same ticket, and the rule its diff changes is one another feature or
-  another app consumes — so the axis's own second question answers yes
+Given a ticket labelled `scope/S` whose diff changes a rule another feature or
+  another app consumes — so the axis's own second question answers yes and the
+  label should have been `scope/L`
 When the PR is written
 Then the gap between the label and the diff is flagged as a scoping failure per
   ADR-0015
