@@ -17,3 +17,4 @@
 | [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
 | [modular-composition](business/modular-composition/index.md) | business | active | ScrumIA answers a fixed set of project-steering questions — specs, tracking, team, discovery, implementation, practices, design — through… |
+| [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
