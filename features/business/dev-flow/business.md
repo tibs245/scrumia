@@ -47,10 +47,10 @@ for the bootstrap case, is what it produces — see #18).
 
 An execution must show, for each acceptance criterion it is answerable for, **a test**:
 an act of checking that could have come out the other way. A unit test is one form of
-test. So are an automated check over the project's own prose, an audit by an external
-agent, and a checklist walked case by case. What varies between them is the executor and
-the failure mode — a failing assertion, a red CI check, a **Blocked** verdict, a case
-that comes out wrong. The requirement never varies.
+test, an integration test another. So are an automated check over the project's own
+prose, an audit by an external agent, and a checklist walked case by case. What varies
+between them is the executor and the failure mode — a failing assertion, a red CI check,
+a **Blocked** verdict, a case that comes out wrong. The requirement never varies.
 
 **The form follows the criterion's own subject, never the deliverable's overall
 nature.** A ticket shipping code *and* a spec change owes each of its criteria the form
@@ -63,7 +63,8 @@ in a markdown table.
 
 | Form | What it is | It fails when | Worked example in this repo |
 |---|---|---|---|
-| **Unit or integration test** | code exercising code | an assertion does not hold | `tools/test_build_site.py`'s `test_ac8_index_links_to_every_module` — it rebuilds the index and asserts every plugin in the marketplace is linked from it |
+| **Unit test** | code exercising one behaviour of the code | an assertion does not hold | `tools/test_build_site.py`'s `test_ac8_index_links_to_every_module` — it reads the built index in both languages and asserts every plugin the marketplace declares is linked from it |
+| **Integration test** | code standing a realistic whole up and running the real thing across it | an assertion does not hold, on the assembled system | `tools/test_validate.py`'s `test_broken_link_under_features_is_caught` — it builds a throwaway feature tree holding one dangling link, runs the real `check_doc_links()` over it, and asserts the gate reports it |
 | **Automated check over the prose itself** | a program reading the project's own text and refusing a structure the rule forbids | the check reports an error and CI goes red | `tools/validate.py`'s `check_doc_links()` — it walks every relative markdown link under `docs/`, `plugins/` and `features/` and errors on one that resolves nowhere, on every push |
 | **Audit by an external agent** | a role reading the change against the question that role owns, and returning a verdict | the verdict is **Blocked**, with the failing case named | gate 2 on this very section: `scrumia-business` blocked its first wording, naming the case that wording made unsatisfiable — a mixed ticket owing a unit test for a sentence in a table ([#31](https://github.com/tibs245/scrumia/issues/31#issuecomment-5240730278)) |
 | **External validation checklist** | the cases written out and walked one by one, by someone who did not write the change, each outcome reported and signed | a case comes out wrong | gate 3 on this very section: its claim that a rule is something *"where there is nothing to execute"* was walked against two mechanisms this repo runs daily — `tools/validate.py` and the gate 2 reviews — and came out false, which is what sent it back |
