@@ -44,6 +44,8 @@ Business features first, then app features — one per app, never two. Then the 
 
 The specs go out on a `specs/<slug>` branch, in a PR left open. The human reviews the design in the same tool as the code, and the refinement that follows starts from something frozen rather than from the memory of a discussion.
 
+`specs` here is a type of the project's commit vocabulary, not a prefix of its own: the same list names branches, types commits and titles PRs, and it is defined once in [ADR-0017](adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*. A `specs`-typed commit moves no module's version, because a feature carries none.
+
 > **Modules** — `scrumia-discovery` (skill `scrumia-split`) for the splitting, `scrumia-specs` for the format, `scrumia-github-project` for the issues.
 
 ## 3. Refinement makes the ticket executable

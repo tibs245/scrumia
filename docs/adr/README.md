@@ -4,7 +4,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 
 | # | Decision | Status |
 |---|---|---|
-| [0001](0001-distribution-as-plugins.md) | Distribution as native Claude Code plugins | accepted |
+| [0001](0001-distribution-as-plugins.md) | Distribution as native Claude Code plugins | accepted — one accepted cost superseded by [0017](0017-version-bump-and-commit-signal.md) |
 | [0002](0002-standing-roles.md) | Three standing roles, without depending on agent teams | accepted |
 | [0003](0003-cross-cutting-architecture.md) | `archi.md` in the EPIC + project ADRs | accepted |
 | [0004](0004-feature-splitting.md) | Feature splitting criterion | accepted |
@@ -20,6 +20,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0014](0014-roles-ship-with-their-capability.md) | A standing role ships with the module that gives it something to guard | accepted |
 | [0015](0015-scope-measures-reach.md) | The scope axis measures reach, not medium | accepted |
 | [0016](0016-global-feature-index.md) | The specs contract gains a global index; keys stop freezing values | accepted |
+| [0017](0017-version-bump-and-commit-signal.md) | What a version bump promises, and the commit signal it derives from | accepted |
 
 ## Scope of the decisions
 
@@ -35,6 +36,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The `practices` slot** | 0010 (cross-cutting practices) |
 | **The `implementation` and `practices` slots, plus `scrumia-core`** | 0011 (rules hierarchy) |
 | **The `specs` module, plus its consumers (`tracker`, `discovery`, `team`) and `scrumia-core`** | 0016 (specs contract, superseding 0012) |
+| **The project** — every module it ships, and every project consuming one | 0017 (what a version bump promises, and the commit signal) |
 
 A module decision is contested by writing another module, not by debating this one.
 
@@ -46,6 +48,7 @@ A module decision is contested by writing another module, not by debating this o
 - **0011** — if the three-concern floor for staying single-file proves wrong once real modules have gone through the migration
 - **0016** — if a specs module ships with a fundamentally different shape (no per-feature catalog) than the seven-key vocabulary assumes
 - **0013** — as soon as a project needs its issues in one tool and its PRs in GitHub; that case is blocked until the slot splits
+- **0017** — when the first module reaches `1.0.0`, which lifts the `0.x` shift; or the first time a type in daily use is missing from its vocabulary, since admitting one takes a superseding ADR
 
 ## Format
 

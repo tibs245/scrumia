@@ -95,5 +95,12 @@ skills commands hand off to. Run it before pushing; CI runs it too.
 Files are in English — including comments, commit messages and workflow names. Only
 `site/fr/` is French.
 
+A commit is `<type>(<scope>): <subject>` with a `Refs: #<n>` trailer, and its type comes
+from the one vocabulary that also names branches and titles PRs — defined in
+`docs/adr/0017-version-bump-and-commit-signal.md`, cited here and enumerated nowhere else.
+The scope is mandatory: a module's version bump is derived from it. What each bump
+promises is `features/business/release-versioning/`'s; where the close is written is
+`features/business/github-tracking/`'s.
+
 Comments earn their place by explaining a non-obvious **why**, roughly one line in ten.
 Module narration and multi-paragraph docblocks belong in the PR body or in `docs/`.
