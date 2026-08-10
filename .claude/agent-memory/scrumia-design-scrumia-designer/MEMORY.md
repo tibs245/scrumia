@@ -1,2 +1,1 @@
-- [Sky tokens derivation](sky-tokens-derivation.md) — sky = color-mix of themed tokens; per-theme strength via light-dark(color-mix(), color-mix())
-- [Hero copy decision](hero-copy-decision.md) — #60: orbit line promoted to final headline; counts cut to the 3 derivable facts
+- [Quiet link idiom](quiet-link-idiom.md) — text-coloured link only beside an already-spent accent; promotion to identity.md tracked on the board

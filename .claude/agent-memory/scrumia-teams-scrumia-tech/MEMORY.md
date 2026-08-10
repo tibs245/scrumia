@@ -1,4 +1,18 @@
 - [Site motion invariants](site-motion-invariants.md) — .js gate semantics, reduced-motion delay blind spot, nth-child stagger coupling
 - [Cross-skill claims go stale silently](pitfall-cross-skill-claims.md) — skills assert what siblings do; validate.py checks links, never truth
 - [Site i18n guard invariants](site-i18n-guard-invariants.md) — why the unused-key guard stops at page-level keys; `mod_no_slot` is read programmatically
-- [Scope axis: reach, entry vs exit](scope-axis-entry-exit.md) — ADR-0015's blast-radius test, the four surfaces that carry it verbatim, and when a label/diff gap is not a defect
+- [Scope axis: reach, entry vs exit](scope-axis-entry-exit.md) — owned by execution-policy; AC-21 checks the verbatim carriage, `gh label list` sees what the repo cannot
+- [Skill placement: knowledge, not output](skill-placement-knowledge-not-output.md) — five shipped audit skills prove the composition's real rule
+- [Negative slot decisions are ADRs](negative-slot-decisions-are-adrs.md) — ADR-0013's pattern: reopen conditions and a stated cost, not a docs/ bullet
+- [CLAUDE.md marker region is generated](claude-md-marker-region-is-generated.md) — scrumia-init rewrites it; never depend on hand-written prose inside the markers
+- [Plugins cite features/ and restate](plugins-cite-features-plus-restate.md) — the relative link dies in a marketplace install, so the inline restatement is deliberate cover
+- [docs/dev-flow.md mirrors site workflow.json](docs-dev-flow-mirrors-site-workflow.md) — same steps, two renderings; validate.py and the rebuild both miss a half-swept step
+- [Reservation tickets need a board card](reservation-tickets-need-a-board-card.md) — `gh issue create` leaves no card; `board.sh read` never sees it
+- [Check HEAD vs origin vs the brief](review-head-vs-origin-vs-brief.md) — the brief's SHA, the worktree tip and the pushed tip routinely disagree on a re-review
+- [warn() vs error() is the decidability line](validate-warn-vs-error-is-the-decidability-line.md) — validate.py already encodes "approximates" vs "decides"; run the check, don't imagine inputs
+- [ADR-0004's "verifiable" is feature-scoped](adr-0004-verifiable-is-feature-scoped.md) — not criterion falsifiability; its "without subjective judgment" excludes the audit form
+- [docs/agents.md mirrors the role review axes](docs-agents-mirrors-role-axes.md) — names only, no rule text: renaming an axis leaves it stale and no grep finds it
+- [gh search needs a negative control](pitfall-gh-search-in-qualifier.md) — mechanics in github-tracking/tech.md; execute documented queries against a term that must return nothing
+- [Rule placement in skills](pitfall-rule-placement-in-skills.md) — a rule under Step N binds from Step N onward; earlier yield points stay uncovered
+- [Sweep surfaces for format rules](sweep-surface-format-rules.md) — the eight places a scrumia-specs rule is restated; grep phrasing, not the file list
+- [scope rubric vs site/tools coupling](scope-rubric-vs-site-tools-coupling.md) — peer-app declaration vs builder reality; judge by blast radius, fix tracked on the board

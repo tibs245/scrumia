@@ -24,3 +24,11 @@ PR, false after.
 paraphrases included, not just the exact string the ticket quoted. Treat a sentence the
 diff falsifies as a regression the PR introduced, not as a pre-existing wart, and
 distinguish it from what a "measures vs gates" sibling ticket owns.
+
+**Second pass, when a rule changes shape mid-review:** grep the phrasings *the PR itself
+introduced*, not only the ones it replaced. On #31 the rule was re-keyed (coverage keyed on
+the criterion's subject, not the deliverable's nature) after the first sweep had already
+propagated the deliverable-keyed wording to six surfaces. Five were re-swept; the sixth
+(`scrumia-ticket` Step 7's PR-body mapping) kept the superseded phrasing *and* cited the
+step that now contradicted it. A rule that changes shape needs its own full sweep — the
+previous one is not a head start, it is a list of places now holding a stale copy.
