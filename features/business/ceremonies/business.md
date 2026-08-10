@@ -110,7 +110,8 @@ leaves the other two as venues it does not speak for.
 **Trigger.** A human call on a **named area**. That is the whole trigger: nothing today
 carries an *area*, so "the same area accumulating findings" is something a human notices
 and acts on, not an event a tool can fire. Saying otherwise would fail this feature's own
-second test — a trigger nobody can compute is a trigger nobody has.
+first test — an event is a *recorded* fact, and a trigger nobody can compute is a trigger
+nobody has.
 
 What makes the call worth making is usually that repetition: debt on the path of a ticket
 is already filed continuously — `scrumia-ticket` Step 4 turns what an execution notices in
@@ -119,17 +120,24 @@ that. It is for what no ticket walks past, and repeated in-passing findings in o
 are the observation that sends someone looking.
 
 **Input.** The specs and the code of that area, the issues already filed against it, and
-what the tracker's status pass reports as a gap between spec and code.
+the gap between a spec and the code that claims to implement it — reported by the
+tracker's status pass across the project, and checked file by file by the specs module's
+own audit mode.
 
-**It is already enacted, per slot.** The composition ships five audits —
-`scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`, `scrumia-solidjs-audit`,
-`scrumia-design-audit` — each in the module that owns the knowledge its findings need, and
-each already observing rather than fixing, on an area asked for up front. This ceremony
-does not replace them and is not a wrapper over them: it is the occasion on which one or
-several are run, plus the part none of them can see — the gap between a spec and the code
-that claims to implement it, which belongs to no single practice or implementation module.
-A project whose plugged-in modules ship no audit still holds the ceremony; it just reads
-the specs, the code and the filed issues by hand.
+**Its reading is already enacted, per slot; its filing is not.** The composition ships
+five audits — `scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`,
+`scrumia-solidjs-audit`, `scrumia-design-audit` — each in the module that owns the
+knowledge its findings need, and each already observing rather than fixing, on an area
+asked for up front. This ceremony does not replace them and is not a wrapper over them: it
+is the occasion on which one or several are run.
+
+But each of them stops at a **list**, in the session, for a human to turn into tickets.
+That is one step short of this ceremony's artefact, and the shortfall is the same one that
+disqualifies the sprint's gather below: close the session and the list is gone. So the
+filing is the ceremony's own step, not something the audits already did — and it is what
+makes the occasion worth naming rather than just running a skill. A project whose
+plugged-in modules ship no audit at all still holds the ceremony; it reads the specs, the
+code and the filed issues by hand and files the same way.
 
 **A named area is part of the trigger, not a detail.** An audit of "the project" returns
 a list nobody triages, which is a document rather than an artefact. The area is named
@@ -138,9 +146,10 @@ before the audit starts.
 **What it produces that outlives it.** Issues on the tracker, each situated — the file or
 the area, what is wrong, how bad. Unlabelled: `scope/*` and `risk/*` are set at
 refinement, and an audit that rated its own findings would be doing refinement's job on
-a batch it just wrote. Nothing else: **the audit files, it never fixes.** That boundary is what keeps it from becoming the refactor session dropped
-below — the moment an audit starts changing code, it is executing without a ticket, and
-the acceptance criterion that makes execution refusable is gone.
+a batch it just wrote. Nothing else: **the audit files, it never fixes.** That boundary
+is what keeps it from becoming the refactor session dropped below — the moment an audit
+starts changing code, it is executing without a ticket, and the acceptance criterion that
+makes execution refusable is gone.
 
 **Async.** It reads artefacts and writes issues; the roles judge in writing and the human
 triages a list. Nothing in it requires simultaneity, and a synchronous audit would end in
@@ -164,12 +173,16 @@ refactoring is warranted and nobody has filed it, that is the debt audit's outpu
 the audit files an issue, like anything else.
 
 **This drops the occasion, not the skills.** `scrumia-tdd-refactor` and
-`scrumia-solid-refactor` resolve a **finding already filed** by their paired audit. That
-is the ticket this section asks for — a scoped change with a stated intent — reached
-through a skill instead of by hand, and nothing here refuses it. What is dropped is
-opening one of them on nothing in particular, at no one's request, because it is
-Thursday: same skill, no filed finding, no acceptance criterion, and the whole objection
-above applies again.
+`scrumia-solid-refactor` each resolve **one finding**, named before they start — from
+their paired audit's list, from an issue, or stated by the person opening them. That
+named finding is the scoped intent this section asks for, reached through a skill instead
+of by hand, and nothing here refuses it. The intent is what matters, not the venue it was
+written in: requiring an issue on the tracker would refuse the shipped skills' own
+documented use and would make this feature depend on a tracker slot being filled.
+
+What is dropped is opening one of them on nothing in particular, at no one's request,
+because it is Thursday: same skill, no named finding, nothing that could fail, and the
+whole objection above applies again.
 
 ## The sprint's gather is not a ceremony either
 
@@ -182,9 +195,11 @@ Its own prose settles it: a deviation reported there is *a second copy for the h
 front of you, not the record* — the record is on the ticket, written when the deviation
 was decided. Everything the gather reports already exists somewhere queryable, and the
 gather itself survives nothing: close the session and it is gone. No artefact of its own,
-so under BR-3 it is not admitted. The same holds for the sprint's validation step, where
-the human approves the batch: that is a decision point on work in flight — a gate's shape,
-not a ceremony's.
+so under this feature's BR-3 it is not admitted. The same holds for the sprint's
+validation step, where the human approves the batch: that is a decision point **on work in
+flight** — a gate's shape, not a ceremony's. The phrase reappears in BR-4 below meaning
+something harmless, a human deciding inside an async ceremony; what separates the two is
+what is being decided on. Work in flight makes it a gate. Records already written do not.
 
 Naming this matters more than naming the standup. The gather is the one occasion the
 composition actually ships that could be mistaken for a ceremony, and it reads across a
@@ -208,7 +223,8 @@ first:
    grid — it changes the module in one of *those* slots, and the ceremony follows. There
    is no third answer left for a module to give, and a slot nobody can answer differently
    is not a slot.
-2. **A module here would have to assume the slots it reads.** BR-3 forbids a module
+2. **A module here would have to assume the slots it reads.**
+   `features/business/modular-composition/` BR-3 forbids a module
    assuming another slot is filled. A ceremonies module whose entire input is the
    tracker's record has nothing left to do when the tracker slot is empty — not a
    degraded behaviour it could name, an empty one. A capability that cannot degrade is a
@@ -217,6 +233,12 @@ first:
    because they *describe* the composition — the slot table, the rules format. The
    ceremonies consume it. A slotless module that consumes the composition would be a
    third kind of thing, and nothing found here justifies inventing one.
+
+Those three reasons are the refusal, and they carry no stated cost or reopen condition —
+which is what an ADR is for, and what `docs/adr/0013-tracker-stays-one-slot.md` does for
+the neighbouring negative decision. That the argument lives here instead is #199. Until it
+closes, this section is the decision's only home, and a spec carries only its current
+version.
 
 **Where automation lands, if it is ever written.** "One more skill in an existing module"
 is [`docs/modules.md`](../../../docs/modules.md)'s own default for a capability that fills

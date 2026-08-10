@@ -25,18 +25,18 @@ execution without the acceptance criterion that makes execution refusable. That 
 occasion, not the paired refactor skills, which resolve a finding already filed.
 
 Two occasions the composition already ships are judged rather than left ambiguous: the
-debt audit is **already enacted per slot** by the five audit skills, and this ceremony is
-when they are run plus the spec/code gap none of them can see; `scrumia-sprint`'s closing
-gather is **not** a ceremony, because everything it reports is a second copy of something
-already recorded.
+debt audit's **reading** is already enacted per slot by the five audit skills, which end
+at a list in the session — the filing that makes it a ceremony is still its own step;
+`scrumia-sprint`'s closing gather is **not** a ceremony, because everything it reports is
+a second copy of something already recorded and the gather itself survives nothing.
 
 ## Links
 
 - Implemented by: none, and not by a module either. `business.md` § *Where the ceremonies
   live* states the decision: no `scrumia-ceremonies`, no `ceremonies` slot. Both
-  ceremonies are practices enacted through the plugged-in modules — the debt audit
-  partly by the five audit skills already shipped in the `practices`, `implementation`
-  and `design` slots. Any future automation lands as one more skill in the module that
+  ceremonies are practices enacted through the plugged-in modules — the debt audit's
+  reading partly by the five audit skills already shipped in the `practices`,
+  `implementation` and `design` slots. Any future automation lands in the module that
   owns the knowledge the ceremony needs, which is how those five are placed: the `team`
   slot for the retrospective, and for the debt audit's remaining part the `specs` slot,
   whose knowledge the spec/code gap requires.

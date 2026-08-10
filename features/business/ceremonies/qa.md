@@ -49,12 +49,12 @@ Then it is dropped, because the pull request is the execution path's artefact an
 ### AC-5 — The drop applies to the occasion, not to the paired refactor skills
 
 ```gherkin
-Given `scrumia-tdd-refactor` or `scrumia-solid-refactor` is opened on a finding its
-  paired audit already filed
+Given `scrumia-tdd-refactor` or `scrumia-solid-refactor` is opened on one named finding —
+  from its paired audit's list, from an issue, or stated by the person opening it
 When the work runs
-Then it is the ticket this feature asks for and nothing refuses it — whereas the same
-  skill opened on nothing filed, at nobody's request, is the dropped session: a change
-  with no acceptance criterion behind it
+Then it is the scoped intent this feature asks for and nothing refuses it, whatever venue
+  the finding was written in — whereas the same skill opened on nothing named, at nobody's
+  request, is the dropped session: a change with nothing behind it that could fail
 ```
 
 ### AC-6 — The sprint's gather is judged, and fails the same test
@@ -106,6 +106,14 @@ Given a debt audit on a named area finds code worth refactoring
 When it closes
 Then it has filed situated issues and has changed no code — the fix goes through a ticket
   with an acceptance criterion, like any other change
+```
+
+```gherkin
+Given the audit was run through the shipped audit skills, which end at a list of findings
+  in the session
+When the ceremony closes
+Then the findings have been filed, because a list that dies with the session is not the
+  artefact that admits this ceremony — the skills enact its reading, not its filing
 ```
 
 ```gherkin
