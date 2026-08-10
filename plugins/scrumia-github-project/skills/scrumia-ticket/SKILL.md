@@ -180,9 +180,9 @@ If a team module is plugged in, route the review by what your diff actually touc
 
 This is the same table `scrumia-review` applies at gate 2, deliberately: the two must never disagree about who owed this PR a review.
 
-**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR: per [ADR-0006](../../../../docs/adr/0006-ticket-routing.md), that gap is a signal of failed scoping, not a detail.
+**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR: per [ADR-0015](../../../../docs/adr/0015-scope-measures-reach.md), that gap is a signal of failed scoping, not a detail.
 
-The table has no scope tier in it, `scope/XL` included: ADR-0006 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
+The table has no scope tier in it, `scope/XL` included: ADR-0015 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
 Spawn the role by its agent type — `scrumia-teams:scrumia-tech`, `scrumia-teams:scrumia-business`. If the type does not resolve, the module that ships it was installed or updated without a restart since; say so rather than reviewing anyway, and fall back to a subprocess, prompt on stdin:
 

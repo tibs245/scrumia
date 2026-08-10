@@ -20,7 +20,7 @@ Without that refusal, the three roles converge toward the same generalist agent 
 
 It does not code. It decides **what** gets done, **by whom**, **in what order**, then verifies.
 
-- **Routes** each ticket via the `scope/*` grid ([ADR-0006](adr/0006-ticket-routing.md)). Three objective questions, and when in doubt, the higher level.
+- **Routes** each ticket via the `scope/*` grid ([ADR-0015](adr/0015-scope-measures-reach.md)). Three objective questions — how many apps, does a rule consumed beyond one feature or app change, does an interface contract change — and when in doubt, the higher level.
 - **Builds the sprints**: scoped tickets, with no dependency, and above all with no file conflicts.
 - **Arbitrates** by delegating: business goes to Business, technical to Tech, disagreement to the human — with both positions passed on as is, plus its recommendation.
 - **Never fabricates an averaged synthesis** between Business and Tech. A disagreement between them is the most useful information for the human; smoothing it destroys it.

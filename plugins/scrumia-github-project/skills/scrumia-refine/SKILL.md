@@ -78,14 +78,18 @@ GitHub then computes the parent's progress itself (`subIssuesSummary`), which is
 
 Two labels, two independent questions. Getting this wrong is not cosmetic: `pick-model.sh` reads both to decide which model executes the ticket. Who reviews the PR is **not** one of the consequences — gate 2 routes that by the diff's actual scope, not by this label ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)). A higher label buys a stronger model, never an extra reviewer.
 
-One `scope/*` label, based on three objective questions: how many apps are touched, does a spec file change, and which one.
+One `scope/*` label, based on three objective questions: how many apps are touched, **does a rule consumed beyond one feature or app change**, and does an interface contract change.
 
 | Label | Condition |
 |---|---|
-| `scope/S` | 1 app, no spec modified, rule already written |
-| `scope/M` | 1 app, but a spec changes or the scope remains unclear |
-| `scope/L` | ≥2 apps, or a business spec, or an interface contract |
+| `scope/S` | 1 app, and no rule changes — it is already written |
+| `scope/M` | 1 app, and a rule changes that nothing beyond it consumes, or the scope remains unclear |
+| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract |
 | `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
+
+The second question is the one that gets misread, so read it as written: it measures **a rule's reach, not a file's location**. A rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root without changing any such rule has answered *no* to it, and is labelled on the other two questions — the label is `scope/M`, or `scope/S` if no rule moved at all.
+
+That test is stated once, in [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*, and this table applies it rather than defining it — the wording above is that section's, not a variant. Where the deliverable *is* specs, the file-location reading it replaced made every ticket `scope/L` and the axis stopped discriminating ([`docs/adr/0015-scope-measures-reach.md`](../../../../docs/adr/0015-scope-measures-reach.md)).
 
 When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 

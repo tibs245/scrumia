@@ -46,12 +46,22 @@ diff's actual scope and reads no label at all (`docs/adr/0005-validation-gates.m
 One label read two ways is two labels, and the second one drifts unobserved because
 nothing names it.
 
-`docs/adr/0006-ticket-routing.md` decided the axis and its three verifiable
-questions — how many apps, does a spec change, and which one. This spec does not
-replace them; it says what the second and third *measure*. The ADR's own table renders
-them in the file-location wording, and an accepted ADR is never edited
-(`docs/adr/README.md`), so aligning it is a superseding ADR's job — tracked in #78,
-along with the plugin prose and the GitHub label descriptions that restate it.
+`docs/adr/0015-scope-measures-reach.md` decided the axis and its three verifiable
+questions — how many apps, does a rule consumed beyond one feature or app change, and
+does an interface contract change. This spec does not replace them; it is where the
+second one's test is *stated*, and the ADR adopts it by reference rather than by
+paraphrase. It supersedes `docs/adr/0006-ticket-routing.md`, whose own table rendered
+the same questions in the file-location wording an accepted ADR could not be edited out
+of (`docs/adr/README.md`).
+
+**Every surface that tells a labeller what a tier means points here.** The refinement
+skill's table, the manager's routing table and the description carried by the `scope/*`
+label itself each apply this test and name this section as where it is defined; none
+re-words it. A labeller must still be able to decide from the surface in front of them —
+a pointer that leaves them unable to answer is as broken as a fourth paraphrase — so
+what those surfaces carry is this section's own wording, not a variant of it. Four
+independent renderings of one test are what produced #78, and they drifted precisely
+because each was free to say it differently.
 
 ## The grid is project data; what it must satisfy is not
 

@@ -48,12 +48,14 @@ Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, n
 
 | Label | Condition | Handling |
 |---|---|---|
-| `scope/S` | 1 app, no spec modified, rule already written | Autonomous execution alone |
-| `scope/M` | 1 app, but a spec changes or the scope is fuzzy | Autonomous execution + review by the tech role |
-| `scope/L` | ≥2 apps, or touches a business spec, or changes an interface contract | You + the tech role, + the business role if business is touched |
+| `scope/S` | 1 app, and no rule changes — it is already written | Autonomous execution alone |
+| `scope/M` | 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | Autonomous execution + review by the tech role |
+| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if business is touched |
 | `scope/XL` | New value unit, pivot, data migration | Out of execution: send it back to the scoping module |
 
-Three questions are enough to settle it: *how many apps?*, *does a specs file change?*, *which one?*
+Three questions are enough to settle it: *how many apps?*, *does a rule consumed beyond one feature or app change?*, *does an interface contract change?*
+
+The middle question measures **a rule's reach, not a file's location**: a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule has answered *no* — it is not `scope/L` on that clause, however many spec files its diff lists. That test is stated once, in [`features/business/execution-policy/business.md`](../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*; this table applies it, in that section's own words, and does not define it. The file-location reading it replaced is why a whole sprint's labels had to be overridden ([`docs/adr/0015-scope-measures-reach.md`](../../../docs/adr/0015-scope-measures-reach.md)).
 
 When hesitating between two levels, take the higher one. One review too many costs a few minutes; a missing review costs a revert.
 

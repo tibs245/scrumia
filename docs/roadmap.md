@@ -30,7 +30,7 @@ What the pilot must settle:
 
 - Does the composition documented in `CLAUDE.md` hold without drifting from the configuration? → ADR-0009
 - Do the splitting thresholds match reality? → ADR-0004
-- Does the `scope/*` grid classify correctly? → ADR-0006
+- Does the `scope/*` grid classify correctly? → ADR-0015
 - Is running two parallel sessions workable? → ADR-0002
 - Does refinement produce tickets that are actually executable on the first try?
 - Do implementation modules and practices actually change what agents produce? → ADR-0010

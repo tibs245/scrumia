@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The manager's routing cites ADR-0015 instead of the superseded 0006; the triggers themselves are unchanged
+- Issue: #78
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — Convening the team is specified as its own entry point, distinct from a sprint, and checks module installation rather than declaration
 - Issue: #132
 - PR: #NN (filled at merge)

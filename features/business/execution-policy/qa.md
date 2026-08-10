@@ -221,6 +221,24 @@ unilateral departure from a human's override in the first place: both arrive as 
 comment. Attribution that a machine can check is #42's, and until it lands this criterion
 guards the vocabulary rather than the behaviour.
 
+### AC-21 — Every surface a labeller reads applies the test and names its owner
+
+```gherkin
+Given a surface that tells whoever sets a scope/* label what a tier means — a refinement
+  skill's table, the manager's routing table, or the description a fresh install seeds
+  onto the label itself
+When someone follows it to label a ticket that edits only files under the specs root and
+  changes no rule another feature or app consumes
+Then the surface carries them below scope/L on the spec clause and names this feature as
+  where the test is defined; a surface stating its own condition without pointing here
+  fails this, and so does one that points here but leaves the labeller unable to decide
+  without opening it
+```
+
+The seeded label description is in the list on purpose: it is the one surface that
+outlives the repository it was copied from, so a fresh install that seeds the old wording
+reintroduces the drift with nothing in the diff to show for it.
+
 ## Out of scope
 
 - Who reads the accumulated records, and on what occasion. This feature requires that

@@ -34,7 +34,7 @@ does not exist: it would have nothing to guard but its own taste.
   no implementation module (`CLAUDE.md`); the roles are not code under `site` or
   `tools`, they are the agent definitions themselves.
 - Related ADRs: `docs/adr/0002-standing-roles.md` (why subagents, not team members;
-  the sprint-loop constraint), `docs/adr/0006-ticket-routing.md` (how a ticket
+  the sprint-loop constraint), `docs/adr/0015-scope-measures-reach.md` (how a ticket
   reaches a role).
 
 ## Roles

@@ -58,7 +58,7 @@ Then it goes straight to the human, not settled by the manager on the grounds
 Given a ticket has no scope/* label
 When the manager prepares a sprint from the ready tickets
 Then the ticket is excluded from the sprint as unscoped, per
-  docs/adr/0006-ticket-routing.md
+  docs/adr/0015-scope-measures-reach.md
 ```
 
 ### AC-6 — Escalation holds at any autonomy level
