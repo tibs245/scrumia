@@ -48,12 +48,7 @@ the suspect flag `false`; the fifth card appeared on a retry a few seconds later
 sprint built from that first read would have silently dropped a ticket nobody noticed
 was missing.
 
-The rule that makes this pass: a filtered, non-empty `board.sh` read confirms its own
-`totalCount` before returning it — re-issuing the same query, backing off between
-checks, until two consecutive reads agree or a small retry budget runs out. This is
-retry-with-backoff internal to `board.sh`; it changes no output field; a caller reads
-the same JSON shape whether the first read landed at rest or had to converge across a
-few retries.
+How `board.sh` satisfies this criterion is in `tech.md`.
 
 ### AC-5 — An unfiltered read past the page size is reported as partial, not as the board
 
@@ -86,21 +81,14 @@ Then only the card belonging to that project resolves — not the first card fou
 
 ```gherkin
 Given a ticket closed as won't-fix from `Ready for dev`, its card still carrying that
-  Status because closing an issue does not move it — see index.md's lifecycle
+  Status because closing an issue does not move it — see business.md's lifecycle
 When the board is read
 Then it is not reported as work in progress
 ```
 
-The rule that makes this pass: a board read filters on the issue's own `state`
-(open/closed) before reporting live work, not on the card's Status alone — the same
-field this feature already trusts for an epic's progress (`business.md`).
-
-`board.sh read`'s items carry the issue's own `state` (`OPEN`/`CLOSED`), fetched in one
-batched call rather than one per item. A closed card outside the `Done` column — the
-only place a close is expected — is pulled out of the column it reports as live work
-and returned instead under `closed_without_pr`, with a `closed_without_pr_count` at the
-top level; a closed card sitting in `Done` is a normal merge and stays reported as
-usual.
+A board read filters on the issue's own `state` (open/closed) before reporting live
+work, not on the card's Status alone — the rule is `business.md`'s "Closed without a
+PR"; the field shape this criterion checks is in `tech.md`.
 
 ### AC-9 — A deviation comment with no reason is reported, not counted
 

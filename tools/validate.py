@@ -307,24 +307,78 @@ def check_feature_mandatory_files() -> None:
                 error(f"{rel}: missing mandatory file {name}")
 
 
-TICKET_REF_RE = re.compile(r"#\d+\b")
+# #NN with 1-4 digits: repo ticket numbers. 5+ digit runs (#000000) are colour
+# literals, not tickets. URLs and "issue NN" spellings are tickets too.
+TICKET_REF_RES = [
+    re.compile(r"#\d{1,4}\b(?![0-9a-fA-F])"),
+    re.compile(r"github\.com/[\w./-]+/(?:issues|pull)/\d+"),
+    re.compile(r"\bissues?\s+#?\d+\b", re.IGNORECASE),
+]
 
 
 def check_no_tracker_refs() -> None:
-    """A spec cites no ticket: issue/PR numbers live in the tracker and the changelog only.
-
-    The word-boundary keeps hex colours (#9E4517) out: a digit run followed by a
-    hex letter is not a ticket number.
-    """
+    """A spec cites no ticket: issue/PR numbers live in the tracker and the changelog only."""
     features_root = ROOT / "features"
     for path in sorted(features_root.rglob("*.md")):
         if path.name == "CHANGELOG.md":
             continue
         rel = path.relative_to(ROOT)
         for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            m = TICKET_REF_RE.search(line)
-            if m:
-                error(f"{rel}:{i}: ticket reference {m.group(0)} — only CHANGELOG.md cites issues or PRs")
+            for pattern in TICKET_REF_RES:
+                for m in pattern.finditer(line):
+                    error(f"{rel}:{i}: ticket reference {m.group(0)} — only CHANGELOG.md cites issues or PRs")
+
+
+def check_business_value_heading() -> None:
+    """Every business.md opens its value: a '## Value' heading with non-empty content."""
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        path = feature_dir / "business.md"
+        if not path.exists():
+            continue  # check_feature_mandatory_files already reports this
+        rel = path.relative_to(ROOT)
+        text = path.read_text(encoding="utf-8")
+        m = re.search(r"^## Value\s*\n(.*?)(?=\n## |\Z)", text, re.MULTILINE | re.DOTALL)
+        if not m or not m.group(1).strip():
+            error(f"{rel}: no '## Value' section with content — every feature states who it is for, "
+                  f"what it brings, why it matters, and whether that is measured")
+
+
+def check_qa_shape() -> None:
+    """qa.md carries identified criteria: '### AC-<n>' headings, each with a fenced scenario."""
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        path = feature_dir / "qa.md"
+        if not path.exists():
+            continue  # check_feature_mandatory_files already reports this
+        rel = path.relative_to(ROOT)
+        text = path.read_text(encoding="utf-8")
+        headings = re.findall(r"^### (AC-\d+)\b.*$", text, re.MULTILINE)
+        if not headings:
+            error(f"{rel}: no '### AC-<n>' criterion heading — acceptance criteria carry stable identifiers")
+            continue
+        sections = re.split(r"^### AC-\d+\b.*$", text, flags=re.MULTILINE)[1:]
+        for ac, body in zip(headings, sections):
+            if "```" not in body:
+                error(f"{rel}: {ac} has no fenced scenario — a criterion is a Given/When/Then that can fail")
+
+
+GUARDRAIL_BUSINESS_LINES = 200
+GUARDRAIL_QA_CRITERIA = 12
+
+
+def check_splitting_guardrails() -> None:
+    """ADR-0004's guardrails, surfaced as warnings so the fourth breach is not silent."""
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        rel = feature_dir.relative_to(ROOT)
+        business = feature_dir / "business.md"
+        if business.exists():
+            lines = len(business.read_text(encoding="utf-8").splitlines())
+            if lines > GUARDRAIL_BUSINESS_LINES:
+                warn(f"{rel}/business.md: {lines} lines against the ~{GUARDRAIL_BUSINESS_LINES} splitting guardrail")
+        qa = feature_dir / "qa.md"
+        if qa.exists():
+            count = len(re.findall(r"^### AC-\d+\b", qa.read_text(encoding="utf-8"), re.MULTILINE))
+            if count > GUARDRAIL_QA_CRITERIA:
+                warn(f"{rel}/qa.md: {count} criteria against the ~{GUARDRAIL_QA_CRITERIA} splitting guardrail")
 
 
 def check_feature_index_sections() -> None:
@@ -418,6 +472,9 @@ def main() -> int:
     check_composition_drift()
     check_feature_mandatory_files()
     check_no_tracker_refs()
+    check_business_value_heading()
+    check_qa_shape()
+    check_splitting_guardrails()
     check_feature_index_sections()
     check_feature_files_present()
     check_global_index_drift()

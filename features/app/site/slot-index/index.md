@@ -1,7 +1,6 @@
 # Slot index — the home page's composition section
 
 **Status**: active
-**Stratum**: app (`site`)
 
 ## In brief
 

@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The worked example practices what the catalog preaches: value stated, mechanisms in tech.md
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — Value stated in business.md; ticket references leave the spec
 - Issue: #193
 - PR: #NN (filled at merge)

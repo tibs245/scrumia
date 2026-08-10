@@ -1,7 +1,6 @@
 # Feature format
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 

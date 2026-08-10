@@ -1,7 +1,6 @@
 # Hero — the static site
 
 **Status**: active
-**Stratum**: app (`site`)
 
 ## In brief
 
@@ -12,8 +11,8 @@ different feature's scope.
 
 ## Links
 
-- Business parent: none beyond the epic. The copy decision itself is recorded in
-  `ux.md` and the ticket, not a dedicated `business.md`.
+- Business parent: none beyond the epic — `business.md` carries this app's value
+  statement; no Business-stratum feature stands above it.
 - Authority: `design/identity.md` — what someone should feel in the first three
   seconds, and decision 2 ("motion means causality") for the ring's arrival order.
 - Authority: `design/tokens.css` — the vocabulary; the hero holds no literal colour,

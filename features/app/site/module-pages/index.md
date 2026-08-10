@@ -1,7 +1,6 @@
 # Module pages
 
 **Status**: active
-**Stratum**: app — `site`
 
 ## In brief
 

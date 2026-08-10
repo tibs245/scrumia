@@ -1,7 +1,6 @@
 # Dev flow — brainstorming vs execution
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 

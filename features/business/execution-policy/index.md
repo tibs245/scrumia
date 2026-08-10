@@ -1,7 +1,6 @@
 # Execution policy
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 
@@ -10,18 +9,13 @@ refinement: `scope/*` — how far the change reaches — and `risk/*` — what i
 it is wrong. The two are independent questions, and their crossing is a grid the
 project declares once and a tool reads for everyone.
 
-This is the answer to the founding note's open question, *"who decides big-context
-versus small-context?"*: a label set at refinement on verifiable questions, not a
-judgement improvised when execution starts.
-
 ## Links
 
 - Implemented by: no App feature. The policy is enacted by
   `plugins/scrumia-teams/scripts/pick-model.sh`, shipped by whichever module fills the
   `team` slot, and consumed by `scrumia-sprint` and by `scrumia-ticket`'s Step 0.
-- The grid's cells and the capability order they climb are **project data**, declared
-  in `.scrumia/config.yaml` under `settings.team.execution`. This spec states the
-  invariant they must satisfy; it does not restate them.
+- The grid's cells and the capability order they climb are project data — see
+  `business.md` § *The grid is project data; what it must satisfy is not*.
 - Related ADRs: `docs/adr/0015-scope-measures-reach.md` — why the scope axis is measured
   rather than estimated, the three questions it is measured by, and why the second one
   reads a rule's reach rather than a file's location. It supersedes
@@ -29,8 +23,7 @@ judgement improvised when execution starts.
 - Consumed beyond this feature: the blast-radius test in `business.md` § *The scope axis
   measures reach, not medium* is read by `features/business/agent-team/` for entry
   routing, and applied by the plugin prose and the `scope/*` label descriptions that a
-  labeller works from. Changing it is a change other features and a tracker artefact
-  feel — which is what makes such a change `scope/L` under the test itself.
+  labeller works from.
 
 ## Files present
 
@@ -45,5 +38,6 @@ user content or regulated sector. No `archi.md`: it touches neither `site` nor
 `tools`, so there is no cross-app dialogue to describe. No `tech.md` or
 `api-contract.md`: the mechanics of the script that enacts the policy are
 deliberately out of this spec, and stating them here would be the second statement
-`business.md` forbids.
+`business.md` forbids. No `security.md`: the policy carries no risk surface rated on
+any of the four axes — a wrong routing costs a rerun, not an unrecoverable loss.
 

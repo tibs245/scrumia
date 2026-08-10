@@ -44,6 +44,10 @@ applied by the entries below rather than restated.
   exist, `ux.md` says what the user sees at each one.
 - **tech vs archi, on data flow.** Flow that never leaves the app's own boundary →
   `tech.md`. Flow that crosses apps, scoped to an EPIC → `archi.md`.
+- **business vs tech, on mechanisms.** A rule that constrains what the product
+  promises — whatever tool enacts it — → `business.md`. How a tool, command or flag
+  achieves it, and what happens when it is misused → `tech.md`. "Reads are filtered
+  or they lie" is business; the flag that does the filtering is tech.
 - **ux vs qa, on accessibility.** A property the journey must have, stated in prose
   ("this control is reachable by keyboard") → `ux.md`. Anything testable against a
   named technical criterion (a contrast ratio, a keyboard-trap check, an announcement)

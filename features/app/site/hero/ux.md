@@ -21,6 +21,11 @@ Nothing below the hero is this feature's scope.
 Single state: no empty, loading or error variant. The hero renders from the build or
 not at all.
 
+Reduced motion / no script: a reader with no JavaScript, a script that failed, or
+`prefers-reduced-motion` set never sees Hop travel — it is already assembled, its eye
+already lit, from the first frame. `tech.md` names the gate that withholds the `.js`
+class; the criterion is `qa.md` AC-4 (a11y).
+
 ## Navigation
 
 Reading order: eyebrow, headline, lead, controls, Hop, counts. The ring

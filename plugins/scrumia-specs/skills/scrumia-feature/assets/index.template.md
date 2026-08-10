@@ -1,7 +1,6 @@
 # <Feature name>
 
 **Status**: draft | active | deprecated
-**Stratum**: business | app/<app>
 
 ## In brief
 

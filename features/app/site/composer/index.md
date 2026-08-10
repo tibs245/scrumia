@@ -1,7 +1,6 @@
 # Composer — the home page's build-your-composition section
 
 **Status**: active
-**Stratum**: app (`site`)
 
 ## In brief
 

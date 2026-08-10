@@ -1,7 +1,6 @@
 # Modular composition
 
 **Status**: active
-**Stratum**: business
 
 ## In brief
 

@@ -1,19 +1,12 @@
 # Ground and shell — the static site
 
 **Status**: active
-**Stratum**: app (`site`)
 
 ## In brief
 
 Everything on the site that is not a section: the token vocabulary the pages are
 written in, the lit ground they sit on, and the chrome that wraps them — masthead,
 footer, skip link, theme toggle, arrival gate.
-
-**No Business parent, on purpose.** This feature is purely presentational: it
-carries no business rule, only the rules that keep an interface honest across two
-themes, two languages and a reader with JavaScript switched off. What the site
-*says* belongs to the business features it renders; what it *looks like* belongs to
-`design/identity.md`, which this feature implements rather than restates.
 
 ## Links
 

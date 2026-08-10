@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The index sheds its last rules
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — Value stated in business.md; ticket references leave the spec
 - Issue: #193
 - PR: #NN (filled at merge)
@@ -12,7 +17,7 @@ Reverse-chronological. Short. The reasoning is in the issues, not here.
 - PR: #NN (filled at merge)
 - Breaking: no
 
-## 2026-08-10 — The blast-radius test reaches its readers: ADR-0015 supersedes 0006, and every surface a labeller works from applies the test and names this feature as its owner. AC-21 now also requires the shared wording to be carried verbatim, which sets it: the tier conditions are compressed until they fit the narrowest surface, a 100-character GitHub label description
+## 2026-08-10 — The blast-radius test reaches its readers, carried verbatim
 - Issue: #78
 - PR: #NN (filled at merge)
 - Breaking: no

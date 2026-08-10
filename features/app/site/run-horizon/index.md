@@ -1,7 +1,6 @@
 # Run horizon — the home page's run section
 
 **Status**: active
-**Stratum**: app (`site`)
 
 ## In brief
 
