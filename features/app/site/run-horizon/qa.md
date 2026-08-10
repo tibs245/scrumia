@@ -1,6 +1,6 @@
 # Acceptance criteria — Run horizon
 
-One scenario per rule in `index.md`. Each scenario must be able to fail.
+One scenario per rule in `ux.md`. Each scenario must be able to fail.
 
 `tools/check_run_horizon.py` is the runnable form of AC-1, AC-2, AC-3 and AC-4's
 first scenario: it renders the built pages in headless Chrome at nine widths in
@@ -46,7 +46,7 @@ And the legend states the ratio in digits — `3 of 7`, `4 of 7` — so it stays
 
 ## Edge cases
 
-### AC-3 — The split survives being read without colour
+### AC-3 — The split survives being read without colour (a11y)
 
 ```gherkin
 Given a reader who cannot distinguish the human blue from the agent coral, or a

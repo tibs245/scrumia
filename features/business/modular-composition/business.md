@@ -1,15 +1,40 @@
 # Modular composition — business rules
 
+## The slots
+
+A slot is a question a project-steering method has to answer, named so a module can
+claim it instead of a project inventing its own. Seven exist today:
+
+| Slot | The question | Reference module |
+|---|---|---|
+| `specs` | Where do specs live, in what shape? | `scrumia-specs` |
+| `tracker` | Where does state live: tickets, columns, PRs? | `scrumia-github-project` |
+| `team` | Which standing roles, with what scope? | `scrumia-teams` |
+| `discovery` | How does an idea become framed work? | `scrumia-discovery` |
+| `implementation` | How we code — per app | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
+| `practices` | Which cross-cutting practices — per app | `scrumia-practice-tdd`, `scrumia-practice-solid` |
+| `design` | Where does the design system live? | `scrumia-design` |
+
+`implementation` and `practices` are the two slots that repeat: they apply per app,
+not once for the whole project.
+
+A module may also ship the **standing role** that guards its slot's capability, rather
+than that role living in the `team` slot's module. `scrumia-design` is the first to do
+so: a design role in a project with no design system would have nothing to judge but
+taste. The role registers in the same `settings.team.roles` list, so routing stays
+single-sourced — see [ADR-0014](../../../docs/adr/0014-roles-ship-with-their-capability.md)
+and the `agent-team` feature.
+
 ## Why a composition rather than a method
 
 A method that answers every project-steering question as one block forces a project
 to take everything or leave everything. In practice a project takes it, adapts it,
 diverges from it, and ends up on a fork that no longer receives updates.
 
-ScrumIA separates the questions into slots (see `index.md`) and lets a project
-answer each independently, by picking a module or leaving the slot empty. What is
-meant to be reusable is this separation — not the specific answers the reference
-modules give. See [ADR-0001](../../../docs/adr/0001-distribution-as-plugins.md),
+ScrumIA separates the questions into slots (above) and lets a project answer each
+independently, by picking a module or leaving the slot empty. What is meant to be
+reusable is this separation — not the specific answers the reference modules give.
+See [ADR-0001](../../../docs/adr/0001-distribution-as-plugins.md),
 [ADR-0007](../../../docs/adr/0007-single-base-repo.md) and
 [ADR-0009](../../../docs/adr/0009-documented-composition.md).
 

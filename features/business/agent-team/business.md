@@ -11,6 +11,29 @@ without settling it itself), **verdict** (a role's explicit answer:
 approved / blocked, compliant / non-compliant, or their "with reservations"
 variants).
 
+## Roles
+
+Which roles exist is a property of the composition, not of one module.
+`settings.team.roles` is the single list, and an entry names its provider with
+`from:` when that provider is not the team module
+(`docs/adr/0014-roles-ship-with-their-capability.md`). A role whose slot is
+empty does not exist: it would have nothing to guard but its own taste.
+
+Each role's scope and its explicit refusal — a role with no refusal line
+would be indistinguishable from another and shouldn't exist as a separate
+role.
+
+| Role | Owns | Refuses |
+|---|---|---|
+| Manager | The board, splitting value into tickets, routing a ticket to the role it belongs to, sprint cadence, arbitration between business and tech | Deciding a business rule itself (routes to business); judging architecture or implementation quality itself (routes to tech); the final merge decision (belongs to the human alone) |
+| Business | Business rules and domain vocabulary, consistency across business specs, legal/compliance constraints, business acceptance criteria | The architecture, the stack, delivery planning and priorities — those belong to tech and to the manager |
+| Tech | Cross-cutting architecture, API contracts, technical debt, implementation quality | Business rules and delivery priorities — those belong to business and to the manager |
+| Designer | Visual identity, design-system consistency, legibility and visual hierarchy, accessibility as far as it is visual | The message itself (business), the architecture (tech), delivery priorities (manager); and inventing a value the design system already answers |
+
+Designer is present only where the `design` slot is filled — its definition
+lives in that module (`plugins/scrumia-design/agents/scrumia-designer.md`),
+not in `plugins/scrumia-teams/agents/`.
+
 ## Activation triggers
 
 A role does not activate on every ticket. It activates when the ticket crosses

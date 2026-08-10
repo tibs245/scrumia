@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — index.md drops its code-cycle-ownership restatement of business.md and conforms to the four-section template
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — The ceremonies deferral now points at the `ceremonies` feature instead of the ticket that created it, and states that a gate is not one
 - Issue: #11
 - PR: #NN (filled at merge)

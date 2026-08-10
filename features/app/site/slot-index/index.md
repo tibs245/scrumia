@@ -11,55 +11,33 @@ defines, each row showing what currently answers it in this repo's own
 replace a grid of eight cards with one typographic index: name, question, dotted
 leader, fill, with the answer opening in a native `<details name="slot">`.
 
-## Where the authority sits
+## Links
 
-| Question | Answered by |
-|---|---|
-| What is a slot, and which seven exist? | `features/business/modular-composition/index.md` |
-| How is a slot row drawn? | `design/components/slot-index/spec.md` |
-| Which values may be used? | `design/tokens.css` — the vocabulary |
-
-This feature renders the business concept; it does not define it. A slot's name
-or question changing is a `modular-composition` change first, carried here
-second.
-
-## The rules this feature owns
-
-**Exactly seven rows, no eighth example.** Every row is one of the project's
-real slots, read from `.scrumia/config.yaml` at the time this was written —
-`specs`, `tracker`, `team`, `discovery`, `implementation`, `practices`, `design`.
-None is illustrative; a made-up "and if you leave a slot empty?" row would be
-exactly the kind of claim `design/identity.md`'s "mechanism over claim" rule
-exists to block.
-
-**An empty row states its emptiness in words.** `.slot-fill` reads
-`nothing installed`, never only a dashed leader — a stroke style alone is not
-perceivable to everyone.
-
-**No JavaScript opens or closes a row.** `name="slot"` groups the seven
-`<details>` elements into one native accordion; opening one closes the last,
-entirely through the browser's own semantics.
-
-**One drawing of a slot.** `slot-index` is the only component in `design/` that
-draws a slot; the card it replaces (`slot-card`) carries no spec of its own
-after this feature landed — see `design/components/slot-index/spec.md` for
-what was carried forward from the card's refusals.
+- Business parent: none. `features/business/modular-composition/index.md` names
+  its own mechanism as implemented by no App feature — this feature renders that
+  business concept without being its implementation.
+- Authority:
+  - `features/business/modular-composition/index.md` — what a slot is, and
+    which seven exist
+  - `design/components/slot-index/spec.md` — how a slot row is drawn, and the
+    refusals that keep it the only drawing (no card alongside it, no script for
+    open/close)
+  - `design/tokens.css` — the vocabulary of values this feature may use
 
 ## Files present
 
-| File | Why it exists |
+| File | Read it when |
 |---|---|
+| `ux.md` | Checking which rows may appear, and the empty state's wording rule |
+| `tech.md` | Checking why no script opens or closes a row |
 | `qa.md` | The criteria the index must keep passing — no-JS, the empty state, one component, keyboard and both themes |
 | `CHANGELOG.md` | History of changes to this spec |
 
 No `business.md`: the business rule is `modular-composition`'s, not this
-feature's own. No `ux.md`: the interaction is fully specified by
-`design/components/slot-index/spec.md`'s row anatomy, and restating it here
-would be the second copy the design contract exists to prevent.
+feature's own.
 
 ## Open issues
 
-- #57 retired `design/components/slot-card/preview.html`, batched with the
-  other unchosen explorations. Its Claude Design card could not be removed in
-  that same run — no `DesignSync` tool was available in the session — and is
-  tracked by #92 instead.
+- #92 — sync the Claude Design project: push `slot-index`, remove the four
+  retired cards. Superseded #57 (closed), whose own removal was completed but
+  could not reach Claude Design in that same run.

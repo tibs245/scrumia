@@ -1,6 +1,6 @@
 # Acceptance criteria — Ground and shell
 
-One scenario per rule in `index.md`. Each scenario must be able to fail.
+One scenario per rule in `tech.md` and `ux.md`. Each scenario must be able to fail.
 
 ## Nominal
 
@@ -44,7 +44,7 @@ Then both carry a `footer_non_affiliation` key — the build's anti-divergence
   in the language of that page
 ```
 
-### AC-6 — Every real pair is measured, and the two actors stay tellable apart
+### AC-6 — Every real pair is measured, and the two actors stay tellable apart (a11y)
 
 ```gherkin
 Given `design/tokens.css`

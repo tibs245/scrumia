@@ -2,6 +2,16 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — index sheds its rules, ux.md is born, tech.md gains three
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no. `index.md` drops its "The rules this feature owns" section — six
+  rules move to `tech.md` (three cited from `design/tokens.css` and
+  `design/identity.md` rather than restated, three new), one moves to a new
+  `ux.md`. `index.md` now carries exactly the template's four sections, and its
+  Files present table stops listing `tools/check_contrast.py`, which lives
+  outside this feature — it is now an Authority line under Links instead.
+
 ## 2026-08-09 — `check_contrast.py` gates CI, `qa.md` names who feeds it
 - Issue: #95
 - PR: (filled at merge)

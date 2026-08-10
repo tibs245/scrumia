@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The slots move from the index to business.md, where a rule belongs
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — AC-1 names the artefact its Then-clause is checked against
 - Issue: #38
 - PR: #NN (filled at merge)

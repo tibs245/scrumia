@@ -1,5 +1,72 @@
 # GitHub tracking — business rules
 
+## Why GitHub
+
+Whoever runs a ticket — a human or one of the standing roles — needs one place to see
+what is ready, what is running, and what already shipped, without reconciling a second
+system against the code. GitHub is that place: issues, pull requests and reviews live
+next to the diff itself, so a ticket's status and its code never drift apart from being
+tracked in two tools that someone has to keep in sync by hand. That issues and PRs
+travel together is also, today, a constraint the `tracker` slot accepts rather than a
+free choice —
+[ADR-0013](../../../docs/adr/0013-tracker-stays-one-slot.md) records it, with the
+condition that would split the slot. The vocabulary and rules below make the tracking
+precise.
+
+## Ticket lifecycle
+
+A ticket crosses six columns, in order:
+
+| Column | Meaning |
+|---|---|
+| `Backlog` | Raw intent, not yet refined |
+| `Ready for dev` | Refined: criteria written, scope and risk set |
+| `To dev` | Selected into the current sprint |
+| `In progress` | Being executed |
+| `In review` | PR open, awaiting review |
+| `Done` | Merged |
+
+A card just added to the board — `gh issue create --project` or `gh project item-add`
+— carries **no Status at all**, not `Backlog`: it sits in none of the six until someone
+places it. `board.sh read` reports that as its own `(no status)` group rather than
+folding it into `Backlog`, because a card nobody placed is worth seeing, not papering
+over.
+
+Skills never move a card by naming a column directly, except for that first placement.
+They name a **flow step**, and `settings.tracker.board.flow` in `.scrumia/config.yaml`
+maps each step to this board's actual column name. That indirection is what lets
+ScrumIA adopt a board that already exists — columns renamed, vocabulary already in use
+— without renaming anything or touching a skill.
+
+| Transition | Trigger | Flow step |
+|---|---|---|
+| (no status) → `Backlog` | a ticket is filed | none — the column name is used directly, once |
+| `Backlog` → `Ready for dev` | `scrumia-refine` judges its four readiness conditions met | `ready` |
+| `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — see #23 |
+| `To dev` → `In progress` | execution starts on the ticket | `in_progress` |
+| `In progress` → `In review` | the PR opens | `in_review` |
+| `In review` → `Done` | the PR merges | `done` — not automated today either, see #23 |
+
+Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
+`done`). `Backlog` is entered by its literal column name, once, at filing. `To dev`
+and the post-merge move to `Done` currently have no skill that performs them —
+selecting a ticket into a sprint or merging its PR does not by itself move its card.
+
+### Closed without a PR
+
+A ticket can also leave the flow sideways instead of reaching `Done`: closed as
+won't-fix from `Backlog`, or abandoned in `Ready for dev` or `In progress` with no PR
+ever opened. No transition performs this — closing an issue does not move its card.
+The card **keeps whatever Status it last had**; this is post-close residue, not a
+seventh column, and not `Done` either — `Done` keeps its single meaning, "merged",
+and routing a won't-fix ticket there would make the column answer two different
+questions.
+
+A reader trusts the issue's own `state` (open/closed), not the card's Status, to know
+whether it still represents live work — the same rule this file applies below to an
+epic's progress, read from its children's `state` rather than from where their cards
+sit. `qa.md` specifies the board-reading scenario this implies.
+
 ## Vocabulary
 
 **Milestone = sprint.** One milestone bounds one sprint. `board.sh ready --milestone
