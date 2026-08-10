@@ -31,13 +31,5 @@ leader, fill, with the answer opening in a native `<details name="slot">`.
 | `ux.md` | Checking which rows may appear, and the empty state's wording rule |
 | `tech.md` | Checking why no script opens or closes a row |
 | `qa.md` | The criteria the index must keep passing — no-JS, the empty state, one component, keyboard and both themes |
+| `business.md` | Checking the value this section brings, or why the business rule is `modular-composition`'s, not this feature's own |
 | `CHANGELOG.md` | History of changes to this spec |
-
-No `business.md`: the business rule is `modular-composition`'s, not this
-feature's own.
-
-## Open issues
-
-- #92 — sync the Claude Design project: push `slot-index`, remove the four
-  retired cards. Superseded #57 (closed), whose own removal was completed but
-  could not reach Claude Design in that same run.

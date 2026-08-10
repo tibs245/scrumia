@@ -295,20 +295,36 @@ def check_composition_drift() -> None:
 
 
 def check_feature_mandatory_files() -> None:
-    """Every leaf feature carries index.md, qa.md, CHANGELOG.md; business.md too at the Business stratum.
+    """Every leaf feature carries index.md, qa.md, CHANGELOG.md and business.md.
 
     Per the catalog's existence categories (plugins/scrumia-specs/.../catalog.md):
-    these three are unconditional, business.md is mandatory per stratum.
+    all four are unconditional — every feature states its value in business.md.
     """
-    features_root = ROOT / "features"
     for feature_dir in bfi.find_leaf_features(ROOT):
         rel = feature_dir.relative_to(ROOT)
-        required = ["index.md", "qa.md", "CHANGELOG.md"]
-        if bfi.stratum_for(feature_dir, features_root) == "business":
-            required.append("business.md")
-        for name in required:
+        for name in ["index.md", "qa.md", "CHANGELOG.md", "business.md"]:
             if not (feature_dir / name).exists():
                 error(f"{rel}: missing mandatory file {name}")
+
+
+TICKET_REF_RE = re.compile(r"#\d+\b")
+
+
+def check_no_tracker_refs() -> None:
+    """A spec cites no ticket: issue/PR numbers live in the tracker and the changelog only.
+
+    The word-boundary keeps hex colours (#9E4517) out: a digit run followed by a
+    hex letter is not a ticket number.
+    """
+    features_root = ROOT / "features"
+    for path in sorted(features_root.rglob("*.md")):
+        if path.name == "CHANGELOG.md":
+            continue
+        rel = path.relative_to(ROOT)
+        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            m = TICKET_REF_RE.search(line)
+            if m:
+                error(f"{rel}:{i}: ticket reference {m.group(0)} — only CHANGELOG.md cites issues or PRs")
 
 
 def check_feature_index_sections() -> None:
@@ -401,6 +417,7 @@ def main() -> int:
     check_french_leftovers()
     check_composition_drift()
     check_feature_mandatory_files()
+    check_no_tracker_refs()
     check_feature_index_sections()
     check_feature_files_present()
     check_global_index_drift()

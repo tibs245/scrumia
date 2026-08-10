@@ -1,5 +1,19 @@
 # Business rules — Composer
 
+## Value
+
+For a visitor deciding whether ScrumIA fits their project. It brings the one
+place on the site where that visitor acts rather than reads: assembling
+their own composition, slot by slot, and leaving with the install commands
+and the `.scrumia/config.yaml` their choices produce. It matters because the
+modularity claim stated everywhere else on the site is abstract until
+someone builds with it — the composer is where "swap a module" stops being a
+sentence and becomes something the visitor just did. Measured: not
+instrumented today — no analytics track how far a visitor gets through the
+seven slots or whether they copy an artifact.
+
+Business parent: none beyond the site epic.
+
 App stratum. This feature has no Business parent of its own — it does not
 copy `modular-composition`'s rules, it applies them to one screen. Only what
 is specific to that application sits here.

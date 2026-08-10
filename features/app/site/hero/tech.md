@@ -18,11 +18,13 @@ restated here.
 
 The three counts in `.counts` (slots, modules shipped, human touchpoints) are
 literals, not values computed from `.claude-plugin/marketplace.json` and
-`.scrumia/config.yaml`. Debt assumed 2026-08-09, exit condition named as "after #65
-lands" (`site/templates/index.html`, inline comment next to the numbers).
+`.scrumia/config.yaml`. Debt assumed 2026-08-09, exit condition: until the
+counts are computed from the manifests (`site/templates/index.html`, inline
+comment next to the numbers).
 
-#65 has since closed — it built the manifest enumerator and the per-module pages, not
-a recount of the hero's own counts. The debt is unpaid: the numbers are still
-literals, and no open issue currently tracks migrating them. This is a gap, not a
-resolved item — the comment in `site/templates/index.html` needs a live issue number
-in place of the closed one, or the derivation done outright.
+The manifest enumerator has since landed, along with the per-module pages —
+not a recount of the hero's own counts. The debt is unpaid: the numbers are
+still literals, and no open issue currently tracks migrating them. This is a
+gap, not a resolved item — the comment in `site/templates/index.html` needs
+a live issue number in place of the closed one, or the derivation done
+outright.

@@ -45,7 +45,3 @@ No `legal.md`: this feature governs the team's own workflow, not personal data,
 payment, or user content. No `archi.md`: it does not touch `site` or `tools`, so
 there is no cross-app dialogue to describe for this EPIC.
 
-## Open issues
-
-- #18 — The bootstrap case: a ticket whose deliverable is the parent feature is
-  refused at Step 0. This feature was itself created under that gap, by exception.

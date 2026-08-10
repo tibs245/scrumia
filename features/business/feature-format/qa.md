@@ -30,13 +30,13 @@ Given a feature with no legal, cross-app, interface or technical rubric that
   applies to it
 When the feature is written
 Then the files the plugged specs module declares mandatory exist regardless —
-  for `scrumia-specs`: `index.md`, `qa.md` and `CHANGELOG.md` in every
-  feature, and `business.md` in a Business-stratum feature
+  for `scrumia-specs`: `index.md`, `qa.md`, `CHANGELOG.md` and `business.md`,
+  in every feature at both strata
 And an audit of that feature reports any one of them missing as a defect,
   never as the assertion "nothing to say"
-And the module declares its three existence categories — mandatory
-  everywhere, mandatory per stratum, content-tested — together, where its
-  catalogue lives, so no consumer infers a file's category from a table cell
+And the module declares its existence categories — mandatory everywhere,
+  content-tested — together, where its catalogue lives, so no consumer infers
+  a file's category from a table cell
 ```
 
 ### AC-4 — An App feature references its Business parent instead of duplicating it
@@ -143,6 +143,29 @@ Then both use the catalogue's one ordinal scale for that axis
 And a risk assumed rather than mitigated records its rating, the reason it
   is accepted, a named acceptor and a revisit condition — an assumed risk
   missing any of the four is a defect
+```
+
+### AC-14 — A spec cites no ticket
+
+```gherkin
+Given any file of a feature except its changelog
+When it references an issue or a PR by number
+Then automated validation reports it as an error — tracker state lives in
+  the tracker, and only the changelog points at it
+And the fact or open question the reference carried is stated in words
+  instead, so nothing is lost with the number
+```
+
+### AC-15 — Every feature states its value
+
+```gherkin
+Given any feature, at either stratum
+When its `business.md` is read
+Then it states who the feature is for, what it brings them, why it matters,
+  and whether that contribution can be measured — the measure named, or the
+  note that it is not instrumented today
+And a feature whose value cannot be stated is reported as a splitting or
+  deletion candidate, not as a feature missing a paragraph
 ```
 
 ## Out of scope

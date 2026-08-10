@@ -35,9 +35,3 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 | `qa.md` | need the refusal rule, the autonomy gates, or what routes gate 2's review, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 
-## Open issues
-
-- #3 — [EPIC] Spec the dev flow: brainstorming vs execution, gates, ceremonies (parent)
-- #18 — The bootstrap case: a ticket whose deliverable is the parent feature is refused at Step 0
-- #170 — A branch left behind by a stopped run is indistinguishable from a finished implementation
-- #191 — `scrumia-review` gate 2 and `scrumia-manager` still describe the label/diff gap without the carve-out AC-6 states, so a correct `scope/M` on a specs-only diff can still be reported as a scoping failure

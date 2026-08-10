@@ -1,5 +1,17 @@
 # Business rules — execution policy
 
+## Value
+
+For whoever executes a ticket, and the humans reviewing which model ran it. It brings a
+model choice derived from two independently-set labels — scope and risk — rather than a
+judgement improvised when execution starts, plus a deviation record that makes
+disagreement with the grid countable instead of anecdotal. It matters because the
+alternative is a grid that can ship inverted, parse cleanly, and run for a full sprint
+spending the weak model where the risk is — and because a label read a different way by
+each of its consumers drifts unobserved. Measured: the deviation record, queryable by
+cell — how often a cell was overridden or a split refused, and in which direction; who
+reads that count and on what cadence is still open.
+
 Vocabulary: **scope** (how far a change reaches, carried by a `scope/*` label),
 **risk** (what it costs if the change is wrong, carried by a `risk/*` label),
 **cell** (the grid entry the two axes cross at), **decision** (what the policy
@@ -37,14 +49,15 @@ The file-location reading fails on a whole class of repository, and not rarely: 
 the deliverable *is* specs, every ticket touches a spec file by construction, every
 ticket is `scope/L`, and the axis stops discriminating. ScrumIA is such a repository.
 The 2026-08-08 sprint overrode the resulting answer on all five of its tickets in the
-same direction (#32), and the refinement of #34, #35 and #36 hit it again. An axis that
-must be overridden systematically is not a strict axis — it is noise wearing a label.
+same direction, and a later refinement pass hit it again on three more tickets. An axis
+that must be overridden systematically is not a strict axis — it is noise wearing a
+label.
 
 **The test belongs to the axis, not to one of its readers.** `scope/*` has two: this
 policy, which reads it for capability, and the manager's entry routing, which reads it
 for who is asked while the ticket runs (`features/business/agent-team/business.md`).
-It had a third until #130 — the review owed at exit — and that one now routes by the
-diff's actual scope and reads no label at all (`docs/adr/0005-validation-gates.md`).
+It had a third, the review owed at exit, until that routing was retired — it now routes
+by the diff's actual scope and reads no label at all (`docs/adr/0005-validation-gates.md`).
 One label read two ways is two labels, and the second one drifts unobserved because
 nothing names it.
 
@@ -64,8 +77,9 @@ A labeller must still be able to decide from the surface in front of them — a 
 that leaves them unable to answer is as broken as a fourth paraphrase — so what those
 surfaces carry is the clause in this section's words, the four tier conditions in
 ADR-0015's, or, where there is only room for one of the two, the conditions: never a
-variant of either. Four independent renderings of one test are what produced #78, and
-they drifted precisely because each was free to say it differently.
+variant of either. Four independent renderings of one test are what produced divergent
+labels in practice, and they drifted precisely because each was free to say it
+differently.
 
 That is only satisfiable if one wording fits every surface, and the surfaces are not
 equally roomy: a GitHub label description stops at 100 characters, 38 of which go on
@@ -87,7 +101,7 @@ specified is the invariant any grid must satisfy:
 The order is *declared*, not inferred: model names carry no ordering of their own, so a
 grid can ship inverted, parse cleanly, pass every check and run — spending the weak
 model where the risk is and the strong one where it is not. That is not hypothetical;
-it shipped through a full sprint unnoticed (#47).
+it shipped through a full sprint unnoticed.
 
 It is declared **once, in the project's configuration, beside the grid it governs**, so
 that the two are read and edited together. It is deliberately not restated in this
@@ -241,8 +255,8 @@ defect as a decision. An agent writing an override records whose it was.
 
 Nothing checks that attribution. An agent can write a human's name against its own
 decision, and this rule would not catch it — making what an agent writes to the tracker
-machine-attributable is #42's, and this record is one of the three consumers waiting on
-it.
+machine-attributable is separate, open work, and this record is one of the three
+consumers waiting on it.
 
 ### Structured, because prose was already tried
 
@@ -252,7 +266,8 @@ they lean" has to be a query, not a reading of every ticket the project ever ran
 Repetition is what the record is for. Deviations leaning the same way on the same cell are
 that cell asking to be adjusted, and a signal that only survives if it can be counted. Five
 overrides written into five PR bodies in one sprint did not survive — not because nobody
-could read them, but because nobody could count them. That is what produced #32.
+could read them, but because nobody could count them. That is what pushed the record from
+prose into a structured field.
 
 Which venue holds the record is the tracker's to say — an issue comment, a row in a file,
 whatever the tool makes queryable. `features/business/github-tracking/` names the one in
@@ -267,8 +282,8 @@ cry wolf or stay silent, with no way to tell which.
 
 That is a stopping point, not an oversight: the record's purpose is to make the question
 answerable at all, and it now is. **Who asks it and when — a sprint boundary, a
-retrospective, a status pass — is open, and tracked in #167**, along with whether anything
-surfaces it unprompted.
+retrospective, a status pass — is open**, along with whether anything surfaces it
+unprompted.
 
 Whoever ends up reading it needs one warning stated here rather than learned later: **a
 count of zero is evidence of nothing.** Nothing forces a deviation to be recorded — an

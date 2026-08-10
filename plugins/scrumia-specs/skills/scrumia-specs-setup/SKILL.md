@@ -50,7 +50,7 @@ Seed the global index too — run `python3 tools/build_features_index.py` from t
 This module describes itself in `CLAUDE.md`. Return to `scrumia-init` the line to insert:
 
 ```markdown
-| Specs | `scrumia-specs` | Specs live in `features/`, one per feature, as targeted files. `index.md`, `qa.md` and `CHANGELOG.md` are mandatory; the rest exist only if they have content. See the `scrumia-feature` skill. |
+| Specs | `scrumia-specs` | Specs live in `features/`, one per feature, as targeted files. `index.md`, `business.md`, `qa.md` and `CHANGELOG.md` are mandatory; the rest exist only if they have content. See the `scrumia-feature` skill. |
 ```
 
 ## Step 4 — Report back

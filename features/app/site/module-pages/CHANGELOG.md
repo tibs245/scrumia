@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — Value stated in business.md; ticket references leave the spec
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — index.md brought under the new catalog: neutral brief, Business parent link, Read-it-when table, closed issues dropped
 - Issue: #193
 - PR: #NN (filled at merge)

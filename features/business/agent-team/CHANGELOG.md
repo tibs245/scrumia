@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — Value stated in business.md; ticket references leave the spec
+- Issue: #193
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-10 — The roles table and the composition rule move from the index into business.md; the index keeps a pointer
 - Issue: #193
 - PR: #NN (filled at merge)

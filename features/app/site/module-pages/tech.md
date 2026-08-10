@@ -17,9 +17,9 @@ not from the manifest's own `description`: a French page carrying an English sen
 would be a divergence the build could not see.
 
 Skill *descriptions* are left off the page for the same reason — the frontmatter that
-carries them is English-only. #66 settled the call: the pages name the skills and stop
-there. Describing each one would need a bilingual file of its own, and a module's
-`SKILL.md` frontmatter already carries the description for whoever installs it.
+carries them is English-only. The pages name the skills and stop there. Describing
+each one would need a bilingual file of its own, and a module's `SKILL.md`
+frontmatter already carries the description for whoever installs it.
 
 ## Why `site/modules.json` and not the manifest
 
@@ -49,14 +49,14 @@ The existing anti-divergence guard is reused, not reimplemented: module pages go
 the same `load_strings` / `render` path as every other page, so a key present in English
 and absent in French fails the build exactly as it always has. That guard now covers both
 directions of the same gap: a page-level string an i18n file carries that no template
-reads fails the build too (#114) — previously a warning, which is how a leftover key
-(`composer_js_strings`, deleted by #114) sat unnoticed.
+reads fails the build too — previously a warning, which is how a leftover key
+(`composer_js_strings`, now deleted) sat unnoticed.
 
 The unused half stops at page-level keys: chrome strings are shared across pages, and
 some are read programmatically rather than through a `{{token}}` — `mod_no_slot`, which
 `module_specials` pulls from `labels` — so an unused-key check over `common.json` would
-fail on a string that is in fact used. This is the same shape of asymmetry #114 just
-closed, left open on purpose rather than left unnoticed.
+fail on a string that is in fact used. This is the same shape of asymmetry just closed
+above, left open on purpose rather than left unnoticed.
 
 Three more guards are added around it, specific to modules:
 
@@ -78,21 +78,21 @@ existed before, which is why their generated output is byte-for-byte unchanged.
 
 ## Reaching a module page from the index
 
-The index page's `#modules` cards existed before `module.html` did (#65), each one
+The index page's `#modules` cards existed before `module.html` did, each one
 hand-written per plugin. Their `.mod-name` had no link — the manifest enumerator gave
-every fact on the card a source except that one, so #70 closes it the same way #65
-opened the pages: `@modlink_<name>`, one special per module, computed alongside
-`@emoji_<name>` in `build()` from the same `modules` list, never a literal
-`href="modules/…"` typed by hand. Twelve names still appear in `index.html` — the
-card content is not itself generated (#65's scope stopped at the module pages) — but
-the URL each one points to is, which is what AC-9 asks for: the string a template
-author could get wrong lives in one Python expression, not twelve.
+every fact on the card a source except that one; the link closes that gap the same
+way the enumerator opened the pages: `@modlink_<name>`, one special per module,
+computed alongside `@emoji_<name>` in `build()` from the same `modules` list, never a
+literal `href="modules/…"` typed by hand. Twelve names still appear in `index.html` —
+the card content is not itself generated (the first version's scope stopped at the
+module pages) — but the URL each one points to is, which is what AC-9 asks for: the
+string a template author could get wrong lives in one Python expression, not twelve.
 
 ## Escaping manifest facts
 
 `module_specials` builds `@mod_tags` and `@mod_skills` out of names sourced from
 `marketplace.json` and the skills tree. Those names are HTML-escaped before they're
-folded into `<li>` markup (#71) — every entry in that manifest is authored in this repo
+folded into `<li>` markup — every entry in that manifest is authored in this repo
 and gated by `tools/validate.py` in CI today, which made the raw interpolation safe in
 practice, but escaping costs nothing and stops being optional the day the marketplace
 takes an outside contribution.
@@ -100,5 +100,6 @@ takes an outside contribution.
 ## Deliberately not done here
 
 The template is a stub: it carries the structure and the tokens and no design decision —
-that belongs to the redesign epic. English prose is real as of #66, reviewed against the
-voice the hero (#60) and the slot index (#61) settled; French is #58's.
+that belongs to the redesign epic. English prose shipped for all twelve modules,
+reviewed against the voice the hero and the slot index settled; French followed in a
+separate pass.

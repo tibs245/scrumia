@@ -104,5 +104,6 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
   means — owned by `features/business/modular-composition/`.
 - The `#slots` section that reports this repo's own composition — owned by
   `features/app/site/slot-index/`.
-- The captured `compose-status.sh` output in `#install` — #64.
-- The run section — #62.
+- The captured `compose-status.sh` output in `#install`, a different section
+  of the home page.
+- The run section — owned by `features/app/site/run-horizon/`.

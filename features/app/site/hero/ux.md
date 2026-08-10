@@ -36,5 +36,5 @@ show.
   the line should end, in both languages, and no CSS `text-wrap: balance` substitutes
   for that choice.
 - The hero never spends `--human` or `--agent`. Only `--accent`, `--text` and the
-  surfaces — the human/agent colour rule is a different feature's decision (#52) and
+  surfaces — the human/agent colour rule is a different feature's decision and
   the hero does not anticipate it either way. Tested by `qa.md` AC-5.

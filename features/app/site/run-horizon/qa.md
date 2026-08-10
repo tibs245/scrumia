@@ -81,7 +81,9 @@ Then no mark blooms, every step is readable from the first frame, and the marks
 ## Out of scope
 
 - What the seven steps are — owned by `features/business/dev-flow/`.
-- The promise in the legend that swapping a module changes the line's shape:
-  #56 is what keeps it.
-- The composition output block in `#install` (#64) and the twelve module
-  micro-identities (#66), which share these files but not this section.
+- The promise in the legend that swapping a module changes the line's shape —
+  owned by `features/app/site/composer/`.
+- The composition output block in `#install`, a different section of the
+  home page, and the twelve module micro-identities
+  (`features/app/site/module-pages/`), which share these files but not this
+  section.

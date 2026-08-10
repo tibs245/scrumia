@@ -53,7 +53,7 @@ The rule that makes this pass: a filtered, non-empty `board.sh` read confirms it
 checks, until two consecutive reads agree or a small retry budget runs out. This is
 retry-with-backoff internal to `board.sh`; it changes no output field; a caller reads
 the same JSON shape whether the first read landed at rest or had to converge across a
-few retries. Fixed in #26.
+few retries.
 
 ### AC-5 — An unfiltered read past the page size is reported as partial, not as the board
 
@@ -100,7 +100,7 @@ batched call rather than one per item. A closed card outside the `Done` column �
 only place a close is expected — is pulled out of the column it reports as live work
 and returned instead under `closed_without_pr`, with a `closed_without_pr_count` at the
 top level; a closed card sitting in `Done` is a normal merge and stays reported as
-usual. Fixed in #79.
+usual.
 
 ### AC-9 — A deviation comment with no reason is reported, not counted
 
@@ -133,7 +133,7 @@ Then they are returned by a search over comment text on the cell token, without
 
 ## Out of scope
 
-- Who reads the deviation records once they accumulate, and on what occasion — #167.
+- Who reads the deviation records once they accumulate, and on what occasion — open.
   This feature materialises the record and makes the search possible; it appoints nobody.
 - Creating the board's columns and the project itself (`scrumia-project-setup`) —
   setup-time, not the ongoing reading and moving this feature specifies.

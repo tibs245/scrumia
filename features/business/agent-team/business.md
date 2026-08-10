@@ -1,5 +1,18 @@
 # Business rules — agent team
 
+## Value
+
+For the humans steering the project and the agents executing its tickets — everyone who
+needs to know who is asked, and who is not. It brings bounded ownership: each role's
+Owns/Refuses table, its activation trigger, and the three escalations that reach the
+human whatever the project's autonomy level. It matters because a manager that decides
+a business rule itself, or a tech role that settles delivery priority, is exactly the
+undifferentiated agent this feature exists to prevent — the roles are what keeps a
+disagreement surfaced instead of averaged away. Not instrumented today: nothing counts
+how often a role's stated refusal held versus was crossed; the Owns/Refuses table and
+the escalation rule are checked by reading the spec and the transcripts, not by a
+computed measure.
+
 Vocabulary: **role** (manager, business, tech, and designer where the `design`
 slot is filled), **activation trigger** (what
 brings a role into a ticket), **convening** (bringing the enabled roles up

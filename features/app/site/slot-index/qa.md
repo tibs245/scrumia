@@ -52,4 +52,5 @@ Then the row opens, a visible focus ring is drawn around the summary in both
 - What the seven slots are, and their questions — owned by
   `features/business/modular-composition/index.md`.
 - Retiring `design/components/slot-card/preview.html` and its Claude Design
-  card — #57 (closed); the Claude Design side is tracked by #92.
+  card — the local retirement is done; the Claude Design side has not caught
+  up yet.
