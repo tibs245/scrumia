@@ -120,7 +120,9 @@ git add -A && git commit -m "<type>(<scope>): <what changed>
 Refs: #<n>"
 ```
 
-The scope is not optional, and the `Refs:` trailer goes on **every** commit of the branch — a lookup returning some of a ticket's commits reads exactly like one returning all of them. Both, and what a scope may name, are stated in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *What a commit carries*; the GitHub spelling is `features/business/github-tracking/`'s.
+The scope is not optional, and the `Refs:` trailer goes on **every** commit of the branch — a lookup returning some of a ticket's commits reads exactly like one returning all of them. `<scope>` is **one token** naming what the commit changes: a module (its plugin name with the vendor prefix dropped), an app (from `apps[]` in `.scrumia/config.yaml`), a feature (the directory holding its `index.md` under the specs root), or the literal `repo` for what belongs to none of the three. A change atomic across two modules names both, comma-separated; nothing else carries two tokens. Why the scope is mandatory, and what each token buys, are in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *What a commit carries* and [ADR-0017](../../../../docs/adr/0017-version-bump-and-commit-signal.md) § *The signal*.
+
+**If the project documents no such convention**, keep the shape but read the alphabet off its own history rather than importing this one: this paragraph describes ScrumIA's, and a consuming project may spell its scopes differently.
 
 The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
 
