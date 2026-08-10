@@ -522,9 +522,17 @@ PLUGIN_CHANGELOG = (
 )
 
 
-def write_plugin(root: Path, body: str | None) -> Path:
+def write_manifest(plugin: Path, version: str) -> None:
+    manifest = plugin / ".claude-plugin"
+    manifest.mkdir(parents=True, exist_ok=True)
+    (manifest / "plugin.json").write_text(
+        f'{{"name": "{plugin.name}", "version": "{version}"}}\n', encoding="utf-8")
+
+
+def write_plugin(root: Path, body: str | None, version: str = "0.4.0") -> Path:
     plugin = root / "plugins" / "scrumia-widget"
     plugin.mkdir(parents=True, exist_ok=True)
+    write_manifest(plugin, version)
     if body is not None:
         (plugin / "CHANGELOG.md").write_text(body, encoding="utf-8")
     return plugin
@@ -645,6 +653,134 @@ def test_banned_field_outside_an_entry_is_caught() -> None:
             shutil.rmtree(tmp)
 
 
+def test_spec_entry_missing_a_required_field_is_caught() -> None:
+    print("an entry missing Issue: or Breaking: is an error, not only one missing Category:")
+    for field in ("- Issue: #42\n", "- Breaking: no\n"):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            write_spec_changelog(tmp, SPEC_ENTRY.replace(field, ""))
+            errors = run_check(tmp, "check_spec_changelogs")
+            check(f"the missing '{field.strip()}' is reported",
+                  any("needs exactly one" in e for e in errors), str(errors))
+        finally:
+            shutil.rmtree(tmp)
+
+
+def test_spec_entry_with_an_extra_field_is_caught() -> None:
+    print("a field outside the three is an error — the entry carries three, and only three")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, SPEC_ENTRY.replace(
+            "- Breaking: no\n", "- Author: bob\n- Breaking: no\n"))
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("'Author:' is reported", any("unknown field 'Author:'" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_empty_spec_changelog_is_caught() -> None:
+    print("a spec changelog holding only its heading is an unwritten mandatory file")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, "# Changelog — widget\n")
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("the empty changelog is reported", any("no entry" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_changelog_outside_a_leaf_feature_is_reached() -> None:
+    print("an EPIC directory with no index.md is walked too — it was escaping entirely")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        epic = tmp / "features" / "app" / "site"
+        epic.mkdir(parents=True)
+        (epic / "CHANGELOG.md").write_text(
+            "# Changelog — site\n\n## 2026-08-10 — A thing\n- Issue: #1\n- PR: #2\n"
+            "- Category: Added\n- Breaking: no\n", encoding="utf-8")
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("the non-leaf changelog is gated",
+              any("PR:" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_changelog_behind_plugin_json_is_caught() -> None:
+    print("a module bumped in plugin.json with no matching changelog section is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        plugin = write_plugin(tmp, PLUGIN_CHANGELOG)
+        write_manifest(plugin, "0.5.0")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the stale changelog is reported",
+              any("plugin.json declares 0.5.0" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_changelog_current_with_plugin_json_passes() -> None:
+    print("the newest section matching plugin.json produces no finding")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        plugin = write_plugin(tmp, PLUGIN_CHANGELOG)
+        write_manifest(plugin, "0.4.0")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_directory_without_a_manifest_is_not_a_module() -> None:
+    print("plugins/ also holds caches — a directory with no plugin.json owes no changelog")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        (tmp / "plugins" / ".cache").mkdir(parents=True)
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("no changelog is demanded of it", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def write_marketplace(root: Path, entry_version: str, top_version: str = "0.4.0") -> None:
+    market = root / ".claude-plugin"
+    market.mkdir(parents=True, exist_ok=True)
+    (market / "marketplace.json").write_text(
+        '{"version": "' + top_version + '", "plugins": [{"name": "scrumia-widget", '
+        '"version": "' + entry_version + '", "source": "./plugins/scrumia-widget"}]}\n',
+        encoding="utf-8")
+
+
+def test_marketplace_version_mismatch_names_the_file_to_fix() -> None:
+    print("plugin.json is the authority, so the error names marketplace.json as the one to fix")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_manifest(write_plugin(tmp, PLUGIN_CHANGELOG), "0.5.0")
+        write_marketplace(tmp, "0.4.0")
+        errors = run_check(tmp, "check_marketplace")
+        check("the error names marketplace.json as the file to fix",
+              any("fix marketplace.json" in e for e in errors), str(errors))
+        check("it does not report a symmetric 'mismatch'",
+              not any("version mismatch" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_marketplace_agreeing_versions_pass() -> None:
+    print("a module whose version differs from the marketplace's own is the normal state")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_manifest(write_plugin(tmp, PLUGIN_CHANGELOG), "0.5.0")
+        write_marketplace(tmp, "0.5.0", top_version="0.4.0")
+        v.ROOT = tmp
+        v.ERRORS.clear()
+        v.WARNINGS.clear()
+        v.check_marketplace()
+        check("no errors", list(v.ERRORS) == [], str(v.ERRORS))
+        check("and no lockstep warning either", list(v.WARNINGS) == [], str(v.WARNINGS))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def test_plugin_keeps_fixed_and_security() -> None:
     print("Fixed and Security are legitimate for a module, unlike for a spec")
     tmp = Path(tempfile.mkdtemp())
@@ -712,6 +848,15 @@ def main() -> int:
                  test_plugin_release_without_category_is_caught,
                  test_plugin_version_without_date_is_caught,
                  test_banned_field_outside_an_entry_is_caught,
+                 test_spec_entry_missing_a_required_field_is_caught,
+                 test_spec_entry_with_an_extra_field_is_caught,
+                 test_empty_spec_changelog_is_caught,
+                 test_changelog_outside_a_leaf_feature_is_reached,
+                 test_changelog_behind_plugin_json_is_caught,
+                 test_changelog_current_with_plugin_json_passes,
+                 test_directory_without_a_manifest_is_not_a_module,
+                 test_marketplace_version_mismatch_names_the_file_to_fix,
+                 test_marketplace_agreeing_versions_pass,
                  test_plugin_keeps_fixed_and_security,
                  test_template_placeholders_are_not_reached):
         test()

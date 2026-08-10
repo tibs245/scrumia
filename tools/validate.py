@@ -459,6 +459,7 @@ def check_global_index_drift() -> None:
 
 SPEC_CATEGORIES = {"Added", "Changed", "Deprecated", "Removed"}
 PLUGIN_CATEGORIES = SPEC_CATEGORIES | {"Fixed", "Security"}
+SPEC_ENTRY_FIELDS = {"Issue", "Category", "Breaking"}
 
 ENTRY_HEADING_RE = re.compile(r"^\d{4}-\d{2}-\d{2} — \S")
 VERSION_HEADING_RE = re.compile(r"^(?:\[Unreleased\]|\[\d+\.\d+\.\d+\] - \d{4}-\d{2}-\d{2})$")
@@ -487,21 +488,26 @@ def _entries(text: str) -> list[tuple[str, list[str]]]:
 
 def check_spec_changelogs() -> None:
     """A feature's changelog entry names only what exists when it is written."""
-    for feature_dir in bfi.find_leaf_features(ROOT):
-        path = feature_dir / "CHANGELOG.md"
-        if not path.exists():
-            continue
+    # Every CHANGELOG.md under features/, not only the leaves: an EPIC directory
+    # carrying one has the same reader and the same way to rot.
+    for path in sorted((ROOT / "features").rglob("CHANGELOG.md")):
         rel = path.relative_to(ROOT)
         text = path.read_text(encoding="utf-8")
         # File-scoped, not entry-scoped: a banned field in the preamble is still on disk.
         _report_banned_fields(text, str(rel))
-        for heading, body in _entries(text):
+        entries = _entries(text)
+        if not entries:
+            error(f"{rel}: no entry — a mandatory file with no content is an unwritten one")
+        for heading, body in entries:
             where = f"{rel}: '{heading}'"
             if not ENTRY_HEADING_RE.match(heading):
                 error(f"{where}: heading is not 'YYYY-MM-DD — <one-line title>'")
             keys = [m.group(1) for m in map(BULLET_KEY_RE.match, body) if m]
-            if keys.count("Category") != 1:
-                error(f"{where}: needs exactly one Category: line, found {keys.count('Category')}")
+            for required in ("Issue", "Category", "Breaking"):
+                if keys.count(required) != 1:
+                    error(f"{where}: needs exactly one {required}: line, found {keys.count(required)}")
+            for extra in sorted(set(keys) - SPEC_ENTRY_FIELDS):
+                error(f"{where}: unknown field '{extra}:' — the entry carries three, and only three")
             for line in body:
                 m = BULLET_KEY_RE.match(line)
                 if m and m.group(1) == "Category":
@@ -516,6 +522,10 @@ def check_spec_changelogs() -> None:
 def check_plugin_changelogs() -> None:
     """Every shipped module carries a Keep a Changelog file a consumer can read."""
     for plugin_dir in sorted(d for d in (ROOT / "plugins").iterdir() if d.is_dir()):
+        # A directory is a module when it declares itself one; plugins/ also holds caches.
+        manifest_path = plugin_dir / ".claude-plugin" / "plugin.json"
+        if not manifest_path.exists():
+            continue
         path = plugin_dir / "CHANGELOG.md"
         if not path.exists():
             error(f"plugins/{plugin_dir.name}: missing CHANGELOG.md")
@@ -540,6 +550,14 @@ def check_plugin_changelogs() -> None:
             # [Unreleased] is empty until something lands in it; a released version is not.
             if not categories and heading != "[Unreleased]":
                 error(f"{where}: no category section — a release states what kind of change it is")
+        released = [h for h, _ in entries if h != "[Unreleased]"]
+        declared = (load_json(manifest_path) or {}).get("version")
+        # The shape being gated buys nothing if the newest section describes an older release.
+        if released and declared and not released[0].startswith(f"[{declared}]"):
+            error(
+                f"{rel}: newest section is '{released[0]}' but plugin.json declares "
+                f"{declared} — the changelog cites plugin.json, so add the missing section"
+            )
         # A second changelog under the same plugin shadows the one a consumer reads.
         for stray in plugin_dir.rglob("CHANGELOG.md"):
             if stray != path:

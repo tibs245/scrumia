@@ -119,10 +119,8 @@ The entry's format is stated once, in [`references/catalog.md`](references/catal
 - Breaking: yes — see the migration described in #45
 ```
 
-Two rules the catalog states and this example only shows. **Name nothing that does not
-exist yet**: the issue number is knowable while you write, a PR number is not, and a
-placeholder standing in for one reads as a filled field. **One entry, one category**: a
-change that adds one rule and alters another is two entries.
+The two rules that example obeys — name nothing that does not exist yet, and one entry
+per category — are stated in the catalog with their reasons. Read them there.
 
 The *why* is in `#45`, not here. A changelog entry that explains its reasoning is a spec starting to grow again.
 
