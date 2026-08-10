@@ -134,19 +134,5 @@
   "install_composition_heading": "Votre composition",
   "install_composition_intro": "Voici ce que ScrumIA voit dans ce dépôt, lu depuis <code>.scrumia/config.yaml</code>. Rien n'est deviné : chaque slot est réel, chaque module installé ou vide à dessein.",
   "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ─────────────────────────────────\n  specs      scrumia-specs\n  tracker    scrumia-github-project\n  team       scrumia-teams\n  discovery  scrumia-discovery\n  design     scrumia-design\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  Change any of this with /scrumia-core:scrumia-compose.",
-  "install_after": "<code>scrumia-init</code> cartographie vos apps, propose une composition, offre la commande d'installation pour chaque module dont il a besoin, et écrit la composition dans <code>CLAUDE.md</code>. Le relancer vérifie au lieu de réécrire.",
-  "composer_js_strings": {
-    "marketplace": "# ajouter la place de marché une seule fois",
-    "install": "# installer votre composition",
-    "thenInit": "# puis, à l'intérieur du repo à configurer",
-    "configComment": "# Généré par le compositeur - examinez, puis validez",
-    "trackerToWrite": "tracker : le vôtre à écrire",
-    "implNeighbor": "implementation: code voisin",
-    "noteSolo": "Pas de suivi, pas d'équipe : de la bonne taille pour un script solo. Les specs restent actuelles dans le repo; l'historique vit dans git.",
-    "noteExploring": "Pas de suivi encore: le cadrage produit les specs sur une branche. Branchez le suivi quand les idées deviennent un backlog.",
-    "noteProduction": "La boucle complète. Vous conservez trois points de contact : décisions de cadrage, validations risquées, et la fusion. Les agents font le reste.",
-    "noteOtherTracker": "Le slot de suivi a un contrat défini - écrire un module Jira ou Linear est un travail borné (voir les docs). Jusqu'à alors, les compétences de tickets se dégradent en sortie texte.",
-    "noteOtherStack": "Aucun module d'implémentation pour ce stack encore: l'app suit les conventions du code voisin - comportement normal, pas une lacune. Le contrat pour écrire le vôtre tient une page.",
-    "notePractices": "Les pratiques s'appliquent app par app ; où l'une est en désaccord avec le module d'implémentation, le module d'implémentation gagne."
-  }
+  "install_after": "<code>scrumia-init</code> cartographie vos apps, propose une composition, offre la commande d'installation pour chaque module dont il a besoin, et écrit la composition dans <code>CLAUDE.md</code>. Le relancer vérifie au lieu de réécrire."
 }

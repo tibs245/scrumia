@@ -17,7 +17,8 @@ One module page per marketplace plugin is generated on top of that:
 
 Output: site/<page>.html (en), site/fr/<page>.html (fr), site/modules/<name>.html,
 site/fr/modules/<name>.html, site/assets/tokens.css, plus sitemap.xml.
-A key missing in any language fails the build — that is the anti-divergence guard.
+A key missing in any language, or a page-level key no template reads, fails the build —
+that is the anti-divergence guard, both directions.
 
 Run from anywhere: python3 tools/build_site.py
 Adding a language = add site/i18n/<lang>/ and one entry to LANGS below.
@@ -252,14 +253,14 @@ def render_page(lang: str, cfg: dict, page: str, tpl_path: Path, extra: dict[str
     if "{{" in html:
         ERRORS.append(f"{origin}: unresolved '{{{{' left in output")
     page_json = I18N / lang / f"{page}.json"
-    # Chrome keys are shared: only warn about unused page-level keys. A malformed
+    # Chrome keys are shared: only check unused-ness on page-level keys. A malformed
     # file is already reported by load_strings above — this reparse must not raise.
     try:
         page_keys = set(json.loads(page_json.read_text(encoding="utf-8")).keys()) if page_json.exists() else set()
     except json.JSONDecodeError:
         page_keys = set()
     for key in sorted({k for k in strings if k not in used} & page_keys):
-        print(f"warning: {origin}: unused string '{key}'")
+        ERRORS.append(f"{origin}: unused string '{key}'")
     out = cfg["out"] / f"{page}.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
