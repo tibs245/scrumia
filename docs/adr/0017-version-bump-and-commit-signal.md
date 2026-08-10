@@ -48,10 +48,21 @@ lookup that reads as complete.
 
 ### 1. What a bump promises a project already using the module
 
-The promise is about **the module's published surface** — the config keys it reads under
-`settings.<slot>`, the contract block it writes into `CLAUDE.md`, the names of the skills
-and commands it ships, the scripts other modules invoke by path. Not about the content of
-a project's own specs, which the module never owns.
+The promise is about **the module's published surface**:
+
+- the config keys it reads under `settings.<slot>`
+- the contract block it writes into `CLAUDE.md`
+- the names of the skills and commands it ships, and the scripts other modules invoke by
+  path
+- **what its skills instruct an agent to do, and the artefacts they produce**
+
+The fourth item is the one a repository of prose cannot leave out. Here the deliverable
+*is* the instruction, so a module that rewrites what a skill tells an agent has changed
+what a project gets, exactly as surely as one that renames a key — and a surface listing
+only names, keys and paths would let it ship under a bump promising nothing moved.
+
+Not about the content of a project's own specs, which the module never owns, and not about
+the module's internals, which it may reshape freely.
 
 | Bump | Promise | What the project owes |
 |---|---|---|
@@ -61,6 +72,11 @@ a project's own specs, which the module never owns.
 
 A project that takes a patch or a minor and then breaks has found a defect in the module,
 not a consequence it should have anticipated.
+
+**A release is a version published to the marketplace** — a manifest whose number moved,
+reachable by a project running `/plugin marketplace update`. Not a commit, not a merge:
+several merges can land between two releases, and none of them is one. The windows counted
+below are counted in these.
 
 ### 2. The signal: `<type>(<scope>): <subject>`
 
@@ -74,11 +90,18 @@ The scope is **one token**, from one of four namespaces:
 |---|---|---|
 | a module | its plugin name with `scrumia-` dropped | `core`, `teams`, `specs`, `github-project`, `design`, `discovery`, `rules`, `impl-rust`, `impl-solidjs`, `practice-tdd`, `practice-solid`, `practice-tanstack-query` |
 | an app | its name in `apps[]` of `.scrumia/config.yaml` | `site`, `tools` |
-| a feature | its directory name under the specs root | `dev-flow`, `github-tracking`, `release-versioning` |
-| everything else | the literal `repo` | `CLAUDE.md`, `.github/`, root `docs/`, the marketplace manifest |
+| a feature | the name of the directory holding its `index.md` | `dev-flow`, `github-tracking`, `release-versioning` |
+| everything else | the literal `repo` | `CLAUDE.md`, `.github/`, root `docs/`, root `design/`, the marketplace manifest |
 
-The four namespaces are disjoint today and must stay so. A new feature named after a
-module is a naming defect to fix, not a scope to disambiguate.
+The module column states a **rule** — plugin name, `scrumia-` dropped — and its examples
+are today's twelve, not the list. The thirteenth module needs no ADR.
+
+**Feature tokens name the directory that holds an `index.md`, not any directory under the
+specs root.** `features/app/site/` and `features/app/tools/` are grouping directories, not
+features, so `site` and `tools` stay app tokens and the namespaces do not overlap there.
+Within what remains, the four are disjoint today and must stay so: a new feature named
+after a module is a naming defect to fix, not a scope to disambiguate. `features/index.md`
+belongs to no feature and is scoped with whatever change regenerated it.
 
 **A commit touching several modules is split into one commit per module.** Where the
 change is genuinely atomic across them — the two sides of one contract, which cannot be
@@ -98,22 +121,44 @@ branch and PR steps, `CLAUDE.md`, the specs — cites it and enumerates nothing.
 | `feat` | a capability the module did not have | **minor** | `Added` |
 | `fix` | a defect in behaviour that already existed | **patch** | `Fixed` |
 | `refactor` | shape changed, behaviour did not | patch | `Changed` |
-| `docs` | prose a consumer reads | patch | `Changed` |
-| `chore` | tooling, CI, housekeeping | patch | none, normally |
-| `design` | what a user sees changes — a token, a component, a page | patch | `Changed` |
+| `docs` | prose that describes without instructing — a README, a rationale | patch | `Changed` |
+| `chore` | tooling, CI, housekeeping — nothing a consumer reads or runs | patch | none |
+| `design` | what a user sees changes — a token, a component, a page | **minor** | `Changed` |
 | `specs` | a rule under the specs root changes | none — see below | the spec changelog's, not a module's |
 
-Two rules govern the whole table:
+Three rules govern the whole table:
 
-- **`!` on the type, or a `BREAKING CHANGE:` footer, overrides the row and bumps a major.**
-  Available on every type, not only `feat` and `fix`.
 - **A bump happens only where the scope names a module.** A commit scoped to an app, a
   feature or `repo` moves no number, whatever its type, because there is no number to
   move. `docs(site):` bumps nothing; `docs(github-project):` bumps a patch. This is what
   makes `specs` a type with no version consequence: a feature carries no version, and a
   spec never lives inside a module.
+- **The type is chosen against §1's published surface, not against the files touched.**
+  This is what makes the type checkable rather than a mood. A change that adds something a
+  project can use is `feat`; one that makes existing behaviour do what it was already meant
+  to do is `fix`; `refactor`, `chore` and `docs` are for changes that alter **nothing** a
+  consumer reads or runs. The trap in this repository is `docs`: prose that *instructs an
+  agent* is the module's behaviour, so editing it is `feat` or `fix`, never `docs`. `docs`
+  is for prose that describes without instructing — a README, a rationale, a changelog.
+- **A change to the published surface that a project must act on carries `!`, or a
+  `BREAKING CHANGE:` footer, whatever its type.** Not only `feat` and `fix` may carry it,
+  and it is **owed**, not offered: this is the sentence that turns §7's "the commit's signal
+  is authoritative" into an authority over a signal someone is actually told to send. Its
+  absence is why zero of 116 commits have ever emitted one.
 
-**`design` and `specs` are admitted, not rejected.** `design` because five commits on
+`design` sits at **minor** and not at patch because a patch promises a project it may take
+the update without reading, and a change to what a user sees is never that. This is the
+ticket's option B taken for `design` specifically, at the cost the *Rejected alternatives*
+section prices: a stock parser, which ignores the type entirely, computes a lower number
+than we do.
+
+The changelog column names **a module's** categories. A commit changing a rule under the
+specs root writes a spec changelog instead, whose four categories are the specs module's
+own (`plugins/scrumia-specs/.../catalog.md`) and do not include `Fixed` — a rule that turns
+out wrong is a `Changed` there. `Deprecated`, `Removed` and `Security` are nobody's type:
+no commit type implies them, and they stay what a human writes when a change deserves one.
+
+**Both `design` and `specs` are admitted, not rejected.** `design` because five commits on
 `main` already use it for user-visible change and the repository ships a design module
 whose tokens are a consumer's surface; `specs` because the specs branch prefix at
 `docs/dev-flow.md` already uses it and rejecting it would leave a form in daily use
@@ -130,11 +175,17 @@ they stay what a human writes when they judge a change deserves one.
 Every module is at `0.4.0`, where semver promises nothing. Rather than pretend otherwise
 or let a doc rename ship `1.0.0`:
 
-| The mapping says | Below `1.0.0`, it is |
-|---|---|
-| major | minor — `0.4.0` → `0.5.0` |
-| minor | patch |
-| patch | patch |
+| The mapping says | Below `1.0.0`, the number moves | and the promise a project reads is |
+|---|---|---|
+| major | minor — `0.4.0` → `0.5.0` | major's: **act** |
+| minor | patch | minor's: nothing owed, read what you gained |
+| patch | patch | patch's: nothing owed |
+
+**The obligation shifts with the number.** §1's table is read one row up below `1.0.0`, and
+that is the whole point of writing the shift down: a project that read the unshifted table
+would take a minor "without acting" and break on a rename that shipped inside it. Below
+`1.0.0` a minor is where breakage lives, and a patch is where a minor's news lives — which
+is why the changelog is not optional reading below `1.0.0`, for either level.
 
 Reaching `1.0.0` is what lifts the shift, and is a decision per module, not a release-wide
 event.
@@ -230,13 +281,19 @@ a tracker with no pull request and no board, and see whether it survives:
 
 | Rule | Feature |
 |---|---|
-| what a bump promises, the bump unit, the `0.x` shift, type → bump, the scope alphabet, the deprecation window, the two staleness layers, breakage authority | **new** — `features/business/release-versioning/` |
+| what a bump promises, the bump unit, the `0.x` shift, how a type is chosen and which bump it earns, the deprecation window, the two staleness layers, breakage authority | **new** — `features/business/release-versioning/` |
 | every commit carries a type, a scope, and a reference to its work item; `--fixup`'s branch boundary | `features/business/dev-flow/` |
 | the reference trailer's spelling, one close in the pull request body, GitHub's closing keywords, closing left to GitHub | `features/business/github-tracking/` |
 
-The versioning half gets its own feature rather than joining `modular-composition`,
-because that feature's own out-of-scope bullet already argues the split: it establishes
-that a module exists and can be composed, not how it evolves once adopted.
+The type table itself is nobody's spec: it stays here, per the bet priced under *What we
+accept*, and both features cite it.
+
+The **replacement test** separates the third row from the first two — it survives a tracker
+swap or it does not. It cannot separate the first from the second, since both survive it
+word for word; what separates those is ADR-0004's one-unit-of-value criterion, and the
+argument for a new feature rather than an amendment of `modular-composition` is that
+feature's own out-of-scope bullet: it establishes that a module exists and can be composed,
+not how it evolves once adopted.
 
 ### Relation to 0001
 
@@ -298,9 +355,12 @@ gate, which does gate, is deliberate and named here rather than discovered later
   lands this ADR.
 - *The convention ships unenforced.* Stated here rather than found later. Until a gate
   exists, conformance is a habit.
-- *Below `1.0.0` the number says less than it will.* A feature and a fix are the same
-  patch bump until a module reaches `1.0.0`, so a consumer below it reads the changelog
-  for anything finer than "something moved".
+- *Below `1.0.0` the number says less than it will, and says it one row out.* A feature and
+  a fix are the same patch bump until a module reaches `1.0.0`; worse, the level a project
+  reads is not the level it owes, so every twelve modules shipping today require the shift
+  in §4 to be read alongside the promise in §1. Two tables to hold at once is a real cost,
+  and the alternative — leaving the promise table to read false for every module in
+  existence — is not one.
 - *A fifth business feature about process joins the specs root.* `release-versioning` sits
   beside `dev-flow`, `github-tracking`, `execution-policy` and `ceremonies`, and a reader
   filing a process rule now has one more door to try. The replacement test and each
