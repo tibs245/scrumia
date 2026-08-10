@@ -1,6 +1,7 @@
 # ADR-0006 — Ticket routing by measurable scope
 
 **Status**: accepted — 2026-08-07
+**Superseded by**: [0015](0015-scope-measures-reach.md) — 2026-08-10. The decision below stands as it was taken; its second question, and the `scope/L` row that renders it, were replaced. Nothing else here was edited.
 
 ## Context
 

@@ -46,11 +46,11 @@ Don't re-read all the specs on startup. You open a feature when a ticket concern
 
 Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, not an impression:
 
-| Label | Condition | Handling |
+| Label | Condition | Asked at entry |
 |---|---|---|
 | `scope/S` | At most 1 app, and no rule changes — it is already written | Autonomous execution alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | Autonomous execution + review by the tech role |
-| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if business is touched |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear | Autonomous execution + the tech role |
+| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New value unit, pivot, data migration | Out of execution: send it back to the scoping module |
 
 Three questions are enough to settle it: *how many apps?*, *does a rule consumed beyond one feature or app change?*, *does an interface contract change?*
@@ -59,7 +59,7 @@ The middle question measures **a rule's reach, not a file's location**: a contra
 
 When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 
-That "Handling" column is **entry** routing — who is asked before and during execution. It does not decide who reviews the PR at the end: gate 2 routes that by the diff's actual scope (ADR-0005), so a ticket whose diff outgrows the label you set still gets the review its diff calls for, and the gap comes back to you as a scoping signal rather than as a skipped review.
+That "Asked at entry" column is exactly that — **entry** routing — who is asked before and during execution. It does not decide who reviews the PR at the end: gate 2 routes that by the diff's actual scope (ADR-0005), so a ticket whose diff outgrows the label you set still gets the review its diff calls for, and the gap comes back to you as a scoping signal rather than as a skipped review.
 
 ## Preparing a sprint
 
