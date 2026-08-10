@@ -23,8 +23,7 @@ The execution path's mechanics — one worktree per ticket, one branch per ticke
 committing before the run yields control, what covers an acceptance criterion, review
 before merge, the three gates, `auto_merge` — are **this feature's**. Ownership is
 settled; the wording is not all here yet — worktree ownership lands through #20, and
-until it does, no other spec
-becomes its home. Committing before the run yields control is written down, in
+until it does, no other spec becomes its home. Committing before the run yields control is written down, in
 `business.md` § *Who decides, on each path*. A tracker feature *traces* that cycle:
 it says which concrete artefact each abstract step becomes on its tool, and it never
 redefines the step itself.

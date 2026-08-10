@@ -99,7 +99,7 @@ The outline:
 
 ## 7. The human validates and merges
 
-The PR carries the criterion-by-criterion mapping against the **issue's** criteria, a separate list of the **feature** criteria it added or amended — each cited with its file, the two sets being numbered alike and never merged — the modified specs, the review verdicts, and the open reservations with their issues.
+The PR carries the criterion-by-criterion mapping against the **issue's** criteria, a separate list of the **feature** criteria it added or amended, the modified specs, the review verdicts, and the open reservations with their issues.
 
 **Agents do not merge**, except for a category explicitly listed in `settings.autonomy.auto_merge`.
 

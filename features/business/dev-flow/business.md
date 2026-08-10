@@ -47,8 +47,8 @@ for the bootstrap case, is what it produces — see #18).
 
 An execution must show, for each acceptance criterion it is answerable for, something
 that could have failed. **Falsifiability is the requirement; a test file is the form it
-takes where a runner can exercise the criterion.** The form follows the **criterion's
-own subject**, never the deliverable's overall nature:
+takes where the criterion's subject is executable behaviour.** The form follows the
+**criterion's own subject**, never the deliverable's overall nature:
 
 - **A criterion whose subject is executable behaviour** — covered by a test that can
   fail. A ticket carrying code never trades such a criterion for a section reference,
@@ -58,8 +58,14 @@ own subject**, never the deliverable's overall nature:
   written so that a concrete case could contradict it. A criterion no case could
   contradict is not covered; pointing at a section does not rescue it.
 
-A criterion's subject is prose where no runner the project has could exercise it. That
-is a question about the project's runners, not about a file's extension.
+**Which side a criterion falls on is decided by its subject, not by the tooling that
+happens to exist.** Its subject is prose where there is nothing to execute: a rule, a
+wording, a document. Its subject is executable behaviour where something the project
+runs would behave differently depending on whether the criterion holds. **An absent
+harness does not make a criterion prose** — where a behaviour criterion has no test to
+run yet, writing that test is part of the work, not a reason to reclassify it. Asking
+which runner could exercise an artefact settles a borderline case; it never settles
+whether a behaviour owes a test.
 
 Keying the form to the criterion rather than to the deliverable is what keeps a mixed
 ticket answerable. One shipping code *and* a spec change owes tests for its behaviour
@@ -67,8 +73,8 @@ criteria and sections for its prose criteria, in the same proposal, with no read
 under which either half escapes — where the deliverable decided the form, such a ticket
 would face an impossible instruction and pick its way out of it.
 
-The second form is not a softening of the first. It exists because a criterion no
-runner can exercise cannot satisfy the first at all, and an execution meeting that wall
+The second form is not a softening of the first. It exists because a criterion with
+nothing to execute cannot satisfy the first at all, and an execution meeting that wall
 invents a substitute of its own.
 
 **This is what *verifiable* means** in § *The two paths*, what `qa.md` AC-1 calls "an
@@ -79,6 +85,12 @@ under three names, not three requirements.
 to or amends in the feature's acceptance file. A criterion already standing in that
 file and untouched by the ticket is not this execution's to re-cover; it was covered
 when it was written.
+
+**Not being answerable for a standing criterion is no licence to break one.** A
+criterion the ticket contradicts without touching is a contradiction surfacing
+mid-execution: the run stops and escalates under § *Who decides, on each path* →
+**Execution**, `qa.md` AC-2's case. And the project's tests and linter run in every
+case, whatever the execution is answerable for.
 
 A ticket whose entire deliverable is the specification satisfies the spec-before-code
 sequencing rather than waiving it: there is no second half to sequence against. Its

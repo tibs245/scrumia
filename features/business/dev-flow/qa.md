@@ -132,8 +132,8 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
 ### AC-11 — The criterion's own subject decides the form its coverage takes
 
 ```gherkin
-Given a criterion whose subject is prose, no runner the project has being able to
-  exercise it
+Given a criterion whose subject is prose — a rule, a wording, a document, with nothing
+  to execute
 When the reviewable proposal is reviewed
 Then the section that satisfies the criterion is accepted as its coverage, and no
   finding is raised for the absence of a test file
@@ -148,6 +148,14 @@ Then that criterion is blocked unless a test that can fail covers it, the prose 
 ```
 
 ```gherkin
+Given a criterion whose subject is executable behaviour, the project having no harness
+  able to run it yet
+When the reviewable proposal is reviewed
+Then the criterion still owes a test and writing the harness is part of the work — the
+  absence of a runner does not reclassify its subject as prose
+```
+
+```gherkin
 Given a criterion that no concrete case could contradict
 When the reviewable proposal is reviewed
 Then it is reported as uncovered, whichever section the proposal points at
@@ -159,8 +167,8 @@ Then it is reported as uncovered, whichever section the proposal points at
 Given a ticket that amends one criterion in its feature's acceptance file, that file
   holding nine others it does not touch
 When gate 2 checks what the proposal covers
-Then it raises a finding only on the ticket's own criteria and the one amended, and
-  none on the nine standing criteria the ticket left alone
+Then it checks only the ticket's own criteria and the one amended, and raises no
+  finding on the nine standing criteria the ticket left alone
 ```
 
 ### AC-13 — The two acceptance namespaces stay two lists, each citation carrying its own
