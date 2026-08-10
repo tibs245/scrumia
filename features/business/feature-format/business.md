@@ -166,23 +166,13 @@ category of change it is. It never explains *why*; the issue does that. A
 changelog entry that explains is a spec that has started growing again — that
 is exactly how the monolithic PRD this format replaces re-forms.
 
-An entry names **only what exists when it is written**. The issue number does;
-the PR number does not, because the entry is part of the change the PR carries.
-A field nobody can fill is filled with a placeholder, and a placeholder reads as
-a complete entry to everything that does not squint. The issue reaches the PR
-through the tracker anyway, so nothing is lost by not storing it twice.
-
-The category is one of four, drawn from
-[Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/): `Added`,
-`Changed`, `Deprecated`, `Removed`. Its `Fixed` is not adopted here — a spec
-rule that turns out wrong is a `Changed`, since a document has no bugs, only
-rules that were wrong — and its `Security` has no referent in a document.
-`Deprecated` is the one that earns its place at this stratum: a rule being
-retired may be cited by other features, and that is the warning they need
-before it goes.
-
-An entry classifies **one** change. A change that spans two categories is two
-entries, not one entry with the more flattering label.
+An entry names **only what exists when it is written** — the issue does, a PR
+number does not, since the entry ships inside the PR. A field nobody can fill
+gets a placeholder, and a placeholder reads as complete to anything that does not
+squint. And an entry classifies **one** change: a change spanning two categories
+is two entries, since a single label would be false about half of it. Which four
+categories, and why two of [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s
+six have no referent in a document, is the catalogue's to state.
 
 History lives in three places, one per use: `CHANGELOG.md` for *what* changed
 and *when*, in one line; the commits for *who* changed it; the issues for

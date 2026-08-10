@@ -416,6 +416,200 @@ def test_qa_with_fenced_criteria_passes() -> None:
         shutil.rmtree(tmp)
 
 
+# --- check_spec_changelogs ---
+
+SPEC_ENTRY = (
+    "# Changelog — widget\n\n"
+    "## 2026-08-10 — The widget states its boundary\n"
+    "- Issue: #42\n"
+    "- Category: Changed\n"
+    "- Breaking: no\n"
+)
+
+
+def write_spec_changelog(root: Path, body: str) -> Path:
+    feature = root / "features" / "business" / "widget"
+    write_feature_index(feature)
+    (feature / "CHANGELOG.md").write_text(body, encoding="utf-8")
+    return feature
+
+
+def test_spec_entry_with_pr_line_is_caught() -> None:
+    print("a spec entry carrying a PR: line is an error, whatever its value")
+    for value in ("#48", "#NN (filled at merge)", "(filled at merge)", "TBD"):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            write_spec_changelog(tmp, SPEC_ENTRY.replace(
+                "- Breaking: no\n", f"- PR: {value}\n- Breaking: no\n"))
+            errors = run_check(tmp, "check_spec_changelogs")
+            check(f"'PR: {value}' is reported",
+                  any("PR:" in e for e in errors), str(errors))
+        finally:
+            shutil.rmtree(tmp)
+
+
+def test_spec_entry_with_unfilled_placeholder_is_caught() -> None:
+    print("a #NN placeholder in any field is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, SPEC_ENTRY.replace("- Issue: #42", "- Issue: #NN"))
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("#NN is reported", any("#NN" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_spec_entry_without_category_is_caught() -> None:
+    print("a spec entry with no Category: line is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, SPEC_ENTRY.replace("- Category: Changed\n", ""))
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("the missing category is reported",
+              any("exactly one Category" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_spec_entry_with_foreign_category_is_caught() -> None:
+    print("Fixed and Security have no referent in a spec, so they are errors there")
+    for value in ("Fixed", "Security", "Invented"):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            write_spec_changelog(tmp, SPEC_ENTRY.replace("Category: Changed", f"Category: {value}"))
+            errors = run_check(tmp, "check_spec_changelogs")
+            check(f"'{value}' is reported",
+                  any(f"category '{value}'" in e for e in errors), str(errors))
+        finally:
+            shutil.rmtree(tmp)
+
+
+def test_spec_entry_with_bad_heading_is_caught() -> None:
+    print("a heading that is not a date and a title is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, SPEC_ENTRY.replace(
+            "## 2026-08-10 — The widget states its boundary", "## Unreleased"))
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("the malformed heading is reported",
+              any("YYYY-MM-DD" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_conformant_spec_changelog_passes() -> None:
+    print("a conformant spec changelog, wrapped prose and free-text Breaking included")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_spec_changelog(tmp, SPEC_ENTRY.replace(
+            "- Breaking: no\n",
+            "- Breaking: no. The previous wording stays valid for readers of the\n"
+            "  older guide, which is why nothing is dated here.\n"))
+        errors = run_check(tmp, "check_spec_changelogs")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+# --- check_plugin_changelogs ---
+
+PLUGIN_CHANGELOG = (
+    "# Changelog — scrumia-widget\n\n"
+    "## [Unreleased]\n\n"
+    "## [0.4.0] - 2026-08-10\n"
+    "### Added\n"
+    "- The widget slot.\n"
+)
+
+
+def write_plugin(root: Path, body: str | None) -> Path:
+    plugin = root / "plugins" / "scrumia-widget"
+    plugin.mkdir(parents=True, exist_ok=True)
+    if body is not None:
+        (plugin / "CHANGELOG.md").write_text(body, encoding="utf-8")
+    return plugin
+
+
+def test_plugin_without_changelog_is_caught() -> None:
+    print("a shipped module with no changelog is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, None)
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the missing file is reported",
+              any("missing CHANGELOG.md" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_second_changelog_is_caught() -> None:
+    print("a skill-level changelog shadows the one a consumer reads")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        plugin = write_plugin(tmp, PLUGIN_CHANGELOG)
+        skill = plugin / "skills" / "scrumia-widget"
+        skill.mkdir(parents=True)
+        (skill / "CHANGELOG.md").write_text("# Changelog\n\n## [0.1.0] - 2026-01-01\n", encoding="utf-8")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the shadowing file is reported",
+              any("shadows" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_bad_version_heading_is_caught() -> None:
+    print("a plugin section heading that is not '[<version>] - date' is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, PLUGIN_CHANGELOG.replace("## [0.4.0] - 2026-08-10", "## 0.4.0"))
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("the malformed heading is reported",
+              any("[<version>]" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_foreign_category_is_caught() -> None:
+    print("a category outside Keep a Changelog's six is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, PLUGIN_CHANGELOG.replace("### Added", "### Improved"))
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("'Improved' is reported",
+              any("category 'Improved'" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_plugin_keeps_fixed_and_security() -> None:
+    print("Fixed and Security are legitimate for a module, unlike for a spec")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin(tmp, PLUGIN_CHANGELOG + "### Fixed\n- A thing.\n### Security\n- Another.\n")
+        errors = run_check(tmp, "check_plugin_changelogs")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_template_placeholders_are_not_reached() -> None:
+    print("the template legitimately carries #NN, and neither check walks it")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        assets = tmp / "plugins" / "scrumia-specs" / "skills" / "scrumia-feature" / "assets"
+        assets.mkdir(parents=True)
+        (assets / "CHANGELOG.template.md").write_text(
+            "# Changelog — <feature>\n\n## YYYY-MM-DD — <title>\n- Issue: #NN\n", encoding="utf-8")
+        (tmp / "plugins" / "scrumia-specs" / "CHANGELOG.md").write_text(
+            PLUGIN_CHANGELOG, encoding="utf-8")
+        write_spec_changelog(tmp, SPEC_ENTRY)
+        errors = run_check(tmp, "check_spec_changelogs") + run_check(tmp, "check_plugin_changelogs")
+        check("the template is not reported",
+              not any("template" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_broken_link_under_features_is_caught,
                  test_valid_link_under_features_passes,
@@ -439,7 +633,19 @@ def main() -> int:
                  test_ticket_url_reference_is_caught,
                  test_long_digit_run_is_not_a_ticket,
                  test_qa_without_criterion_shape_is_caught,
-                 test_qa_with_fenced_criteria_passes):
+                 test_qa_with_fenced_criteria_passes,
+                 test_spec_entry_with_pr_line_is_caught,
+                 test_spec_entry_with_unfilled_placeholder_is_caught,
+                 test_spec_entry_without_category_is_caught,
+                 test_spec_entry_with_foreign_category_is_caught,
+                 test_spec_entry_with_bad_heading_is_caught,
+                 test_conformant_spec_changelog_passes,
+                 test_plugin_without_changelog_is_caught,
+                 test_plugin_second_changelog_is_caught,
+                 test_plugin_bad_version_heading_is_caught,
+                 test_plugin_foreign_category_is_caught,
+                 test_plugin_keeps_fixed_and_security,
+                 test_template_placeholders_are_not_reached):
         test()
     print()
     if FAILURES:

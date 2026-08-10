@@ -76,15 +76,12 @@ def check_marketplace() -> dict[str, dict]:
             continue
         if manifest.get("name") != name:
             error(f"plugins/{name}/plugin.json: name '{manifest.get('name')}' != directory")
+        # Modules version independently, so only plugin.json can say which side is wrong.
         if manifest.get("version") != entry.get("version"):
             error(
-                f"plugins/{name}: version mismatch — plugin.json {manifest.get('version')} "
-                f"vs marketplace.json {entry.get('version')}"
-            )
-        if manifest.get("version") != market.get("version"):
-            warn(
-                f"plugins/{name}: version {manifest.get('version')} differs from "
-                f"marketplace version {market.get('version')}"
+                f"marketplace.json: entry '{name}' says {entry.get('version')} — "
+                f"plugins/{name}/plugin.json declares {manifest.get('version')}, "
+                f"and it is the authority; fix marketplace.json"
             )
         source = entry.get("source")
         if source != f"./plugins/{name}":
@@ -460,6 +457,91 @@ def check_global_index_drift() -> None:
     )
 
 
+SPEC_CATEGORIES = {"Added", "Changed", "Deprecated", "Removed"}
+PLUGIN_CATEGORIES = SPEC_CATEGORIES | {"Fixed", "Security"}
+
+ENTRY_HEADING_RE = re.compile(r"^\d{4}-\d{2}-\d{2} — \S")
+VERSION_HEADING_RE = re.compile(r"^\[(Unreleased|\d+\.\d+\.\d+)\](?: - \d{4}-\d{2}-\d{2})?$")
+BULLET_KEY_RE = re.compile(r"^- ([A-Za-z]+):")
+PLACEHOLDER_RE = re.compile(r"#NN\b")
+
+
+def _entries(text: str) -> list[tuple[str, list[str]]]:
+    """Split a changelog into (heading, body lines) per '## ' block."""
+    blocks: list[tuple[str, list[str]]] = []
+    for line in text.splitlines():
+        if line.startswith("## "):
+            blocks.append((line[3:].strip(), []))
+        elif blocks:
+            blocks[-1][1].append(line)
+    return blocks
+
+
+def check_spec_changelogs() -> None:
+    """A feature's changelog entry names only what exists when it is written."""
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        path = feature_dir / "CHANGELOG.md"
+        if not path.exists():
+            continue
+        rel = path.relative_to(ROOT)
+        for heading, body in _entries(path.read_text(encoding="utf-8")):
+            where = f"{rel}: '{heading}'"
+            if not ENTRY_HEADING_RE.match(heading):
+                error(f"{where}: heading is not 'YYYY-MM-DD — <one-line title>'")
+            keys = [m.group(1) for m in map(BULLET_KEY_RE.match, body) if m]
+            if "PR" in keys:
+                error(f"{where}: carries a PR: line — an entry names only what exists when written")
+            if PLACEHOLDER_RE.search("\n".join(body)):
+                error(f"{where}: carries a #NN placeholder")
+            categories = [k for k in keys if k in PLUGIN_CATEGORIES or k == "Category"]
+            if categories.count("Category") != 1:
+                error(f"{where}: needs exactly one Category: line, found {categories.count('Category')}")
+            for line in body:
+                m = BULLET_KEY_RE.match(line)
+                if m and m.group(1) == "Category":
+                    value = line.split(":", 1)[1].strip()
+                    if value not in SPEC_CATEGORIES:
+                        error(
+                            f"{where}: category '{value}' is not one of "
+                            f"{', '.join(sorted(SPEC_CATEGORIES))}"
+                        )
+
+
+def check_plugin_changelogs() -> None:
+    """Every shipped module carries a Keep a Changelog file a consumer can read."""
+    for plugin_dir in sorted(d for d in (ROOT / "plugins").iterdir() if d.is_dir()):
+        path = plugin_dir / "CHANGELOG.md"
+        if not path.exists():
+            error(f"plugins/{plugin_dir.name}: missing CHANGELOG.md")
+            continue
+        rel = path.relative_to(ROOT)
+        text = path.read_text(encoding="utf-8")
+        entries = _entries(text)
+        if not entries:
+            error(f"{rel}: no version section")
+        for heading, body in entries:
+            where = f"{rel}: '{heading}'"
+            if not VERSION_HEADING_RE.match(heading):
+                error(f"{where}: heading is not '[<version>] - YYYY-MM-DD' or '[Unreleased]'")
+            if PLACEHOLDER_RE.search("\n".join(body)):
+                error(f"{where}: carries a #NN placeholder")
+            for line in body:
+                if line.startswith("### "):
+                    category = line[4:].strip()
+                    if category not in PLUGIN_CATEGORIES:
+                        error(
+                            f"{where}: category '{category}' is not one of "
+                            f"{', '.join(sorted(PLUGIN_CATEGORIES))}"
+                        )
+        # A second changelog under the same plugin shadows the one a consumer reads.
+        for stray in plugin_dir.rglob("CHANGELOG.md"):
+            if stray != path:
+                error(
+                    f"{stray.relative_to(ROOT)}: a module carries one changelog, at its root — "
+                    f"this one shadows {rel}"
+                )
+
+
 def main() -> int:
     check_marketplace()
     check_skills()
@@ -478,6 +560,8 @@ def main() -> int:
     check_feature_index_sections()
     check_feature_files_present()
     check_global_index_drift()
+    check_spec_changelogs()
+    check_plugin_changelogs()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")
