@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — The blast-radius test reaches its readers: ADR-0015 supersedes 0006, and every surface a labeller works from applies the test and names this feature as its owner
+- Issue: #78
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — A deviation gets one durable, fielded venue carrying its kind and its cell; counting repetition is a human's job, and the record is never read back to choose a model
 - Issue: #32
 - PR: #NN (filled at merge)

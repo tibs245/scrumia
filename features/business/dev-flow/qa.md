@@ -66,7 +66,7 @@ Given a ticket labelled `scope/S` whose diff touches `features/business/**`
 When gate 2 runs
 Then the business role reviews it, alongside tech, because the diff routes the
   review and the label does not, and the gap between the two is flagged in the PR
-  as a scoping failure per ADR-0006
+  as a scoping failure per ADR-0015
 ```
 
 ### AC-7 — Where a tracker feature and this one disagree on the process, this one governs

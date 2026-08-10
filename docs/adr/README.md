@@ -9,7 +9,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0003](0003-cross-cutting-architecture.md) | `archi.md` in the EPIC + project ADRs | accepted |
 | [0004](0004-feature-splitting.md) | Feature splitting criterion | accepted |
 | [0005](0005-validation-gates.md) | Validation gates and autonomy levels | accepted |
-| [0006](0006-ticket-routing.md) | Ticket routing by measurable scope | accepted |
+| [0006](0006-ticket-routing.md) | Ticket routing by measurable scope | superseded by [0015](0015-scope-measures-reach.md) |
 | [0007](0007-single-base-repo.md) | A single base repo | accepted |
 | [0008](0008-state-lives-in-github.md) | State lives in GitHub | accepted |
 | [0009](0009-documented-composition.md) | Documented composition, no dynamic resolution | accepted |
@@ -18,6 +18,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0012](0012-specs-contract.md) | The specs contract: documented, not hard-coded | accepted |
 | [0013](0013-tracker-stays-one-slot.md) | The `tracker` slot stays one slot, for now | accepted |
 | [0014](0014-roles-ship-with-their-capability.md) | A standing role ships with the module that gives it something to guard | accepted |
+| [0015](0015-scope-measures-reach.md) | The scope axis measures reach, not medium | accepted |
 
 ## Scope of the decisions
 
@@ -26,7 +27,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | Scope | ADR |
 |---|---|
 | **The project** | 0001 (distribution), 0007 (single repo), 0009 (composition) |
-| **The `team` module** | 0002 (standing roles), 0005 (gates), 0006 (routing) |
+| **The `team` module** | 0002 (standing roles), 0005 (gates), 0015 (routing, superseding 0006) |
 | **The `specs` module** | 0003 (cross-cutting architecture), 0004 (splitting) |
 | **The `tracker` module** | 0008 (state outside the repo), 0013 (one slot, for now) |
 | **The `design` module** | 0014 (a role ships with its capability) |

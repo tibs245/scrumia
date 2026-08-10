@@ -48,6 +48,23 @@ If absent, propose these values and write them. The columns reflect the real flo
 
 `gh label create <name> --color <hex> --description <text>`, ignoring duplicate errors.
 
+### The scope and risk descriptions are seeded verbatim, not improvised
+
+A label's description is the only statement of the axis a labeller gets without leaving GitHub, and it outlives the repository it was copied from. Seed these exactly — a description typed from memory at install time becomes one more independent rendering of a test, which is precisely how the scope axis came to say four different things in four places (#78):
+
+```bash
+gh label create "scope/S"  --color c2e0c6 --description "1 app, and no rule changes: it is already written"
+gh label create "scope/M"  --color fef2c0 --description "1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear"
+gh label create "scope/L"  --color f9d0c4 --description "2+ apps, a rule consumed beyond one feature or app, or an interface contract"
+gh label create "scope/XL" --color e99695 --description "New unit of value, pivot, migration — belongs to scoping"
+gh label create "risk/low"      --color 0e8a16 --description "Reversible in a commit, no data, no user-visible behaviour"
+gh label create "risk/medium"   --color fbca04 --description "Visible to users, but a revert restores the previous state"
+gh label create "risk/high"     --color d93f0b --description "Money, personal data, auth, or a contract other apps consume"
+gh label create "risk/critical" --color b60205 --description "Irreversible: destructive migration, payment, outbound notification"
+```
+
+The `scope/*` wording turns on **a rule's reach, not a file's location**: a rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule is not `scope/L` on that clause, however many spec files its diff lists. The test is the execution policy's to state — [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium* here, or whichever feature owns the axis in the project being set up — and the descriptions above carry that section's own words rather than a paraphrase of them. Re-run this step after the test changes; nothing else propagates it to GitHub.
+
 Scope and risk are two axes, not one scale. A one-line change to a payment rule is `scope/S` and `risk/critical`; a large but mechanical rename is `scope/L` and `risk/low`. Collapsing them into a single "priority" is what makes small dangerous changes get executed casually.
 
 If the project already labels its tickets, keep its vocabulary and map it in `settings.team.execution.labels` (`scrumia-team-setup`, Step 3) rather than relabelling an existing backlog.

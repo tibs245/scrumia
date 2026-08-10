@@ -17,11 +17,11 @@ A role does not activate on every ticket. It activates when the ticket crosses
 into what it owns.
 
 **Manager** — always, first: it routes every ticket by giving it exactly one
-`scope/*` label (`docs/adr/0006-ticket-routing.md`), prepares each sprint from
+`scope/*` label (`docs/adr/0015-scope-measures-reach.md`), prepares each sprint from
 the ready tickets, and arbitrates whenever business and tech disagree.
 
 **Business** — a ticket is labeled `scope/L` and changes a business rule
-(`docs/adr/0006-ticket-routing.md`; what counts as changing one is the
+(`docs/adr/0015-scope-measures-reach.md`; what counts as changing one is the
 blast-radius test in `features/business/execution-policy/`, not the fact that a
 file under `features/business/` moved); or the manager escalates a business-rule
 ambiguity, a functional edge case, or a compliance question directly, outside
@@ -31,7 +31,7 @@ of a ticket's routing.
 or the manager escalates a doubt about architecture, a dependency, debt, or
 implementation quality directly.
 
-The label conditions who is asked at entry; ADR-0006 also holds that the diff's
+The label conditions who is asked at entry; ADR-0015 also holds that the diff's
 actual scope conditions who reviews at exit, independent of the label.
 
 ## Convening the team

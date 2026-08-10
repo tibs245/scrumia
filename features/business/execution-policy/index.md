@@ -22,8 +22,15 @@ judgement improvised when execution starts.
 - The grid's cells and the capability order they climb are **project data**, declared
   in `.scrumia/config.yaml` under `settings.team.execution`. This spec states the
   invariant they must satisfy; it does not restate them.
-- Related ADRs: `docs/adr/0006-ticket-routing.md` — why the scope axis is measured
-  rather than estimated, and the three questions it is measured by.
+- Related ADRs: `docs/adr/0015-scope-measures-reach.md` — why the scope axis is measured
+  rather than estimated, the three questions it is measured by, and why the second one
+  reads a rule's reach rather than a file's location. It supersedes
+  `docs/adr/0006-ticket-routing.md`.
+- Consumed beyond this feature: the blast-radius test in `business.md` § *The scope axis
+  measures reach, not medium* is read by `features/business/agent-team/` for entry
+  routing, and applied by the plugin prose and the `scope/*` label descriptions that a
+  labeller works from. Changing it is a change other features and a tracker artefact
+  feel — which is what makes such a change `scope/L` under the test itself.
 
 ## Files present
 
@@ -50,6 +57,3 @@ deliberately out of this spec, and stating them here would be the second stateme
   order beside it
 - #18 — the bootstrap gate refuses a ticket whose deliverable is its own parent
   feature; this feature was created under that gap, by the exception #12 set
-- #78 — the scope axis's blast-radius test is stated here but not yet in
-  `docs/adr/0006`'s wording, nor in the plugin prose and label descriptions that
-  restate it

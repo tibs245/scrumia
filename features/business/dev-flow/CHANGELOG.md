@@ -2,6 +2,11 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
+## 2026-08-10 — AC-6's scoping-failure citation follows the routing decision to ADR-0015; gate 2's own routing is unchanged
+- Issue: #78
+- PR: #NN (filled at merge)
+- Breaking: no
+
 ## 2026-08-09 — An execution commits to the ticket's branch before it yields control, at every yield point
 - Issue: #118
 - PR: #NN (filled at merge)
