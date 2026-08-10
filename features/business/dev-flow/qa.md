@@ -172,12 +172,6 @@ Then the criterion is reported as uncovered — the approximation may ship as a 
   and it does not stand in for the audit or checklist the subject calls for
 ```
 
-```gherkin
-Given a criterion that no concrete case could contradict
-When the reviewable proposal is reviewed
-Then it is reported as uncovered, whichever section the proposal points at
-```
-
 ### AC-12 — An execution answers for the criteria it touched, not for the whole file
 
 ```gherkin
@@ -205,7 +199,7 @@ When the proposal is reviewed
 Then no finding is raised on the difference in counts
 ```
 
-### AC-14 — A section reference locates what satisfies a criterion; it never covers it
+### AC-14 — Coverage is an act that could have come out otherwise; a location, a blanket verdict and an unfalsifiable criterion are not
 
 ```gherkin
 Given a proposal whose mapping answers a criterion with a section reference and nothing
@@ -220,6 +214,19 @@ Given a criterion covered by an agent audit at gate 2
 When the proposal writes its line in the criterion-by-criterion mapping
 Then that line carries both the location of what satisfies the criterion and the form
   that checked it with its outcome, rather than either one alone
+```
+
+```gherkin
+Given a proposal carrying ten criteria and one gate 2 verdict that named two of them
+When it maps the other eight to that same overall verdict
+Then those eight are reported as uncovered: an audit covers the criteria its verdict
+  addresses, and a blanket verdict comes out the same beside any of them
+```
+
+```gherkin
+Given a criterion that no concrete case could contradict
+When the reviewable proposal is reviewed
+Then it is reported as uncovered, whichever section the proposal points at
 ```
 
 ## Out of scope

@@ -63,10 +63,10 @@ in a markdown table.
 
 | Form | What it is | It fails when | Worked example in this repo |
 |---|---|---|---|
-| **Unit test** | code exercising one behaviour of the code | an assertion does not hold | `tools/test_build_site.py`'s `test_ac8_index_links_to_every_module` — it reads the built index in both languages and asserts every plugin the marketplace declares is linked from it |
+| **Unit test** | code exercising one behaviour of the code | an assertion does not hold | `tools/test_build_site.py`'s `test_ac9_link_is_generated_not_hand_written` — it calls `module_link_specials()` with two invented module names and asserts the hrefs it returns were derived from them rather than hardcoded |
 | **Integration test** | code standing a realistic whole up and running the real thing across it | an assertion does not hold, on the assembled system | `tools/test_validate.py`'s `test_broken_link_under_features_is_caught` — it builds a throwaway feature tree holding one dangling link, runs the real `check_doc_links()` over it, and asserts the gate reports it |
-| **Automated check over the prose itself** | a program reading the project's own text and refusing a structure the rule forbids | the check reports an error and CI goes red | `tools/validate.py`'s `check_doc_links()` — it walks every relative markdown link under `docs/`, `plugins/` and `features/` and errors on one that resolves nowhere, on every push |
-| **Audit by an external agent** | a role reading the change against the question that role owns, and returning a verdict | the verdict is **Blocked**, with the failing case named | gate 2 on this very section: `scrumia-business` blocked its first wording, naming the case that wording made unsatisfiable — a mixed ticket owing a unit test for a sentence in a table ([#31](https://github.com/tibs245/scrumia/issues/31#issuecomment-5240730278)) |
+| **Automated check over the prose itself** | a program reading the project's own text and refusing a structure the rule forbids | the check reports an error and CI goes red | `tools/validate.py`'s `check_doc_links()` — it walks every relative markdown link under `docs/`, `plugins/` and `features/` and errors on one that resolves nowhere, on every pull request and every push to `main` |
+| **Audit by an external agent** | a role reading the change against the question that role owns, and returning a verdict | the verdict is **Blocked**, with the failing case named | gate 2 on this very section: `scrumia-business` blocked its first wording, naming the case that wording made unsatisfiable — a mixed ticket owing a unit test for a sentence in a table (#31) |
 | **External validation checklist** | the cases written out and walked one by one, by someone who did not write the change, each outcome reported and signed | a case comes out wrong | gate 3 on this very section: its claim that a rule is something *"where there is nothing to execute"* was walked against two mechanisms this repo runs daily — `tools/validate.py` and the gate 2 reviews — and came out false, which is what sent it back |
 | **Self-validation checklist** | the same walk, run by the execution over its own diff, against a list stated in advance | a case comes out wrong | the execution's own self-review step, over its enumerated list: an uncovered criterion, an ignored error case, a contract changed without its file, an out-of-scope file |
 
@@ -75,6 +75,13 @@ has cases stated in advance and a case can come out wrong. It is what remains wh
 team module is plugged in, and a proposal says which one ran rather than letting a
 self-check read as a review.
 
+**This umbrella is this feature's, and a practice may narrow it.** Where a practice
+plugged in through `apps[].practices` uses *test* in a narrower sense — a red test in
+`scrumia-practice-tdd` is code exercising code — that narrower sense governs inside the
+paths the practice covers, and a criterion there is not discharged by an audit or a
+checklist. The forms above say what covers a criterion at gate 2; they never lower a
+practice's own bar.
+
 ### Which form a criterion's subject calls for
 
 Read this by the criterion's subject. Not by what tooling happens to exist, and not by
@@ -82,20 +89,23 @@ how strong a form one could imagine building.
 
 | The criterion's subject | The form it calls for | Worked example |
 |---|---|---|
-| Behaviour of code the project runs | a unit or integration test | `app/site/module-pages/qa.md AC-8` — *every module is reachable from the site's navigation* — is behaviour of `tools/build_site.py`; `test_ac8_index_links_to_every_module` fails the moment a module page stops being linked |
+| Behaviour of code the project runs | a unit or integration test | `features/app/site/module-pages/qa.md AC-9` — *the link is generated, not hand-written* — is behaviour of `tools/build_site.py`; `test_ac9_link_is_generated_not_hand_written` calls the function and fails the moment a URL stops being derived from the module's name |
 | A property of the project's own text that a program can decide | an automated check over the prose, in the harness CI already runs | *every relative link resolves* is decidable by reading the tree, and `check_doc_links()` decides it — the artefact under test is markdown, and it is executed against |
-| A judgement about a rule — is this wording consistent with another spec, is it ambiguous, would an agent reading it do the intended thing | an audit by the role that owns that judgement, at gate 2, returning a verdict | `qa.md` AC-13 — *the two acceptance namespaces stay two lists* — is a judgement about wording; `scrumia-business` owns spec vocabulary, and its verdict on the diff is the test |
-| A property with finitely many cases that a reader must walk, because no program decides them | a validation checklist: the cases written out, walked, each outcome reported — external where the stakes justify it, the execution's own at minimum | `qa.md` AC-5's two `auto_merge` scenarios, walked against `.scrumia/config.yaml` (`auto_merge: none`) and reported case by case |
+| A judgement about a rule — is this wording consistent with another spec, is it ambiguous, would an agent reading it do the intended thing | an audit by the role that owns that judgement, at gate 2, returning a verdict on that criterion; a checklist walked against the criterion where no role owns the judgement | `qa.md` AC-13 — *the two acceptance namespaces stay two lists* — is a judgement about wording; `scrumia-business` owns spec vocabulary, and its verdict on the diff is the test |
+| A property with finitely many cases that a reader must walk, because no program decides them | a validation checklist: the cases written out, walked, each outcome reported — external where the stakes justify it, the execution's own at minimum | `qa.md` AC-5's two `auto_merge` scenarios, walked against the paragraph that enumerates all three settings (`scrumia-review` Step 5, *Do not merge*), with `.scrumia/config.yaml` supplying the value in force |
 
-**"A program can decide it" is a strict test, not an aspiration.** A program decides a
-property when it returns the verdict a careful reader would return, on every case the
-criterion covers. Where it would pass on something the criterion forbids, or fail on
-something the criterion allows, it approximates the property and does not cover the
-criterion. `tools/validate.py`'s `check_french_leftovers()` is exactly that: it counts
-accented characters and flags a file past three, which catches leftover French and also
-catches a page full of proper nouns. It is shipped as a warning for that reason, and a
-warning is not coverage. Ship the approximation where it helps; the criterion still owes
-the form its subject calls for.
+**Whether a program can decide a property is settled by running the check, not by
+imagining inputs.** A check decides a property when, run over the project's actual
+content, it reports nothing a careful reader would not — which is exactly what makes it
+shippable as an error rather than a warning. `tools/validate.py` carries both channels
+and the choice between them *is* this distinction: `check_doc_links()` errors, because
+on this repository's real tree it flags only links that genuinely resolve nowhere;
+`check_french_leftovers()` warns, because it counts accented characters and flags a file
+past three, which catches leftover French and also catches a page full of proper nouns.
+A check that has to warn in order to stay quiet is an approximation: ship it where it
+helps, and the criterion still owes the form its subject calls for. Hunting for a
+pathological input some future check would mishandle is **not** this test — every
+matcher has one, and treating that as disqualifying would empty this row.
 
 **No form is owed merely because it is conceivable.** The mapping is read by subject and
 returns one form; *"an automated check could be written for this"* is not a subject.
@@ -118,8 +128,17 @@ The location is still required, and the criterion-by-criterion mapping is where 
 belongs — a reviewer has to be told where to look. So each line of that mapping carries
 **both**: where what satisfies the criterion lives, *and* which form checked it, with
 its outcome. "`business.md` § *Covering a criterion*" is half a line; "`business.md`
-§ *Covering a criterion* — audited by `scrumia-business` at gate 2, Approved" is the
-line.
+§ *Covering a criterion* — audited by `scrumia-business` at gate 2, which found the
+subject→form mapping operable, Approved" is the line.
+
+**An audit covers the criteria its verdict addresses, and no others.** A clean overall
+verdict is not evidence about a criterion the reviewer never named: the form's whole
+value is that it can fail on one criterion while passing on the rest, and a blanket
+"Approved at gate 2" written against ten criteria restores exactly the property a
+section reference had — it comes out the same whichever criterion it is placed beside.
+So the audit is asked about the criterion, and the mapping line says what the reviewer
+said about *it*. A checklist is read the same way: the case walked has to be that
+criterion's case.
 
 ### No criterion is uncoverable
 
