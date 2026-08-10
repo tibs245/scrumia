@@ -1,21 +1,9 @@
 # Changelog — Composer
 
-Reverse-chronological. Short. The reasoning is in the issues, not here.
+Reverse-chronological. One entry per notable change, one category each.
+The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-10 — Value stated in business.md; ticket references leave the spec
-- Issue: #193
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-10 — Conform to the new file catalog: index restored to four sections, rules relocated to business/ux/tech/api-contract
-- Issue: #193
-- PR: #NN (filled at merge)
-- Breaking: no
-
-## 2026-08-09 — Record the retired "swap" exploration's degradation mark
-- Issue: #57
-- Breaking: no
-
-## 2026-08-09 — First version: the composer becomes a slot index you fill
-- Issue: #56
+## 2026-08-10 — Changelog rebuilt on Keep a Changelog's categories
+- Issue: #213
+- Category: Changed
 - Breaking: no

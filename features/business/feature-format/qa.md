@@ -63,8 +63,9 @@ Then each app gets its own App feature directory, and no single App feature
 ```gherkin
 Given a notable change to a feature
 When the entry is added to `CHANGELOG.md`
-Then the entry states the date, a one-line title, the issue, the PR, and
-  whether it is breaking — and nothing that explains why the change was made
+Then the entry states the date, a one-line title, the issue, the category of
+  change, and whether it is breaking — and nothing that explains why the
+  change was made
 ```
 
 ### AC-7 — `archi.md` exists only in the Business EPIC, and only while it lives
@@ -166,6 +167,26 @@ Then it states who the feature is for, what it brings them, why it matters,
   note that it is not instrumented today
 And a feature whose value cannot be stated is reported as a splitting or
   deletion candidate, not as a feature missing a paragraph
+```
+
+### AC-16 — An entry names only what exists when it is written
+
+```gherkin
+Given a changelog entry being written as part of the change it describes
+When the entry is added to `CHANGELOG.md`
+Then it carries the issue number, which is knowable at that moment
+And it carries no PR number and no placeholder standing in for one — the
+  tracker reaches the PR from the issue
+```
+
+### AC-17 — A change spanning two categories is two entries
+
+```gherkin
+Given a change that both adds a rule and alters an existing one
+When it is recorded in `CHANGELOG.md`
+Then it produces two entries, one per category
+And neither entry's title describes the other's change, so each stays the one
+  line the format asks for
 ```
 
 ## Out of scope

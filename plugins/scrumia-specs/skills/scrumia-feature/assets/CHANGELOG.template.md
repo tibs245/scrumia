@@ -1,8 +1,9 @@
 # Changelog — <feature>
 
-Reverse-chronological. Short. The reasoning is in the issues, not here.
+Reverse-chronological. One entry per notable change, one category each.
+The reasoning is in the issues; earlier history is in git and the tracker.
 
 ## YYYY-MM-DD — <one-line title of the change>
 - Issue: #NN
-- PR: #NN (filled at merge)
+- Category: Added | Changed | Deprecated | Removed
 - Breaking: yes | no
