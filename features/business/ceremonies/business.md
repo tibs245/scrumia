@@ -51,10 +51,22 @@ under *Retrospective* below.
 
 **Trigger.** A human call at a boundary where facts have accumulated — a sprint's end is
 the usual one — and the event that makes the call worth making is at least one fact
-recorded since the previous retrospective read: a deviation record, a gate-2 **Blocked**
-verdict, a label/diff gap flagged in a PR, a ticket reopened after merge, a refused
-split. **No new facts, no retrospective.** That is the trigger working, not a degenerate
-case of it.
+**recorded** since the previous retrospective read: a deviation record (an override or a
+refused split, in `features/business/execution-policy/`'s own two senses), a gate-2
+**Blocked** verdict, a label/diff gap flagged in a PR, a ticket reopened after merge.
+**No new records, no retrospective.** That is the trigger working, not a degenerate case
+of it.
+
+The word *recorded* is doing work there, and the feature it borrows from says why: a
+count of zero is evidence of nothing, because nothing forces a deviation to be written
+down and an omitted record is indistinguishable from a compliant run
+(`features/business/execution-policy/`). This trigger reads that zero anyway, knowingly.
+It is safe here and would not be elsewhere: the retrospective's job is to act on what the
+project can show, and mobilising a human to confirm that nothing was written down
+produces nothing either way. What the zero must never license is the opposite claim —
+that the period was clean. A silent period is a period nobody reported on, and if that
+silence is itself suspected, the answer is to fix the recording, not to hold a
+retrospective that has nothing to read.
 
 **Input.** Those records, as the tracker holds them. All of it is written before the
 ceremony starts; nothing is reconstructed from anyone's memory of the sprint.
@@ -69,7 +81,9 @@ last read*, which is uncomputable if no run says where it stopped: without the m
 next retrospective cannot tell a record already read and judged harmless from one nobody
 has opened, and the safe reading of that ambiguity is to read everything again, every
 time. Which venue holds the mark is the tracker's to say, as with the deviation record
-itself; this feature requires only that it be queryable.
+itself; this feature requires only that it be queryable. The parallel is not yet true in
+practice — the deviation record's venue and shape are written down, the mark's are not.
+That gap is #198, and until it closes BR-6 states an obligation no venue yet accepts.
 
 **Async.** Its whole input is already written down, so nothing in it needs two people
 present at the same moment: an agent prepares the reading and proposes the edits, the
@@ -77,32 +91,54 @@ human decides when they get to it. Synchronous, it would spend its time re-colle
 conversation facts that are already queryable — the uniform mobilisation this feature
 exists to avoid.
 
-**What it does not settle.** `features/business/execution-policy/` requires the deviation
-record to be countable and leaves open — in #167 — who counts, at what threshold, and
-whether anything surfaces the record unprompted. Naming the retrospective as a venue
-where that record is read does not close it: this feature says where the reading happens
-when it happens, not that anyone is accountable for it happening, and it sets no
-threshold at which a cell should be edited.
+**What it counts, and what it does not settle.** Repetition is counted **on a cell** of
+the grid, never on the handle a deviation names: the record carries who decided an
+override because a decision has an author, and the retrospective reads it to find a cell
+the grid gets wrong, not a person who gets it wrong.
+
+`features/business/execution-policy/` requires the deviation record to be countable and
+leaves open — in #167 — *who* counts, *at what threshold*, and whether anything surfaces
+the record unprompted. This feature closes none of those three: it names a venue where
+the reading happens when it happens, makes nobody accountable for it happening, and sets
+no threshold at which a cell should be edited. It does narrow the fourth part of that
+question, the *when*: of the three candidates #167 lists — a sprint boundary, a
+retrospective, a status pass — this feature specifies the retrospective's own timing, and
+leaves the other two as venues it does not speak for.
 
 ## Debt audit — admitted
 
-**Trigger.** A human call on a **named area**, or the event repetition makes visible: the
-same area accumulating out-of-scope findings across several tickets. Debt on the path of
-a ticket is already filed continuously — `scrumia-ticket` Step 4 turns what an execution
-notices in passing into an issue rather than an extra line of diff — so this ceremony is
-not for that. It is for what no ticket walks past, and repeated in-passing findings in
-one area are the signal that the area deserves a look of its own.
+**Trigger.** A human call on a **named area**. That is the whole trigger: nothing today
+carries an *area*, so "the same area accumulating findings" is something a human notices
+and acts on, not an event a tool can fire. Saying otherwise would fail this feature's own
+second test — a trigger nobody can compute is a trigger nobody has.
+
+What makes the call worth making is usually that repetition: debt on the path of a ticket
+is already filed continuously — `scrumia-ticket` Step 4 turns what an execution notices in
+passing into an issue rather than an extra line of diff — so this ceremony is not for
+that. It is for what no ticket walks past, and repeated in-passing findings in one area
+are the observation that sends someone looking.
 
 **Input.** The specs and the code of that area, the issues already filed against it, and
 what the tracker's status pass reports as a gap between spec and code.
+
+**It is already enacted, per slot.** The composition ships five audits —
+`scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`, `scrumia-solidjs-audit`,
+`scrumia-design-audit` — each in the module that owns the knowledge its findings need, and
+each already observing rather than fixing, on an area asked for up front. This ceremony
+does not replace them and is not a wrapper over them: it is the occasion on which one or
+several are run, plus the part none of them can see — the gap between a spec and the code
+that claims to implement it, which belongs to no single practice or implementation module.
+A project whose plugged-in modules ship no audit still holds the ceremony; it just reads
+the specs, the code and the filed issues by hand.
 
 **A named area is part of the trigger, not a detail.** An audit of "the project" returns
 a list nobody triages, which is a document rather than an artefact. The area is named
 before the audit starts.
 
-**What it produces that outlives it.** Issues on the tracker, each carrying the scope and
-risk labels that let the execution policy route it. Nothing else: **the audit files, it
-never fixes.** That boundary is what keeps it from becoming the refactor session dropped
+**What it produces that outlives it.** Issues on the tracker, each situated — the file or
+the area, what is wrong, how bad. Unlabelled: `scope/*` and `risk/*` are set at
+refinement, and an audit that rated its own findings would be doing refinement's job on
+a batch it just wrote. Nothing else: **the audit files, it never fixes.** That boundary is what keeps it from becoming the refactor session dropped
 below — the moment an audit starts changing code, it is executing without a ticket, and
 the acceptance criterion that makes execution refusable is gone.
 
@@ -126,6 +162,37 @@ would reintroduce, under a ceremony's name, the single thing the execution path 
 So refactoring is not a ceremony here. It is work, and work is a ticket. Where
 refactoring is warranted and nobody has filed it, that is the debt audit's output — and
 the audit files an issue, like anything else.
+
+**This drops the occasion, not the skills.** `scrumia-tdd-refactor` and
+`scrumia-solid-refactor` resolve a **finding already filed** by their paired audit. That
+is the ticket this section asks for — a scoped change with a stated intent — reached
+through a skill instead of by hand, and nothing here refuses it. What is dropped is
+opening one of them on nothing in particular, at no one's request, because it is
+Thursday: same skill, no filed finding, no acceptance criterion, and the whole objection
+above applies again.
+
+## The sprint's gather is not a ceremony either
+
+`scrumia-sprint` ends by gathering the batch — per ticket, the PR opened or the reason it
+was not, plus what needs human attention. It looks like a ceremony from outside: a named
+occasion, at a boundary, reading across several runs. It is not one, and the reason is
+this feature's third test.
+
+Its own prose settles it: a deviation reported there is *a second copy for the human in
+front of you, not the record* — the record is on the ticket, written when the deviation
+was decided. Everything the gather reports already exists somewhere queryable, and the
+gather itself survives nothing: close the session and it is gone. No artefact of its own,
+so under BR-3 it is not admitted. The same holds for the sprint's validation step, where
+the human approves the batch: that is a decision point on work in flight — a gate's shape,
+not a ceremony's.
+
+Naming this matters more than naming the standup. The gather is the one occasion the
+composition actually ships that could be mistaken for a ceremony, and it reads across a
+sprint's records the way the retrospective does. The two are not redundant: the gather
+relays a session's outcome to the human waiting on it, and the retrospective reads what
+several sessions left behind in order to change the project. Where a sprint's gather ends
+with facts worth acting on, the retrospective is the occasion for acting on them — which
+is exactly why a sprint's end is where the call is usually made.
 
 ## Where the ceremonies live: no module, no new slot
 
@@ -151,13 +218,19 @@ first:
    ceremonies consume it. A slotless module that consumes the composition would be a
    third kind of thing, and nothing found here justifies inventing one.
 
-**Where automation lands, if it is ever written.** Neither ceremony is automated by this
-spec; both are practices a human runs with the roles. When one earns a skill, it belongs
-to the module that already owns its output — the `team` slot for the retrospective, whose
-edits land in `settings.team.execution` and whose judgement is the roles', and the
-`tracker` slot for the debt audit, whose output is issues. "One more skill in an existing
-module" is [`docs/modules.md`](../../../docs/modules.md)'s own default for a capability
-that fills no slot differently, and nothing here beats it.
+**Where automation lands, if it is ever written.** "One more skill in an existing module"
+is [`docs/modules.md`](../../../docs/modules.md)'s own default for a capability that fills
+no slot differently, and the composition answers *which* module by placement rather than
+by rule: a skill lives where the **knowledge its findings need** lives. That is why five
+audits sit in the `practices`, `implementation` and `design` slots and none in the
+`tracker`, though every one of them ends in issues. Where the output is filed is not who
+knows how to produce it.
+
+Applied here: the debt audit is already enacted per slot by those five, and the part they
+cannot see — the spec/code gap — needs the `specs` slot's knowledge, not the tracker's.
+The retrospective's knowledge is the execution policy's grid and the roles' judgement,
+both the `team` slot's; that is where a skill for it would land, and the edits it proposes
+to `settings.team.execution` are that slot's to make.
 
 ## Business rules
 
@@ -169,8 +242,8 @@ that fills no slot differently, and nothing here beats it.
   ordinary ticket path would have produced anyway is not its own.
 - **BR-4** — Synchronous or asynchronous is decided per ceremony and stated with its
   reason. Async is the expected answer, because a ceremony whose input is already written
-  needs no simultaneity — and a human's decision inside an async ceremony is a gate, not
-  a reason to make the ceremony synchronous.
+  needs no simultaneity — and a human's decision inside an async ceremony is a decision
+  point, not a reason to make the ceremony synchronous.
 - **BR-5** — The debt audit files issues and never changes code. Changing code is a
   ticket, gated by an acceptance criterion.
 - **BR-6** — A retrospective leaves a queryable mark of how far it read, whether or not it
