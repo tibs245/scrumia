@@ -60,3 +60,4 @@ exactly one side.
 - #20 — Sprint Step 3 describes the orchestration in prose instead of shipping it (carries this feature's worktree-ownership wording)
 - #118 — A ticket agent can lose its whole implementation by pausing for a review it was told to ask for
 - #170 — A branch left behind by a stopped run is indistinguishable from a finished implementation
+- #191 — the skill prose still tells an execution to report a correct label as a scoping failure when the diff is specs-only; AC-6 states the narrowed rule, `scrumia-ticket` and `scrumia-review` have not caught up
