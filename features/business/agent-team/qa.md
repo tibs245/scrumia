@@ -7,8 +7,8 @@ One scenario per case. Each scenario must be able to fail.
 ### AC-1 — A role activates on its documented trigger
 
 ```gherkin
-Given a ticket labeled scope/L that changes a rule consumed beyond one feature
-  or app
+Given a ticket labeled scope/L that changes a business rule consumed beyond
+  one feature or app
 When the manager routes it
 Then the business role is asked at entry, alongside tech
 ```
@@ -130,6 +130,20 @@ Then that role is reported as a gap rather than silently convened as part of
   a smaller roster
 And the install command is named, not a restart
 ```
+
+### AC-14 — A non-business rule crossing the boundary does not convene business
+
+```gherkin
+Given a ticket labeled scope/L whose only change is an interface contract
+  between two apps, with no business rule at stake
+When the manager routes it
+Then tech is asked at entry and the business role is not
+```
+
+AC-1 and AC-14 are the two halves of one trigger. `scope/L` is reached by any of the
+axis's three questions (`docs/adr/0015-scope-measures-reach.md`), and only one of them
+concerns a business rule; the label alone therefore does not convene business, and the
+role's own condition in `business.md` — *and changes a business rule* — is what does.
 
 ## Out of scope
 

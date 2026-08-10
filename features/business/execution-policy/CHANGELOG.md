@@ -2,7 +2,7 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
-## 2026-08-10 — The blast-radius test reaches its readers: ADR-0015 supersedes 0006, and every surface a labeller works from applies the test and names this feature as its owner
+## 2026-08-10 — The blast-radius test reaches its readers: ADR-0015 supersedes 0006, and every surface a labeller works from applies the test and names this feature as its owner. AC-21 now also requires the shared wording to be carried verbatim, which sets it: the tier conditions are compressed until they fit the narrowest surface, a 100-character GitHub label description
 - Issue: #78
 - PR: #NN (filled at merge)
 - Breaking: no

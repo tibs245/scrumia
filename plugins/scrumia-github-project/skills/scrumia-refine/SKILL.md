@@ -82,14 +82,14 @@ One `scope/*` label, based on three objective questions: how many apps are touch
 
 | Label | Condition |
 |---|---|
-| `scope/S` | At most 1 app, and no rule changes — it is already written |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond its feature consumes, or the scope is unclear |
-| `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract |
-| `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
+| `scope/S` | ≤1 app, no rule changes: it is already written |
+| `scope/M` | ≤1 app, a rule changes, read only in its feature, or unclear |
+| `scope/L` | ≥2 apps, a rule read beyond its feature, or interface contract |
+| `scope/XL` | New value unit, pivot, data migration: back to scoping |
 
-The second question is the one that gets misread, so read it as written: it measures **a rule's reach, not a file's location**. A rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root without changing any such rule has answered *no* to it. The label is then `scope/M`, or `scope/S` if no rule moved at all — unless question 1 or question 3 carries it to `scope/L` on its own.
+The second question is the one that gets misread, so read it as written: it measures **a rule's reach, not a file's location**. A rule read beyond its feature is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root without changing any such rule has answered *no* to it. The label is then `scope/M`, or `scope/S` if no rule moved at all — unless question 1 or question 3 carries it to `scope/L` on its own.
 
-That test is stated once, in [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*, and this table applies it rather than defining it — the wording above is that section's, not a variant. Where the deliverable *is* specs, the file-location reading it replaced made every ticket `scope/L` and the axis stopped discriminating ([`docs/adr/0015-scope-measures-reach.md`](../../../../docs/adr/0015-scope-measures-reach.md)).
+That test is stated once, in [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*, and this table applies it rather than defining it. The Condition cells are [ADR-0015](../../../../docs/adr/0015-scope-measures-reach.md)'s, copied word for word — including their terseness, which exists so the same wording fits the `scope/*` label descriptions a fresh install seeds. Do not smooth them out here; a smoothed cell is a second definition. Where the deliverable *is* specs, the file-location reading this replaced made every ticket `scope/L` and the axis stopped discriminating.
 
 When hesitating between two levels, take the higher one: one tier too high costs a stronger model than the ticket needed, one tier too low costs a botched ticket. Round up for capability, not to buy a reviewer — the diff decides that either way.
 

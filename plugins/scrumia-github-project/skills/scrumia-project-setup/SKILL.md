@@ -53,17 +53,19 @@ If absent, propose these values and write them. The columns reflect the real flo
 A label's description is the only statement of the axis a labeller gets without leaving GitHub, and it outlives the repository it was copied from. Seed these exactly — a description typed from memory at install time becomes one more independent rendering of a test, and a test rendered independently in four places is how this axis came to say four different things:
 
 ```bash
-gh label create "scope/S"  --color c2e0c6 --description "At most 1 app, and no rule changes: it is already written"
-gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond its feature consumes, or scope is unclear"
-gh label create "scope/L"  --color f9d0c4 --description "2+ apps, a rule consumed beyond one feature or app, or an interface contract"
-gh label create "scope/XL" --color e99695 --description "New unit of value, pivot, migration — belongs to scoping"
+gh label create "scope/S"  --color c2e0c6 --description "≤1 app, no rule changes: it is already written — features/business/execution-policy/"
+gh label create "scope/M"  --color fef2c0 --description "≤1 app, a rule changes, read only in its feature, or unclear — features/business/execution-policy/"
+gh label create "scope/L"  --color f9d0c4 --description "≥2 apps, a rule read beyond its feature, or interface contract — features/business/execution-policy/"
+gh label create "scope/XL" --color e99695 --description "New value unit, pivot, data migration: back to scoping — features/business/execution-policy/"
 gh label create "risk/low"      --color 0e8a16 --description "Reversible in a commit, no data, no user-visible behaviour"
 gh label create "risk/medium"   --color fbca04 --description "Visible to users, but a revert restores the previous state"
 gh label create "risk/high"     --color d93f0b --description "Money, personal data, auth, or a contract other apps consume"
 gh label create "risk/critical" --color b60205 --description "Irreversible: destructive migration, payment, outbound notification"
 ```
 
-The `scope/*` wording turns on **a rule's reach, not a file's location**: a rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule is not `scope/L` on that clause, however many spec files its diff lists. The test is the execution policy's to state — [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium* here, or whichever feature owns the axis in the project being set up — and the descriptions above carry that section's own words rather than a paraphrase of them. Re-run this step after the test changes; nothing else propagates it to GitHub.
+The `scope/*` wording turns on **a rule's reach, not a file's location**: a rule read beyond its feature is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule is not `scope/L` on that clause, however many spec files its diff lists. The test is the execution policy's to state — [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium* here, or whichever feature owns the axis in the project being set up — and each description carries the tier condition [ADR-0015](../../../../docs/adr/0015-scope-measures-reach.md) states, word for word, followed by the path of the feature that owns the test. Substitute that path when another feature owns it; do not re-word the condition to make room.
+
+A GitHub label description stops at 100 characters, and the owner reference spends 38 of them. That budget is why the conditions are written as tightly as they are — and why the same tight wording is what the refinement skill's table, the manager's routing table and ADR-0015 all carry. The narrowest surface sets the wording for every surface, so that a labeller reading one of them is reading the same sentence as a labeller reading any other. Re-run this step after the test changes; nothing else propagates it to GitHub.
 
 Scope and risk are two axes, not one scale. A one-line change to a payment rule is `scope/S` and `risk/critical`; a large but mechanical rename is `scope/L` and `risk/low`. Collapsing them into a single "priority" is what makes small dangerous changes get executed casually.
 
