@@ -54,7 +54,7 @@ A label's description is the only statement of the axis a labeller gets without 
 
 ```bash
 gh label create "scope/S"  --color c2e0c6 --description "At most 1 app, and no rule changes: it is already written"
-gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond it consumes, or scope is unclear"
+gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond its feature consumes, or scope is unclear"
 gh label create "scope/L"  --color f9d0c4 --description "2+ apps, a rule consumed beyond one feature or app, or an interface contract"
 gh label create "scope/XL" --color e99695 --description "New unit of value, pivot, migration — belongs to scoping"
 gh label create "risk/low"      --color 0e8a16 --description "Reversible in a commit, no data, no user-visible behaviour"

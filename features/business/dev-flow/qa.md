@@ -65,8 +65,25 @@ Then nothing merges without the human, whatever `settings.autonomy.level` says
 Given a ticket labelled `scope/S` whose diff touches `features/business/**`
 When gate 2 runs
 Then the business role reviews it, alongside tech, because the diff routes the
-  review and the label does not, and the gap between the two is flagged in the PR
-  as a scoping failure per ADR-0015
+  review and the label does not
+```
+
+```gherkin
+Given the same ticket, and the rule its diff changes is one another feature or
+  another app consumes — so the axis's own second question answers yes
+When the PR is written
+Then the gap between the label and the diff is flagged as a scoping failure per
+  ADR-0015
+```
+
+```gherkin
+Given the same ticket, but the rule its diff changes is consumed by nothing beyond
+  its own feature
+When the PR is written
+Then the extra review still happens and the gap is not reported as a scoping
+  failure — `scope/S` was the correct label (`features/business/execution-policy/`
+  AC-3), and the two grids disagreeing here is them measuring different things,
+  not the manager having mislabelled
 ```
 
 ### AC-7 — Where a tracker feature and this one disagree on the process, this one governs

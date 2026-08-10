@@ -2,7 +2,7 @@
 
 Reverse-chronological. Short. The reasoning is in the issues, not here.
 
-## 2026-08-10 — AC-6's scoping-failure citation follows the routing decision to ADR-0015; gate 2's own routing is unchanged
+## 2026-08-10 — A label/diff gap is a scoping failure only when the axis would have answered higher: AC-6 splits the two cases now that ADR-0015 decouples the grids. Gate 2's own routing is unchanged
 - Issue: #78
 - PR: #NN (filled at merge)
 - Breaking: no

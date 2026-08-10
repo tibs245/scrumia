@@ -26,7 +26,7 @@ The three questions, with the second and third re-stated:
 | Label | Condition | Asked at entry |
 |---|---|---|
 | `scope/S` | At most 1 app, and no rule changes — it is already written | executes alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear | + the tech role |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond its feature consumes, or the scope is unclear | + the tech role |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | + the manager and the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New unit of value, pivot, data migration | leaves execution: sent back to scoping |
 
@@ -34,7 +34,7 @@ Three application rules:
 
 - **The live statement of question 2 is the spec's, not this table's.** `features/business/execution-policy/business.md` § *The scope axis measures reach, not medium* owns the test; this ADR records the decision to adopt it, and the surfaces that route a labeller cite the spec rather than paraphrasing it. That is what keeps the next drift to one place to fix instead of five.
 - **When hesitating between two levels, take the higher one.** One tier too high costs a stronger model than the ticket needed; one tier too low costs a botched ticket. Round up for capability — not to buy a reviewer, because the label buys none.
-- **The label conditions the entry, the diff conditions the exit.** Who is asked *while* the ticket runs comes from the label; who reviews the PR comes from the diff's actual scope ([ADR-0005](0005-validation-gates.md)), which reads no label at all. Where the two disagree, the gap is flagged — it is a signal of failed scoping, not a skipped review. 0006 stated this rule with a "Handling" column that read as though the label bought a reviewer; it does not, and has not since #130.
+- **The label conditions the entry, the diff conditions the exit.** Who is asked *while* the ticket runs comes from the label; who reviews the PR comes from the diff's actual scope ([ADR-0005](0005-validation-gates.md)), which reads no label at all. Where the diff calls for more review than the label implied, that gap is worth a line in the PR — but it is a signal of failed scoping only when the axis's own questions would have answered higher. Decoupling the two grids means they now disagree routinely and correctly: a specs-only diff whose rule nothing else consumes is `scope/M` on this axis and still meets a path-based exit grid, and reporting that as a mislabel would fire on a whole class of correctly-labelled ticket. `features/business/dev-flow/` AC-6 carries both cases. 0006 stated this rule with a "Handling" column that read as though the label bought a reviewer; it does not, and has not since #130.
 
 A ticket without a `scope/*` label is an unscoped ticket: it does not enter a sprint, and it shows up as such in `scrumia-status`.
 

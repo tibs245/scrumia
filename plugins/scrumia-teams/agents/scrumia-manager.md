@@ -49,7 +49,7 @@ Each ticket gets exactly one `scope/*` label. The criterion is **measurable**, n
 | Label | Condition | Asked at entry |
 |---|---|---|
 | `scope/S` | At most 1 app, and no rule changes — it is already written | Autonomous execution alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear | Autonomous execution + the tech role |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond its feature consumes, or the scope is unclear | Autonomous execution + the tech role |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | You + the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New value unit, pivot, data migration | Out of execution: send it back to the scoping module |
 
