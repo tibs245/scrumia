@@ -461,9 +461,17 @@ SPEC_CATEGORIES = {"Added", "Changed", "Deprecated", "Removed"}
 PLUGIN_CATEGORIES = SPEC_CATEGORIES | {"Fixed", "Security"}
 
 ENTRY_HEADING_RE = re.compile(r"^\d{4}-\d{2}-\d{2} — \S")
-VERSION_HEADING_RE = re.compile(r"^\[(Unreleased|\d+\.\d+\.\d+)\](?: - \d{4}-\d{2}-\d{2})?$")
+VERSION_HEADING_RE = re.compile(r"^(?:\[Unreleased\]|\[\d+\.\d+\.\d+\] - \d{4}-\d{2}-\d{2})$")
 BULLET_KEY_RE = re.compile(r"^- ([A-Za-z]+):")
 PLACEHOLDER_RE = re.compile(r"#NN\b")
+
+
+def _report_banned_fields(text: str, rel: str) -> None:
+    for i, line in enumerate(text.splitlines(), 1):
+        if line.startswith("- PR:"):
+            error(f"{rel}:{i}: a PR: line — an entry names only what exists when it is written")
+        if PLACEHOLDER_RE.search(line):
+            error(f"{rel}:{i}: an unfilled #NN placeholder")
 
 
 def _entries(text: str) -> list[tuple[str, list[str]]]:
@@ -484,18 +492,16 @@ def check_spec_changelogs() -> None:
         if not path.exists():
             continue
         rel = path.relative_to(ROOT)
-        for heading, body in _entries(path.read_text(encoding="utf-8")):
+        text = path.read_text(encoding="utf-8")
+        # File-scoped, not entry-scoped: a banned field in the preamble is still on disk.
+        _report_banned_fields(text, str(rel))
+        for heading, body in _entries(text):
             where = f"{rel}: '{heading}'"
             if not ENTRY_HEADING_RE.match(heading):
                 error(f"{where}: heading is not 'YYYY-MM-DD — <one-line title>'")
             keys = [m.group(1) for m in map(BULLET_KEY_RE.match, body) if m]
-            if "PR" in keys:
-                error(f"{where}: carries a PR: line — an entry names only what exists when written")
-            if PLACEHOLDER_RE.search("\n".join(body)):
-                error(f"{where}: carries a #NN placeholder")
-            categories = [k for k in keys if k in PLUGIN_CATEGORIES or k == "Category"]
-            if categories.count("Category") != 1:
-                error(f"{where}: needs exactly one Category: line, found {categories.count('Category')}")
+            if keys.count("Category") != 1:
+                error(f"{where}: needs exactly one Category: line, found {keys.count('Category')}")
             for line in body:
                 m = BULLET_KEY_RE.match(line)
                 if m and m.group(1) == "Category":
@@ -516,6 +522,7 @@ def check_plugin_changelogs() -> None:
             continue
         rel = path.relative_to(ROOT)
         text = path.read_text(encoding="utf-8")
+        _report_banned_fields(text, str(rel))
         entries = _entries(text)
         if not entries:
             error(f"{rel}: no version section")
@@ -523,16 +530,16 @@ def check_plugin_changelogs() -> None:
             where = f"{rel}: '{heading}'"
             if not VERSION_HEADING_RE.match(heading):
                 error(f"{where}: heading is not '[<version>] - YYYY-MM-DD' or '[Unreleased]'")
-            if PLACEHOLDER_RE.search("\n".join(body)):
-                error(f"{where}: carries a #NN placeholder")
-            for line in body:
-                if line.startswith("### "):
-                    category = line[4:].strip()
-                    if category not in PLUGIN_CATEGORIES:
-                        error(
-                            f"{where}: category '{category}' is not one of "
-                            f"{', '.join(sorted(PLUGIN_CATEGORIES))}"
-                        )
+            categories = [line[4:].strip() for line in body if line.startswith("### ")]
+            for category in categories:
+                if category not in PLUGIN_CATEGORIES:
+                    error(
+                        f"{where}: category '{category}' is not one of "
+                        f"{', '.join(sorted(PLUGIN_CATEGORIES))}"
+                    )
+            # [Unreleased] is empty until something lands in it; a released version is not.
+            if not categories and heading != "[Unreleased]":
+                error(f"{where}: no category section — a release states what kind of change it is")
         # A second changelog under the same plugin shadows the one a consumer reads.
         for stray in plugin_dir.rglob("CHANGELOG.md"):
             if stray != path:

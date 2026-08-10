@@ -1,9 +1,6 @@
 # Changelog — scrumia-practice-tanstack-query
 
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
-Entries are written by a human for someone deciding whether to take the version, never
-generated from the commit log. Versions move per module: a number here promises that
-*this* module changed, not that the repository published.
 
 ## [Unreleased]
 

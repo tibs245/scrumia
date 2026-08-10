@@ -58,7 +58,7 @@ In short:
 Two existence categories, declared in `references/catalog.md`: **mandatory in every
 feature** (`index.md`, `qa.md`, `CHANGELOG.md`, `business.md` — every feature states
 its value), **content-tested** (everything else). Two absolute rules travel with them:
-a spec cites no ticket — only `CHANGELOG.md` points at issues and PRs — and every
+a spec cites no ticket — only `CHANGELOG.md` points at an issue, never at a PR — and every
 `business.md` opens with who the feature is for, what it brings, why it matters, and
 whether that can be measured.
 

@@ -170,9 +170,9 @@ An entry names **only what exists when it is written** — the issue does, a PR
 number does not, since the entry ships inside the PR. A field nobody can fill
 gets a placeholder, and a placeholder reads as complete to anything that does not
 squint. And an entry classifies **one** change: a change spanning two categories
-is two entries, since a single label would be false about half of it. Which four
-categories, and why two of [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s
-six have no referent in a document, is the catalogue's to state.
+is two entries, since a single label would be false about half of it. Which
+categories, and why [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)'s set
+is narrowed for a document, is the catalogue's to state.
 
 History lives in three places, one per use: `CHANGELOG.md` for *what* changed
 and *when*, in one line; the commits for *who* changed it; the issues for

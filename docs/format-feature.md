@@ -75,8 +75,9 @@ It is generated, never hand-written: `python3 tools/build_features_index.py` bui
 A spec contains only its current version. No "formerly", no "since v2", no struck-through section.
 
 History lives in three places, one per use: the feature's `CHANGELOG.md` — short, one
-entry per change, with pointers, and the **only** spec file allowed to cite an issue
-or a PR; the commits — who changed what, when; the issues — *why*, which
+entry per change, and the **only** spec file allowed to cite an issue — and only an
+issue, since the entry ships inside the PR that would number it; the commits — who
+changed what, when; the issues — *why*, which
 alternatives, which trade-offs. A changelog entry that explains its reasoning is a
 spec that starts growing again — this is exactly how monolithic PRDs re-form. The
 entry's exact shape is the catalog's and the template's to state, once.
