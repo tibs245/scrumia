@@ -83,11 +83,11 @@ One `scope/*` label, based on three objective questions: how many apps are touch
 | Label | Condition |
 |---|---|
 | `scope/S` | At most 1 app, and no rule changes — it is already written |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope remains unclear |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract |
 | `scope/XL` | New unit of value, pivot, migration — belongs to scoping |
 
-The second question is the one that gets misread, so read it as written: it measures **a rule's reach, not a file's location**. A rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root without changing any such rule has answered *no* to it, and is labelled on the other two questions — the label is `scope/M`, or `scope/S` if no rule moved at all.
+The second question is the one that gets misread, so read it as written: it measures **a rule's reach, not a file's location**. A rule consumed beyond one feature or app is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root without changing any such rule has answered *no* to it. The label is then `scope/M`, or `scope/S` if no rule moved at all — unless question 1 or question 3 carries it to `scope/L` on its own.
 
 That test is stated once, in [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium*, and this table applies it rather than defining it — the wording above is that section's, not a variant. Where the deliverable *is* specs, the file-location reading it replaced made every ticket `scope/L` and the axis stopped discriminating ([`docs/adr/0015-scope-measures-reach.md`](../../../../docs/adr/0015-scope-measures-reach.md)).
 

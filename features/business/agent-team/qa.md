@@ -7,7 +7,8 @@ One scenario per case. Each scenario must be able to fail.
 ### AC-1 — A role activates on its documented trigger
 
 ```gherkin
-Given a ticket labeled scope/L that modifies a file under features/business/**
+Given a ticket labeled scope/L that changes a rule consumed beyond one feature
+  or app
 When the manager routes it
 Then the business role is asked at entry, alongside tech
 ```

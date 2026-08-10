@@ -26,7 +26,7 @@ The three questions, with the second and third re-stated:
 | Label | Condition | Asked at entry |
 |---|---|---|
 | `scope/S` | At most 1 app, and no rule changes — it is already written | executes alone |
-| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is fuzzy | + the tech role |
+| `scope/M` | At most 1 app, and a rule changes that nothing beyond it consumes, or the scope is unclear | + the tech role |
 | `scope/L` | ≥2 apps, or a rule consumed beyond one feature or app changes, or an interface contract changes | + the manager and the tech role, + the business role if a business rule is at stake |
 | `scope/XL` | New unit of value, pivot, data migration | leaves execution: sent back to scoping |
 
@@ -48,7 +48,7 @@ A ticket without a `scope/*` label is an unscoped ticket: it does not enter a sp
 
 **What we accept**
 
-- *Question 2 is a judgement about reach, not a path glob.* "Is this rule consumed beyond its feature?" is checkable — a feature's `index.md` Links section names its consumers — but it is checkable by reading, not by matching a pattern. That is a real loss of mechanical verifiability against 0006, and we take it, because a mechanical test that answers "yes" for every ticket in the repository verifies nothing.
+- *Question 2 is a judgement about reach, not a path glob.* "Is this rule consumed beyond its feature?" is answerable, but by reading rather than by matching a pattern — and today it is answerable unevenly, because a feature's `index.md` names its consumers only where someone thought to write them down. Where the Links section is silent the labeller has to grep, and a labeller who does not will under-label. That is a real loss of mechanical verifiability against 0006, and we take it, because a mechanical test that answers "yes" for every ticket in the repository verifies nothing.
 - *Labels set under the old reading do not migrate themselves.* Twelve open tickets carried the file-location reading and had to be re-judged by hand when this landed (#78). Any project adopting this change inherits the same one-off pass.
 - *`scope/XL` is still not an execution level*, it is a switch back to scoping. Kept from 0006 deliberately: there is no good way to autonomously execute what has not been scoped.
 

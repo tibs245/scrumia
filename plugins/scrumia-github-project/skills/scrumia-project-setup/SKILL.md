@@ -41,7 +41,7 @@ If absent, propose these values and write them. The columns reflect the real flo
 | Label | Usage | Read by |
 |---|---|---|
 | `scrumia` | Marks tickets driven by the composition | filters, to separate them from tickets opened by hand |
-| `scope/S` `scope/M` `scope/L` `scope/XL` | How much work, set at refinement | `pick-model.sh`; the PR review is routed by the diff, not by this label |
+| `scope/S` `scope/M` `scope/L` `scope/XL` | How far the change reaches, set at refinement | `pick-model.sh`; the PR review is routed by the diff, not by this label |
 | `risk/low` `risk/medium` `risk/high` `risk/critical` | What it costs to get this wrong | `pick-model.sh` |
 | `needs-<role>` | Escalation requested to a role — one per active role in `settings.team.roles`, including those a non-team module provides (`needs-design`) | `scrumia-manager` |
 | `epic` | Marks a unit of value; its children are **native sub-issues** | `scrumia-status`, `board.sh epic` |
@@ -54,7 +54,7 @@ A label's description is the only statement of the axis a labeller gets without 
 
 ```bash
 gh label create "scope/S"  --color c2e0c6 --description "At most 1 app, and no rule changes: it is already written"
-gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond it consumes, or scope unclear"
+gh label create "scope/M"  --color fef2c0 --description "At most 1 app, and a rule changes that nothing beyond it consumes, or scope is unclear"
 gh label create "scope/L"  --color f9d0c4 --description "2+ apps, a rule consumed beyond one feature or app, or an interface contract"
 gh label create "scope/XL" --color e99695 --description "New unit of value, pivot, migration — belongs to scoping"
 gh label create "risk/low"      --color 0e8a16 --description "Reversible in a commit, no data, no user-visible behaviour"
