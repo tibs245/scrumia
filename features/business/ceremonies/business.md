@@ -120,9 +120,11 @@ that. It is for what no ticket walks past, and repeated in-passing findings in o
 are the observation that sends someone looking.
 
 **Input.** The specs and the code of that area, the issues already filed against it, and
-the gap between a spec and the code that claims to implement it — reported by the
-tracker's status pass across the project, and checked file by file by the specs module's
-own audit mode.
+the gap between a spec and the code that claims to implement it — reported across the
+project by the tracker's status pass, and, for one narrow slice of it, by the specs
+module's audit of a feature, which catches an interface contract that has drifted from
+the code. Nothing shipped checks the general case file by file; the ceremony's reader
+does it by hand.
 
 **Its reading is already enacted, per slot; its filing is not.** The composition ships
 five audits — `scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`,
