@@ -157,6 +157,32 @@ Then it is allowed; and when the target is the default branch, or a branch anoth
   fetched
 ```
 
+### AC-13 — A commit's multi-scope form generalizes past modules, and `*` covers what isn't worth naming
+
+```gherkin
+Given a commit atomic across a `repo`-scoped file and an app-scoped file — `design/tokens.css`
+  mirrored into `site/assets/tokens.css` by one commit, the change not sensibly splittable
+When the commit is written
+Then the scope carries both tokens comma-separated (`chore(repo,site): …`) rather than being
+  refused for naming two tokens outside two modules — ADR-0017 §2's comma form generalizes to
+  any of the four namespaces, not modules only
+```
+
+```gherkin
+Given a commit whose comma-separated scope names a module alongside an app, a feature or `repo`
+When the version bump is derived
+Then only the module token named bumps, at ADR-0017 §2's level and no other — the non-module
+  tokens change nothing about what bumps
+```
+
+```gherkin
+Given a commit spanning more scopes than are worth naming individually — more than three
+When the scope is written
+Then it may use the `*` escape hatch (`refactor(*): …`), which derives no bump on its own; a
+  commit that also needs a module to bump still names that module's real token alongside it
+  (`refactor(specs,*): …`)
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified

@@ -90,6 +90,21 @@ are `docs/adr/0017-version-bump-and-commit-signal.md`'s — defined there once a
 enumerated in no spec, this one included. `features/business/release-versioning/` states
 what they are worth; this feature states that they are written.
 
+**A commit spanning several scopes is split into one commit per scope by default.** Where
+the change genuinely doesn't make sense split apart, the scope carries them comma-separated
+(`feat(specs,core): …`) — across any of ADR-0017 §2's four namespaces, not modules only. The
+repo's own instance: `design/tokens.css` (`repo`) mirrored into `site/assets/tokens.css`
+(`site`) by one commit (`ec58969`), across `repo` and an app, not two modules. Naming more
+than one token changes nothing about what bumps: only the module tokens actually named still
+bump, at ADR-0017 §2's level and no other — an app, a feature or `repo` token riding
+alongside one buys it nothing.
+
+**`<type>(*):` is a separate escape hatch, not a fifth namespace.** `*` stands for "touches
+more scopes than are worth naming individually" — useful once a commit spans more than
+three, where listing them all stops being informative. It carries no bump derivation of its
+own; a commit that also needs a module to bump still names that module's real token
+alongside it, e.g. `refactor(specs,*): …`.
+
 **The same vocabulary names the branch and titles the reviewable proposal.** One list,
 three uses, so a branch prefix that appears in no type list cannot exist.
 
