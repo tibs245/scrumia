@@ -1,3 +1,4 @@
 # Business memory — ScrumIA
 
-- [Rule vs rationale duplication](rule-vs-rationale-duplication.md) — object to a duplicated trigger or obligation; let a duplicated reason stand
+No entries. See `features/business/agent-team/business.md` § *What role memory may hold*
+before writing one.
