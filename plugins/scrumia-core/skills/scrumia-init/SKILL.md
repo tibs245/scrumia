@@ -283,8 +283,8 @@ For each app whose `extends` names at least one module, offer to write a short s
 ```markdown
 <!-- scrumia:start -->
 This app follows `scrumia-impl-solidjs`, `scrumia-practice-tdd`.
-Before writing code here, read plugins/scrumia-impl-solidjs/skills/scrumia-solidjs/SKILL.md
-and plugins/scrumia-practice-tdd/skills/scrumia-tdd/SKILL.md — load only the guides you need.
+Before writing code here, open each module's main skill by name — `scrumia-impl-solidjs`
+and `scrumia-practice-tdd` — and load only the guides you need.
 <!-- scrumia:end -->
 ```
 

@@ -27,6 +27,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   reads them, converts them to `extends:` and warns once per run; they are removed no earlier
   than the second release after this one, in a change carrying the breaking signal.
 
+### Fixed
+- The per-app `CLAUDE.md` stub `scrumia-init` offers to write cited each module by a
+  `plugins/<module>/…` path — a form that does not exist in an installed session and that
+  `tools/validate.py` could not see, since it is neither a markdown link nor a script call.
+  It now names each module instead, the form AC-11 requires.
+
 ## [0.4.0] - 2026-08-10
 ### Added
 - `scrumia-init` — installs or verifies a project's composition: writes `.scrumia/config.yaml`, the specs tree, and the composition table in `CLAUDE.md`.
