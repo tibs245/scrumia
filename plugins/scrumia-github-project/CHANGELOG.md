@@ -21,6 +21,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   commit atomic across several scopes names them all regardless of namespace, not modules
   only, and `<type>(*):` covers a commit spanning more scopes than are worth naming
   individually.
+- `scrumia-project-setup`'s label table now names `scrumia-manager` as a reader of
+  `scope/*`, alongside `pick-model.sh`, so the row no longer implies a single reader.
 
 ## [0.4.0] - 2026-08-10
 ### Added
