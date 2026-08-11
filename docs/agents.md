@@ -10,6 +10,8 @@ Defined in `plugins/scrumia-teams/agents/`, and configurable per project. They a
 
 The model choice: Opus everywhere, because all three read a lot of spec or code before arbitrating, and Opus holds that without the bill of the tier above. That tier — Fable — is deliberately absent from every default: it costs twice as much per token, so it is opted into by a human for a specific role or ticket, never assigned by a table.
 
+**This page restates each role's numbered review order and priority list by name, not by link — nothing here is generated from `plugins/scrumia-teams/agents/*.md` or `plugins/scrumia-design/agents/*.md`, and `tools/validate.py` cannot see one drift from the other.** Renaming or reordering a role's list in its agent definition means grepping this page for the old wording before opening the PR — and `site/i18n/{en,fr}/modules/scrumia-teams.json`, the natural second home for the same enumeration, in the same pass.
+
 ## What makes the split useful
 
 Each boundary is a **refusal line**: the Manager does not settle a business rule, Business does not judge an architecture choice, Tech does not decide a delivery priority.
@@ -59,7 +61,7 @@ It does not come from running processes — see [ADR-0002](adr/0002-standing-rol
 | Business | Domain vocabulary, cross-cutting rules assumed but not written |
 | Tech | Architecture invariants, accepted debts and their reason, house conventions |
 
-None of them writes ticket state there: it would become wrong within days, and a wrong memory is worse than an empty one.
+None of them writes ticket state there: it would become wrong within days, and a wrong memory is worse than an empty one. It is repo-local and project-scoped, so it never substitutes for a skill, an ADR or a feature — see [`features/business/agent-team/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md) § *What role memory may hold* for the full test.
 
 **State in the tracker module** — any session rebuilds the context by reading it.
 
