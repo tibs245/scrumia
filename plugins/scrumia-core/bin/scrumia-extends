@@ -37,7 +37,7 @@ overrides that with a directory holding <module>/ checkouts — for this reposit
 for CI, where no harness is running.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and each module's own extends.json,
-registers.json and dependencies.json. Writes nothing, anywhere.
+registers.json and dependencies.jsonl. Writes nothing, anywhere.
 EOF
   exit 2
 }
@@ -121,8 +121,8 @@ discover_roots() {
     MODULES=$(jq -c --arg m "$name" --arg r "$root" --arg s "$src" \
       --slurpfile ex <(read_json "$root/extends.json") \
       --slurpfile rg <(read_json "$root/registers.json") \
-      --slurpfile dp <(read_json "$root/dependencies.json") \
-      '. + [{module: $m, root: $r, source: $s, extends: $ex[0], registers: $rg[0], dependencies: $dp[0]}]' \
+      --slurpfile dp <(read_jsonl "$root/dependencies.jsonl") \
+      '. + [{module: $m, root: $r, source: $s, extends: $ex[0], registers: $rg[0], runs: $dp[0]}]' \
       <<<"$MODULES")
   done <<<"$ROOTS"
 
@@ -131,7 +131,20 @@ discover_roots() {
   # "the project override beats both", kept as a scope rather than as a self-ranking).
   if [ -f "$LOCAL_EXTENDS" ]; then
     MODULES=$(jq -c --slurpfile ex <(read_json "$LOCAL_EXTENDS") \
-      '. + [{module: "(this project)", root: ".", extends: $ex[0], registers: {}, dependencies: {}}]' <<<"$MODULES")
+      '. + [{module: "(this project)", root: ".", extends: $ex[0], registers: {}, runs: []}]' <<<"$MODULES")
+  fi
+}
+
+# One record per line, collected into an array. A dependency is a bare name today, so a
+# line is a JSON string; an object with a `run` key is accepted too, so a second field can
+# arrive without the format changing under every module at once.
+read_jsonl() {
+  if [ -f "$1" ]; then
+    if ! jq -se '[.[] | if type == "string" then . elif type == "object" then (.run // empty) else empty end]' "$1" 2>/dev/null; then
+      note "$1 is not one JSON record per line — ignored"; echo '[]'
+    fi
+  else
+    echo '[]'
   fi
 }
 
@@ -279,7 +292,7 @@ cmd_check() {
       echo "$mod declares running '$want:$name', but the '$name' it would reach is published by $pub_mod, from '$pub_src' — a name on PATH is first-come, so this is a different command wearing the same name" >&2
       failed=$((failed + 1))
     fi
-  done < <(jq -r '.[] | .module as $m | (.dependencies.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
+  done < <(jq -r '.[] | .module as $m | (.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
 
   # A contribution to a register nobody opens is inert — it will never be printed, and
   # nothing else would ever say so.

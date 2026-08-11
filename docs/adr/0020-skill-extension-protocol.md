@@ -62,7 +62,8 @@ shim to publish, no logic to maintain, nothing that can be wrong except the data
 
 ### What a module runs is declared, not inferred
 
-`dependencies.json` lists the published names a module executes. The caller declares what
+`dependencies.jsonl` lists the published names a module executes, one per line — a flat
+list, where a keyed object would wrap a single array in ceremony. The caller declares what
 it calls — which is the provenance nobody had, and the reason a broken call site could
 only ever be found by reading prose.
 

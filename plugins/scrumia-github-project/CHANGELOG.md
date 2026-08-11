@@ -4,7 +4,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `registers.json` and `dependencies.json` — this module opens the `refine`, `implement`,
+- `registers.json` and `dependencies.jsonl` — this module opens the `refine`, `implement`,
   `review` and `audit` registers, and declares the published names it runs, qualified by
   their source. Its four main
   skills now ask `scrumia-extends` what governs the work instead of restating another

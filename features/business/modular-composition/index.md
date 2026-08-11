@@ -23,7 +23,7 @@ is stored, so nothing can go stale. `business.md` § *Vocabulary* is the authori
   `scrumia-extends` name it publishes, and prints the composition to a terminal through
   `plugins/scrumia-core/scripts/compose-status.sh`, which both its skills end by running.
   Each module declares what it opens, contributes and consumes in its own
-  `registers.json`, `extends.json` and `dependencies.json`.
+  `registers.json`, `extends.json` and `dependencies.jsonl`.
 - Defers to: `features/business/release-versioning/` for how a module evolves once
   adopted — what a version bump promises, the deprecation window, and when a project is
   told. This feature establishes that a module can be composed, not what changing it costs.

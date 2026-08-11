@@ -4,7 +4,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `registers.json`, `extends.json` and `dependencies.json` — this module opens the
+- `registers.json`, `extends.json` and `dependencies.jsonl` — this module opens the
   `design` register and contributes to `implement`, `review`, `audit` and `convene`;
   the designer role reaches the team through `convene` rather than through prose.
 

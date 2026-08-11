@@ -114,7 +114,7 @@ this repository must not ship one.
 | A contribution to a register nobody opens | error | — |
 | Two modules opening one register | error | — |
 | A register the module opens that no skill of its own asks for | — | error |
-| A key in `dependencies.json` other than `runs` | — | error |
+| A line of `dependencies.jsonl` that is not a name | — | error |
 | A register nothing contributes to | nothing — an empty table is an answer | — |
 
 Two rows deserve their reason spelled out.
@@ -130,12 +130,25 @@ check structurally cannot: a skill that opens an extension point, reads as cover
 applies nothing.
 
 The set it runs over is `registers.json`, and that is deliberate. A draft of
-`dependencies.json` carried a second list, `reads`, naming the registers a module consults.
+`dependencies` carried a second list, `reads`, naming the registers a module consults.
 It bought nothing — a module that opens a register already promises to consult it, so the
 two lists were the same set — and where they *did* differ they hid the defect the check
 exists for: `scrumia-specs` opened `find-spec`, `scrumia-specs-find` never asked, `reads`
 did not list it, and a check scoped to `reads` said nothing. Two lists that must agree
 eventually will not, so there is one, and it is the one that carries the promise.
+
+## Why two formats
+
+`registers.json` and `extends.json` are keyed: a register name is written once and groups
+what belongs to it. `dependencies.jsonl` is a flat list, so it is one record per line.
+
+The split is not stylistic. Converting `extends.json` to JSONL was measured on
+`scrumia-impl-rust` and rejected: the register name would go from 3 occurrences to 11,
+because every row would have to carry its own. That denormalises the one field whose typo
+is already the silent failure above — eleven independent chances to orphan a directive
+instead of three, for a 4% saving in bytes. A flat list has no such key, so it pays none of
+that and keeps what a line-per-record file is good at: appending without touching the
+neighbouring line, and diffing as exactly what changed.
 
 ## Constraints the implementation lives under
 

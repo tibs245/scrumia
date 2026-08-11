@@ -4,7 +4,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `registers.json`, `extends.json` and `dependencies.json` — this module opens the
+- `registers.json`, `extends.json` and `dependencies.jsonl` — this module opens the
   `write-spec` and `find-spec` registers, contributes the spec-before-code rule to
   `implement` and the spec/code gap to `review`, and declares the names it runs.
 - `scrumia-specs-find` asks the `find-spec` register what else this project loads with a
