@@ -7,7 +7,7 @@ description: The ScrumIA TDD reference — the red-green-refactor cycle operatio
 
 **Not one line of production code without a red test that justifies it.**
 
-This practice refines one point of the implementation contract: **how we test**. It applies to apps that declare it in `.scrumia/config.yaml` (`apps[].practices`), with or without an implementation module. When an implementation module is plugged in, it situates this practice for its stack — its tooling takes precedence over the generic examples here.
+This practice refines one point of the implementation contract: **how we test**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module. When an implementation module is plugged in, it situates this practice for its stack — its tooling takes precedence over the generic examples here.
 
 ## The contract
 
@@ -74,4 +74,4 @@ If `.scrumia/practices/scrumia-practice-tdd.md` exists, its content takes preced
 
 ## Scoping
 
-This module applies to the apps that declare `scrumia-practice-tdd` in `.scrumia/config.yaml` (`apps[].practices`) — TDD scoping is by app, not by file pattern. Within an app, [`section.json`](section.json) globs (`**/*` by default) pick which files the guides apply to; the only per-path carve-out is `exempt_paths` under `settings.practices.scrumia-practice-tdd` (see [guides/03-ac-mapping.md](guides/03-ac-mapping.md)), honored before any guide in this module applies.
+This module applies to the apps that list `scrumia-practice-tdd` in their own `extends` in `.scrumia/config.yaml` — TDD scoping is by app, not by file pattern. Within an app, [`section.json`](section.json) globs (`**/*` by default) pick which files the guides apply to; the only per-path carve-out is `exempt_paths` under `settings.practices.scrumia-practice-tdd` (see [guides/03-ac-mapping.md](guides/03-ac-mapping.md)), honored before any guide in this module applies.

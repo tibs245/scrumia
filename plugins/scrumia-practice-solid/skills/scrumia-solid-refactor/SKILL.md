@@ -11,7 +11,7 @@ This skill addresses **one finding** — from `scrumia-solid-audit` or stated by
 
 A refactor without tests is a gamble. Check that the zone is covered:
 
-- If the TDD practice is plugged into the app (`apps[].practices` in the config), its `scrumia-tdd-refactor` skill provides the method for getting under test — apply it first.
+- If the TDD practice is plugged into the app (listed in the app's own `extends` in the config), its `scrumia-tdd-refactor` skill provides the method for getting under test — apply it first.
 - Otherwise, write the minimum of characterization tests on the zone's observable behavior, and say explicitly that this is the only safety net.
 
 If no safety net is possible (code not runnable locally), stop and say why.

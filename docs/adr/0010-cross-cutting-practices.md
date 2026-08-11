@@ -1,6 +1,6 @@
 # ADR-0010 — Cross-cutting practices as composable modules
 
-**Status**: accepted — 2026-08-07
+**Status**: superseded by [0019](0019-extends-replaces-composition-and-practices.md) — 2026-08-11. The `practices` slot no longer exists; a practice module is declared through `extends`, per app. Every rule this ADR gave a practice module (refines a named point of the implementation contract, works on its own, ships reference/audit/refactor skills, the "specific beats generic" precedence) is restated, unchanged, in 0019.
 
 ## Context
 

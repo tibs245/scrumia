@@ -1,0 +1,197 @@
+{
+  "_comment": "The kernel's closed action vocabulary. A module bids on a name from this list in its own composition.json and cannot invent one. Providers are declared by each module, never here; callers are counted, never declared.",
+  "sets": [
+    {
+      "name": "run",
+      "covers": "the project's own declared steps",
+      "configured_by_extends": true
+    },
+    {
+      "name": "kernel",
+      "covers": "init and compose \u2014 non-configurable by construction",
+      "configured_by_extends": false
+    },
+    {
+      "name": "adoption",
+      "covers": "the *-setup skills and the two contract audits",
+      "configured_by_extends": false
+    },
+    {
+      "name": "authoring",
+      "covers": "rules \u2014 outside the product",
+      "configured_by_extends": false
+    }
+  ],
+  "steps": [
+    "Brief",
+    "Scoping",
+    "Refinement",
+    "Sign-off",
+    "Sprint",
+    "Build",
+    "Merge"
+  ],
+  "actions": [
+    {
+      "name": "brief/scope-idea",
+      "set": "run",
+      "step": "Brief",
+      "kind": "contribution"
+    },
+    {
+      "name": "brief/state-need",
+      "set": "run",
+      "step": "Brief",
+      "kind": "decision"
+    },
+    {
+      "name": "scoping/split-into-work",
+      "set": "run",
+      "step": "Scoping",
+      "kind": "decision"
+    },
+    {
+      "name": "scoping/write-spec",
+      "set": "run",
+      "step": "Scoping",
+      "kind": "contribution"
+    },
+    {
+      "name": "refinement/refine-ticket",
+      "set": "run",
+      "step": "Refinement",
+      "kind": "decision"
+    },
+    {
+      "name": "sign-off/approve-ready",
+      "set": "run",
+      "step": "Sign-off",
+      "kind": "decision"
+    },
+    {
+      "name": "sprint/assemble-batch",
+      "set": "run",
+      "step": "Sprint",
+      "kind": "decision"
+    },
+    {
+      "name": "build/execute-ticket",
+      "set": "run",
+      "step": "Build",
+      "kind": "decision"
+    },
+    {
+      "name": "build/pick-model",
+      "set": "run",
+      "step": "Build",
+      "kind": "decision"
+    },
+    {
+      "name": "build/move-card",
+      "set": "run",
+      "step": "Build",
+      "kind": "decision"
+    },
+    {
+      "name": "build/find-spec",
+      "set": "run",
+      "step": "Build",
+      "kind": "contribution"
+    },
+    {
+      "name": "build/apply-design-system",
+      "set": "run",
+      "step": "Build",
+      "kind": "contribution"
+    },
+    {
+      "name": "build/sync-design-system",
+      "set": "run",
+      "step": "Build",
+      "kind": "contribution"
+    },
+    {
+      "name": "build/apply-implementation",
+      "set": "run",
+      "step": "Build",
+      "kind": "contribution"
+    },
+    {
+      "name": "merge/review-pr",
+      "set": "run",
+      "step": "Merge",
+      "kind": "contribution"
+    },
+    {
+      "name": "merge/approve",
+      "set": "run",
+      "step": "Merge",
+      "kind": "decision"
+    },
+    {
+      "name": "read/board-status",
+      "set": "run",
+      "kind": "contribution"
+    },
+    {
+      "name": "read/next-step",
+      "set": "run",
+      "kind": "contribution"
+    },
+    {
+      "name": "read/convene-roles",
+      "set": "run",
+      "kind": "contribution"
+    },
+    {
+      "name": "kernel/init",
+      "set": "kernel",
+      "kind": "decision"
+    },
+    {
+      "name": "kernel/compose",
+      "set": "kernel",
+      "kind": "decision"
+    },
+    {
+      "name": "adoption/specs-setup",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/tracker-setup",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/team-setup",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/design-setup",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/rules-setup",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/design-audit",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "adoption/feature-audit",
+      "set": "adoption",
+      "kind": "contribution"
+    },
+    {
+      "name": "authoring/write-rules",
+      "set": "authoring",
+      "kind": "contribution"
+    }
+  ]
+}

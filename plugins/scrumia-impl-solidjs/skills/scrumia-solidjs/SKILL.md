@@ -5,7 +5,7 @@ description: ScrumIA's SolidJS practices — behaviour-first component tests, fi
 
 # Coding in SolidJS
 
-This module fills the `implementation` slot for the apps that declare it in `.scrumia/config.yaml`. It has authority over the "how" in those apps — including over your own preferences. It is one choice among several defensible ones; each rule comes with its reason, given with each rule below.
+This module contributes to `build/apply-implementation` for every app that lists it in its own `extends` in `.scrumia/config.yaml`. It has authority over the "how" in those apps — including over your own preferences. It is one choice among several defensible ones; each rule comes with its reason, given with each rule below.
 
 ## The contract
 
@@ -114,4 +114,4 @@ If `.scrumia/impl/scrumia-impl-solidjs.md` exists, its content takes precedence 
 
 ## Scope
 
-This module applies to apps whose `.scrumia/config.yaml` sets `implementation: scrumia-impl-solidjs`. Within such an app, `section.json`'s globs (`src/**/*.tsx`, `src/**/*.ts`) pick which files trigger the guides above.
+This module applies to apps whose `.scrumia/config.yaml` lists `scrumia-impl-solidjs` in the app's own `extends`. Within such an app, `section.json`'s globs (`src/**/*.tsx`, `src/**/*.ts`) pick which files trigger the guides above.

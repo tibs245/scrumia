@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# ScrumIA — prints this module's composition manifest, with its own resolved root.
+# Published on PATH so scrumia-assemble never has to know where this module is
+# installed: the harness resolves the name, the module answers for itself.
+set -uo pipefail
+
+self=$(basename "$0")
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd) || {
+  echo "$self: cannot resolve my own plugin root" >&2; exit 1; }
+
+[ $# -eq 0 ] || { echo "usage: $self   # takes no argument, writes nothing" >&2; exit 2; }
+command -v jq >/dev/null 2>&1 || { echo "$self: jq not found" >&2; exit 1; }
+[ -f "$here/composition.json" ] || {
+  echo "$self: no composition.json at $here — this module declares no actions" >&2; exit 1; }
+
+# root is injected rather than stored: the committed manifest stays portable, and
+# only the answer printed here carries a path this machine can open.
+jq --arg root "$here" '. + {root: $root}' "$here/composition.json"
