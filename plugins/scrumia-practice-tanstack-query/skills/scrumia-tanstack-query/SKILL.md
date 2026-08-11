@@ -5,7 +5,7 @@ description: The ScrumIA TanStack Query reference — query keys, the queryOptio
 
 # Coding with TanStack Query
 
-This practice refines one point of the implementation contract: **how server state is fetched, cached, and mutated.** It applies to apps that declare it in `.scrumia/config.yaml` (`apps[].practices`), with or without an implementation module — nothing here assumes `scrumia-impl-solidjs`, `scrumia-impl-rust`, or any other module is present. When an implementation module for the app's framework does situate TanStack Query for its stack, its tooling takes precedence over the generic examples here; today none of this marketplace's implementation modules does, so the guides below are the whole answer.
+This practice refines one point of the implementation contract: **how server state is fetched, cached, and mutated.** It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module — nothing here assumes `scrumia-impl-solidjs`, `scrumia-impl-rust`, or any other module is present. When an implementation module for the app's framework does situate TanStack Query for its stack, its tooling takes precedence over the generic examples here; today none of this marketplace's implementation modules does, so the guides below are the whole answer.
 
 > Entry point for an agent. Read this file first, then open only the guide(s) the task needs — loading all nine for a one-line fix defeats the point of splitting them.
 

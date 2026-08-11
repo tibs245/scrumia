@@ -5,7 +5,7 @@ description: The Rust practices of ScrumIA — tests per invariant, unrepresenta
 
 # Coding in Rust
 
-This module fills the `implementation` slot for apps that declare it in `.scrumia/config.yaml`. It is the authority on the "how" in those apps — including against your preferences. It is one choice among other possible ones; it is worth what its reasons are worth, given with each rule.
+This module contributes to `build/apply-implementation` for every app that lists it in its own `extends` in `.scrumia/config.yaml`. It is the authority on the "how" in those apps — including against your preferences. It is one choice among other possible ones; it is worth what its reasons are worth, given with each rule.
 
 ## The contract
 
@@ -91,4 +91,4 @@ If `.scrumia/impl/scrumia-impl-rust.md` exists, its content takes precedence ove
 
 ## Scope
 
-This module applies to apps whose `.scrumia/config.yaml` sets `implementation: scrumia-impl-rust`. Within such an app, `section.json`'s globs (`**/*.rs`, `Cargo.toml`) pick which files trigger the guides above.
+This module applies to apps whose `.scrumia/config.yaml` lists `scrumia-impl-rust` in the app's own `extends`. Within such an app, `section.json`'s globs (`**/*.rs`, `Cargo.toml`) pick which files trigger the guides above.

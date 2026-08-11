@@ -1,0 +1,48 @@
+{
+  "module": "scrumia-specs",
+  "grain": "cross-cutting",
+  "provides": [
+    {
+      "action": "scoping/write-spec",
+      "read": [
+        "skills/scrumia-feature/SKILL.md"
+      ],
+      "entry": "scrumia-specs:feature"
+    },
+    {
+      "action": "build/find-spec",
+      "read": [
+        "skills/scrumia-specs-find/SKILL.md"
+      ],
+      "entry": "scrumia-specs:scrumia-specs-find"
+    },
+    {
+      "action": "adoption/specs-setup",
+      "read": [
+        "skills/scrumia-specs-setup/SKILL.md"
+      ],
+      "entry": "scrumia-specs:scrumia-specs-setup"
+    },
+    {
+      "action": "adoption/feature-audit",
+      "read": [
+        "skills/scrumia-feature/SKILL.md"
+      ],
+      "entry": "scrumia-specs:feature"
+    }
+  ],
+  "contract": {
+    "name": "Specs contract",
+    "intro": "Read the file named by `acceptance_file` for its acceptance criteria, identifiers in `ac_id_format`; the file named by `global_index` at the root of `specs_root` lists every feature; the other per-feature files it may carry are listed under `catalog`.",
+    "keys": {
+      "specs_root": "features/",
+      "feature_index": "index.md",
+      "global_index": "index.md",
+      "acceptance_file": "qa.md",
+      "ac_id_format": "AC-<n>",
+      "changelog": "CHANGELOG.md",
+      "catalog": "business.md, legal.md, archi.md, api-contract.md, tech.md, ux.md, security.md, devx.md"
+    }
+  },
+  "calls": []
+}

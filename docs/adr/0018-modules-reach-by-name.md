@@ -1,6 +1,6 @@
 # ADR-0018 — A module reaches another by a published name, never by a path
 
-**Status**: accepted — 2026-08-11
+**Status**: accepted — 2026-08-11 — extended by [0020](0020-assembled-composition.md), which answers for documents what this ADR answers for executables, and makes the PATH behaviour recorded below load-bearing beyond these two call sites.
 
 ## Context
 

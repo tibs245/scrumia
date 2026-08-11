@@ -1,0 +1,49 @@
+{
+  "module": "scrumia-design",
+  "grain": "cross-cutting",
+  "provides": [
+    {
+      "action": "build/apply-design-system",
+      "read": [
+        "skills/scrumia-design-system/SKILL.md"
+      ],
+      "entry": "scrumia-design:scrumia-design-system"
+    },
+    {
+      "action": "build/sync-design-system",
+      "read": [
+        "skills/scrumia-design-sync/SKILL.md"
+      ],
+      "entry": "scrumia-design:scrumia-design-sync"
+    },
+    {
+      "action": "adoption/design-setup",
+      "read": [
+        "skills/scrumia-design-setup/SKILL.md"
+      ],
+      "entry": "scrumia-design:scrumia-design-setup"
+    },
+    {
+      "action": "adoption/design-audit",
+      "read": [
+        "skills/scrumia-design-audit/SKILL.md"
+      ],
+      "entry": "scrumia-design:scrumia-design-audit"
+    }
+  ],
+  "contract": {
+    "name": "Design contract",
+    "intro": "Read `identity_file` for the intent and `tokens_file` for the vocabulary before writing any interface; `components_dir` holds one directory per component.",
+    "keys": {
+      "design_root": "design/",
+      "identity_file": "identity.md",
+      "tokens_file": "tokens.css",
+      "components_dir": "components/",
+      "component_preview": "preview.html",
+      "component_spec": "spec.md",
+      "card_marker": "@dsCard",
+      "remote": "claude-design"
+    }
+  },
+  "calls": []
+}

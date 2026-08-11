@@ -1,0 +1,45 @@
+{
+  "module": "scrumia-teams",
+  "grain": "cross-cutting",
+  "provides": [
+    {
+      "action": "sprint/assemble-batch",
+      "read": [
+        "skills/scrumia-sprint/SKILL.md"
+      ],
+      "entry": "scrumia-teams:sprint"
+    },
+    {
+      "action": "build/pick-model",
+      "run": "scrumia-pick-model"
+    },
+    {
+      "action": "read/convene-roles",
+      "read": [
+        "skills/scrumia-standup/SKILL.md"
+      ],
+      "entry": "scrumia-teams:standup"
+    },
+    {
+      "action": "adoption/team-setup",
+      "read": [
+        "skills/scrumia-team-setup/SKILL.md"
+      ],
+      "entry": "scrumia-teams:scrumia-team-setup"
+    }
+  ],
+  "calls": [
+    {
+      "action": "build/execute-ticket",
+      "from": "skills/scrumia-sprint/SKILL.md"
+    },
+    {
+      "action": "build/pick-model",
+      "from": "skills/scrumia-sprint/SKILL.md"
+    },
+    {
+      "action": "read/board-status",
+      "from": "skills/scrumia-sprint/SKILL.md"
+    }
+  ]
+}

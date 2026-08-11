@@ -5,7 +5,7 @@ description: The ScrumIA SOLID reference — the five principles, each with its 
 
 # Designing with SOLID — and knowing when to stop
 
-This practice refines one point of the implementation contract: **which design principles**. It applies to apps that declare it in `.scrumia/config.yaml` (`apps[].practices`). When an implementation module is plugged in, it situates these principles for its technology — and **specific beats generic**: if the implementation module restricts a principle, the module is right.
+This practice refines one point of the implementation contract: **which design principles**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`. When an implementation module is plugged in, it situates these principles for its technology — and **specific beats generic**: if the implementation module restricts a principle, the module is right.
 
 ## The core contract
 
@@ -97,7 +97,7 @@ If `.scrumia/practices/scrumia-practice-solid.md` exists, its content takes prec
 
 ## Per-app scoping
 
-This module applies to the apps that declare it in `.scrumia/config.yaml` (`apps[].practices`). Within an app, `section.json`'s globs pick which guides are in scope; the default is all five (`**/*`).
+This module applies to the apps that list it in their own `extends` in `.scrumia/config.yaml`. Within an app, `section.json`'s globs pick which guides are in scope; the default is all five (`**/*`).
 
 ## The module's two other skills
 
