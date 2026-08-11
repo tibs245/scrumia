@@ -29,6 +29,10 @@ jobs:
         run: |
           python3 -m pip install --quiet pyyaml   # the script's YAML reader when yq is absent
           python3 tools/test_compose_status.py
+      - name: Check the config schema scrumia-init writes
+        run: |
+          python3 -m pip install --quiet pyyaml   # the template is parsed, not grepped
+          python3 tools/test_scrumia_init.py
       - name: Check design token contrast and hue separation
         run: python3 tools/check_contrast.py
       - name: Rebuild the site and check the committed output is current

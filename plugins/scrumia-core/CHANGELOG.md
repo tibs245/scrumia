@@ -6,6 +6,16 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 ### Changed
 - `/next` and the config `scrumia-init` writes cite the tracker and team modules' published
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
+- The config `scrumia-init` writes declares modules through `extends:` — one flat, unordered
+  list per project, plus one per app carrying that app's implementation module and its
+  practice modules together. A module you did not choose is absent from the list rather than
+  present as `null`, so what nothing covers is now stated in the composition report instead of
+  as a placeholder in your config. `scrumia-compose` reads and edits the same key.
+
+### Deprecated
+- `composition:`, and the per-app `implementation:` and `practices:` keys. `scrumia-init` still
+  reads them, converts them to `extends:` and warns once per run; they are removed no earlier
+  than the second release after this one, in a change carrying the breaking signal.
 
 ## [0.4.0] - 2026-08-10
 ### Added

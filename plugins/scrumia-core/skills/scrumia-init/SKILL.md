@@ -51,7 +51,9 @@ List the installed modules by reading `enabledPlugins` in `.claude/settings.json
 
 Read the keys whose value is `true`, and split each on `@` to get the module name. **A key set to `false` is installed but disabled** — treating it as plugged in would promise a capability the session doesn't have. Check both files: a module enabled in `settings.local.json` is real but not shared with whoever clones the repo.
 
-Then propose a composition. A slot without a module is acceptable — the project runs in degraded mode, it just has to be said.
+Then propose a composition. A need nobody covers is acceptable — the project runs in degraded mode, it just has to be said.
+
+**Slot** is the word for the question you ask a human here — "which module fills this need" — and it is the only place that word does any work. The config below records modules, not slots.
 
 | Slot | Role | Reference module |
 |---|---|---|
@@ -59,11 +61,10 @@ Then propose a composition. A slot without a module is acceptable — the projec
 | `tracker` | Where state lives: tickets, columns, PRs | `scrumia-github-project` |
 | `team` | Standing roles and sprint execution | `scrumia-teams` |
 | `discovery` | Scoping an idea into framed work | `scrumia-discovery` |
-| `implementation` | How we code, **per app** | one module per stack (`scrumia-impl-rust`, `scrumia-impl-solidjs`) |
-| `practices` | Cross-cutting practices, **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
 | `design` | The design system | `scrumia-design` |
+| how an app is built, **per app** | what that app's code is written against — an implementation module, plus any cross-cutting practices | `scrumia-impl-rust`, `scrumia-impl-solidjs`, `scrumia-practice-tdd`, `scrumia-practice-solid` |
 
-Two slots take several modules at once, app by app: `implementation` (a SolidJS app and a Rust app don't share practices) and `practices` (TDD on the API, not on the prototype next door). Both mappings are explicit, per app.
+The last row is one question, not two, and it is asked once per app: a SolidJS app and a Rust app are built differently, and TDD applies to the API without applying to the prototype next door. Implementation and practices were always two answers at two granularities to that same question, so they are declared together, in the app's own list — never project-wide.
 
 If a slot the user wants is not installed, give the command (`/plugin install <module>@scrumia`) and note that newly enabled plugins load **at the next session**.
 
@@ -75,20 +76,21 @@ project:
   name: "<name>"
   repo: "<owner>/<repo>"
 
-# Which module fills which slot. An empty slot = capability absent, owned.
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: scrumia-discovery
-  design: scrumia-design
+# The modules this project runs. Flat, unordered, present modules only.
+extends:
+  - scrumia-specs
+  - scrumia-github-project
+  - scrumia-teams
+  - scrumia-discovery
+  - scrumia-design
 
 apps:
   - name: "<app>"
     path: "apps/<app>"      # required, repo-relative — the boundary an agent resolves a file against
     type: "frontend | backend | mobile | worker | cli"
-    implementation: null    # the module that says how to code here
-    practices: []           # cross-cutting practices for this app, e.g. [scrumia-practice-tdd, scrumia-practice-tanstack-query]
+    # What this app is built against: its implementation module and its
+    # cross-cutting practices, together. Omit the key for an app that has neither.
+    extends: [scrumia-impl-rust, scrumia-practice-tdd]
 
 # Settings passed to modules. Every key below is commented with what reads it —
 # a setting with no named reader does not belong here (see CLAUDE.md instead).
@@ -129,11 +131,43 @@ settings:
       max_tickets: 5          # read by scrumia-sprint to cap the batch — beyond it, human review saturates
 ```
 
-An absent module is declared `null` rather than omitted: the difference between "not chosen yet" and "deliberately without" matters. An app without practices carries `practices: []` — no practice imposed, the implementation module's conventions suffice. `path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
+**`extends` lists the modules that are there, and nothing else.** A module nobody chose is simply absent from the list — there is no `null` placeholder, because a flat list has no per-slot key to leave empty. That is a change of where the absence is written, not a decision to stop writing it: the need still exists whether or not a module covers it, and Step 8's report is what names it, rather than a line in this file ([ADR-0019](https://github.com/tibs245/scrumia/blob/main/docs/adr/0019-extends-replaces-composition-and-practices.md)). Writing `specs: null` back in to make the gap visible would put the same claim in two places, one of which goes stale.
+
+**The list is not ordered.** It is shaped like ESLint's `extends` and carries none of its last-wins semantics: nothing in the composition is arbitrated by list position. Where two modules would both make the same decision — who moves a card, which model runs a ticket — that is a conflict to name to the user at composition time, not something the order settles.
+
+**An app's `extends` carries its implementation module and its practice modules together**, in one list, because they are two answers to one question about that app. Precedence between them stays in prose and is unchanged: the implementation module wins over a practice module where they contradict each other, and a project override (`.scrumia/impl/<module>.md`, `.scrumia/practices/<module>.md`) wins over both. Do not try to read that order out of the list — the list has none.
+
+`path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
 
 `roles[].model` is gone too, and its disappearance is the interesting one. A standing role's model lives in its agent's own frontmatter, which the platform reads at load time — no config key can change it at runtime, so the one that sat here only ever described the frontmatter without governing it. What replaces it is `execution.matrix`, which applies where a model is genuinely chosen at call time: the per-ticket executor `scrumia-sprint` launches. To change a standing role's model, edit its agent file; to change how tickets are executed, edit the matrix.
 
 Two further keys an earlier version of this template carried are gone on purpose. `settings.specs.root` is superseded by the `## Specs contract` block (Step 5): the hard path lives in `CLAUDE.md` now, where every consumer already has to look; `scrumia-specs-setup` still proposes its own `root`/`strates` defaults if it needs them at install time, but this template no longer pre-seeds a value nothing here reads. `paths.adr` had no reader anywhere in the codebase — `docs/adr/` is a hard path stated directly in prose (`scrumia-tech`, `scrumia-rules`), which the house's anti-indirection stance prefers over a config key nobody consults. The cost: a project that genuinely wants a different ADR location has no config knob for it, only a doc to edit. If a module starts reading either key, put it back and name the reader.
+
+## Step 3b — Migrate a project already written on `composition:`
+
+`extends` replaced a `composition:` map keyed by slot, and per-app `implementation` and `practices` keys. Projects installed before that change still carry the old spelling, and there is no installer to run against them ([ADR-0001](https://github.com/tibs245/scrumia/blob/main/docs/adr/0001-distribution-as-plugins.md)) — this skill is the migration path. In verification mode, if the config on disk carries any of the three old keys, convert it and say what you did.
+
+The conversion is mechanical:
+
+| On disk | Becomes |
+|---|---|
+| `composition:` — each slot whose value names a module | one entry in the project-level `extends` list |
+| `composition:` — each slot whose value is `null` | nothing. The slot key disappears; report each one dropped |
+| `apps[].implementation` naming a module | an entry in that app's `extends` |
+| `apps[].practices` — each module listed | an entry in that same app's `extends` |
+| `apps[].implementation: null`, `apps[].practices: []` | nothing. An app left with an empty list carries no `extends` key at all |
+
+Write the implementation module first in an app's list, for a reader's benefit only — the list carries no precedence, and a converted config must not be presented as though the order it came out in meant something.
+
+**Name every dropped `null` in the report.** A slot deliberately left empty was a decision someone made, and the conversion deletes the only place that decision was written. The report is where it survives — "`design` was empty and is now simply absent from `extends`" — so the user can tell a converted gap from one this run invented.
+
+**Never rewrite the old keys away silently, and never in the same pass that installs a project.** Show the conversion, then write it. Deleting a key a project's own tooling might still read is exactly the failure the window below exists to prevent.
+
+**Both spellings keep working, for a window counted in releases.** `composition:` and the per-app keys stay readable through the release that deprecates them and the one after it, and may be removed no earlier than the second release after that — the window `features/business/release-versioning/` defines for anything a module publishes, which this is ([business.md](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md) § *What a module owes to be upgradable*). ADR-0019 says "one minor" in passing; the release-counted window is the one that governs, since `modular-composition` defers this question to `release-versioning` by name rather than answering it itself.
+
+While the window is open, reading an old key emits **one** warning — naming the key, its replacement, and the fact that removal is coming — and then proceeds. Not one per key, not one per app: a config carrying `composition:` plus three apps still on both old per-app keys would otherwise emit seven, for a single decision the user has already been told about.
+
+**If a config carries both `extends` and `composition:`, `extends` is what the project runs on.** Report the difference between the two rather than merging them: a stale `composition:` left beside a hand-edited `extends` is a leftover, and silently unioning the two would install modules nobody chose. Then offer to delete the leftover.
 
 ## Step 4 — Let each module install itself
 
@@ -166,17 +200,18 @@ Before acting, check which module covers what you are about to do.
 | Discovery | `scrumia-discovery` | An idea goes through scoping before becoming a ticket. |
 | Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
-### Implementation and practices, per app
+### What each app is built against
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `web` | `apps/web` | `scrumia-impl-solidjs` | `scrumia-practice-tdd` |
-| `api` | `apps/api` | `scrumia-impl-rust` | `scrumia-practice-tdd`, `scrumia-practice-solid` |
+| App | Path | Extends |
+|---|---|---|
+| `web` | `apps/web` | `scrumia-impl-solidjs`, `scrumia-practice-tdd` |
+| `api` | `apps/api` | `scrumia-impl-rust`, `scrumia-practice-tdd`, `scrumia-practice-solid` |
 
-When you write code in an app, load its implementation module's main skill and the
-reference skill of each of its practices. The implementation module wins over a
-generic practice; the project override (`.scrumia/impl/`, `.scrumia/practices/`)
-wins over both. An app without a module follows the neighboring code's conventions.
+When you write code in an app, load the main skill of each module in its `extends`.
+The implementation module wins over a generic practice; the project override
+(`.scrumia/impl/`, `.scrumia/practices/`) wins over both — the list itself carries no
+order and settles nothing. An app with an empty `extends` follows the neighboring
+code's conventions.
 
 Concretely: resolve the app from the path of the file you're about to edit (`apps[].path`
 above), open the skill index (`SKILL.md`) of each module declared for that app, and load
@@ -228,15 +263,15 @@ remote: claude-design
 
 Write only the lines of modules actually plugged in. A table naming an absent module sends agents to a skill that doesn't exist.
 
-**The `## Specs contract` block is copied, never composed.** If the `specs` slot is filled, open the plugged module's main `SKILL.md`, find its own `## Composition block` section, and copy that block verbatim under `## Specs contract` — do not write it from memory of `scrumia-specs`'s shape, another module may occupy the slot with different keys' values. This is ADR-0009's documented-composition rule applied to a module's internal vocabulary, formalized in `docs/adr/0012-specs-contract.md`: consumers (`scrumia-ticket`, `scrumia-split`, the team agents) read this block instead of hard-coding a specs module's file names.
+**The `## Specs contract` block is copied, never composed.** If a specs module appears in `extends`, open that module's main `SKILL.md`, find its own `## Composition block` section, and copy that block verbatim under `## Specs contract` — do not write it from memory of `scrumia-specs`'s shape, another module may occupy the slot with different keys' values. This is ADR-0009's documented-composition rule applied to a module's internal vocabulary, formalized in `docs/adr/0012-specs-contract.md`: consumers (`scrumia-ticket`, `scrumia-split`, the team agents) read this block instead of hard-coding a specs module's file names.
 
-**The `## Design contract` block follows the same rule**, copied from the plugged design module's `## Composition block` (`scrumia-design`: `skills/scrumia-design-system/SKILL.md`). Same reason, same discipline — and same omission when the slot is empty.
+**The `## Design contract` block follows the same rule**, copied from the plugged design module's `## Composition block` (`scrumia-design`: `skills/scrumia-design-system/SKILL.md`). Same reason, same discipline — and same omission when no design module appears in `extends`.
 
-If the `specs` slot is empty (`composition.specs: null`), write no `## Specs contract` section at all, and note its absence in the Step 8 report — a section with nothing to copy would either be blank or invented, and both are worse than omitted. On re-run, compare the block on disk against the plugged module's current `## Composition block` and report drift instead of silently overwriting — same discipline as every other marker section.
+If no specs module appears in `extends`, write no `## Specs contract` section at all, and note its absence in the Step 8 report — a section with nothing to copy would either be blank or invented, and both are worse than omitted. On re-run, compare the block on disk against the plugged module's current `## Composition block` and report drift instead of silently overwriting — same discipline as every other marker section.
 
 ## Step 6 — Offer per-app `CLAUDE.md` stubs (optional)
 
-For each app that has at least one module plugged in (`implementation` set, or `practices` non-empty), offer to write a short stub at `<path>/CLAUDE.md`, between markers so it can be checked and regenerated like the root section:
+For each app whose `extends` names at least one module, offer to write a short stub at `<path>/CLAUDE.md`, between markers so it can be checked and regenerated like the root section:
 
 ```markdown
 <!-- scrumia:start -->
@@ -248,7 +283,7 @@ and plugins/scrumia-practice-tdd/skills/scrumia-tdd/SKILL.md — load only the g
 
 This rides Claude Code's native nested-`CLAUDE.md` loading: an agent already working inside `apps/web/` picks up its scope without detouring through the root file first. Keep it to 3-5 lines — a pointer to the skill indexes, not a copy of their content.
 
-An app with no module plugged in gets no stub — nothing to point to. On re-run, replace only what sits between the markers, same as the root file; content a project added outside them stays untouched. If the file exists with no markers at all, check it against the config, report drift, and ask before touching it — never overwrite unmarked content.
+An app with an empty or absent `extends` gets no stub — nothing to point to. On re-run, replace only what sits between the markers, same as the root file; content a project added outside them stays untouched. If the file exists with no markers at all, check it against the config, report drift, and ask before touching it — never overwrite unmarked content.
 
 ## Step 7 — Enable the plugins for the project
 
@@ -285,9 +320,9 @@ Summarize what this run *did*: what was created, what drifted, what remains to b
 ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 ```
 
-Its output *is* the closing summary — the slot table, the slots left empty on purpose, the apps carrying no implementation module. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
+Its output *is* the closing summary — what each declared need resolves to, what nothing covers, and the apps built against no module at all. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
 
-If the script reports a slot as `not declared`, that is this skill's own output to fix: Step 3 writes every slot key explicitly, `null` included.
+A need the script reports as covered by nothing is **not** a defect in this skill's output. Under `extends` there is no key to write for it — the list names the modules that are there, and the report is where the gap is stated. Say it in the report as a gap the project owns, and name the module that would cover it; do not go back and invent a placeholder in the config to make the line disappear.
 
 ## What you don't do
 
