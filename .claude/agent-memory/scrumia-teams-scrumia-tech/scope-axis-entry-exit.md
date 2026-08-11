@@ -14,6 +14,6 @@ AC-21 — including the live GitHub label descriptions, which no repo check sees
 check them with `gh label list`.
 
 **How to apply:** reviewing anything that touches scope labelling or gate 2, treat an
-unqualified "label/diff gap = failed scoping" claim as a finding; `scrumia-review`
-gate 2 and `scrumia-manager` have not caught up with the carve-out — tracked on the
-board.
+unqualified "label/diff gap = failed scoping" claim as a finding, and check the live
+GitHub label descriptions too (`gh label list`) — they are one of AC-21's four surfaces
+and no repo check sees them drift.

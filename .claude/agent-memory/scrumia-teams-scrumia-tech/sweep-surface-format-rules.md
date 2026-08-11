@@ -30,4 +30,4 @@ Ordered by damage:
 five places and left four, two of which instruct an agent.
 
 **How to apply:** grep the rule's phrasing, not the file list — the wordings differ by
-site. See [[contract-block-carries-names-not-status]] for the neighbouring trap.
+site.

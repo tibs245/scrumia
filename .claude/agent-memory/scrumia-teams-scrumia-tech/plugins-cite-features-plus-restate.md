@@ -6,10 +6,10 @@ metadata:
 ---
 
 Skills and agents under `plugins/` cite this repo's specs with a relative link
-(`../../../../features/business/<feature>/business.md § *Section*`). Established sites:
-`scrumia-manager.md:58`, `scrumia-refine/SKILL.md:92`, `scrumia-project-setup/SKILL.md:66`
-(execution-policy), and `scrumia-ticket/SKILL.md:121,137,154,219`, `scrumia-review:42`,
-`scrumia-tech.md:38` (dev-flow). It is the convention, not a slip.
+(`../../../../features/business/<feature>/business.md § *Section*`). Established across
+`scrumia-manager.md`, `scrumia-refine/SKILL.md`, `scrumia-project-setup/SKILL.md`
+(execution-policy citations), and `scrumia-ticket/SKILL.md`, `scrumia-review`,
+`scrumia-tech.md` (dev-flow citations). It is the convention, not a slip.
 
 **The link does not resolve outside this repo.** In a marketplace install the plugin sits
 under `~/.claude/plugins/…`, and `../../../../features/` points at nothing. So the idiom
@@ -22,8 +22,8 @@ The `execution-policy` sites carry a portability hedge the `dev-flow` sites omit
 *"or whichever feature owns the axis in the project being set up — substitute that path"*.
 That hedge is the more careful form of the idiom.
 
-**Why:** worked out reviewing #31, which added three more dev-flow citations. The
-duplication looked like a drift machine until the marketplace-install case explained it.
+**Why this trips reviews up:** the duplication reads like a drift machine until the
+marketplace-install case explains it.
 
 **How to apply:** do not flag a restatement beside a `features/` citation as redundancy —
 check the restatements agree with the source and with each other. Do flag a citation that
