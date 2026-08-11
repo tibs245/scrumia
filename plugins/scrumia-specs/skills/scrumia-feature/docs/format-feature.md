@@ -1,15 +1,17 @@
 # Feature format
 
-The operational reference is the catalog:
-[`plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md`](../plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md)
+The operational reference is the catalog: [`../references/catalog.md`](../references/catalog.md)
 
-This document explains **why** the format is the way it is.
+This document explains **why** the format is the way it is. It ships alongside the
+catalog, inside `scrumia-specs` itself, so what a project reads matches the version of
+the skill it actually has installed — not whatever this repository's `main` branch
+carries at the moment someone opens a link.
 
-**This repository restates the format rule at three more sites, none shipped to a
-consumer project — a project installing `scrumia-specs` has no `docs/` or `site/` of
-its own.** This file and `docs/architecture.md` restate it in prose; `site/i18n/{en,fr}/modules/scrumia-specs.json` (`refusals`, `philosophy`) restates it for
+**This repository additionally restates the format rule at two sites of its own,
+neither shipped to a consumer project** — `docs/architecture.md` restates it in prose;
+`site/i18n/{en,fr}/modules/scrumia-specs.json` (`refusals`, `philosophy`) restates it for
 `site/**/modules/*.html`, which is **generated** from that JSON by
-`tools/build_site.py` — edit the JSON and rebuild, both languages. Sweep these three in
+`tools/build_site.py` — edit the JSON and rebuild, both languages. Sweep these two in
 addition to the catalog's own list, but only when working in this repository itself.
 
 ## What we replace
@@ -45,7 +47,7 @@ Which files are mandatory is the plugged specs module's own declaration, made wh
 its catalog lives; another module may declare a different set. A consumer delegates
 the writing to that module's writing skill, and does not infer the set from
 `CLAUDE.md`'s `## Specs contract` block, which names files without marking any of
-them required ([ADR-0016](adr/0016-global-feature-index.md)).
+them required ([ADR-0016](https://github.com/tibs245/scrumia/blob/main/docs/adr/0016-global-feature-index.md)).
 
 ## Two strata
 
@@ -75,7 +77,7 @@ Two more rules keep the index from re-growing what it just shed: a spec cites no
 
 `features/` also carries one index at its root — the file named by the specs contract's `global_index` key, `features/index.md` in this project — listing every feature in one line each: stratum, status, one-line brief. It makes a feature reachable without a pointer and without walking the tree.
 
-It is generated, never hand-written: `python3 tools/build_features_index.py` builds it from the tree, and `tools/validate.py` fails the build on any drift between the two. A stale index is worse than none, because it is believed. See [ADR-0016](adr/0016-global-feature-index.md) for the contract change that named it.
+It is generated, never hand-written: `python3 tools/build_features_index.py` builds it from the tree, and `tools/validate.py` fails the build on any drift between the two. A stale index is worse than none, because it is believed. See [ADR-0016](https://github.com/tibs245/scrumia/blob/main/docs/adr/0016-global-feature-index.md) for the contract change that named it.
 
 ## Never any history in a spec
 
@@ -95,5 +97,5 @@ A feature is a **unit of value verifiable independently**. The test: can you wri
 Given/When/Then scenario that validates it without depending on another feature in
 progress? In the other direction: no rule of its own and a single scenario means it
 is a **ticket**, not a feature. The numeric guardrails and their justification are
-[ADR-0004](adr/0004-feature-splitting.md)'s; validation surfaces a breach as a
+[ADR-0004](https://github.com/tibs245/scrumia/blob/main/docs/adr/0004-feature-splitting.md)'s; validation surfaces a breach as a
 warning so the fourth one is not silent.

@@ -4,10 +4,14 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- The catalog states where a feature-format rule is restated — the five sites a sweep
+- The catalog states where a feature-format rule is restated — the six sites a sweep
   has to reach, ordered by damage — and distinguishes a criterion's own falsifiability
   (`qa.md`, "must be able to fail") from ADR-0004's feature-splitting *verifiable*, which
   is a different property under a shared word.
+- `format-feature.md`, the format's rationale, moves from this repository's own `docs/`
+  to ship inside `scrumia-feature` itself, alongside the catalog it explains: a project
+  reads the version of the rationale that matches its installed skill, not whatever this
+  repository's `main` branch carries.
 
 ### Changed
 - The changelog entry drops its `PR:` field and gains a `Category:` — an entry names
