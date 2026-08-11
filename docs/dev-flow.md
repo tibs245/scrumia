@@ -4,6 +4,8 @@ Here is the flow as it runs with the reference composition. Another composition 
 
 Each step names the module that carries it. An empty slot simplifies the corresponding step; it does not make it disappear silently.
 
+**This file and `site/i18n/{en,fr}/workflow.json` narrate the same numbered flow, sentence for sentence, in two renderings — the mapping is positional (this file's step 6 outline maps to `step6_li1`…`step6_li6`, its step 7 prose to `step7_p1`, and so on), not by name.** `site/**/workflow.html`, in both languages, is generated from that JSON by `tools/build_site.py`; edit the JSON, rebuild, and `git diff --exit-code site/` must come back clean. When a change touches any numbered step here, sweep the *same step number* in both `workflow.json` files, `li` items and `pN` prose alike — a clean `validate.py` run and a clean `git diff site/` both pass even when the site's prose still carries the sentence this file just replaced.
+
 ## Overview
 
 ```

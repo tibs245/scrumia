@@ -2,6 +2,8 @@
 
 Each ADR freezes a decision, its reasoning and what was rejected. An accepted ADR is never modified: write a new one that replaces it, and mark the old one as *superseded by*.
 
+**A decision *not* to build something is a decision, not an absence of one.** A no-new-slot or no-split call at the composition level belongs here, not only in `../modules.md`'s candidate list, which registers intent but reasons about nothing. [0013](0013-tracker-stays-one-slot.md) is the pattern: an explicit *"Reopen this when…"* list and a *"what we accept"* naming who is blocked by the deferral. A feature's own boundary — a capability this feature will not grow into, stated as an enduring rule of what it is — can instead live in that feature's `business.md`, as `features/business/ceremonies/`'s *"Refactor session — dropped"* does: it holds because it is the feature's current shape, not a history of the debate. What does not survive there is a *rejected alternative*'s reasoning argued in passing — a spec carries only its current version (`CLAUDE.md`, *Shared rules*), so an argument not restated as the feature's shape is gone on the next edit, with nothing left recording it was ever weighed.
+
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-distribution-as-plugins.md) | Distribution as native Claude Code plugins | accepted — one accepted cost superseded by [0017](0017-version-bump-and-commit-signal.md) |
