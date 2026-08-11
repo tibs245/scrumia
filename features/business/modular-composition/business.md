@@ -134,6 +134,15 @@ leaves the module is refused (BR-7).
 the registers it reads. The caller declaring its own edges is the provenance nothing had
 when a broken call site could only be found by reading prose.
 
+**A name is declared with the source it comes from.** The session PATH is one flat
+namespace shared with every enabled plugin, and a naming convention two marketplaces both
+follow does not separate them. So a dependency on a name states *whose* — the marketplace
+the publishing module ships from — which turns a collision from something nobody notices
+into something a check reports. What is *executed* stays the bare name: the source is a
+claim to verify, never something to look up in order to decide what to run. Register names
+carry no source, because a register is a composition-local concept and not an entry in an
+OS-wide namespace.
+
 **The order is the composition's, never a module's.** Project-local first, then the
 modules an app extends, then the project-wide ones; required before optional within a
 tier. A module does not rank itself against modules it has never heard of.
@@ -302,9 +311,12 @@ the composition.
   the fragments' content. The table orders contributions; inside a module, that module's
   own routing table orders its files.
 - **BR-11** — A module declares the outward edges it depends on — the published names it
-  runs and the registers it reads — and the check reports each one nothing satisfies. A
-  name that is absent is never read as "this module contributes nothing": that reading
-  turns a plugin awaiting a restart into a silent claim that no rules apply.
+  runs, each qualified by the source that publishes it, and the registers it reads — and
+  the check reports each one nothing satisfies, including a name whose actual publisher
+  ships from another source. A name that is absent is never read as "this module
+  contributes nothing": that reading turns a plugin awaiting a restart into a silent claim
+  that no rules apply. Qualifying a declaration is not resolving it: what a skill invokes
+  is still the bare name, and nothing consults a source to decide what to run.
 - **BR-12** — The directive table arbitrates nothing. Two contributions whose prose
   contradicts each other are both printed, in the computed order; resolving them is a
   composition decision a person makes, not one a generator may make silently.

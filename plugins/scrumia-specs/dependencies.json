@@ -1,4 +1,8 @@
 {
-  "runs": ["scrumia-extends"],
-  "reads": ["write-spec"]
+  "runs": [
+    "tibs245/scrumia:scrumia-extends"
+  ],
+  "reads": [
+    "write-spec"
+  ]
 }

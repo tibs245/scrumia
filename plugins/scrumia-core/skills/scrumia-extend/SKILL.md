@@ -89,17 +89,36 @@ The outward edges, declared by the caller rather than inferred from prose:
 
 ```json
 {
-  "runs":  ["scrumia-board", "scrumia-pick-model"],
+  "runs":  ["tibs245/scrumia:scrumia-board", "tibs245/scrumia:scrumia-pick-model"],
   "reads": ["implement", "review"]
 }
 ```
 
-`runs` lists the **published names** this module executes — never a module name, because
-what a module depends on is the name, not whoever publishes it this month. `reads` lists
-the registers its skills consult. `scrumia-extends --check` fails on a name nothing
-publishes, on a register nobody opens, and on a contribution to a register nobody opens —
-that last one being the silent case: directives that will never be printed, and nothing
-else would ever say so.
+`runs` lists the published names this module executes, each **qualified by its source** —
+`<source>:<name>`, where the source is the marketplace the publishing module ships from
+(`owner/repo` for a GitHub marketplace). The qualification exists because PATH is one flat
+namespace shared with every enabled plugin: a bare `scrumia-board` says *which command*
+and never *whose*, so two marketplaces publishing the same name resolve first-come, with
+nothing to notice it.
+
+**What is executed stays the bare name.** A skill runs `scrumia-board`, exactly as
+[ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)
+says; the source is a claim to check, not something to invoke. Qualifying it does not name
+a module either — the dependency is still the name, not whoever publishes it this month;
+what is added is *from which marketplace*, which is the thing that stays true when the
+publishing module is renamed or replaced.
+
+`reads` lists the registers this module's skills consult. Register names are not
+qualified: a register is a composition-local concept, not an entry in an OS-wide
+namespace.
+
+`scrumia-extends --check` fails on a name nothing publishes, on a name whose actual
+publisher ships from a different source than the one declared, on a register nobody opens,
+and on a contribution to a register nobody opens — that last one being the silent case:
+directives that will never be printed, and nothing else would ever say so. An unqualified
+entry is reported without failing: this repository's own validator refuses one, but a
+consuming project is not blocked by another author's laxness. A publisher that declares no
+repository makes the source *unchecked*, reported as such and never as a match.
 
 ## One fragment, several registers
 

@@ -350,7 +350,18 @@ def check_extension_data() -> None:
     anything this repository had not anticipated. What is closed is containment and
     existence, which is ADR-0018's rule and is decidable from the tree alone.
     """
-    published = {e.name for e in ROOT.glob("plugins/*/bin/*") if e.is_file()}
+    # Who publishes what, and the source each publisher claims. A `runs` entry is
+    # checked against both: PATH is one flat namespace shared with every enabled plugin,
+    # so a bare name says which command and never whose.
+    published = {}
+    for entry in ROOT.glob("plugins/*/bin/*"):
+        if entry.is_file():
+            published.setdefault(entry.name, entry.parent.parent)
+
+    def source_of(plugin: Path) -> str:
+        meta = load_json(plugin / ".claude-plugin" / "plugin.json") or {}
+        url = meta.get("repository") or meta.get("homepage") or ""
+        return re.sub(r"^[a-z+]+://[^/]+/", "", url).removesuffix(".git").rstrip("/")
 
     def data_of(plugin: Path, name: str):
         path = plugin / name
@@ -408,9 +419,29 @@ def check_extension_data() -> None:
 
         deps, rel = data_of(plugin, "dependencies.json")
         if deps:
-            for name in deps.get("runs", []):
-                if name not in published:
-                    error(f"{rel}: runs '{name}', which no plugin publishes under its bin/")
+            for entry in deps.get("runs", []):
+                source, _, name = entry.rpartition(":")
+                if not source:
+                    error(
+                        f"{rel}: runs '{name}' unqualified — name it <source>:<name>, since "
+                        f"PATH is shared with every enabled plugin and a bare name says "
+                        f"which command, never whose"
+                    )
+                    continue
+                publisher = published.get(name)
+                if publisher is None:
+                    error(f"{rel}: runs '{entry}', and no plugin publishes '{name}' under its bin/")
+                    continue
+                # The qualification is a claim about provenance, checked here. What a
+                # skill actually invokes stays the bare name (ADR-0018).
+                actual = source_of(publisher)
+                if not actual:
+                    warn(f"{rel}: runs '{entry}', published by {publisher.name}, which declares no repository — the source is unchecked")
+                elif actual != source:
+                    error(
+                        f"{rel}: runs '{entry}', but '{name}' is published by {publisher.name}, "
+                        f"from '{actual}'"
+                    )
             for register in deps.get("reads", []):
                 # A skill that declares reading a register and never runs the tool reads
                 # as covered and applies nothing — the one failure a declaration check

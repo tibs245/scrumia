@@ -147,7 +147,27 @@ The three cases must not collapse. An absent name silently read as "no rules app
 well-formed, passes every gate, and tells every later agent that nothing governs the
 work — which is the failure this criterion exists to catch.
 
-### AC-12 — A module is cited by name the harness resolves, never by a path
+### AC-12 — A name is depended on with its source, and the source is checked
+
+```gherkin
+Given two marketplaces whose modules both publish an executable of the same name, and a
+  module that declares running that name qualified by the source it expects
+When the composition is checked
+Then the name is resolved to the module that actually publishes it, that module's own
+  declared source is compared against the one claimed, and a mismatch is reported as a
+  different command wearing the same name
+Given the publishing module declares no source of its own
+Then the check reports the claim as unverifiable, never as satisfied
+Given a declaration that carries no source at all
+Then this repository's own validator refuses it, while a consuming project's check
+  reports it and continues — an author's laxness does not block someone else's project
+```
+
+The qualification is a claim, checked. What a skill invokes stays the bare name: a check
+that resolved a source in order to decide what to run would be the capability registry
+arriving through the back door.
+
+### AC-13 — A module is cited by name the harness resolves, never by a path
 
 ```gherkin
 Given two modules that need to interoperate — for example the tracker's ticket skill
@@ -158,7 +178,7 @@ Then it names the other module in its own prose, in a form the harness resolves 
   resolves the name to a module on the agent's behalf
 ```
 
-### AC-13 — The table arbitrates nothing
+### AC-14 — The table arbitrates nothing
 
 ```gherkin
 Given two modules whose directives, in prose, contradict each other on the same point
@@ -168,7 +188,7 @@ Then both rows appear, in the computed order, with nothing dropped and nothing m
   project, because a generator does not read English
 ```
 
-### AC-14 — A third-party module plugs in without joining the base repo
+### AC-15 — A third-party module plugs in without joining the base repo
 
 ```gherkin
 Given no ScrumIA-authored module answers a project's need
@@ -185,7 +205,7 @@ The two lists answer to different tests. The first admits an item only when skip
 breaks silently; a module that contributes nothing is reported by name, so it cannot join
 that list without weakening what membership in it means.
 
-### AC-15 — A module ships the standing role that guards its capability
+### AC-16 — A module ships the standing role that guards its capability
 
 ```gherkin
 Given a module providing a capability and shipping the standing role that guards it,

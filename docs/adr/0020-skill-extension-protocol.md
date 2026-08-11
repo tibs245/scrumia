@@ -66,6 +66,18 @@ shim to publish, no logic to maintain, nothing that can be wrong except the data
 The caller declares what it calls — which is the provenance nobody had, and the reason a
 broken call site could only ever be found by reading prose.
 
+**A name is declared with its source**: `tibs245/scrumia:scrumia-board`. ADR-0018 records
+that the session PATH is "one flat namespace shared with every other enabled plugin" and
+answers it with a `scrumia-` prefix — a convention, which two marketplaces both following
+it do not resolve. Qualifying the *declaration* makes the collision checkable: the check
+resolves the bare name, finds the module that publishes it, and compares that module's own
+declared source against the one the caller claimed.
+
+**What is executed stays the bare name.** The qualification is a claim, not an invocation,
+and ADR-0018's mechanism is untouched. Nothing looks a source up to decide what to run;
+a mismatch is reported, never routed around — routing around it would be the capability
+registry, arriving through the back door.
+
 ### The table is computed when asked, and stored nowhere
 
 `scrumia-extends <register> [--app <name>|--path <file>]` reads the project's `extends`,
