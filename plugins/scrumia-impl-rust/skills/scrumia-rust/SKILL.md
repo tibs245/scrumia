@@ -5,8 +5,6 @@ description: The Rust practices of ScrumIA — tests per invariant, unrepresenta
 
 # Coding in Rust
 
-This module contributes to `build/apply-implementation` for every app that lists it in its own `extends` in `.scrumia/config.yaml`. It is the authority on the "how" in those apps — including against your preferences. It is one choice among other possible ones; it is worth what its reasons are worth, given with each rule.
-
 ## The contract
 
 - **How we test** — one test per invariant, not per function; the compiler is the first test suite. → [04-testing](guides/04-testing.md)

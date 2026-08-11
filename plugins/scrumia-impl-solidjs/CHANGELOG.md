@@ -3,6 +3,12 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Fixed
+- The opening paragraph is gone. It narrated how this module is composed — an action name
+  from a vocabulary that no longer exists, and a claim of authority over apps it does not
+  name — none of which a reader needs in order to use the skill. Which registers this
+  module contributes to is `extends.json`'s to declare, and `scrumia-extends` reads it.
+
 ### Added
 - `extends.json` — the six guides and four refusals are contributed to the `implement`,
   `review` and `audit` registers, so a skill applies them without naming this module.
