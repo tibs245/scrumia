@@ -36,7 +36,7 @@ roles up, hands the floor back to the human, and starts no sprint.
 
 | File | Read it when |
 |---|---|
-| `business.md` | Activation triggers per role, the escalation rules that hold regardless of the project's autonomy level, the Owns/Refuses table per role, and what a role's project memory may and may not hold |
+| `business.md` | Activation triggers per role, the escalation rules that hold regardless of the project's autonomy level, and the Owns/Refuses table per role |
 | `qa.md` | Acceptance criteria for role activation, convening as an entry point, arbitration and the sprint-loop constraint |
 | `CHANGELOG.md` | History of changes to this feature |
 

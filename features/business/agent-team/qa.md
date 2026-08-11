@@ -145,17 +145,6 @@ axis's three questions (`docs/adr/0015-scope-measures-reach.md`), and only one o
 concerns a business rule; the label alone therefore does not convene business, and the
 role's own condition in `business.md` — *and changes a business rule* — is what does.
 
-### AC-15 — A finding that belongs in a skill, an ADR or a feature is not written as memory
-
-```gherkin
-Given a role is about to write a project-memory entry
-When the note is shareable knowledge that already has, or should have, a
-  dedicated home — a debate for a skill, a decision for an ADR, a spec for a
-  feature — a skill gap, or an attempt to fix a behavior after the fact
-Then the role does not write it to memory, and instead names the promotion the
-  note calls for or files it as a finding
-```
-
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —
