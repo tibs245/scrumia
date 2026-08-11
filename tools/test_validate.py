@@ -87,6 +87,112 @@ def test_repo_features_pass_the_real_gate() -> None:
     check("no broken link under the real features/ tree", errors == [], str(errors))
 
 
+# --- containment: a plugin reaches nothing outside itself (ADR-0018) ---
+
+def write_plugin_skill(root: Path, body: str, plugin: str = "scrumia-widget") -> Path:
+    skill = root / "plugins" / plugin / "skills" / "scrumia-do"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text(body, encoding="utf-8")
+    return skill
+
+
+def test_link_leaving_its_plugin_is_caught() -> None:
+    print("a markdown link resolving outside its own plugin is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        (tmp / "docs").mkdir(parents=True)
+        (tmp / "docs" / "agents.md").write_text("# Agents\n", encoding="utf-8")
+        write_plugin_skill(tmp, "See [the roles](../../../../docs/agents.md).\n")
+        errors = run_doc_links(tmp)
+        check("the escaping link is reported even though the target exists here",
+              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_link_into_a_sibling_plugin_is_caught() -> None:
+    print("reaching a sibling plugin by path is an error — installed, it is one segment deeper")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        other = tmp / "plugins" / "scrumia-other"
+        other.mkdir(parents=True)
+        (other / "README.md").write_text("# Other\n", encoding="utf-8")
+        write_plugin_skill(tmp, "See [the other](../../../scrumia-other/README.md).\n")
+        errors = run_doc_links(tmp)
+        check("the sibling reach is reported",
+              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_intra_plugin_link_still_passes() -> None:
+    print("a link staying inside the plugin is untouched — the rule does not over-reach")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        skill = write_plugin_skill(tmp, "See [the reference](references/traps.md).\n")
+        (skill / "references").mkdir()
+        (skill / "references" / "traps.md").write_text("# Traps\n", encoding="utf-8")
+        errors = run_doc_links(tmp)
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_script_call_leaving_its_plugin_is_caught() -> None:
+    print("a ${CLAUDE_SKILL_DIR} script call into another plugin is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        other = tmp / "plugins" / "scrumia-other" / "scripts"
+        other.mkdir(parents=True)
+        (other / "tool.sh").write_text("#!/bin/sh\n", encoding="utf-8")
+        write_plugin_skill(
+            tmp, "```bash\n${CLAUDE_SKILL_DIR}/../../../scrumia-other/scripts/tool.sh\n```\n")
+        errors = run_check(tmp, "check_skill_scripts")
+        check("the cross-plugin script call is reported",
+              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_canonical_url_naming_no_file_is_caught() -> None:
+    print("a canonical blob URL pointing at nothing is an error — the escape hatch is gated too")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin_skill(tmp, f"See [the ADR]({v.CANONICAL_BLOB}docs/adr/9999-nope.md).\n")
+        errors = run_doc_links(tmp)
+        check("the dangling URL is reported",
+              any("canonical URL names no file" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_canonical_url_naming_a_real_file_passes() -> None:
+    print("a canonical blob URL naming a file that exists passes")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        (tmp / "docs" / "adr").mkdir(parents=True)
+        (tmp / "docs" / "adr" / "0018-real.md").write_text("# Real\n", encoding="utf-8")
+        write_plugin_skill(tmp, f"See [the ADR]({v.CANONICAL_BLOB}docs/adr/0018-real.md).\n")
+        errors = run_doc_links(tmp)
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_non_executable_published_name_is_caught() -> None:
+    print("a bin/ entry that cannot run is an error — PATH would find it and fail")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
+        bin_dir.mkdir(parents=True)
+        (bin_dir / "scrumia-widget-tool").write_text("#!/bin/sh\n", encoding="utf-8")
+        errors = run_check(tmp, "check_published_names")
+        check("the non-executable name is reported",
+              any("not executable" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
 def run_check(root: Path, check_name: str) -> list[str]:
     """Point one validate.py check at a fixture root instead of the repo."""
     v.ROOT = root
@@ -813,6 +919,13 @@ def main() -> int:
     for test in (test_broken_link_under_features_is_caught,
                  test_valid_link_under_features_passes,
                  test_repo_features_pass_the_real_gate,
+                 test_link_leaving_its_plugin_is_caught,
+                 test_link_into_a_sibling_plugin_is_caught,
+                 test_intra_plugin_link_still_passes,
+                 test_script_call_leaving_its_plugin_is_caught,
+                 test_canonical_url_naming_no_file_is_caught,
+                 test_canonical_url_naming_a_real_file_passes,
+                 test_non_executable_published_name_is_caught,
                  test_feature_missing_mandatory_file_is_caught,
                  test_feature_with_all_mandatory_files_passes,
                  test_feature_index_invented_section_is_caught,
