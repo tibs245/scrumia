@@ -104,7 +104,7 @@ settings:
         enabled: true
       - name: tech
         enabled: true
-    execution:               # read by scripts/pick-model.sh, which scrumia-sprint and scrumia-ticket call before running a ticket
+    execution:               # read by scrumia-pick-model, which scrumia-sprint and scrumia-ticket call before running a ticket
       unlabeled: sonnet      # ticket with no scope label: run here and ask for refinement, never guess a size
       unrated_risk: medium   # risk column assumed when the ticket carries no risk label — the answer says so
       labels:                # this project's own words for size and risk; the matrix below speaks S/M/L/XL and low..critical
