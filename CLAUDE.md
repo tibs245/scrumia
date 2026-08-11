@@ -6,33 +6,42 @@ Before acting, check which module covers what you are about to do.
 
 ScrumIA is the composition it ships: this repo runs on its own plugins.
 
-| Slot | Plugged module | What to know |
-|---|---|---|
-| Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
-| Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
-| Team | `scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
-| Discovery | `scrumia-discovery` | Scope an idea before it becomes a ticket: `scrumia-brainstorm`, then `scrumia-split`. |
-| Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
+| Module | What to know |
+|---|---|
+| `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
+| `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
+| `scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
+| `scrumia-discovery` | Scope an idea before it becomes a ticket: `scrumia-brainstorm`, then `scrumia-split`. |
+| `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
 `scrumia-design` also ships the `designer` standing role, registered in
 `settings.team.roles` like the other three (`docs/adr/0014`). Route interface questions
 to it — it is the only role that judges what a user actually sees.
 
-### Implementation and practices, per app
+### Per app
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `site` | `site` | none | none |
-| `tools` | `tools` | none | none |
+| App | Path | Extends |
+|---|---|---|
+| `site` | `site` | none |
+| `tools` | `tools` | none |
 
-Both apps carry no implementation module, so follow the conventions of the neighboring
+Both apps extend nothing of their own, so follow the conventions of the neighbouring
 code. `plugins/` is the product itself — markdown, not code — and is deliberately absent
-from this table: no implementation module speaks for it.
+from this table: no module speaks for it. `.scrumia/config.yaml` records that as
+`build/apply-implementation: not-applicable` rather than leaving it to be inferred.
 
-When an implementation module does get plugged in, resolve the app from the path of the
-file you're about to edit, open that module's `SKILL.md`, and load only the guides its
-routing table points to. The implementation module wins over a generic practice; a
-project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both.
+### What to load, and in what order
+
+Do not work it out from the tables above. Ask:
+
+```bash
+scrumia-assemble load <action>          # e.g. build/execute-ticket, scoping/write-spec
+```
+
+It prints the contributing modules in the order that applies here, each with a resolved
+path. Inside a module, that module's own routing table decides what to open next. The
+built files live in `.scrumia/assemblies/`; they are generated, committed and gated —
+edit the manifests, then run `scrumia-assemble build`, never the artefact.
 
 ### Specs contract
 
@@ -84,6 +93,8 @@ a finding, not an exception.
   without a filter is silently truncated at 30 items.
 - Before executing a ticket, ask `scrumia-pick-model <n>` which model it runs on, and act
   on its `instruction` rather than re-reading the matrix.
+- Before acting on a step, ask `scrumia-assemble load <action>` what to open. Never
+  recompose that yourself out of one module's prose about another.
 <!-- scrumia:end -->
 
 ## Working on this repo

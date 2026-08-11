@@ -340,6 +340,104 @@ def check_composition_drift() -> None:
             )
 
 
+def check_module_manifests() -> None:
+    """A module's composition.json only names things that exist, inside itself.
+
+    Containment is checked here rather than on the built assemblies: .scrumia/ is
+    globbed by no other check, has no plugin root to resolve against, and an artefact
+    built from manifests that already passed is correct by construction.
+    """
+    vocab_path = ROOT / "plugins" / "scrumia-core" / "data" / "actions.json"
+    vocab = load_json(vocab_path)
+    if vocab is None:
+        error(f"{vocab_path.relative_to(ROOT)}: missing — the closed action vocabulary")
+        return
+    known = {a["name"] for a in vocab.get("actions", [])}
+    kinds = {a["name"]: a.get("kind") for a in vocab.get("actions", [])}
+    published = {e.name for e in ROOT.glob("plugins/*/bin/*") if e.is_file()}
+
+    def resolves(name: str) -> bool:
+        """A caller or entry names whatever the harness resolves: a skill or a command."""
+        if ":" not in name:
+            return False
+        module, thing = name.split(":", 1)
+        base = ROOT / "plugins" / module
+        return (base / "skills" / thing / "SKILL.md").exists() or (base / "commands" / f"{thing}.md").exists()
+
+    for manifest_path in sorted(ROOT.glob("plugins/*/composition.json")):
+        plugin = manifest_path.parent
+        rel = manifest_path.relative_to(ROOT)
+        data = load_json(manifest_path)
+        if not isinstance(data, dict):
+            error(f"{rel}: must be a JSON object")
+            continue
+        if data.get("module") != plugin.name:
+            error(f"{rel}: declares module '{data.get('module')}' but sits in plugins/{plugin.name}")
+        if data.get("grain", "cross-cutting") not in ("technology", "cross-cutting"):
+            error(f"{rel}: grain must be 'technology' or 'cross-cutting'")
+
+        publisher = plugin / "bin" / f"{plugin.name}-manifest"
+        if not publisher.exists():
+            error(f"{rel}: no {publisher.relative_to(ROOT)} — a manifest nothing publishes cannot be read by name")
+
+        for entry in data.get("provides", []):
+            action = entry.get("action")
+            if action not in known:
+                error(f"{rel}: '{action}' is not in the kernel's closed action vocabulary")
+            for frag in entry.get("read", []):
+                target = (plugin / frag).resolve()
+                if not target.is_relative_to(plugin.resolve()):
+                    error(f"{rel}: fragment leaves plugins/{plugin.name} → {frag} — {CONTAINMENT_HINT}")
+                elif not target.exists():
+                    error(f"{rel}: fragment does not exist → {frag}")
+            run = entry.get("run")
+            if run is not None and run not in published:
+                error(f"{rel}: run '{run}' names no executable under any plugin's bin/")
+            ep = entry.get("entry")
+            if ep is not None and not resolves(ep):
+                error(f"{rel}: entry '{ep}' resolves to no skill or command file")
+
+        for call in data.get("calls", []):
+            action = call.get("action")
+            if action not in known:
+                error(f"{rel}: calls '{action}', which is not in the action vocabulary")
+            evidence = call.get("from")
+            if not evidence:
+                error(f"{rel}: a call declares no 'from' — a caller names the file inside itself that makes it")
+                continue
+            target = (plugin / evidence).resolve()
+            if not target.is_relative_to(plugin.resolve()):
+                error(f"{rel}: call evidence leaves plugins/{plugin.name} → {evidence}")
+            elif not target.exists():
+                error(f"{rel}: call evidence does not exist → {evidence}")
+
+    # Two providers on a decision action is scrumia-assemble's check, scoped to what a
+    # project extends. This repo ships twelve modules and runs five; a collision between
+    # two nobody composes together is not a defect, and refusing it here would forbid a
+    # second tracker module from ever being written.
+    del kinds
+
+
+def check_assemblies_current() -> None:
+    """The committed assemblies still match the composition they were built from.
+
+    Resolved by repo path, never by PATH: CI has no harness, so no plugin's bin/ is on it.
+    """
+    tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-assemble"
+    if not tool.exists():
+        error(f"{tool.relative_to(ROOT)}: missing")
+        return
+    env = {**os.environ, "SCRUMIA_MODULE_DIR": "plugins", "NO_COLOR": "1"}
+    try:
+        result = subprocess.run([str(tool), "check"], cwd=str(ROOT), env=env,
+                                capture_output=True, text=True, timeout=30)
+    except Exception as exc:  # noqa: BLE001 - reported, not raised
+        error(f"{tool.relative_to(ROOT)}: failed to run — {exc}")
+        return
+    if result.returncode != 0:
+        error(f".scrumia/assemblies: {result.stderr.strip().splitlines()[-1] if result.stderr.strip() else 'drifted'}")
+
+
 def check_feature_mandatory_files() -> None:
     """Every leaf feature carries index.md, qa.md, CHANGELOG.md and business.md.
 
@@ -627,6 +725,8 @@ def main() -> int:
     check_published_names()
     check_french_leftovers()
     check_composition_drift()
+    check_module_manifests()
+    check_assemblies_current()
     check_feature_mandatory_files()
     check_no_tracker_refs()
     check_business_value_heading()

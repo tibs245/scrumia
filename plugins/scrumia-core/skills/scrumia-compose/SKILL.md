@@ -13,7 +13,7 @@ Read `.scrumia/config.yaml` and present:
 
 - Each slot, the plugged-in module, and whether it is actually installed — read `enabledPlugins` in `.claude/settings.json` and `.claude/settings.local.json` (an agent cannot run the interactive `/plugin list`)
 - Empty slots, and what the project loses as a result
-- The app → implementation module and practices mapping (`apps[].implementation`, `apps[].practices`), with uncovered apps
+- Each app's own `extends` list (`apps[].extends`), with the apps that carry none
 - **Each app's `path`** — required for per-app activation to resolve at all; flag any app entry missing it
 - **Whether a per-app `CLAUDE.md` stub exists at `apps[].path`** for apps that have a module plugged in, and whether it still names the modules actually configured — a stale stub misleads an agent working inside that app just as a stale root section does
 - Gaps between `.scrumia/config.yaml` and the `CLAUDE.md` section

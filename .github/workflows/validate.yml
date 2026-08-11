@@ -17,7 +17,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validate manifests, skills, hooks and links
+      # validate.py runs scrumia-assemble, which reads the config with yq or PyYAML.
+      # Installed here rather than further down: the first step that needs it wins.
+      - name: Install the YAML reader the shell tools fall back on
+        run: python3 -m pip install --quiet pyyaml
+      - name: Validate manifests, skills, hooks, links and the composed assemblies
         run: python3 tools/validate.py
       - name: Check the link gate covers docs/, plugins/ and features/
         run: python3 tools/test_validate.py
@@ -26,9 +30,7 @@ jobs:
       - name: Check the composer's rows against the files it pre-renders
         run: python3 tools/test_composer.py
       - name: Check the composition summary against its acceptance criteria
-        run: |
-          python3 -m pip install --quiet pyyaml   # the script's YAML reader when yq is absent
-          python3 tools/test_compose_status.py
+        run: python3 tools/test_compose_status.py
       - name: Check design token contrast and hue separation
         run: python3 tools/check_contrast.py
       - name: Rebuild the site and check the committed output is current

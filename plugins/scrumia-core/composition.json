@@ -24,5 +24,10 @@
       "entry": "scrumia-core:next"
     }
   ],
-  "calls": []
+  "calls": [
+    {
+      "action": "read/board-status",
+      "from": "commands/next.md"
+    }
+  ]
 }

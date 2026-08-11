@@ -3,13 +3,22 @@ project:
   name: "ScrumIA"
   repo: "tibs245/scrumia"
 
-# Which module fills which slot. An empty slot = capability absent, owned.
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: scrumia-discovery
-  design: scrumia-design
+# The modules this project runs. Flat, unordered, present modules only.
+extends:
+  - scrumia-specs
+  - scrumia-github-project
+  - scrumia-teams
+  - scrumia-discovery
+  - scrumia-design
+
+# Arbitrations and exclusions only — never the full action table, which is derived.
+# Read by scrumia-assemble; an entry here is this project's own answer, not a module's.
+actions:
+  brief/state-need: human           # someone decides there is a need; no tool does
+  sign-off/approve-ready: human     # a person says a ticket may start
+  merge/approve: human              # auto_merge is none here, so the approval is a person's
+  build/apply-implementation: not-applicable   # plugins/ is markdown, and both apps below
+                                               # deliberately carry no implementation module
 
 # ScrumIA's product is markdown: plugins/ is the deliverable and carries no
 # implementation module. Only these two hold code an implementation module
@@ -17,14 +26,10 @@ composition:
 apps:
   - name: "site"
     path: "site"
-    type: "frontend"
-    implementation: null     # plain HTML/CSS/JS built by tools/build_site.py, deployed to Pages
-    practices: []
+    type: "frontend"  # plain HTML/CSS/JS built by tools/build_site.py, deployed to Pages
   - name: "tools"
     path: "tools"
-    type: "cli"
-    implementation: null     # Python: validate.py gates the marketplace in CI, build_site.py renders the site
-    practices: []
+    type: "cli"       # Python: validate.py gates the marketplace in CI, build_site.py renders the site
 
 # Settings passed to modules. Every key below is commented with what reads it —
 # a setting with no named reader does not belong here (see CLAUDE.md instead).

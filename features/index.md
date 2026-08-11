@@ -16,5 +16,5 @@
 | [execution-policy](business/execution-policy/index.md) | business | active | Which model executes a ticket, decided from two labels the manager already sets at refinement: scope/ — how far the change reaches — and… |
 | [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
-| [modular-composition](business/modular-composition/index.md) | business | active | ScrumIA answers a fixed set of project-steering questions — specs, tracking, team, discovery, implementation, practices, design — through… |
+| [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through extends, a flat, unordered list in . |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
