@@ -49,6 +49,11 @@ Six categories, Keep a Changelog's own: `Added`, `Changed`, `Deprecated`, `Remov
 learns a config key is going away *before* it does, which is the only warning a version
 number cannot give.
 
+**A `Deprecated` entry names the release that removes the deprecated name** — the release,
+not a version number, which is not yet derivable at the release that deprecates. That
+release is not the module's to pick freely: `features/business/release-versioning/` owns
+the window itself; this file only says the entry must name where it ends.
+
 **Versions move per module.** A number here promises that *this* module changed, not that
 the repository published — a project pinning one module should never take a bump caused by
 another it does not use.
@@ -67,4 +72,5 @@ it.
 `tools/validate.py` — a changelog whose entries drift is what an unchecked convention
 produces, and this one drifted for months before anyone counted. It errors on a missing
 file, on a `PR:` line, on an unfilled `#NN`, on a heading that is not a date and a title,
-and on a category outside its half's set.
+and on a category outside its half's set. The deprecation-window obligation above is not
+among them — whether it should be is #87's question, not this file's.
