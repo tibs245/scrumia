@@ -61,7 +61,7 @@ It does not come from running processes — see [ADR-0002](adr/0002-standing-rol
 | Business | Domain vocabulary, cross-cutting rules assumed but not written |
 | Tech | Architecture invariants, accepted debts and their reason, house conventions |
 
-None of them writes ticket state there: it would become wrong within days, and a wrong memory is worse than an empty one. It is repo-local and project-scoped, so it never substitutes for a skill, an ADR or a feature — see [`features/business/agent-team/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md) § *What role memory may hold* for the full test.
+None of them writes ticket state there: it would become wrong within days, and a wrong memory is worse than an empty one. It is repo-local and project-scoped, so it never substitutes for a skill, an ADR or a feature — see `features/business/agent-team/business.md` § *What role memory may hold* for the full test.
 
 **State in the tracker module** — any session rebuilds the context by reading it.
 
