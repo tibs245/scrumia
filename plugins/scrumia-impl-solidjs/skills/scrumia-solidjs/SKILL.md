@@ -5,8 +5,6 @@ description: ScrumIA's SolidJS practices — behaviour-first component tests, fi
 
 # Coding in SolidJS
 
-This module contributes to `build/apply-implementation` for every app that lists it in its own `extends` in `.scrumia/config.yaml`. It has authority over the "how" in those apps — including over your own preferences. It is one choice among several defensible ones; each rule comes with its reason, given with each rule below.
-
 ## The contract
 
 - **How we test** — behaviour-first component tests, unit-tested primitives, Playwright kept outside the fast loop. → [06-testing](guides/06-testing.md)
