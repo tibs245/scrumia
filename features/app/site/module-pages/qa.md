@@ -62,6 +62,26 @@ Then each comes from `@modlink_<name>`, a special the builder computes from
 And no literal `href="modules/…"` string is typed into the template
 ```
 
+### AC-10 — The reference page's module sections are reachable too
+
+```gherkin
+Given the reference page's `#modules` section, in both languages
+When a reader looks at one of its twelve `<code>module-name</code>` headings
+Then the heading links to its own `modules/<name>.html`
+And a reader who followed `module.html`'s back link (`{{@lroot}}reference.html`)
+  can complete the round trip back to the module they left, not just to the
+  section they landed on
+```
+
+### AC-11 — The reference page's link is generated too
+
+```gherkin
+Given the twelve module heading links on the reference page
+When their `href` is traced to its source
+Then each comes from `@modlink_<name>`, the same special AC-9 already covers
+And no literal `href="modules/…"` string is typed into the reference template
+```
+
 ## Edge cases
 
 ### AC-2 — A gap in the prose fails the build

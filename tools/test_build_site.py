@@ -284,12 +284,42 @@ def test_ac9_link_is_generated_not_hand_written() -> None:
           specials == {"@modlink_zeta": "modules/zeta.html", "@modlink_a-b-c": "modules/a-b-c.html"}, str(specials))
 
 
+# --- AC-10 -------------------------------------------------------------------
+
+
+def test_ac10_reference_links_to_every_module() -> None:
+    print("AC-10 every module is reachable from the reference page too")
+    market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+    names = [p["name"] for p in market["plugins"]]
+
+    for lang, ref in (("en", REPO / "site" / "reference.html"), ("fr", REPO / "site" / "fr" / "reference.html")):
+        page = ref.read_text(encoding="utf-8")
+        missing = [n for n in names if f'<h3><a href="modules/{n}.html"><code>{n}</code></a>' not in page]
+        check(f"[{lang}] every module heading links to its page", not missing, str(missing))
+
+
+# --- AC-11 -------------------------------------------------------------------
+
+
+def test_ac11_reference_link_is_generated_not_hand_written() -> None:
+    print("AC-11 the reference page's link is generated too")
+
+    template = (REPO / "site" / "templates" / "reference.html").read_text(encoding="utf-8")
+    check("the template carries no literal modules/*.html href",
+          'href="modules/' not in template and 'href="{{@lroot}}modules/' not in template)
+    check("the template uses one @modlink_<name> special per heading",
+          template.count("{{@modlink_") == len(
+              json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))["plugins"]))
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
                  test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
                  test_ac6_malformed_page_json_is_reported_not_raised,
                  test_ac7_manifest_facts_are_escaped,
-                 test_ac8_index_links_to_every_module, test_ac9_link_is_generated_not_hand_written):
+                 test_ac8_index_links_to_every_module, test_ac9_link_is_generated_not_hand_written,
+                 test_ac10_reference_links_to_every_module,
+                 test_ac11_reference_link_is_generated_not_hand_written):
         test()
     print()
     if FAILURES:
