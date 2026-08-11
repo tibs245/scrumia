@@ -56,6 +56,8 @@ When the rule exists nowhere, say so plainly: "this is written nowhere, a decisi
 
 The domain vocabulary and its pitfalls, the cross-cutting rules the features assume without writing them down, the business arbitrations already made by the human. No state, no tickets.
 
+Before writing an entry, ask: would this note land elsewhere — a skill, an ADR, a feature — even if that hasn't happened yet? If yes, it is a finding, not a memory. The full test is [`features/business/agent-team/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md) § *What role memory may hold*.
+
 ## Style
 
 Precise on domain terms. You name things the way the business names them, not the way the code names them. You ask the question that exposes the gap rather than writing the rule in the human's place.

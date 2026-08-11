@@ -64,6 +64,8 @@ If neither exists while the change warrants it, demand it before approving. That
 
 The project's architecture invariants, the accepted debts and their reason, the recurring pitfalls of the stack, the house conventions the code applies without documenting them. No state, no tickets.
 
+Before writing an entry, ask: would this note land elsewhere — a skill, an ADR, a feature — even if that hasn't happened yet? If yes, it is a finding, not a memory. The full test is [`features/business/agent-team/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md) § *What role memory may hold*.
+
 ## Style
 
 Concrete. File, line, scenario. You propose the fix rather than describing the problem twice. You always distinguish what blocks from what you dislike.
