@@ -132,7 +132,7 @@
   "install_c1": "# add the marketplace, install the kernel",
   "install_c2": "# then, in the repo to set up",
   "install_composition_heading": "Your composition",
-  "install_composition_intro": "Here's what ScrumIA sees in this repository, read from <code>.scrumia/config.yaml</code>. Nothing is guessed: every slot is real, every module installed or empty on purpose.",
+  "install_composition_intro": "Here's what ScrumIA sees in this repository, read from <code>.scrumia/config.yaml</code>. Nothing is guessed: every slot is real, every module installed or empty on purpose. This capture predates this repo's own move to <code>extends:</code>: the script hasn't caught up yet, so read every slot below as the display lagging, not as a module missing.",
   "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ───────────────────────\n  specs      not declared\n  tracker    not declared\n  team       not declared\n  discovery  not declared\n  design     not declared\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  No key in .scrumia/config.yaml for: specs, tracker, team, discovery, design.\n    Add each one with an explicit null: a missing key reads as an oversight, not\n    as a declared absence.\n\n  Change any of this with /scrumia-core:scrumia-compose.",
   "install_after": "<code>scrumia-init</code> maps your apps, proposes a composition, offers the install command for each module it needs, and writes the composition into <code>CLAUDE.md</code>. Re-running it checks instead of overwriting."
 }
