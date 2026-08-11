@@ -83,7 +83,7 @@ A project can maintain its own sections, in the same shape, under `.scrumia/rule
 
 This does not replace the single-file overrides (`.scrumia/impl/<module>.md`, `.scrumia/practices/<module>.md`) — those stay the right tool for a short exception to an existing module. It is the outlet for house rules that either outgrow a single file or answer to no plugged module at all (a legacy subsystem's quirks, a security rule specific to this codebase). The tooling — scaffolding a new section, checking it against the same shape a module uses — is the new `scrumia-rules` module: optional, since the format needs no module to be written by hand, the same way `.scrumia/impl/<module>.md` needs none today.
 
-Precedence is unchanged from ADR-0010: **specific beats generic**. A project-local section beats an implementation module, which beats a practice module, for any file its glob covers. What changes is scope, not order — a project can now out-argue a module with a rules hierarchy of its own instead of a single overflowing file.
+Precedence is unchanged from ADR-0019: **specific beats generic**. A project-local section beats an implementation module, which beats a practice module, for any file its glob covers. What changes is scope, not order — a project can now out-argue a module with a rules hierarchy of its own instead of a single overflowing file.
 
 ## Consequences
 
