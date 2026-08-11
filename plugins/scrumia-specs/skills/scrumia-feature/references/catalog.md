@@ -33,6 +33,32 @@ where `scrumia-specs` declares its own. Do not read the set out of `CLAUDE.md`'s
 consumers need not hard-code them, and marks none of them required
 (`docs/adr/0012-specs-contract.md`).
 
+## Where a format rule is restated
+
+A rule about the feature format lives here first, but it is restated at seven other
+sites — a sweep that stops at the obvious ones leaves a retired rule live somewhere an
+agent still runs it. Ordered by how much damage a stale copy does:
+
+1. `scrumia-specs-setup/SKILL.md` Step 3 — the composition line handed to `scrumia-init`
+   for a **consumer project's** `CLAUDE.md`. Always loaded, and the only statement of the
+   rule a project gets without opening this file.
+2. `scrumia-specs/commands/feature.md` — restates the rule as an instruction; the front
+   door for `/feature`.
+3. `scrumia-feature/SKILL.md` — three separate statements: the opening framing sentence,
+   the catalogue table, and "Updating an existing feature"'s step on deleting a file that
+   became meaningless, which a mandatory-file rule must carve out of.
+4. `assets/index.template.md` — the note under the "Files present" sample table.
+5. `docs/format-feature.md` and `docs/architecture.md`.
+6. `site/i18n/{en,fr}/modules/scrumia-specs.json` (`refusals`, `philosophy`) — its
+   `site/**/modules/*.html` are **generated**: edit the JSON and rebuild with
+   `tools/build_site.py`, both languages.
+7. `scrumia-discovery/skills/scrumia-split/SKILL.md` Step 2 — enumerates which files to
+   create for a new feature, in contract-key terms. A consumer in another module, easy to
+   miss, and the place a mandatory-file rule gets silently re-derived.
+
+Grep the rule's **phrasing** across these, not the file list — the wording differs by
+site, and a rename here doesn't announce itself anywhere else.
+
 ## The membership tests
 
 Three boundaries carry most of the collisions; each has one test, stated here and
@@ -133,6 +159,8 @@ stable identifier (`AC-<n>`) that tickets and tests reference.
 fail — a contrast ratio, a keyboard path, an announcement — tagged as such.
 
 A criterion must be able to fail. If it cannot fail, it tests nothing.
+
+This is a different property from [ADR-0004](https://github.com/tibs245/scrumia/blob/main/docs/adr/0004-feature-splitting.md)'s *verifiable*, which names a **feature-splitting** criterion — "can you write at least one Given/When/Then scenario that validates it" — not a test for one already-written criterion. Cite this section for whether a criterion can fail; cite ADR-0004 only for whether a unit of value is small enough to split on.
 
 Expected coverage: nominal, zero, boundary, duplicate, concurrency, cancellation,
 expiration, insufficient permissions. An "out of scope" section prevents bug tickets
