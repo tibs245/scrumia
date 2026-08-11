@@ -151,6 +151,8 @@ A module without a setup skill has nothing to create — implementation and prac
 
 This is the step that makes the composition operative. Replace only what sits between the markers; create the file if it doesn't exist.
 
+**Everything between `<!-- scrumia:start -->` and `<!-- scrumia:end -->` is generated, in full, by this step.** A re-run — first install or after adding a module — replaces it wholesale. A skill, in this repository or any other module, must never depend on a hand-written sentence sitting inside that region: it survives only until the next `scrumia-init` run, and a fresh install never had it at all. If a skill needs a project's `CLAUDE.md` to state something durable, that something belongs in the template below, not in prose added by hand next to it.
+
 ````markdown
 <!-- scrumia:start -->
 ## ScrumIA composition

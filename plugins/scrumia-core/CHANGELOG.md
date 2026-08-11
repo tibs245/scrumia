@@ -3,6 +3,12 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Fixed
+- `scrumia-init` Step 5 now states that everything between the `scrumia:start`/`scrumia:end`
+  markers is regenerated in full, so a skill must never depend on a hand-written sentence
+  placed inside that region — it survives only until the next run, and a fresh install
+  never had it.
+
 ### Changed
 - `/next` and the config `scrumia-init` writes cite the tracker and team modules' published
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
