@@ -165,10 +165,30 @@ def check_hooks() -> None:
 
 CANONICAL_BLOB = "https://github.com/tibs245/scrumia/blob/main/"
 
-CONTAINMENT_HINT = (
-    "a module is installed one path segment deeper than it sits here, so this resolves "
-    f"somewhere else once installed — publish a name under bin/, or cite {CANONICAL_BLOB}<path>"
-)
+
+def containment_hint(resolved: Path) -> str:
+    """The remedy differs by what's on the other side of the escape.
+
+    A target still under plugins/ is another module — AC-11 bans citing it by any
+    path, a canonical URL included, because only a published name is a real edge for
+    the coverage calculation. A target outside plugins/ (docs/, features/) is exactly
+    what the canonical-URL escape hatch exists for; offering it for the other case
+    would send an author to fix one AC-11 violation by writing another.
+
+    Resolved, same reason plugin_root_of is: on macOS a temp root is a symlink, and
+    an unresolved plugins/ never contains a resolved child.
+    """
+    if resolved.is_relative_to((ROOT / "plugins").resolve()):
+        return (
+            "a module is installed one path segment deeper than it sits here, so this "
+            "resolves somewhere else once installed — and a sibling module is cited by "
+            "name, never by any path, canonical URL included (AC-11): publish a name "
+            "under bin/, or name the module in prose instead"
+        )
+    return (
+        "a module is installed one path segment deeper than it sits here, so this resolves "
+        f"somewhere else once installed — publish a name under bin/, or cite {CANONICAL_BLOB}<path>"
+    )
 
 
 def plugin_root_of(rel: Path) -> Path | None:
@@ -227,7 +247,7 @@ def check_doc_links() -> None:
             else:
                 resolved = (md.parent / target).resolve()
             if plugin_dir is not None and not resolved.is_relative_to(plugin_dir):
-                error(f"{rel}: link leaves plugins/{plugin_dir.name} → {target} — {CONTAINMENT_HINT}")
+                error(f"{rel}: link leaves plugins/{plugin_dir.name} → {target} — {containment_hint(resolved)}")
                 continue
             if not resolved.exists():
                 error(f"{rel}: broken link → {target}")
@@ -251,7 +271,7 @@ def check_skill_scripts() -> None:
         for match in script_re.finditer(text):
             script = (skill_dir / match.group(1)).resolve()
             if plugin_dir is not None and not script.is_relative_to(plugin_dir):
-                error(f"{rel}: script call leaves plugins/{plugin_dir.name} → {match.group(0)} — {CONTAINMENT_HINT}")
+                error(f"{rel}: script call leaves plugins/{plugin_dir.name} → {match.group(0)} — {containment_hint(script)}")
                 continue
             if not script.exists():
                 error(f"{rel}: references missing script → {match.group(0)}")
@@ -395,6 +415,10 @@ def check_module_citations_by_name() -> None:
     example block with no link syntax at all. A path cannot be counted as a real edge by
     the coverage calculation modular-composition/qa.md AC-2 depends on; naming is what
     AC-11 requires instead.
+
+    Matches only a trailing-slash form (plugins/<module>/…), so prose that legitimately
+    needs to show the banned shape — a rule stating what not to write — can still do so
+    by using plugins/<module> with no slash, or the literal placeholder plugins/<module>/.
     """
     for md in sorted(ROOT.glob("plugins/**/*.md")):
         rel = md.relative_to(ROOT)

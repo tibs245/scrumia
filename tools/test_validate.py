@@ -106,6 +106,8 @@ def test_link_leaving_its_plugin_is_caught() -> None:
         errors = run_doc_links(tmp)
         check("the escaping link is reported even though the target exists here",
               any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+        check("the hint offers the canonical-URL escape — the target is outside plugins/",
+              any("cite https://github.com/tibs245/scrumia/blob/main/" in e for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -121,6 +123,12 @@ def test_link_into_a_sibling_plugin_is_caught() -> None:
         errors = run_doc_links(tmp)
         check("the sibling reach is reported",
               any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+        check("the hint does not offer the canonical-URL escape — that would be a second "
+              "AC-11 violation, citing a sibling module by a path instead of by name",
+              not any("cite https://github.com/tibs245/scrumia/blob/main/" in e for e in errors),
+              str(errors))
+        check("the hint points at naming the module instead",
+              any("never by any path, canonical URL included" in e for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -376,6 +384,28 @@ def test_repo_plugins_pass_the_real_citation_gate() -> None:
     print("the repo's own plugins/**/*.md pass check_module_citations_by_name as it runs today")
     errors = run_check(REPO, "check_module_citations_by_name")
     check("no cross-module path citation in the real tree", errors == [], str(errors))
+
+
+def test_canonical_url_into_a_sibling_plugin_is_still_caught() -> None:
+    print("a canonical blob URL citing a sibling module by path is caught here, "
+          "even though check_doc_links lets a canonical URL through unchecked for containment")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        other = tmp / "plugins" / "scrumia-other" / "skills" / "scrumia-do"
+        other.mkdir(parents=True)
+        (other / "SKILL.md").write_text("# Other\n", encoding="utf-8")
+        write_plugin_skill(
+            tmp,
+            f"See [the other]({v.CANONICAL_BLOB}plugins/scrumia-other/skills/scrumia-do/SKILL.md).\n",
+        )
+        doc_link_errors = run_doc_links(tmp)
+        check("check_doc_links does not catch it — the canonical branch returns before containment",
+              not any("leaves plugins/scrumia-widget" in e for e in doc_link_errors), str(doc_link_errors))
+        citation_errors = run_check(tmp, "check_module_citations_by_name")
+        check("check_module_citations_by_name catches it",
+              any("cites 'scrumia-other' by a path" in e for e in citation_errors), str(citation_errors))
+    finally:
+        shutil.rmtree(tmp)
 
 
 # --- check_feature_mandatory_files ---
@@ -1092,6 +1122,7 @@ def main() -> int:
                  test_citing_own_module_by_path_is_not_flagged,
                  test_citing_a_module_by_name_is_not_flagged,
                  test_repo_plugins_pass_the_real_citation_gate,
+                 test_canonical_url_into_a_sibling_plugin_is_still_caught,
                  test_feature_missing_mandatory_file_is_caught,
                  test_feature_with_all_mandatory_files_passes,
                  test_feature_index_invented_section_is_caught,
