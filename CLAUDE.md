@@ -93,11 +93,11 @@ agent to a file that doesn't exist is broken, so `python3 tools/validate.py` gat
 marketplace, the frontmatter, every relative link, the scripts skills invoke, and the
 skills commands hand off to. Run it before pushing; CI runs it too.
 
-Nothing written inside `plugins/<module>/` may resolve outside it — an installed module
-sits one version segment deeper than it does here, so a path that climbs out of it lands
-nowhere. Reach another module's script by the name it publishes under its `bin/`, and cite
-this repository's own `docs/` and `features/` by absolute URL. `docs/adr/0018` states why;
-`tools/validate.py` refuses the rest.
+Nothing written inside `plugins/<module>/` may resolve outside it — the rule is
+`features/business/modular-composition/`'s BR-7, and `docs/adr/0018` says why a name on
+PATH is not the resolution ADR-0009 rejected. Here that means: reach another module's
+script by the name it publishes under its `bin/`, and cite this repository's own `docs/`
+and `features/` by absolute URL. `tools/validate.py` refuses the rest.
 
 Files are in English — including comments, commit messages and workflow names. Only
 `site/fr/` is French.

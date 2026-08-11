@@ -134,8 +134,6 @@ When every reference it writes is resolved from its own root — the
 Then each one lands inside that root: the other module's script is reached by
   running the name that module publishes on PATH, with no path held by the
   caller, and the rationale is inlined or cited by absolute URL
-And the repository's validator fails on any reference whose resolved target
-  leaves the module's root, so the rule is enforced rather than remembered
 ```
 
 A reference that escapes resolves in the repository layout and nowhere else, so
