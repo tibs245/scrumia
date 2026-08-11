@@ -20,16 +20,17 @@ A slot is a question. A module is one answer.
 | `tracker` | Where does state live: tickets, columns, PRs? | `scrumia-github-project` |
 | `team` | Which standing roles, with what scope? | `scrumia-teams` |
 | `discovery` | How does an idea become framed work? | `scrumia-discovery` |
-| `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
-| `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
 | `design` | Where does the design system live? | `scrumia-design` |
+| how an app is built | What is this app's code written against? — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs`, `scrumia-practice-tdd`, `scrumia-practice-solid` |
 
-An empty slot is not a failure: it is a capability the project doesn't have, and agents adapt what they propose.
+A slot nothing answers is not a failure: it is a capability the project doesn't have, and agents adapt what they propose. It has no line of its own in the config either — `extends` names the modules that are there, so a gap is derived and reported rather than written down twice.
 
-Two slots are multiple, and both map app by app:
+The last row is one question asked once per app, and it takes several modules at once:
 
-- **`implementation`** — a SolidJS app and a Rust app don't share practices. One module per stack.
-- **`practices`** — cross-cutting practices (TDD, SOLID) that refine one named point of the implementation contract, shared across stacks. An implementation module *situates* each practice for its stack; where they disagree, **specific beats generic** — the implementation module wins, and the project override wins over both. See [ADR-0010](adr/0010-cross-cutting-practices.md).
+- **an implementation module** — a SolidJS app and a Rust app aren't built the same way. One module per stack.
+- **cross-cutting practices** (TDD, SOLID) that refine one named point of the implementation contract, shared across stacks. An implementation module *situates* each practice for its stack; where they disagree, **specific beats generic** — the implementation module wins, and the project override wins over both.
+
+Both are declared together in that app's own `extends` list, which carries no order and settles no precedence: the rule above is the precedence, in prose. See [ADR-0019](adr/0019-extends-replaces-composition-and-practices.md), which retired `practices` as a slot of its own and supersedes ADR-0010.
 
 ## How modules connect
 
@@ -46,11 +47,11 @@ Two slots are multiple, and both map app by app:
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 
-### Implementation and practices, per app
+### What each app is built against
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `web` | `apps/web` | `scrumia-impl-solidjs` | `scrumia-practice-tdd` |
+| App | Path | Extends |
+|---|---|---|
+| `web` | `apps/web` | `scrumia-impl-solidjs`, `scrumia-practice-tdd` |
 <!-- scrumia:end -->
 ```
 
@@ -89,24 +90,23 @@ project:
   name: "my-project"
   repo: "tibs245/my-project"
 
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: scrumia-discovery
-  design: null
+# Flat, unordered, present modules only — a project without a design system
+# simply doesn't name one here.
+extends:
+  - scrumia-specs
+  - scrumia-github-project
+  - scrumia-teams
+  - scrumia-discovery
 
 apps:
   - name: web
     path: apps/web
     type: frontend
-    implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd]
+    extends: [scrumia-impl-solidjs, scrumia-practice-tdd]
   - name: api
     path: apps/api
     type: backend
-    implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+    extends: [scrumia-impl-rust, scrumia-practice-tdd, scrumia-practice-solid]
 
 settings:
   autonomy:
@@ -166,7 +166,7 @@ The reference composition is only an example — the one its author uses.
 | Project in exploration | `core` + `discovery` + `specs` |
 | Framed backlog, in production | `core` + `specs` + `tracker` + `team` + one implementation module per app |
 | Team already tooled on Jira | `core` + `specs` + a Jira tracker module to write |
-| Code conventions already stable | everything except `implementation` |
+| Code conventions already stable | everything except an implementation module |
 | Legacy codebase to bring under test | add `scrumia-practice-tdd` and start with its audit |
 
 Writing a tracker module for Jira or Linear is bounded work: the slot is defined, the contract holds in three rules, and nothing else needs to change.
