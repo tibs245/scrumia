@@ -92,8 +92,8 @@ WIDTH=$(term_width)
 NAME=$(jq -r '.project.name // "this project"' <<<"$CFG")
 REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
 
-# The list is flat, so there is no per-slot key to leave empty. What replaces the
-# old three states is `actions:` — this project's own arbitrations and exclusions.
+# The list is flat, so there is no per-slot key to leave empty: a module is named or
+# it is not, and one that is not named is installed and inert.
 LEGACY=false
 jq -e 'has("extends")' >/dev/null <<<"$CFG" || LEGACY=true
 
@@ -106,14 +106,6 @@ for m in $MODULES; do
   [ ${#m} -gt "$MOD_W" ] && MOD_W=${#m}
   MOD_ROWS="$MOD_ROWS$m"$'\n'
 done
-
-ACT_ROWS="" ACT_W=6 STATE_W=5
-while IFS=$'\t' read -r a state; do
-  [ -n "$a" ] || continue
-  [ ${#a} -gt "$ACT_W" ] && ACT_W=${#a}
-  [ ${#state} -gt "$STATE_W" ] && STATE_W=${#state}
-  ACT_ROWS="$ACT_ROWS$a"$'\t'"$state"$'\n'
-done < <(jq -r '(.actions // {}) | to_entries | .[] | [.key, (.value|tostring)] | @tsv' <<<"$CFG")
 
 APP_ROWS="" APP_W=3 PATH_W=4 EXT_W=7
 while IFS=$'\t' read -r app apath ext; do
@@ -130,14 +122,16 @@ done < <(jq -r '.apps // [] | .[] | [
       | if length == 0 then "none" else join(", ") end)
   ] | @tsv' <<<"$CFG")
 
-# 28 is the width of the "Modules this project extends" heading, and 21 that of the
-# action table's second column: a heading that overflows is as unreadable as a row.
+# 28 is the width of the "Modules this project extends" heading: a heading that
+# overflows is as unreadable as a row.
 MOD_TABLE_W=28
 APP_TABLE_W=$((APP_W + 2 + PATH_W + 2 + EXT_W))
-ACT_TABLE_W=0
-[ -n "$ACT_ROWS" ] && ACT_TABLE_W=$((ACT_W + 2 + 21))
+# The title carries the project name and repo, so it can be the widest line on the
+# page; it folds on the same test as a table rather than being exempt from it.
+TITLE_W=${#NAME}; TITLE_W=$((TITLE_W + 22))
+[ -n "$REPO" ] && TITLE_W=$((TITLE_W + ${#REPO} + 3))
 NARROW=false
-for w in "$MOD_TABLE_W" "$APP_TABLE_W" "$ACT_TABLE_W"; do
+for w in "$MOD_TABLE_W" "$APP_TABLE_W" "$TITLE_W"; do
   [ $((w + 2)) -gt "$WIDTH" ] && NARROW=true
 done
 
@@ -186,31 +180,12 @@ if [ -n "$APP_ROWS" ]; then
   fi
 fi
 
-# Only what the config itself declares. Which action each module provides, and which
-# are covered, is derived by scrumia-assemble — this script resolves nothing.
-if [ -n "$ACT_ROWS" ]; then
-  echo
-  if [ "$NARROW" = true ]; then
-    while IFS=$'\t' read -r a state; do
-      [ -n "$a" ] || continue
-      printf '  %s%s%s\n    %s\n' "$BOLD" "$a" "$RESET" "$state"
-    done <<<"$ACT_ROWS"
-  else
-    printf '  %s%s  %s%s\n' "$DIM" "$(pad Action "$ACT_W")" "This project's answer" "$RESET"
-    printf '  %s%s%s\n' "$DIM" "$(rule $((ACT_W + 2 + 21)) $((WIDTH - 2)))" "$RESET"
-    while IFS=$'\t' read -r a state; do
-      [ -n "$a" ] || continue
-      printf '  %s  %s\n' "$(pad "$a" "$ACT_W")" "$state"
-    done <<<"$ACT_ROWS"
-  fi
-fi
-
 echo
 if [ "$LEGACY" = true ]; then
   wrap '  ' "$WARN" "This config still uses the retired composition:/practices: keys."
   wrap '    ' "" "They are read for one more minor. Migrate to extends: with /scrumia-core:scrumia-compose."
   echo
 fi
-wrap '  ' "$DIM" "What each module provides, and what nothing covers: scrumia-assemble build."
+wrap '  ' "$DIM" "What each module contributes, and to which register: scrumia-extends --list."
 wrap '  ' "$DIM" "Change any of this with /scrumia-core:scrumia-compose."
 echo

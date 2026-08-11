@@ -8,9 +8,8 @@ the modules themselves, written to be pluggable. It brings one flat declaration
 module never requires taking the whole method. It matters because a project that forks
 a monolithic method to adapt one part of it stops receiving updates to the rest;
 `extends` is what lets the reference answers change without breaking a project's own
-choices. Not instrumented today: nothing counts how many projects run with a given
-action uncovered versus covered; the composition's shape is read from
-`.scrumia/config.yaml`, not aggregated.
+choices. Not instrumented today: nothing counts how many projects run with which
+modules; the composition's shape is read from `.scrumia/config.yaml`, not aggregated.
 
 ## `extends` is a routing mechanism first
 
@@ -31,8 +30,6 @@ extends:
   - scrumia-specs
   - scrumia-github-project
   - scrumia-teams
-  - scrumia-discovery
-  - scrumia-design
 apps:
   - name: api
     path: apps/api
@@ -40,91 +37,20 @@ apps:
 ```
 
 **The list is not ordered.** ESLint's own `extends` carries last-wins semantics; this
-one does not — arbitration between two modules that could both provide the same
-decision (below) is explicit, never positional. Any reader brings the ESLint reflex
-uninvited; this rule exists to contradict it on first read.
+one does not. Any reader brings the ESLint reflex uninvited; this rule exists to
+contradict it on first read.
 
-The project declares its **steps**; **actions** follow from the steps; plugins **bid**
-on the actions they provide; `.scrumia/config.yaml` carries only arbitrations and
-exclusions — never the full step → action → provider table, which is generated, not
-authored.
-
-## Two kinds of action
-
-A **decision** has exactly one provider: who moves a card, which model runs a ticket,
-who settles a business rule. `features/business/execution-policy/business.md` § *One
-reader, one decision* already states the "one" rule about decisions — this reuses it
-rather than restating a second version of it.
-
-A **contribution** legitimately has several: reviewing a PR, applying a practice to a
-Build. Three roles reviewing the same PR, two practice modules applying to the same
-app's Build, an implementation module per app — all contributions, all already true of
-the project before this feature existed. A model that forbade multiple providers on
-day one would forbid what already works.
-
-## Three absence states
-
-A given action, for a given step, is in exactly one of three states:
-
-| State | Meaning | Effect on coverage |
-|---|---|---|
-| **Key absent** | Nobody has decided who covers this | Warned once, counted as a hole |
-| `not-applicable` | The step does not exist for this project | Removed from the denominator |
-| `human` | The step exists; a person covers it, no tool | Counted as covered |
-
-`not-applicable` is spelled exactly that way — not `NA`, `none`, `null`. Two YAML
-parsers already coexist in this project's own tooling (`pick-model.sh`'s
-`load_config()` reads with yq if present, else PyYAML), and they disagree on
-two-letter uppercase tokens under YAML 1.1 (`NO` reads `False` under PyYAML, the
-string `"NO"` under yq) — the exact shape a short absence token risks colliding with.
-A fourth spelling of absence, on top of the ones already tracked for `auto_merge`, is
-a defect this feature refuses to add.
-
-Without this distinction, a project-wide coverage claim ("N of M steps covered")
-answers on an undefined M: a step this project doesn't run and a step nobody has
-gotten to yet would count the same, and the claim would be arithmetically false the
-day a step that is genuinely invocable-at-any-moment (`status`, `next`, `standup`) gets
-counted in the same denominator as an ordered step with a before and an after. Reads
-belong to coverage, never to the step denominator.
-
-## Four recipient sets
-
-Coverage is computed against one of four sets an action's caller belongs to, named so
-`extends` is never asked to answer for more than the one it configures:
-
-| Set | What it covers | Configured by `extends`? |
-|---|---|---|
-| **run** | The project's own declared steps | Yes — this is the only one |
-| **kernel** | `init`, `compose` — non-configurable by construction | No |
-| **adoption** | The five `*-setup` skills, plus the two contract audits | No |
-| **authoring** | `rules` — outside the product | No |
-
-A coverage claim that does not name which of these four it measures answers on half
-the system and silently drops the rest. `run` is the axis a project configures; the
-other three exist so an agent — or a human reading a coverage report — never mistakes
-one for the whole.
-
-## Coverage is derived, not declared
-
-A module that bids on an action still **declares** — "I provide this action" is no
-less a declaration than "I fill this slot" was. What changes is the grain: coverage is
-computed by counting **incoming edges by name** against what was declared, so a
-declared action nobody ever reaches from becomes visible as a hole instead of reading
-as covered. `scrumia-specs-find`, `scrumia-design-system`, `scrumia-design-sync` and
-`scrumia-review` each declare a step and are called by nothing today; `scrumia-brainstorm`
-covers Brief while writing no file. Coverage-by-declaration alone would have called all
-of them green.
-
-This is only measurable if **a module reaches another by a name the harness resolves,
-never by a relative path** — a name greps, a path does not (see BR-4). The resolution
-rule's real yield is this measurability, not portability for its own sake.
+**A module installed but named in no `extends` is inert.** Presence on disk is not
+participation: a project may have twenty modules enabled and run the five it names.
+That is what makes a module safe to install before deciding to use it, and it is why
+the mechanism never asks "is this slot filled" — only "does this project run it".
 
 ## `practices` is retired as a named slot
 
 `implementation` and `practices` were always two answers to the same question — how an
-app is built — at two granularities, both contributions on that app's Build. `practices`
-does not survive as its own key: a practice module is declared through `extends`, per
-app, alongside the implementation module:
+app is built — at two granularities. `practices` does not survive as its own key: a
+practice module is declared through `extends`, per app, alongside the implementation
+module:
 
 ```yaml
 apps:
@@ -137,114 +63,105 @@ apps:
 ```
 
 TDD applies to `api`, not to `prototype` next to it, because each app's `extends` list
-is its own — the per-app axis the former `practices` slot carried is what makes this
-declaration and not a single project-wide list.
+is its own — the per-app axis the former `practices` slot carried is what makes this a
+per-app declaration and not a single project-wide list.
 
 **The one precedence rule the retired slot carried is unchanged: specific beats
-generic.** An implementation module wins over a practice module where they contradict
-each other on the same app; a project override
-(`.scrumia/impl/<module>.md`, `.scrumia/practices/<module>.md`) beats both. This stays
-written in prose — deliberately not encoded as `extends` list order, since the list
-carries no positional meaning (see § *`extends`*, above).
+generic, and a project override beats both.** What changes is where it is expressed: no
+longer in prose a reader has to remember, but in the order the directive table prints —
+project-local first, then the app's own modules, then the project-wide ones (§ *A skill
+is extended by data*, below). A module never ranks itself.
 
 Every other rule a practice module owes is unchanged: it refines a named point of the
 implementation contract, it works on its own even without an implementation module
-present, it ships a reference/audit/refactor skill trio, it documents its settings
-under `settings.practices.<module>`.
+present, it ships a reference/audit/refactor skill trio, it documents the settings it
+reads.
 
 ## What a module owes to be pluggable
 
 Three things, no more:
 
 1. **A `SKILL.md`** — the module's own entry point, and the place it documents its
-   contract with the rest of the composition: the settings it reads, the actions it
-   bids on, and the one sentence (`CLAUDE.md` line) that tells an agent what it must
-   know about the module without opening it. A module with no `SKILL.md` cannot be
-   composed — there is nothing for `scrumia-init` to point an agent to.
-2. **The actions it provides** — declared from the kernel's closed vocabulary (below),
-   never a name the module invents. A module's authority stops at what it declared: it
-   does not decide what another module's declared action covers.
-3. **The rule that it never assumes another module is present.** If a module needs a
-   capability that another module would provide, it checks for it rather than assuming
-   it, and if nothing provides it, it names the gap and proposes the next step instead
-   of failing outright or guessing a substitute behaviour.
+   contract with the rest of the composition: the settings it reads, and the one
+   sentence (`CLAUDE.md` line) that tells an agent what it must know about the module
+   without opening it. A module with no `SKILL.md` cannot be composed — there is nothing
+   for `scrumia-init` to point an agent to.
+2. **The rule that it never assumes another module is present.** If a module needs a
+   capability another module would provide, it checks for it rather than assuming it,
+   and if nothing provides it, it names the gap and proposes the next step instead of
+   failing outright or guessing a substitute behaviour.
+3. **The rule that every reference it writes resolves inside itself** (§ *A module
+   reaches nothing outside itself*, below).
 
 A module that skips any of the three still runs, until the day a project composes it
 with a different set of modules than the one it was written against — at which point it
 breaks silently, which is the failure this rule exists to prevent.
 
-The list admits an item only on that test — silent breakage — which is why the manifest
-below is not a fourth entry: a module without one is still composable, and its absence is
-said out loud rather than discovered later.
+The list admits an item only on that test — silent breakage. The extension data files
+below are deliberately not a fourth entry: a module without them is fully composable, it
+simply contributes nothing, and its silence is reported by name rather than discovered
+later.
 
-## What a module owes to join an assembly
+## A skill is extended by data
 
-Two more things, owed by a module that wants to contribute to what an agent loads:
+An agent that has to notice, in one module's prose, that a second module also speaks to
+the task — then open it, and apply a precedence rule stated in a third place — is
+performing a recomposition nothing checks. Prose copies of another module's content are
+what that pressure produces, and a copy outlives the original it was taken from.
 
-1. **A `composition.json` at its root** — for each action it provides, the entry fragment
-   an agent opens, the published name it runs, and the name a person types to reach it;
-   plus the actions it calls, each with a file inside itself as the evidence.
-2. **A `<module>-manifest` executable under its own `bin/`** — which prints that file with
-   its own root resolved, so nothing else has to know where the module is installed.
+So a **main skill states its description and its goal, and stops.** What it must apply
+is contributed by other modules, as data, and rendered into one table at the moment the
+skill asks for it.
 
-A module that skips both is still pluggable and still runs. It contributes to no assembly,
-and the composition says so by name. What is refused is the middle state: a module a
-project names in `extends` whose manifest cannot be reached at all stops the build, because
-reading a missing name as "contributes nothing" would turn a plugin awaiting a restart into
-a silent, well-formed claim that no rules apply.
+**A register is a named extension point.** A module opens one by naming it, the main
+skill that consumes it, and its purpose. A register is opened by exactly one main skill:
+two modules opening the same register leaves nothing to decide which skill consumes it,
+and that is reported rather than arbitrated.
 
-## The composition is assembled, not recomposed at read time
+**A contribution names no consumer.** A module declares what it offers — a directive's
+name, its type, whether it is required, one line of what it says, and the fragment to
+open. It does not declare, and cannot encode, which skill will take it. That is what
+lets one fragment serve implementation, review and audit without being written three
+times, and it is why adding an implementation module does not reopen every practice
+module.
 
-An agent that has to notice, in one module's prose, that a second module also speaks to the
-task — then open it, and apply a precedence rule stated in a third place — is performing a
-recomposition nothing checks. Prose copies of another module's content are what that
-pressure produces, and a copy outlives the original it was taken from.
+**A contribution is data and nothing else.** No executable, no condition, no logic: a
+module is discovered from the environment the harness already provides, so contributing
+costs one file. What a module may not do is reach outside itself — a fragment path that
+leaves the module is refused (BR-7).
 
-So the composition is **built**: a tool reads `extends`, asks each named module to describe
-itself, and writes, per action, what to load and in what order. The rules stay in the module
-that owns them; what is merged is the routing.
+**What a module consumes is declared, not inferred**: the published names it runs and
+the registers it reads. The caller declaring its own edges is the provenance nothing had
+when a broken call site could only be found by reading prose.
 
-Merging the rules themselves is refused. It rebuilds the document-that-only-grows, reloaded
-whole to read three lines, and it makes the freshness check as expensive as a rebuild —
-which is what would force the check to be dropped. **The assembly orders contributors;
-inside a contributor, that module's own routing table and dependency graph order its files.**
+**The order is the composition's, never a module's.** Project-local first, then the
+modules an app extends, then the project-wide ones; required before optional within a
+tier. A module does not rank itself against modules it has never heard of.
 
-Order between contributors is computed, never authored: project-local beats app-level beats
-project-wide, `technology` grain beats `cross-cutting` within a tier, then alphabetical so
-the artefact is stable. That is *specific beats generic*, mechanised.
+**The table does not arbitrate.** Two directives whose prose contradicts each other are
+both printed, in the stated order, because a generator cannot read English. What the
+mechanism claims is that they are visible in one place, which they never were — and that
+is the whole of the claim.
 
-Two providers on a decision action stop the build. Two contributions are both listed. Two
-fragments whose prose contradicts are not detected — a generator does not read English —
-but they are visible in one document, in a stated order, which is what the mechanism claims
-and the whole of it.
+**Nothing is stored.** The table is computed when asked and thrown away. There is no
+artefact to commit, no digest to verify, no drift to gate — and adding a module changes
+what a skill applies with nothing to rebuild. The cost accepted in exchange is that the
+answer depends on the environment at the moment of the call: a module enabled but not yet
+restarted into contributes nothing, silently, until the check is run.
 
-A built assembly names a module and a path inside that module, never an absolute path: it
-is committed and shared, and no harness variable is substituted where it lives. The tool
-resolves those pairs when it prints, so the artefact stays portable and only the answer
-carries a path.
+## The register vocabulary is open
 
-## An entry point is reached, not covered
+A module may open a register nobody had. There is no kernel-owned list to bid from: the
+vocabulary of a given project is the union of what its installed modules open, which is
+why the only honest answer to "which registers exist here" is to ask the tool.
 
-Coverage counts **module callers**. An action a module provides and no other module reaches
-is a hole, whether or not a person can invoke it — the coverage rule above is not softened
-by a human being able to type a command.
-
-What the hole carries is its **entry point**: the skill or command name a person types,
-resolved to a file that must exist. That changes the remedy the report offers, not the
-count. The evidence is sufficient for what it claims and no more: for a human entry point,
-existence is the whole claim, since a command file that exists is invocable and there is no
-further edge; for a module-to-module edge, existence refutes nothing.
-
-## The action vocabulary is closed by the kernel
-
-A plugin cannot bid on an action name it does not know — the same constraint
-`docs/adr/0016-global-feature-index.md` already imposes on the specs contract: this
-exact vocabulary and no other. This bounds the customisation promise: a project chooses
-**which steps** it runs and **who covers what**, never **what the actions are called**.
-A project or third-party module needing a genuinely new action name is a `scrumia-core`
-release, not a config change — a structural ceiling this feature accepts rather than
-works around (see `docs/adr/0019-extends-replaces-composition-and-practices.md` §
-*What we accept*).
+This is a deliberate reversal of the closed vocabulary an earlier version of this feature
+carried. A closed list bounds the customisation promise — a project chooses who covers
+what, never what the extension points are called — but it also means a third-party module
+cannot declare anything the kernel did not anticipate without a `scrumia-core` release,
+which is the opposite of what a plugin marketplace is for. The cost of opening it is that
+a typo in a register name produces silence instead of an error; that is why an unmatched
+contribution is a named finding of the check rather than something nobody mentions.
 
 ## Distribution is what makes composition cheap
 
@@ -270,41 +187,35 @@ registers in the same `settings.team.roles` list, so routing stays single-source
 
 ## How modules connect to each other
 
-**Through generated documentation, never through dynamic resolution.** The generated
-composition has two halves, both written once at composition time and both read as
-ordinary project context.
+**Through documentation and data, never through a lookup that hides who answered.**
 
 The `CLAUDE.md` table is what an agent needs **before** it knows what it is doing: which
 modules are plugged in, and the one sentence about each that saves opening it. It is
-derived from declared actions rather than retyped from named slots.
+written once, at composition time, and read as ordinary project context.
 
-The **assemblies** are what an agent needs **once the task is known**: per action, which
-module's file to open, in which order, and how a person reaches it. They exist because the
-table cannot carry that without becoming the thing nobody reads.
-
-Neither resolves anything at call time. A tool prints a built assembly; when its inputs have
-moved it refuses and says to rebuild, rather than recomputing an answer on the spot — a tool
-that recomputed on every read would be the registry, wearing a build step as a disguise.
+The **directive table** is what an agent needs **once the task is known**: for this
+register, in this project, which fragments to open and which of them are required. It is
+computed when asked, because the `CLAUDE.md` table cannot carry it without becoming the
+document nobody reads.
 
 The rejected alternative is still the capability registry: each module declaring verbs
-that a core resolves to whichever module is plugged in. It would decouple modules
-completely, at a cost paid on **every** call — the agent holding an indirection in mind
-for something that changes a handful of times in a project's life. Documented
-composition pays that cost once, at context load, instead (ADR-0009, amended on one
-point — what gets derived, not when or where resolution happens — by
-[ADR-0019](../../../docs/adr/0019-extends-replaces-composition-and-practices.md)).
+that a core resolves to whichever module is plugged in. Its cost was the agent holding an
+indirection in mind for something it could not see. Nothing here is invisible — every
+contributing module and every file path is printed, and no verb resolves to a module,
+because nothing selects a provider. What *is* amended, and stated as such in
+[ADR-0020](../../../docs/adr/0020-skill-extension-protocol.md), is that the directive
+table is computed at call time rather than written at composition time.
 
 The rule that follows: **a module cites another by name in prose**, in its own
 `SKILL.md` or `CLAUDE.md` line, never through a runtime lookup — and that name must be
-one the harness resolves, never a relative path (§ *Coverage is derived*, above).
-Replacing a module means checking the others that name it; that check is a few minutes
-of grep, done rarely, not a per-call cost.
+one the harness resolves, never a relative path. Replacing a module means checking the
+others that name it; that check is a few minutes of grep, done rarely.
 
 ## A module reaches nothing outside itself
 
 BR-4 governs how a module **names** another. This governs how it **reaches** anything at
-all, which is a different question and was never answered: a reference written inside a
-module resolves inside that module, or it does not resolve.
+all, which is a different question: a reference written inside a module resolves inside
+that module, or it does not resolve.
 
 A module is installed at a path it does not choose. In this repository it sits at
 `plugins/<name>/`; installed from a marketplace it sits one segment deeper, under a
@@ -323,6 +234,12 @@ Two ways out, and only two:
   The module inlines what it needs, or cites an absolute public URL. A
   repository-relative link assumes a consuming project has a file it has never had.
 
+The same harness fact is what makes a contribution readable without an executable: the
+modules present are the ones whose `bin/` the harness put on PATH, so the kernel's tool
+discovers them without any module naming any other. That is a widening of the mechanism,
+recorded in [ADR-0020](../../../docs/adr/0020-skill-extension-protocol.md) — and it is
+what makes PATH load-bearing for the whole composition rather than for two call sites.
+
 Running a name is not the dynamic resolution ADR-0009 rejected: the name is written down,
 constant, and greppable — which a relative path is not — and nothing chooses *which*
 module answers it. See [ADR-0018](../../../docs/adr/0018-modules-reach-by-name.md).
@@ -332,16 +249,12 @@ module answers it. See [ADR-0018](../../../docs/adr/0018-modules-reach-by-name.m
 A composition an agent retypes is a composition that drifts, and the drift is invisible
 because the prose still reads plausibly. So the skills that present the composition —
 `scrumia-init` and `scrumia-compose` — end by running `scrumia-core`'s
-`scripts/compose-status.sh`, which reads `.scrumia/config.yaml` and prints the derived
-coverage itself: which action each declared step's requirement resolves to, and, worded
-differently from one another, the steps marked `not-applicable`, the ones covered by a
-`human`, and the ones with no declared provider at all. What a human reads is the file,
-every time, rather than what one session remembered of it.
+`scripts/compose-status.sh`, which reads `.scrumia/config.yaml` and prints it: the
+modules the project runs, and each app with what it extends. What a human reads is the
+file, every time, rather than what one session remembered of it.
 
-This is reporting, not resolution. Nothing calls the script to find out who provides an
-action; it resolves nothing on any agent's behalf, and BR-4 stands untouched. It makes
-the answer BR-4 already documents legible in a terminal, which is a different job from
-looking that answer up at runtime.
+This is reporting, not resolution. Nothing calls the script to find out who provides
+anything; it resolves nothing on any agent's behalf, and BR-4 stands untouched.
 
 It stops there deliberately. It reads the config and only the config, so it cannot tell
 whether a module named there is actually enabled, or whether `CLAUDE.md` has gone stale
@@ -351,20 +264,19 @@ the composition.
 
 ## Business rules
 
-- **BR-1** — An action is a question, not a module. A step's required actions exist
-  independently of whether any module currently provides them.
-- **BR-2** — An unprovided action is declared, not omitted. `.scrumia/config.yaml`
-  reports it as a hole rather than staying silent; a missing report is a tooling
-  defect, not "no gap".
+- **BR-1** — A register is a question, not a module. An extension point exists
+  independently of whether any installed module currently contributes to it; a register
+  nothing extends yields an empty table, which is an answer and not a failure.
+- **BR-2** — A module installed but named in no `extends` is inert. Presence is never
+  read as participation, and a project's `extends` is the only thing that decides which
+  modules contribute.
 - **BR-3** — A module never assumes another module's capability is present. It checks,
   and on finding the capability unprovided, it names the gap in a message a human or an
   agent can act on, and proposes the next step, rather than failing or silently
   changing behaviour.
 - **BR-4** — A module cites another by name where the sentence needs the specific one,
   and that name is one the harness resolves, never a relative path. Nothing resolves a
-  name to a module at runtime; the resolution is the generated composition — the
-  `CLAUDE.md` table and the assemblies beside it — written once and re-read on every
-  session.
+  name to a module at runtime.
 - **BR-5** — ScrumIA's own modules ship from a single repo, which is also the
   marketplace. A third-party module is not required to: it declares its own source in
   `marketplace.json`, at the adopting project's discretion.
@@ -378,48 +290,46 @@ the composition.
   belonging to no module is inlined or cited by absolute URL. Running a published
   name is not resolving a slot, so BR-4 stands: the name is constant and greppable,
   and nothing decides at runtime which module answers it.
-- **BR-8** — A decision action has exactly one provider; a contribution action may have
-  several. A module that bids on a decision action already provided by another module
-  is a conflict named at composition time, not silently arbitrated by list order —
-  `extends` carries no order to arbitrate by.
-- **BR-9** — Coverage is computed against exactly one of the four recipient sets (run,
-  kernel, adoption, authoring) at a time, and a coverage claim states which. `extends`
-  configures `run` only; the other three exist so a claim never silently answers for
-  half the system while presenting itself as the whole.
-- **BR-10** — What an agent loads for an action is assembled by a tool from what the
-  plugged modules declare, never recomposed by the agent from one module's prose about
-  another. The assembly merges routing; each module keeps and orders its own rules.
-- **BR-11** — A module named in `extends` whose manifest cannot be reached stops the
-  build. Absence of a published name is never read as "this module contributes nothing":
-  that reading turns a plugin awaiting a restart into a silent claim that no rules apply.
-  A module reached and carrying no manifest is the named degradation BR-3 describes.
-- **BR-12** — An entry point is reached, not covered. A person being able to invoke an
-  action does not remove it from the hole count; what it changes is that the hole names
-  the skill or command a person types, resolved to a file that must exist.
+- **BR-8** — A register is opened by exactly one main skill, and may be extended by any
+  number of modules. Two modules opening the same register is a conflict named by the
+  check, never arbitrated by list order — `extends` carries no order to arbitrate by.
+- **BR-9** — A contribution names no consumer. A module declares what it offers and to
+  which register; it does not name, and may not encode, which skill takes it. A key that
+  named a consumer would make every cross-cutting module enumerate the modules that could
+  ever use it.
+- **BR-10** — What a skill applies is contributed as data and rendered on demand, never
+  recomposed by the agent from one module's prose about another, and never merged into
+  the fragments' content. The table orders contributions; inside a module, that module's
+  own routing table orders its files.
+- **BR-11** — A module declares the outward edges it depends on — the published names it
+  runs and the registers it reads — and the check reports each one nothing satisfies. A
+  name that is absent is never read as "this module contributes nothing": that reading
+  turns a plugin awaiting a restart into a silent claim that no rules apply.
+- **BR-12** — The directive table arbitrates nothing. Two contributions whose prose
+  contradicts each other are both printed, in the computed order; resolving them is a
+  composition decision a person makes, not one a generator may make silently.
 
 ## Vocabulary
 
 **"Slot" names the question a project answers when composing** — it survives as the
 word the human-facing composer uses to ask "which module fills this need", because
-that is what a person actually answers, one question at a time. **"Action" names the
-mechanism's own unit** — what a module declares providing, what coverage is computed
-against, what `extends` ultimately resolves to underneath the composer's questions. The
-composer keeps asking questions shaped like slots; the config and the generated
-`CLAUDE.md` table beneath it speak in actions. Using "slot" for the mechanism's unit or
-"action" for what the composer asks a visitor is the drift this section exists to
-prevent — write the one the sentence is actually about.
+that is what a person actually answers, one question at a time. It is not the
+mechanism's unit: nothing in the configuration or the tooling is keyed by slot.
 
-"Area" appears nowhere in this composition's vocabulary as a synonym for either word:
-it reads as a section heading and loses what both "slot" and "action" carry — a
-question, or a unit of work, that exists whether or not anything currently answers it.
+**"Register" names an extension point** — what a main skill opens, what a module
+contributes to, and the argument the kernel's tool takes. It is not a "slot": a slot has
+one answer, a register has as many as the project runs. It is not a "hook" either — that
+word belongs to the harness and names something that executes.
 
-**"Assembly" names the built artefact** — one per action, per project, listing what to
-load and in what order. It is not a "skill": that word belongs to the harness, and an
-assembly is not one, does not load like one, and points at several. It is not an "index"
-either — the specs contract owns that word for two different files, and a third meaning is
-the drift this section exists to prevent.
+**"Directive" names one row of the table** — one principle, method, refusal or
+reference, with the fragment that states it. **"Fragment" names the file** the directive
+points at: one scope, one purpose, so the same file can be contributed to several
+registers with a different obligation each time.
 
-**"Assembled" is not a coverage word.** An action has an assembly exactly when a plugged
-module declared something for it, which is *declaration* — the thing coverage is measured
-against rather than by. A report that counted assemblies would be counting declarations
-with a new name on them.
+**"Extension" is not a coverage word.** A module contributes to a register exactly when
+it declared something for it, which is *declaration*. A report that counted contributions
+would be counting declarations with a new name on them.
+
+"Area" appears nowhere in this vocabulary as a synonym for any of these: it reads as a
+section heading and loses what "slot" and "register" carry — a question, or an extension
+point, that exists whether or not anything currently answers it.

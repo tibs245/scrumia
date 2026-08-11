@@ -340,102 +340,111 @@ def check_composition_drift() -> None:
             )
 
 
-def check_module_manifests() -> None:
-    """A module's composition.json only names things that exist, inside itself.
+def check_extension_data() -> None:
+    """A module's extends.json, registers.json and dependencies.json hold only data
+    that resolves inside that module.
 
-    Containment is checked here rather than on the built assemblies: .scrumia/ is
-    globbed by no other check, has no plugin root to resolve against, and an artefact
-    built from manifests that already passed is correct by construction.
+    The vocabularies are deliberately open (ADR-0020): a register nobody opens, an
+    unknown `type` or `when`, are runtime findings scrumia-extends reports, not build
+    errors — closing them here would forbid a third-party module from declaring
+    anything this repository had not anticipated. What is closed is containment and
+    existence, which is ADR-0018's rule and is decidable from the tree alone.
     """
-    vocab_path = ROOT / "plugins" / "scrumia-core" / "data" / "actions.json"
-    vocab = load_json(vocab_path)
-    if vocab is None:
-        error(f"{vocab_path.relative_to(ROOT)}: missing — the closed action vocabulary")
-        return
-    known = {a["name"] for a in vocab.get("actions", [])}
-    kinds = {a["name"]: a.get("kind") for a in vocab.get("actions", [])}
     published = {e.name for e in ROOT.glob("plugins/*/bin/*") if e.is_file()}
 
-    def resolves(name: str) -> bool:
-        """A caller or entry names whatever the harness resolves: a skill or a command."""
-        if ":" not in name:
-            return False
-        module, thing = name.split(":", 1)
-        base = ROOT / "plugins" / module
-        return (base / "skills" / thing / "SKILL.md").exists() or (base / "commands" / f"{thing}.md").exists()
-
-    for manifest_path in sorted(ROOT.glob("plugins/*/composition.json")):
-        plugin = manifest_path.parent
-        rel = manifest_path.relative_to(ROOT)
-        data = load_json(manifest_path)
+    def data_of(plugin: Path, name: str):
+        path = plugin / name
+        if not path.exists():
+            return None, None
+        rel = path.relative_to(ROOT)
+        data = load_json(path)
         if not isinstance(data, dict):
             error(f"{rel}: must be a JSON object")
+            return None, rel
+        return data, rel
+
+    for plugin in sorted(ROOT.glob("plugins/*")):
+        if not (plugin / ".claude-plugin" / "plugin.json").exists():
             continue
-        if data.get("module") != plugin.name:
-            error(f"{rel}: declares module '{data.get('module')}' but sits in plugins/{plugin.name}")
-        if data.get("grain", "cross-cutting") not in ("technology", "cross-cutting"):
-            error(f"{rel}: grain must be 'technology' or 'cross-cutting'")
 
-        publisher = plugin / "bin" / f"{plugin.name}-manifest"
-        if not publisher.exists():
-            error(f"{rel}: no {publisher.relative_to(ROOT)} — a manifest nothing publishes cannot be read by name")
+        registers, rel = data_of(plugin, "registers.json")
+        opened = set()
+        if registers:
+            for name, entry in registers.items():
+                opened.add(name)
+                if not isinstance(entry, dict):
+                    error(f"{rel}: register '{name}' must be an object with a skill and a purpose")
+                    continue
+                skill = entry.get("skill")
+                if not skill:
+                    error(f"{rel}: register '{name}' names no main skill")
+                elif not (plugin / "skills" / skill / "SKILL.md").exists():
+                    error(f"{rel}: register '{name}' names skill '{skill}', which this module does not ship")
+                if not entry.get("purpose"):
+                    error(f"{rel}: register '{name}' states no purpose")
 
-        for entry in data.get("provides", []):
-            action = entry.get("action")
-            if action not in known:
-                error(f"{rel}: '{action}' is not in the kernel's closed action vocabulary")
-            for frag in entry.get("read", []):
-                target = (plugin / frag).resolve()
-                if not target.is_relative_to(plugin.resolve()):
-                    error(f"{rel}: fragment leaves plugins/{plugin.name} → {frag} — {CONTAINMENT_HINT}")
-                elif not target.exists():
-                    error(f"{rel}: fragment does not exist → {frag}")
-            run = entry.get("run")
-            if run is not None and run not in published:
-                error(f"{rel}: run '{run}' names no executable under any plugin's bin/")
-            ep = entry.get("entry")
-            if ep is not None and not resolves(ep):
-                error(f"{rel}: entry '{ep}' resolves to no skill or command file")
+        extends, rel = data_of(plugin, "extends.json")
+        if extends:
+            for register, rows in extends.items():
+                if not isinstance(rows, list):
+                    error(f"{rel}: '{register}' must be an array of directives")
+                    continue
+                for row in rows:
+                    if not isinstance(row, dict):
+                        error(f"{rel}: '{register}' holds a directive that is not an object")
+                        continue
+                    label = row.get("name") or "(unnamed)"
+                    for field in ("name", "summary", "read"):
+                        if not row.get(field):
+                            error(f"{rel}: '{register}' → {label} has no {field}")
+                    frag = row.get("read")
+                    if not frag:
+                        continue
+                    target = (plugin / frag).resolve()
+                    if not target.is_relative_to(plugin.resolve()):
+                        error(f"{rel}: '{register}' → {label} reads outside plugins/{plugin.name} → {frag} — {CONTAINMENT_HINT}")
+                    elif not target.exists():
+                        error(f"{rel}: '{register}' → {label} reads a file that does not exist → {frag}")
 
-        for call in data.get("calls", []):
-            action = call.get("action")
-            if action not in known:
-                error(f"{rel}: calls '{action}', which is not in the action vocabulary")
-            evidence = call.get("from")
-            if not evidence:
-                error(f"{rel}: a call declares no 'from' — a caller names the file inside itself that makes it")
-                continue
-            target = (plugin / evidence).resolve()
-            if not target.is_relative_to(plugin.resolve()):
-                error(f"{rel}: call evidence leaves plugins/{plugin.name} → {evidence}")
-            elif not target.exists():
-                error(f"{rel}: call evidence does not exist → {evidence}")
-
-    # Two providers on a decision action is scrumia-assemble's check, scoped to what a
-    # project extends. This repo ships twelve modules and runs five; a collision between
-    # two nobody composes together is not a defect, and refusing it here would forbid a
-    # second tracker module from ever being written.
-    del kinds
+        deps, rel = data_of(plugin, "dependencies.json")
+        if deps:
+            for name in deps.get("runs", []):
+                if name not in published:
+                    error(f"{rel}: runs '{name}', which no plugin publishes under its bin/")
+            for register in deps.get("reads", []):
+                # A skill that declares reading a register and never runs the tool reads
+                # as covered and applies nothing — the one failure a declaration check
+                # cannot see, so the grep for the call is the check.
+                if not any(
+                    f"scrumia-extends {register}" in f.read_text(encoding="utf-8")
+                    for f in plugin.glob("skills/*/SKILL.md")
+                ):
+                    error(
+                        f"{rel}: reads '{register}', but no skill in plugins/{plugin.name} "
+                        f"runs `scrumia-extends {register}`"
+                    )
 
 
-def check_assemblies_current() -> None:
-    """The committed assemblies still match the composition they were built from.
+def check_extends_tool_runs() -> None:
+    """scrumia-extends answers on this repository's own composition.
 
-    Resolved by repo path, never by PATH: CI has no harness, so no plugin's bin/ is on it.
+    Run against $SCRUMIA_MODULE_DIR, never PATH: CI has no harness, so no plugin's
+    bin/ is on it. That asymmetry is ADR-0020's, recorded there as accepted.
     """
-    tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-assemble"
+    tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
     if not tool.exists():
         error(f"{tool.relative_to(ROOT)}: missing")
         return
     env = {**os.environ, "SCRUMIA_MODULE_DIR": "plugins", "NO_COLOR": "1"}
     try:
-        result = subprocess.run([str(tool), "check"], cwd=str(ROOT), env=env,
-                                capture_output=True, text=True, timeout=30)
+        result = subprocess.run([str(tool), "--check"], cwd=str(ROOT), env=env,
+                                capture_output=True, text=True, timeout=60)
     except Exception as exc:  # noqa: BLE001 - reported, not raised
         error(f"{tool.relative_to(ROOT)}: failed to run — {exc}")
         return
     if result.returncode != 0:
-        error(f".scrumia/assemblies: {result.stderr.strip().splitlines()[-1] if result.stderr.strip() else 'drifted'}")
+        for line in result.stderr.strip().splitlines():
+            error(f"scrumia-extends --check: {line}")
 
 
 def check_feature_mandatory_files() -> None:
@@ -725,8 +734,8 @@ def main() -> int:
     check_published_names()
     check_french_leftovers()
     check_composition_drift()
-    check_module_manifests()
-    check_assemblies_current()
+    check_extension_data()
+    check_extends_tool_runs()
     check_feature_mandatory_files()
     check_no_tracker_refs()
     check_business_value_heading()

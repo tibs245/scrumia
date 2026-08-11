@@ -80,6 +80,16 @@ It also provides an anchor point: tickets point to an already readable specs PR,
 
 Show the tree produced, the issues created with their numbers, the specs PR, and **the remaining open questions**. The latter are the most useful part of your report: they are what will cost dearly if forgotten.
 
+## What the split has to satisfy here
+
+```bash
+scrumia-extends split
+```
+
+Whatever the composition requires of a feature tree or of the tickets it produces arrives
+here, from the module that owns the rule. An empty table means the checks below are the
+whole obligation.
+
 ## Check before concluding
 
 - Every App feature has a Business parent, or an explicit justification for being purely technical

@@ -149,14 +149,17 @@ If while writing the spec you discover a contradiction with another feature: sto
 
 ## Step 4 — Implement according to the app's module
 
-**Before writing code, resolve which implementation module and which practices cover the file you're about to touch.** The procedure:
+**Before writing code, ask what governs the file you're about to touch.** Do not work it out from `.scrumia/config.yaml`, and do not recall it from another skill's prose:
 
-1. **Resolve the app by path** — match the file against `apps[].path` in `.scrumia/config.yaml`. No match, no module: follow the conventions of the neighboring code. That's normal behavior, not a gap.
-2. **Open the index, not the whole module** — for the app's `implementation` module and each of its `practices`, read only the skill's `SKILL.md`. If the app carries a per-app `CLAUDE.md` stub at its path, it points straight there.
-3. **Load only the routed guides** — the index's routing table tells you which reference guide(s) apply to the kind of change you're making (tests, structure, a specific pattern). Load those, not the module's full reference set.
-4. **Respect each module's `section.json` globs** — a module only speaks for the files it claims within the app; outside its globs, it has nothing to say and neighboring conventions apply.
+```bash
+scrumia-extends implement --path <the file you are about to edit>
+```
 
-Precedence, once the relevant guides are loaded: the implementation module is authoritative on the "how" — its way of writing tests, its design principles, its file structure — including against your preferences. Where a practice (`scrumia-practice-tdd`, `scrumia-practice-solid`, …) and the implementation module disagree, the implementation module wins — **specific beats generic**. A project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both.
+It prints every directive the modules this project runs contribute to `implement`, for that file's app: name, type, whether it is `required`, one line of what it says, and the file to open. **Open every `required` row before writing code.** `optional` rows are offered — take the ones the change calls for.
+
+An empty table is an answer, not a gap: no module the project runs speaks for that file, so the conventions of the neighbouring code apply.
+
+The order the table prints is the precedence: this project's own `.scrumia/extends.json` first, then the modules the app extends, then the project-wide ones — *specific beats generic, and a project override beats both*. What the table does **not** do is arbitrate: two rows whose prose contradicts each other are both printed, and a genuine conflict is a composition problem to escalate, not a judgment call to make silently. Inside a module, that module's own routing table and `section.json` globs still decide what else to open.
 
 Whether an implementation module is plugged in or not: if a specs module is documented, cover each criterion in `ac_id_format` from the file named by `acceptance_file` with a test that can fail; in every case, run the project's tests and linter.
 

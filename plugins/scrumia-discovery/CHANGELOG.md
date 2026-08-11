@@ -4,9 +4,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `composition.json` and `scrumia-discovery-manifest` — this module declares the actions it
-  provides, the fragment to open for each, and how a person reaches it, so the
-  composed assemblies are built from it rather than from prose about it.
+- `registers.json` and `dependencies.json` — this module opens the `scope-idea` and
+  `split` registers, and both skills ask what this project scopes against.
 
 ## [0.4.0] - 2026-08-10
 ### Added

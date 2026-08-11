@@ -1,0 +1,38 @@
+{
+  "implement": [
+    { "name": "Single Responsibility", "type": "norm", "when": "required",
+      "summary": "One reason to change per unit — where a responsibility is cut, and where it is not",
+      "read": "skills/scrumia-solid-principles/guides/01-srp.md" },
+    { "name": "Open/Closed", "type": "norm", "when": "required",
+      "summary": "Extend without editing — and the cost of the indirection that buys it",
+      "read": "skills/scrumia-solid-principles/guides/02-ocp.md" },
+    { "name": "Liskov Substitution", "type": "norm", "when": "required",
+      "summary": "A subtype honours the contract of the type it stands in for",
+      "read": "skills/scrumia-solid-principles/guides/03-lsp.md" },
+    { "name": "Interface Segregation", "type": "norm", "when": "required",
+      "summary": "A caller depends on the operations it uses, not on the ones it ignores",
+      "read": "skills/scrumia-solid-principles/guides/04-isp.md" },
+    { "name": "Dependency Inversion", "type": "norm", "when": "required",
+      "summary": "The policy owns the abstraction; the detail implements it",
+      "read": "skills/scrumia-solid-principles/guides/05-dip.md" },
+    { "name": "No abstraction with one implementer", "type": "refusal", "when": "required",
+      "summary": "Over-application is a defect of the same class as a violation, not a safe excess",
+      "read": "skills/scrumia-solid-principles/decisions/D-01-over-application-audited-equally.md" }
+  ],
+  "review": [
+    { "name": "Over-application counts as a finding", "type": "refusal", "when": "required",
+      "summary": "An interface with a single implementer is reported, not waved through as prudence",
+      "read": "skills/scrumia-solid-principles/decisions/D-01-over-application-audited-equally.md" },
+    { "name": "SOLID audit", "type": "method", "when": "optional",
+      "summary": "Measure a change against the five principles, finding by finding, each citing its guide",
+      "read": "skills/scrumia-solid-audit/SKILL.md" }
+  ],
+  "audit": [
+    { "name": "SOLID audit", "type": "method", "when": "optional",
+      "summary": "Measure an existing codebase against the five principles and report the gap",
+      "read": "skills/scrumia-solid-audit/SKILL.md" },
+    { "name": "SOLID refactor", "type": "method", "when": "optional",
+      "summary": "Turn an audit finding into a bounded refactor rather than a rewrite",
+      "read": "skills/scrumia-solid-refactor/SKILL.md" }
+  ]
+}

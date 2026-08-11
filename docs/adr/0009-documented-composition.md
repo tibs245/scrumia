@@ -1,6 +1,6 @@
 # ADR-0009 — Documented composition, no dynamic resolution
 
-**Status**: accepted — 2026-08-07 — one point amended by [0019](0019-extends-replaces-composition-and-practices.md): what gets derived (`extends`, an actions table) instead of what this ADR named (`composition:`, a slot table). The decision this ADR makes — resolution at composition time, never at call time, no capability registry — stands unmodified, and [0020](0020-assembled-composition.md) settles who performs that resolution: a tool, not the agent.
+**Status**: accepted — 2026-08-07 — amended twice. [0019](0019-extends-replaces-composition-and-practices.md) changes what the config declares: `extends`, a flat list, instead of `composition:`, slot-keyed. [0020](0020-skill-extension-protocol.md) changes *when* a skill's directives are resolved — computed on demand rather than at composition time — and says so plainly; what this ADR rejected, a verb resolving to a module the agent cannot see, is untouched, because nothing there selects a provider.
 
 ## Context
 

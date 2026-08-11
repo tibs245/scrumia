@@ -11,14 +11,9 @@ extends:
   - scrumia-discovery
   - scrumia-design
 
-# Arbitrations and exclusions only — never the full action table, which is derived.
-# Read by scrumia-assemble; an entry here is this project's own answer, not a module's.
-actions:
-  brief/state-need: human           # someone decides there is a need; no tool does
-  sign-off/approve-ready: human     # a person says a ticket may start
-  merge/approve: human              # auto_merge is none here, so the approval is a person's
-  build/apply-implementation: not-applicable   # plugins/ is markdown, and both apps below
-                                               # deliberately carry no implementation module
+# A project adds its own directives in .scrumia/extends.json — same shape as a module's,
+# read first by scrumia-extends, which is how a house rule beats a module's without
+# forking it. This project has none: every rule it runs is a module's.
 
 # ScrumIA's product is markdown: plugins/ is the deliverable and carries no
 # implementation module. Only these two hold code an implementation module

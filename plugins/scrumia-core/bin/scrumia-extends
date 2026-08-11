@@ -1,0 +1,320 @@
+#!/usr/bin/env bash
+# ScrumIA — prints the directives that extend one register, for this project.
+#
+# A register is a named extension point a main skill opens. Any installed module may
+# contribute directives to it by shipping `extends.json` at its own root. Nothing in that
+# file names a consumer: a module declares what it offers, never who takes it.
+#
+# This tool reads the project's composition, collects the contributions of the modules
+# the project actually runs, and prints one table. It computes at call time and writes
+# nothing — there is no artefact that can go stale, and none to commit.
+#
+#   scrumia-extends <register> [--app <name>|--path <file>] [--json]
+#   scrumia-extends --list
+#   scrumia-extends --check
+
+set -uo pipefail
+
+SELF=$(basename "$0")
+CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+LOCAL_EXTENDS="${SCRUMIA_LOCAL_EXTENDS:-.scrumia/extends.json}"
+
+die() { echo "$SELF: $1" >&2; exit 1; }
+note() { echo "$SELF: $1" >&2; }
+
+usage() {
+  cat >&2 <<'EOF'
+scrumia-extends <register>              # the directives that extend this register
+scrumia-extends <register> --app <name> # …including the modules that app extends
+scrumia-extends <register> --path <f>   # …resolving the app from a file's path
+scrumia-extends <register> --json       # the same rows, unrendered
+scrumia-extends --list                  # every register opened here, and what reaches it
+scrumia-extends --check                 # declared dependencies that are not met
+
+A module is found through $PATH: the harness puts <pluginRoot>/bin on it for every
+enabled plugin, so the parent of such an entry is a module root. $SCRUMIA_MODULE_DIR
+overrides that with a directory holding <module>/ checkouts — for this repository and
+for CI, where no harness is running.
+
+Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and each module's own extends.json,
+registers.json and dependencies.json. Writes nothing, anywhere.
+EOF
+  exit 2
+}
+
+command -v jq >/dev/null 2>&1 || die "jq not found"
+
+# ---------------------------------------------------------------- the composition
+
+# Same loader as scrumia-board, scrumia-pick-model and compose-status.sh: one of the two
+# YAML readers the machine already has, never a third dependency.
+load_config() {
+  [ -f "$CONFIG" ] || die "no $CONFIG — run /scrumia-core:scrumia-init first"
+  if command -v yq >/dev/null 2>&1; then
+    CFG=$(yq -o=json '.' "$CONFIG" 2>/dev/null)
+  elif python3 -c 'import yaml' >/dev/null 2>&1; then
+    CFG=$(python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])) or {}, sys.stdout)' "$CONFIG" 2>/dev/null)
+  else
+    die "need yq or python3+PyYAML to read $CONFIG"
+  fi
+  [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
+
+  # `extends` is the current key; the retired composition:/implementation:/practices:
+  # shape is still read for one minor, with a warning (ADR-0019).
+  if ! jq -e 'has("extends")' >/dev/null <<<"$CFG"; then
+    note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to extends:"
+  fi
+
+  SCOPES=$(jq -c '
+    def app_extends: (.extends // ([.implementation] + (.practices // []) | map(select(. != null))));
+    { project: (.extends // ((.composition // {}) | to_entries | map(select(.value != null) | .value)))
+    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), extends: app_extends })) }' <<<"$CFG")
+}
+
+# Which app a file belongs to — the longest declared path that prefixes it, so a nested
+# app wins over the repository-wide one it sits inside.
+app_of_path() {
+  # `.path` is bound before the startswith: inside `$p | startswith(…)` the argument is
+  # evaluated with `.` set to $p, so an unbound `.path` there indexes the string.
+  jq -r --arg p "$1" '
+    [.apps[] | . as $a | select($a.path != "" and ($p == $a.path or ($p | startswith($a.path + "/"))))]
+    | sort_by(.path | length) | last | .name // ""' <<<"$SCOPES"
+}
+
+# ---------------------------------------------------------------- the modules
+
+# The harness prepends <pluginRoot>/bin to PATH for every enabled plugin, with the install
+# path — version segment included — already resolved (ADR-0018). Reading the module roots
+# back out of it is what lets an extension be a data file and nothing else: no module has
+# to publish an executable just to be readable, and no path into a sibling is ever written.
+discover_roots() {
+  local dir root name
+  ROOTS=$(
+    {
+      if [ -n "${SCRUMIA_MODULE_DIR:-}" ]; then
+        find "$SCRUMIA_MODULE_DIR" -maxdepth 3 -name plugin.json -path '*/.claude-plugin/*' 2>/dev/null |
+          while IFS= read -r f; do printf '%s\n' "$(cd -- "$(dirname -- "$f")/.." && pwd)"; done
+      else
+        # No `case` here: bash 3.2 mis-parses a pattern's `)` inside a command
+        # substitution, and macOS still ships 3.2 as /bin/bash.
+        while IFS= read -r dir; do
+          root=${dir%/bin}
+          [ "$root" != "$dir" ] || continue
+          [ -f "$root/.claude-plugin/plugin.json" ] || continue
+          printf '%s\n' "$root"
+        done < <(printf '%s\n' "$PATH" | tr ':' '\n')
+      fi
+    } | awk '!seen[$0]++'
+  )
+
+  MODULES="[]"
+  while IFS= read -r root; do
+    [ -n "$root" ] || continue
+    name=$(jq -r '.name // ""' "$root/.claude-plugin/plugin.json" 2>/dev/null)
+    [ -n "$name" ] || name=$(basename "$root")
+    MODULES=$(jq -c --arg m "$name" --arg r "$root" \
+      --slurpfile ex <(read_json "$root/extends.json") \
+      --slurpfile rg <(read_json "$root/registers.json") \
+      --slurpfile dp <(read_json "$root/dependencies.json") \
+      '. + [{module: $m, root: $r, extends: $ex[0], registers: $rg[0], dependencies: $dp[0]}]' \
+      <<<"$MODULES")
+  done <<<"$ROOTS"
+
+  # The project is an extension of itself: .scrumia/extends.json carries the rows a
+  # project adds without forking a module, and it outranks every module (ADR-0019's
+  # "the project override beats both", kept as a scope rather than as a self-ranking).
+  if [ -f "$LOCAL_EXTENDS" ]; then
+    MODULES=$(jq -c --slurpfile ex <(read_json "$LOCAL_EXTENDS") \
+      '. + [{module: "(this project)", root: ".", extends: $ex[0], registers: {}, dependencies: {}}]' <<<"$MODULES")
+  fi
+}
+
+# A malformed data file is reported, never read as "this module contributes nothing":
+# silence is exactly how a typo in an extension ships green.
+read_json() {
+  if [ -f "$1" ]; then
+    if jq -e 'type == "object"' "$1" >/dev/null 2>&1; then cat "$1"; else
+      note "$1 is not a JSON object — ignored"; echo '{}'
+    fi
+  else
+    echo '{}'
+  fi
+}
+
+# ---------------------------------------------------------------- the rows
+
+# Scope decides order and precedence, and it comes from the project's composition, never
+# from a module ranking itself: local > the app's own modules > the project-wide ones.
+# That is ADR-0010's "specific beats generic, the project override beats both", expressed
+# where the project can see it.
+rows_for() {
+  jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" '
+    ([$scopes.apps[] | select(.name == $app) | (.extends // [])] | first // []) as $appmods
+    | ($scopes.project // []) as $projmods
+    | [ .[]
+        | . as $m
+        | ( if $m.module == "(this project)" then 0
+            elif ($appmods | index($m.module)) then 1
+            elif ($projmods | index($m.module)) then 2
+            else empty end ) as $scope
+        | ($m.extends[$reg] // [])[]
+        | { scope: $scope
+          , scope_name: (["project-local", "app", "project-wide"][$scope])
+          , module: $m.module
+          , root: $m.root
+          , name: (.name // "(unnamed)")
+          , type: (.type // "norm")
+          , when: (.when // "required")
+          , summary: (.summary // "")
+          , read: (.read // "") } ]
+    | sort_by([.scope, (if .when == "required" then 0 else 1 end), .module, .name])' <<<"$MODULES"
+}
+
+render_table() {
+  local reg=$1 rows=$2 app=$3
+  local n mods
+  n=$(jq 'length' <<<"$rows")
+  mods=$(jq -r '[.[].module] | unique | length' <<<"$rows")
+
+  printf '# %s — %s directive(s) from %s module(s)%s\n\n' "$reg" "$n" "$mods" \
+    "$( [ -n "$app" ] && printf ', app `%s`' "$app" )"
+
+  if [ "$n" -eq 0 ]; then
+    printf 'Nothing extends `%s` in this composition. That is an answer, not a failure:\n' "$reg"
+    printf 'the register is open and no module the project runs contributes to it.\n'
+    return
+  fi
+
+  cat <<'EOF'
+Take what the task needs. `required` rows apply to every unit of work in scope;
+`optional` rows are offered, and you decide. This table does not arbitrate: two rows
+that contradict each other are both printed, because a generator cannot read English.
+
+EOF
+  printf '| Name | Type | Use | What it says | Read |\n|---|---|---|---|---|\n'
+  jq -r '.[] | "| " + .name + " | " + .type + " | " + .when + " | " + .summary + " | `"
+             + (if .read == "" then "—" else (.root + "/" + .read) end) + "` |"' <<<"$rows"
+
+  printf '\nOrder is computed, never authored — project-local rows first, then the ones the\n'
+  printf 'app extends, then the project-wide ones; `required` before `optional` within a tier.\n'
+}
+
+# ---------------------------------------------------------------- commands
+
+cmd_register() {
+  local reg=$1 app=$2 as_json=$3 rows
+  rows=$(rows_for "$reg" "$app")
+
+  if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
+    note "no installed module opens the register '$reg' — run 'scrumia-extends --list' for the ones that exist"
+  fi
+
+  if [ "$as_json" = yes ]; then jq '.' <<<"$rows"; else render_table "$reg" "$rows" "$app"; fi
+}
+
+cmd_list() {
+  jq -r --argjson scopes "$SCOPES" '
+    . as $mods
+    | [ $mods[] | .module as $m | (.registers // {}) | to_entries[]
+        | { register: .key, opened_by: $m, skill: (.value.skill // "—"), purpose: (.value.purpose // "") } ]
+    | . as $opened
+    | ([ $mods[] | (.extends // {}) | keys[] ] | unique) as $extended
+    | "| Register | Opened by | Main skill | Purpose | Modules extending it |",
+      "|---|---|---|---|---|",
+      ( ($opened | map(.register)) + $extended | unique | sort[] as $r
+        | ($opened[] | select(.register == $r)) // {register: $r, opened_by: "— nobody —", skill: "—", purpose: ""}
+        | . as $o
+        | "| `" + $r + "` | " + $o.opened_by + " | " + $o.skill + " | " + $o.purpose + " | "
+          + ([ $mods[] | select((.extends // {}) | has($r)) | .module ] | length | tostring) + " |" )
+  ' <<<"$MODULES"
+}
+
+# True when some discovered module ships an executable of this name under its own bin/.
+is_published() {
+  local root
+  while IFS= read -r root; do
+    [ -n "$root" ] && [ -x "$root/bin/$1" ] && return 0
+  done < <(jq -r '.[] | select(.root != ".") | .root' <<<"$MODULES")
+  return 1
+}
+
+cmd_check() {
+  local failed=0
+  # A name a module declares running must be on PATH. A missing one is the commonest
+  # symptom of a plugin enabled but not yet restarted into — worth naming as such.
+  while IFS=$'\t' read -r mod name; do
+    [ -n "$name" ] || continue
+    # Under $SCRUMIA_MODULE_DIR no harness is running, so PATH proves nothing on its own:
+    # a name is also met when a discovered module publishes it under its own bin/.
+    if ! command -v "$name" >/dev/null 2>&1 && ! is_published "$name"; then
+      echo "$mod declares running '$name', which is neither on PATH nor published by an installed module — enable the module that publishes it, then restart the session" >&2
+      failed=$((failed + 1))
+    fi
+  done < <(jq -r '.[] | .module as $m | (.dependencies.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
+
+  while IFS=$'\t' read -r mod reg; do
+    [ -n "$reg" ] || continue
+    if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
+      echo "$mod reads the register '$reg', which no installed module opens" >&2
+      failed=$((failed + 1))
+    fi
+  done < <(jq -r '.[] | .module as $m | (.dependencies.reads // [])[] | $m + "\t" + .' <<<"$MODULES")
+
+  # A contribution to a register nobody opens is inert — it will never be printed, and
+  # nothing else would ever say so.
+  while IFS=$'\t' read -r mod reg; do
+    [ -n "$reg" ] || continue
+    if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
+      echo "$mod extends the register '$reg', which no installed module opens — those directives reach nothing" >&2
+      failed=$((failed + 1))
+    fi
+  done < <(jq -r '.[] | .module as $m | (.extends // {}) | keys[] as $k | $m + "\t" + $k' <<<"$MODULES")
+
+  # Two modules opening one register leaves no way to say which main skill consumes it.
+  # The tool does not pick; it reports and stops.
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    echo "$line" >&2
+    failed=$((failed + 1))
+  done < <(jq -r '
+    [ .[] | .module as $m | (.registers // {}) | keys[] | {register: ., module: $m} ]
+    | group_by(.register) | map(select(length > 1))[]
+    | "the register `" + .[0].register + "` is opened by " + ([.[].module] | join(" and "))
+      + " — nothing decides which main skill consumes it"' <<<"$MODULES")
+
+  if [ "$failed" -gt 0 ]; then
+    die "$failed unmet dependency/dependencies"
+  fi
+  note "every declared dependency is met"
+}
+
+# ---------------------------------------------------------------- argument handling
+
+[ $# -ge 1 ] || usage
+REGISTER=""; APP=""; AS_JSON=no; MODE=register
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --list)  MODE=list; shift ;;
+    --check) MODE=check; shift ;;
+    --json)  AS_JSON=yes; shift ;;
+    --app)   [ $# -ge 2 ] || usage; APP=$2; shift 2 ;;
+    --path)  [ $# -ge 2 ] || usage; APP_PATH=$2; shift 2 ;;
+    -h|--help) usage ;;
+    -*)      die "unknown option: $1" ;;
+    *)       [ -z "$REGISTER" ] || usage; REGISTER=$1; shift ;;
+  esac
+done
+
+load_config
+discover_roots
+
+if [ -n "${APP_PATH:-}" ]; then
+  APP=$(app_of_path "$APP_PATH")
+  [ -n "$APP" ] || note "no app in $CONFIG covers $APP_PATH — only the project-wide modules apply"
+fi
+
+case "$MODE" in
+  list)  [ -z "$REGISTER" ] || usage; cmd_list ;;
+  check) [ -z "$REGISTER" ] || usage; cmd_check ;;
+  *)     [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;
+esac

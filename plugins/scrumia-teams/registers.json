@@ -1,0 +1,10 @@
+{
+  "convene": {
+    "skill": "scrumia-standup",
+    "purpose": "Bring up the project's standing roles and route a question to one"
+  },
+  "sprint": {
+    "skill": "scrumia-sprint",
+    "purpose": "Assemble a batch of ready tickets that can run in parallel"
+  }
+}

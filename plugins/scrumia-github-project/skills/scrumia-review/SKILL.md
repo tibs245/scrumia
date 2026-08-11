@@ -35,7 +35,21 @@ Run the reviewers in parallel when there are two: they don't depend on each othe
 
 **Without a team module plugged in**, do the review yourself, following the same grid: the tech angle (architecture, contracts, failure scenarios) and, if a business spec is touched, the business angle (rules, vocabulary, compliance). Say so explicitly in the synthesis — the human must know this review had a single reviewer wearing two hats.
 
-## Step 3 — Check what is not in the diff
+## Step 3 — Load the directives this project reviews against
+
+```bash
+scrumia-extends review --app <app>      # omit --app for a change outside every app
+```
+
+Every `required` row is a rule this project's composition says a change is judged
+against; every `optional` row is a method offered. A finding cites the row it comes from —
+the module and the file — so the author can go read it, and so a verdict is never this
+skill's opinion about a module it does not own.
+
+An empty table means the composition contributes nothing to a review here; judge on the
+criteria below alone, and say so rather than inventing rules.
+
+## Step 4 — Check what is not in the diff
 
 These gaps are invisible to a reviewer who only looks at the code:
 
@@ -45,7 +59,7 @@ These gaps are invisible to a reviewer who only looks at the code:
 - A spec modified without code, or the reverse, when the ticket asked for both
 - A missing `Closes #<n>`
 
-## Step 4 — Synthesize
+## Step 5 — Synthesize
 
 Deliver a synthesis, not a compilation. The human must be able to decide in one read:
 
@@ -56,7 +70,7 @@ Deliver a synthesis, not a compilation. The human must be able to decide in one 
 
 When Business and Tech diverge, that is first-order information: it's exactly the case that calls for human arbitration. Don't smooth it over.
 
-## Step 5 — Publish
+## Step 6 — Publish
 
 Post the synthesis as a comment on the PR (`gh pr comment`). Blocking objections go into a GitHub review on the relevant lines, where they'll be read in the right place.
 

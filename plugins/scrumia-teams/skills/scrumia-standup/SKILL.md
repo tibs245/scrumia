@@ -21,7 +21,19 @@ claude plugin list
 
 A role declared `enabled: true` whose module is absent is the worst of the three states: the composition says the reviewer exists, and nothing reaches it. Report the gap and name the install command — don't quietly convene two roles out of four.
 
-## Step 2 — Bring them up
+## Step 2 — Pick up the roles other modules ship
+
+```bash
+scrumia-extends convene
+```
+
+A role defined outside the team module — `scrumia-design`'s designer is the shipped
+example — is contributed here by the module that defines it, so the team is not a list
+this skill maintains about modules it does not own. Cross it with `settings.team.roles`:
+a contributed role that the config does not enable stays down, and an enabled role with no
+contribution and no agent file is a finding to report, not a role to invent.
+
+## Step 3 — Bring them up
 
 The roles are not processes waiting to be attached to. Each convocation is a fresh one that rebuilds its context from the tracker, which is exactly why two sessions stay consistent without coordinating.
 
@@ -42,7 +54,7 @@ Tell each one the same three things: it is being convened, nothing is to be exec
 
 Pass on the facts already established in the session so they don't re-derive them, and only those you actually verified.
 
-## Step 3 — Report
+## Step 4 — Report
 
 Per role: what it owns here, its read of the current state, and what it refuses to rule on with where that goes instead.
 

@@ -1,0 +1,44 @@
+{
+  "implement": [
+    { "name": "Project layout", "type": "norm", "when": "required",
+      "summary": "Where a component, a route and a data module go, and what may import what",
+      "read": "skills/scrumia-solidjs/guides/05-project-layout.md" },
+    { "name": "Components and props", "type": "norm", "when": "required",
+      "summary": "Props stay reactive — the shape a component signature must keep",
+      "read": "skills/scrumia-solidjs/guides/01-components-and-props.md" },
+    { "name": "Derivations", "type": "norm", "when": "required",
+      "summary": "createMemo derives, createEffect reaches outside — never the reverse",
+      "read": "skills/scrumia-solidjs/guides/02-derivations.md" },
+    { "name": "Control flow", "type": "norm", "when": "required",
+      "summary": "Show, Switch, For, Index — which one the data actually calls for",
+      "read": "skills/scrumia-solidjs/guides/03-control-flow.md" },
+    { "name": "Data boundary", "type": "norm", "when": "required",
+      "summary": "The api.ts layer: where the network stops and the component starts",
+      "read": "skills/scrumia-solidjs/guides/04-data-boundary.md" },
+    { "name": "Testing", "type": "norm", "when": "required",
+      "summary": "What a component test asserts, and what it must not reach for",
+      "read": "skills/scrumia-solidjs/guides/06-testing.md" },
+    { "name": "No destructured props", "type": "refusal", "when": "required",
+      "summary": "Destructuring reads the signal once and freezes it — the commonest Solid defect",
+      "read": "skills/scrumia-solidjs/decisions/D-01-no-destructured-props.md" },
+    { "name": "No createEffect as a derivation", "type": "refusal", "when": "required",
+      "summary": "An effect that only computes a value is a memo written the expensive way",
+      "read": "skills/scrumia-solidjs/decisions/D-02-no-createeffect-as-derivation.md" },
+    { "name": "No early return before JSX", "type": "refusal", "when": "required",
+      "summary": "An early return runs once and never re-runs — Show is the reactive form",
+      "read": "skills/scrumia-solidjs/decisions/D-03-no-early-returns-before-jsx.md" },
+    { "name": "For vs Index, never swapped", "type": "refusal", "when": "required",
+      "summary": "Keyed by item or by position — swapping them silently corrupts state",
+      "read": "skills/scrumia-solidjs/decisions/D-04-for-vs-index.md" }
+  ],
+  "review": [
+    { "name": "SolidJS refusals", "type": "refusal", "when": "required",
+      "summary": "Destructured props, effect-as-derivation, early return, For/Index swap",
+      "read": "skills/scrumia-solidjs/SKILL.md" }
+  ],
+  "audit": [
+    { "name": "SolidJS audit", "type": "method", "when": "optional",
+      "summary": "Measure an existing app against these guides, finding by finding",
+      "read": "skills/scrumia-solidjs-audit/SKILL.md" }
+  ]
+}

@@ -24,15 +24,25 @@ A ticket that doesn't meet all four stays in the backlog. Moving it forward anyw
 
 `gh issue view <n>`. Look for what the ticket wants to achieve, not how to do it. If the intent itself is vague, the ticket belongs to scoping: send it back to the scoping module rather than guessing.
 
-Don't assume the card starts in `Backlog`. A card added to a board arrives with **no Status** — `gh issue create --project` does not place it in the first column, it places it in none. If `scrumia-board find <n>` shows a card with no status, set it (`scrumia-board move <n> Backlog`) before refining, so the transition at Step 7 moves it from a real state rather than from nothing.
+Don't assume the card starts in `Backlog`. A card added to a board arrives with **no Status** — `gh issue create --project` does not place it in the first column, it places it in none. If `scrumia-board find <n>` shows a card with no status, set it (`scrumia-board move <n> Backlog`) before refining, so the transition at Step 8 moves it from a real state rather than from nothing.
 
 **If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. Refinement starts by reading the ticket — without it there's nothing to refine, so stop here rather than guess the intent from memory.
 
-## Step 2 — Check against the specs
+## Step 2 — Load what "ready" means here
+
+```bash
+scrumia-extends refine
+```
+
+Whatever the composition adds to the definition of ready — a module that requires a
+security note, a legal review, a performance budget — arrives here rather than being
+remembered. An empty table means the criteria below are the whole definition.
+
+## Step 3 — Check against the specs
 
 **Read `CLAUDE.md`'s `## Specs contract` section first** — it names the specs module's own vocabulary (`specs_root`, `feature_index`, `acceptance_file`, `ac_id_format`, `changelog`, `catalog`; `docs/adr/0012-specs-contract.md`). Never assume `scrumia-specs`'s own file names directly: a different module can occupy the `specs` slot with a different layout.
 
-**If the section is absent** — no specs module documented, or `scrumia-init` not yet run — say so: *"no specs module documented — ask the human or proceed without spec updates"*, and skip to Step 3.
+**If the section is absent** — no specs module documented, or `scrumia-init` not yet run — say so: *"no specs module documented — ask the human or proceed without spec updates"*, and skip to Step 4.
 
 Through the plugged-in specs module: does the relevant feature exist? Does what the ticket asks contradict a rule already written? Is a rule missing to settle the question?
 
@@ -42,7 +52,7 @@ Three possible outcomes:
 - **The spec must evolve** → refinement produces the spec update, not just the ticket
 - **The spec contradicts the ticket** → escalate, don't settle it
 
-## Step 3 — Call on the roles when it's useful
+## Step 4 — Call on the roles when it's useful
 
 If the team module is plugged in, bring in a role **when its answer changes the ticket's content** — not to cover the decision.
 
@@ -54,7 +64,7 @@ If the team module is plugged in, bring in a role **when its answer changes the 
 
 Without a team module plugged in, ask the human. It's slower and perfectly viable.
 
-## Step 4 — Split if necessary
+## Step 5 — Split if necessary
 
 A ticket splits into sub-issues when:
 
@@ -74,7 +84,7 @@ gh issue edit <parent> --add-sub-issue <child>,<child>
 
 GitHub then computes the parent's progress itself (`subIssuesSummary`), which is what `scrumia-board epic <n>` reports. A checklist typed into the body is a second count that stops matching the moment a child is closed without someone ticking the box.
 
-## Step 5 — Set the scope and the risk
+## Step 6 — Set the scope and the risk
 
 Two labels, two independent questions. Getting this wrong is not cosmetic: `scrumia-pick-model` reads both to decide which model executes the ticket. Who reviews the PR is **not** one of the consequences — gate 2 routes that by the diff's actual scope, not by this label ([`docs/adr/0005-validation-gates.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0005-validation-gates.md)). A higher label buys a stronger model, never an extra reviewer.
 
@@ -106,7 +116,7 @@ Size and risk are independent, and their independence is the point. A one-line c
 
 If the ticket carries no risk label, execution assumes `execution.unrated_risk` and says so; the assumption is visible, not silent. Setting it here is still better than having it guessed.
 
-## Step 6 — Decide whether the human must validate
+## Step 7 — Decide whether the human must validate
 
 Escalate to the human when:
 
@@ -117,7 +127,7 @@ Escalate to the human when:
 
 Otherwise, move the ticket to `Ready for dev` directly. The configured autonomy level (`settings.autonomy.level`) widens or narrows what you can decide alone: in `guided`, the human validates every transition; in `assisted` and above, only the cases above get escalated.
 
-## Step 7 — Report back
+## Step 8 — Report back
 
 On the issue: what was clarified, the specs updated, the sub-issues created, the scope chosen and why, the questions left open.
 

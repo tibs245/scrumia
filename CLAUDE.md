@@ -27,21 +27,23 @@ to it — it is the only role that judges what a user actually sees.
 
 Both apps extend nothing of their own, so follow the conventions of the neighbouring
 code. `plugins/` is the product itself — markdown, not code — and is deliberately absent
-from this table: no module speaks for it. `.scrumia/config.yaml` records that as
-`build/apply-implementation: not-applicable` rather than leaving it to be inferred.
+from this table: no module speaks for it.
 
-### What to load, and in what order
+### What rules apply, and where they are written
 
-Do not work it out from the tables above. Ask:
+Do not work it out from the tables above, and do not take another module's word for what a
+third one says. Ask:
 
 ```bash
-scrumia-assemble load <action>          # e.g. build/execute-ticket, scoping/write-spec
+scrumia-extends implement               # every directive that governs writing code here
+scrumia-extends review --app site       # …for a review, with that app's own modules
+scrumia-extends --list                  # every register the installed modules open
 ```
 
-It prints the contributing modules in the order that applies here, each with a resolved
-path. Inside a module, that module's own routing table decides what to open next. The
-built files live in `.scrumia/assemblies/`; they are generated, committed and gated —
-edit the manifests, then run `scrumia-assemble build`, never the artefact.
+It prints one table — name, type, whether it is required, one line of what it says, and
+the file to open — assembled from the modules this project runs. Take what the task needs.
+Nothing is stored: the table is computed when asked, so it cannot be stale and there is
+nothing to rebuild after adding a module.
 
 ### Specs contract
 
@@ -93,8 +95,9 @@ a finding, not an exception.
   without a filter is silently truncated at 30 items.
 - Before executing a ticket, ask `scrumia-pick-model <n>` which model it runs on, and act
   on its `instruction` rather than re-reading the matrix.
-- Before acting on a step, ask `scrumia-assemble load <action>` what to open. Never
-  recompose that yourself out of one module's prose about another.
+- Before applying a rule that belongs to another module, ask `scrumia-extends <register>`
+  for it. Never restate it from one module's prose about another, and never infer it from
+  which modules are listed above.
 <!-- scrumia:end -->
 
 ## Working on this repo
