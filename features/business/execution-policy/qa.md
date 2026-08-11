@@ -250,6 +250,12 @@ room, so the narrowest surface sets the wording for all of them. Shortening the
 conditions is how this criterion is met; dropping the owner reference from a surface to
 make room is how it is failed.
 
+**No repo check reads a live GitHub label's description** — `tools/validate.py` runs
+against files in the working tree, and a label seeded at install time lives only on
+GitHub. A review of anything touching scope labelling or gate 2 has to check it by hand,
+`gh label list`, since it is one of this criterion's four surfaces and the only one no
+static check sees drift.
+
 ## Out of scope
 
 - Who reads the accumulated records, and on what occasion. This feature requires that
