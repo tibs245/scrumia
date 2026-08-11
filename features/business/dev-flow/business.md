@@ -91,25 +91,21 @@ enumerated in no spec, this one included. `features/business/release-versioning/
 what they are worth; this feature states that they are written, and, below, how many
 tokens one commit's scope may carry.
 
-**ADR-0017 §2's comma form was module-only and closed**: *"Nothing but that case may carry
-more than one token"*, on a scope it defines as *"one token."* Both retire on this one
-clause, by human ruling — the ADR is not re-edited, and everywhere else it still governs;
-only how many tokens a commit's scope may carry, and across which of the ADR's four
-namespaces, is this feature's to state from here on.
+**How many tokens a commit's scope may carry, and across which of ADR-0017's four
+namespaces, is this feature's to state — below.** Which types exist and what each is
+worth for a version stays ADR-0017 §2's alone.
 
 **A commit spanning several scopes is split into one commit per scope by default.** Where
 the change genuinely doesn't make sense split apart, the scope carries them comma-separated
-(`feat(specs,core): …`) — across any of the four namespaces, not modules only. The repo's
-own case: `design/tokens.css` (`repo`) mirrored into `site/assets/tokens.css` (`site`) by
-one commit, `ec58969` — atomic across `repo` and an app, not two modules. That commit
-predates this rule and carries no scope at all; read as an instance of the *shape* a commit
-like it takes here, not as one that already used the comma form. Naming more than one token
-changes nothing about what bumps: only the module tokens actually named still bump, at
-ADR-0017 §2's level and no other — an app, a feature or `repo` token riding alongside one
-buys it nothing. `*` never stands in for a module: every module a commit changes is still
-named individually, comma-separated alongside `*` or any other token — the mandatory scope
-exists so a per-module bump is derivable from history, and a module hidden under `*` would
-defeat that.
+(`feat(specs,core): …`) — across any of the four namespaces, not modules only. A commit
+mirroring `design/tokens.css` (`repo`) into `site/assets/tokens.css` (`site`) takes the
+shape `repo,site`: atomic across `repo` and an app, not two modules. Naming more than one
+token changes nothing about what bumps: only the module tokens actually named still bump,
+at ADR-0017 §2's level and no other — an app, a feature or `repo` token riding alongside
+one buys it nothing. `*` never stands in for a module: every module a commit changes is
+still named individually, comma-separated alongside `*` or any other token — the mandatory
+scope exists so a per-module bump is derivable from history, and a module hidden under `*`
+would defeat that.
 
 **`<type>(*):` is a separate escape hatch, not a fifth namespace.** `*` stands for "touches
 more scopes than are worth naming individually" — typically past three, where listing them

@@ -161,8 +161,7 @@ Then it is allowed; and when the target is the default branch, or a branch anoth
 
 ```gherkin
 Given a commit atomic across a `repo`-scoped file and an app-scoped file — `design/tokens.css`
-  mirrored into `site/assets/tokens.css` by one commit, the change not sensibly splittable,
-  the shape `ec58969` would have taken had it carried a scope under this rule
+  mirrored into `site/assets/tokens.css` by one commit, the change not sensibly splittable
 When the commit is written
 Then the scope carries both tokens comma-separated (`design(repo,site): …`) rather than being
   refused for naming two tokens outside two modules — ADR-0017 §2's comma form generalizes to
