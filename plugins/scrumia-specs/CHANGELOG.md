@@ -4,7 +4,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- The catalog states where a feature-format rule is restated — the eight sites a sweep
+- The catalog states where a feature-format rule is restated — the five sites a sweep
   has to reach, ordered by damage — and distinguishes a criterion's own falsifiability
   (`qa.md`, "must be able to fail") from ADR-0004's feature-splitting *verifiable*, which
   is a different property under a shared word.

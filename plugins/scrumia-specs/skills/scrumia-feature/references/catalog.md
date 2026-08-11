@@ -35,9 +35,11 @@ consumers need not hard-code them, and marks none of them required
 
 ## Where a format rule is restated
 
-A rule about the feature format lives here first, but it is restated at other sites this
-module ships — a sweep that stops at the obvious ones leaves a retired rule live
-somewhere an agent still runs it. Ordered by how much damage a stale copy does:
+A rule about the feature format lives here first, but it is restated at other sites — a
+sweep that stops at the obvious ones leaves a retired rule live somewhere an agent still
+runs it. Four of the five ship with this module; the fifth ships with `scrumia-discovery`
+and applies only where that module is installed. Ordered by how much damage a stale copy
+does:
 
 1. `scrumia-specs-setup/SKILL.md` Step 3 — the composition line handed to `scrumia-init`
    for a **consumer project's** `CLAUDE.md`. Always loaded, and the only statement of the
@@ -56,9 +58,12 @@ Grep the rule's **phrasing** across these, not the file list — the wording dif
 site, and a rename here doesn't announce itself anywhere else.
 
 This repository additionally restates the rule in its own `docs/` and `site/` —
-`docs/format-feature.md` names those. Neither ships to a consumer project: a project
-installing this module gets none of `docs/` or `site/`, so they are this repository's
-sweep, not this catalog's.
+[`docs/format-feature.md`](https://github.com/tibs245/scrumia/blob/main/docs/format-feature.md)
+names those. Neither ships to a consumer project: a project installing this module gets
+none of `docs/` or `site/`, so they are this repository's sweep, not this catalog's. This
+is one of the two places in this file citing a document outside the module — an absolute
+URL, per `docs/adr/0018-modules-reach-by-name.md`, because a relative path would resolve
+against nothing once installed.
 
 ## The membership tests
 
@@ -161,7 +166,7 @@ fail — a contrast ratio, a keyboard path, an announcement — tagged as such.
 
 A criterion must be able to fail. If it cannot fail, it tests nothing.
 
-This is a different property from `docs/adr/0004-feature-splitting.md`'s *verifiable*, which names a **feature-splitting** criterion — "can you write at least one Given/When/Then scenario that validates it" — not a test for one already-written criterion. Cite this section for whether a criterion can fail; cite ADR-0004 only for whether a unit of value is small enough to split on.
+This is a different property from [ADR-0004](https://github.com/tibs245/scrumia/blob/main/docs/adr/0004-feature-splitting.md)'s *verifiable*, which names a **feature-splitting** criterion — "can you write at least one Given/When/Then scenario that validates it" — not a test for one already-written criterion. Cite this section for whether a criterion can fail; cite ADR-0004 only for whether a unit of value is small enough to split on.
 
 Expected coverage: nominal, zero, boundary, duplicate, concurrency, cancellation,
 expiration, insufficient permissions. An "out of scope" section prevents bug tickets
