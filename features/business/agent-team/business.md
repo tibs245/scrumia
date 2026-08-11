@@ -141,6 +141,36 @@ Which model executes a given *ticket* (as opposed to which model a *role*
 runs as) is a separate policy, keyed on the ticket's scope and risk labels —
 specified by `features/business/execution-policy/`, not here.
 
+## What role memory may hold
+
+Each role's `memory: project` frontmatter (`docs/agents.md`) makes
+`.claude/agent-memory/<role>/` project-scoped and repo-local — it does not ship
+with the module and does not travel to a project that installs one fresh. That
+single fact decides what belongs there.
+
+**Holds:** a durable operating habit for this role on this project — something a
+fresh instance of the role could not derive by reading the repo, and that has no
+other home to live in.
+
+**Never holds:**
+
+- Shareable knowledge that already has, or should have, a dedicated home — a
+  debate belongs in a skill, a decision in an ADR, a spec in a feature. A note
+  that duplicates one of these drifts the moment its original moves, and is a
+  promise this repo-local channel cannot keep in a project that installs the
+  module fresh.
+- A skill gap. Whether something should become a skill is a decision for
+  whoever maintains the module, not a note a role accumulates across sessions.
+- A behavior fix. A precise fix — landed in the skill, the agent definition, or
+  the code — holds up better than a memory note trying to steer behavior after
+  the fact: the note rots, the fix does not.
+
+**Before writing an entry, a role asks: would this note land elsewhere — a
+skill, an ADR, a feature — even if that hasn't happened yet?** If yes, it is a
+finding, not a memory. Write it up as the promotion it calls for, or, short of
+that, name where it belongs — never park it in memory as a stand-in for the
+work of moving it there.
+
 ## Reaching a role requires a restart after install
 
 The same definition serves three ways — delegated subagent, session main agent,
