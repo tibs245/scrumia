@@ -21,10 +21,12 @@ WARNINGS: list[str] = []
 
 
 def error(msg: str) -> None:
+    """Gate: use where the check runs clean on this repo's real content, not on principle."""
     ERRORS.append(msg)
 
 
 def warn(msg: str) -> None:
+    """Advisory: use where the check only approximates the property (can false-positive)."""
     WARNINGS.append(msg)
 
 
