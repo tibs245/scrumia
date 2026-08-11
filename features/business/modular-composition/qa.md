@@ -33,12 +33,12 @@ Then a coverage report names the action a hole — declared but uncalled — rat
 
 ```gherkin
 Given two modules both declaring the same action for the same step
-When that action is a decision (BR-7) — moving a card, picking a model, settling a
+When that action is a decision (BR-8) — moving a card, picking a model, settling a
   business rule
 Then the composition reports a conflict at composition time, naming both modules,
   rather than picking one silently or letting `extends`'s list order arbitrate
 Given the same situation
-When that action is a contribution (BR-7) — reviewing a PR, applying a practice to a
+When that action is a contribution (BR-8) — reviewing a PR, applying a practice to a
   Build
 Then both modules are accepted as legitimate providers and neither is reported as a
   conflict
@@ -103,7 +103,25 @@ Then the gap is reported explicitly — never by a silently absent line — so a
   value
 ```
 
-### AC-9 — A skill degrades by a named message when the action it needs is unprovided
+### AC-9 — A module's references resolve inside it, in either layout
+
+```gherkin
+Given a module whose installed root carries a version segment the repository
+  layout does not, and which needs a script another module ships, plus a
+  rationale belonging to no module at all
+When every reference it writes is resolved from its own root — the
+  `${CLAUDE_SKILL_DIR}` paths in its skills and the relative links in its
+  markdown
+Then each one lands inside that root: the other module's script is reached by
+  running the name that module publishes on PATH, with no path held by the
+  caller, and the rationale is inlined or cited by absolute URL
+```
+
+A reference that escapes resolves in the repository layout and nowhere else, so
+neither a green validator nor a working session in the home repository is evidence
+of anything. The layout it has to be checked against is the installed one.
+
+### AC-10 — A skill degrades by a named message when the action it needs is unprovided
 
 ```gherkin
 Given an action a skill would consume has no provider in the current composition —
@@ -116,7 +134,7 @@ Then it states the gap with a specific, named message — "no specs module docum
   guess a file layout that happens to work for one module
 ```
 
-### AC-10 — A module is cited by name the harness resolves, never by a path
+### AC-11 — A module is cited by name the harness resolves, never by a path
 
 ```gherkin
 Given two modules that need to interoperate — for example the tracker's ticket skill
@@ -132,7 +150,7 @@ A module reaching another by a relative path cannot be counted as a real edge by
 coverage calculation AC-2 depends on — this criterion is what makes AC-2 measurable,
 not a separate concern from it.
 
-### AC-11 — A third-party module plugs in without joining the base repo
+### AC-12 — A third-party module plugs in without joining the base repo
 
 ```gherkin
 Given no ScrumIA-authored module answers a project's need for some action — for
@@ -144,7 +162,7 @@ Then it ships from its own repository, declared in `marketplace.json` through a
   actions it provides, never assume another module is present) to be composable
 ```
 
-### AC-12 — A module ships the standing role that guards its capability
+### AC-13 — A module ships the standing role that guards its capability
 
 ```gherkin
 Given a module providing a capability and shipping the standing role that guards it,

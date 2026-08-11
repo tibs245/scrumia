@@ -9,6 +9,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Breaking: yes — `composition:` and the `practices` slot are retired; see
   `docs/adr/0019-extends-replaces-composition-and-practices.md` for the migration note
 
+## 2026-08-11 — A module's references have to resolve inside it (BR-7, AC-9)
+- Issue: #185
+- Category: Added
+- Breaking: no
+
 ## 2026-08-10 — Versioning is redirected to the feature that now owns it
 - Issue: #7
 - Category: Changed

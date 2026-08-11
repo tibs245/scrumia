@@ -151,4 +151,4 @@ role's own condition in `business.md` — *and changes a business rule* — is w
   that is the execution policy, specified separately in
   `features/business/execution-policy/`. This feature only establishes that a
   role's own model lives in its agent frontmatter.
-- The mechanics and matrix of `scrumia-teams/scripts/pick-model.sh`.
+- The mechanics and matrix of `scrumia-pick-model`.

@@ -79,10 +79,11 @@ a finding, not an exception.
 - Project state lives in the tracker, not in the repo.
 - A spec contains only its current version; history lives in git and the tickets.
 - The composition's configuration is in `.scrumia/config.yaml`.
-- Talk to the board through `scrumia-github-project/scripts/board.sh`, never by composing
-  `gh project` calls: a board read without a filter is silently truncated at 30 items.
-- Before executing a ticket, ask `scrumia-teams/scripts/pick-model.sh <n>` which model it
-  runs on, and act on its `instruction` rather than re-reading the matrix.
+- Talk to the board through `scrumia-board` — the name the tracker module publishes on
+  PATH, never a path into it, and never a composed `gh project` call: a board read
+  without a filter is silently truncated at 30 items.
+- Before executing a ticket, ask `scrumia-pick-model <n>` which model it runs on, and act
+  on its `instruction` rather than re-reading the matrix.
 <!-- scrumia:end -->
 
 ## Working on this repo
@@ -91,6 +92,12 @@ The deliverable is prose that an agent executes. A skill that reads well but sen
 agent to a file that doesn't exist is broken, so `python3 tools/validate.py` gates the
 marketplace, the frontmatter, every relative link, the scripts skills invoke, and the
 skills commands hand off to. Run it before pushing; CI runs it too.
+
+Nothing written inside `plugins/<module>/` may resolve outside it — the rule is
+`features/business/modular-composition/`'s BR-7, and `docs/adr/0018` says why a name on
+PATH is not the resolution ADR-0009 rejected. Here that means: reach another module's
+script by the name it publishes under its `bin/`, and cite this repository's own `docs/`
+and `features/` by absolute URL. `tools/validate.py` refuses the rest.
 
 Files are in English — including comments, commit messages and workflow names. Only
 `site/fr/` is French.

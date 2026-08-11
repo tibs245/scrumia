@@ -84,7 +84,7 @@
 <section id="modules">
   <h2>Les modules</h2>
 
-  <h3><code>scrumia-core</code> — le noyau</h3>
+  <h3><a href="modules/scrumia-core.html"><code>scrumia-core</code></a> — le noyau</h3>
   <p>Ne remplit aucun slot et ne fait rien par lui-même. Il décrit la composition et la rend lisible pour les agents. Le seul module obligatoire.</p>
   <div class="table-wrap">
     <table>
@@ -96,7 +96,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-rules</code> — no slot</h3>
+  <h3><a href="modules/scrumia-rules.html"><code>scrumia-rules</code></a> — no slot</h3>
   <p>Situé aux côtés de <code>scrumia-core</code> : le format de hiérarchie des règles lui-même — index, guides, décisions — qui permet à une compétence de connaissance d'un module, ou aux conventions propres d'un projet, de ne charger que le guide vers lequel une tâche est routée plutôt qu'un seul fichier qui grossit. Ne remplit aucun slot. Ne suppose rien au-delà de <code>scrumia-core</code>. Coûte une couche de plus à bien concevoir — une section est un surcoût en dessous de trois préoccupations distinctes.</p>
   <div class="table-wrap">
     <table>
@@ -109,7 +109,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-specs</code> — slot <code>specs</code></h3>
+  <h3><a href="modules/scrumia-specs.html"><code>scrumia-specs</code></a> — slot <code>specs</code></h3>
   <p>Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Coûte</strong> plus de jugement lors de la rédaction qu'un modèle fixe.</p>
   <div class="table-wrap">
     <table>
@@ -122,7 +122,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-github-project</code> — slot <code>tracker</code></h3>
+  <h3><a href="modules/scrumia-github-project.html"><code>scrumia-github-project</code></a> — slot <code>tracker</code></h3>
   <p>Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Coûte</strong> une dépendance GitHub stricte et rien en mode hors ligne.</p>
   <div class="table-wrap">
     <table>
@@ -137,7 +137,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-teams</code> — slot <code>team</code></h3>
+  <h3><a href="modules/scrumia-teams.html"><code>scrumia-teams</code></a> — slot <code>team</code></h3>
   <div class="grid grid-3">
     <div class="card card-manager">
       <span class="tag">opus · memory: project</span>
@@ -166,7 +166,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-discovery</code> — slot <code>discovery</code></h3>
+  <h3><a href="modules/scrumia-discovery.html"><code>scrumia-discovery</code></a> — slot <code>discovery</code></h3>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
@@ -177,7 +177,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-impl-rust</code> — slot <code>implementation</code></h3>
+  <h3><a href="modules/scrumia-impl-rust.html"><code>scrumia-impl-rust</code></a> — slot <code>implementation</code></h3>
   <p>États invalides rendus impossibles, <code>Result</code> aux limites, erreurs typées par couche. <strong>Refuse</strong> <code>unwrap()</code> en production, les clones qui calment l'analyseur d'emprunt, les traits à implémenteur unique.</p>
   <div class="table-wrap">
     <table>
@@ -189,7 +189,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-impl-solidjs</code> — slot <code>implementation</code></h3>
+  <h3><a href="modules/scrumia-impl-solidjs.html"><code>scrumia-impl-solidjs</code></a> — slot <code>implementation</code></h3>
   <p>Réactivité à grain fin sans réflexes React, tests de composants comportement-d'abord, structure par feature. <strong>Refuse</strong> les props destructurées, les effets utilisés comme dérivations, les composants qui récupèrent les données.</p>
   <div class="table-wrap">
     <table>
@@ -201,7 +201,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-practice-tdd</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-tdd.html"><code>scrumia-practice-tdd</code></a> — slot <code>practices</code></h3>
   <p>Affine un point du contrat d'implémentation : <strong>comment nous testons</strong>. Le cycle opérationnalisé pour un agent, la limite des mocks, la cartographie AC-to-test.</p>
   <div class="table-wrap">
     <table>
@@ -214,7 +214,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-practice-solid</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-solid.html"><code>scrumia-practice-solid</code></a> — slot <code>practices</code></h3>
   <p>Affine un point du contrat d'implémentation : <strong>quels principes de conception</strong>. Les cinq principes, chacun avec sa limite d'application — la sur-application est auditée au même niveau que les violations.</p>
   <div class="table-wrap">
     <table>
@@ -226,7 +226,7 @@
       </tbody>
     </table>
   </div>
-  <h3><code>scrumia-practice-tanstack-query</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-tanstack-query.html"><code>scrumia-practice-tanstack-query</code></a> — slot <code>practices</code></h3>
   <p>Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite qui sépare l'état serveur de l'état purement client. Porté d'une utilisation réelle monorepo : 9 guides, 13 décisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.</p>
   <div class="table-wrap">
     <table>
@@ -236,7 +236,7 @@
       </tbody>
     </table>
   </div>
-  <h3><code>scrumia-design</code> — slot <code>design</code></h3>
+  <h3><a href="modules/scrumia-design.html"><code>scrumia-design</code></a> — slot <code>design</code></h3>
   <p>Identité, tokens et composants vivent dans le dépôt ; un projet Claude Design est la surface de revue, pas la source de vérité. Une règle en dessous : une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Fournit le rôle permanent <code>designer</code> — le seul module à le faire depuis l'extérieur du slot <code>team</code>, parce qu'un rôle sans design system à garder jugerait au goût.</p>
   <div class="table-wrap">
     <table>

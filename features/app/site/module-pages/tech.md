@@ -88,6 +88,19 @@ the card content is not itself generated (the first version's scope stopped at t
 module pages) — but the URL each one points to is, which is what AC-9 asks for: the
 string a template author could get wrong lives in one Python expression, not twelve.
 
+## Reaching a module page from reference.html, and back again
+
+`render_page` already passes `{**emoji_specials, **link_specials}` to every page in
+`PAGES`, `reference.html` included — `@modlink_<name>` was reachable from its template
+before this ticket, just unused there. `module.html`'s back link
+(`{{@lroot}}reference.html`) points at this page's `#modules` section, so leaving a
+heading unlinked broke the round trip in one direction only: a reader could reach the
+section they came from but not the module page itself, one click short of where they
+started. The twelve `<code>module-name</code>` headings now wrap in the same
+`{{@lroot}}{{@modlink_<name>}}` pattern `index.html`'s cards use (AC-10, AC-11) — no new
+special, no new build code, the same guard that keeps the index honest keeps this page
+honest too.
+
 ## Escaping manifest facts
 
 `module_specials` builds `@mod_tags` and `@mod_skills` out of names sourced from

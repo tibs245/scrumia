@@ -244,7 +244,7 @@ Then it may use the `*` escape hatch (`refactor(*): …`), which derives no bump
 
 ## Out of scope
 
-- Which model executes a ticket (`scope/*` × `risk/*` → `pick-model.sh`) — specified
+- Which model executes a ticket (`scope/*` × `risk/*` → `scrumia-pick-model`) — specified
   by `features/business/execution-policy/`, not here.
 - The ceremonies (retrospective, refactor session, debt audit): trigger, cadence,
   artefact, and which of the three are admitted at all — specified by

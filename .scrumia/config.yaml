@@ -46,7 +46,7 @@ settings:
       - name: designer
         enabled: true
         from: scrumia-design   # role defined outside the team slot — see docs/adr/0014
-    execution:               # read by scrumia-teams/scripts/pick-model.sh
+    execution:               # read by scrumia-pick-model
       unlabeled: sonnet
       unrated_risk: medium
       labels:
@@ -73,7 +73,7 @@ settings:
     root: "design"           # setup-time choice; consumers read the Design contract in CLAUDE.md
     remote: claude-design    # claude-design | none — read by scrumia-design-sync
     project_id: "67f47e14-97d0-4e2b-8a10-abb2b2d5e51f"   # the claude.ai/design project UUID, written once linked
-  tracker:                   # read by scrumia-github-project, via scripts/board.sh
+  tracker:                   # read by scrumia-github-project, via scrumia-board
     project: "ScrumIA"
     project_number: 6
     columns:
@@ -83,7 +83,7 @@ settings:
       - In progress
       - In review
       - Done
-    board:                   # resolved once by board.sh columns; stable for the life of the board
+    board:                   # resolved once by scrumia-board columns; stable for the life of the board
       field_id: "PVTSSF_lAHOAD9HXc4Bfw4JzhaBcjo"
       options:
         Backlog: "7f19f379"

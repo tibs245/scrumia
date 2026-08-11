@@ -12,19 +12,19 @@ A sprint is a batch of tickets that can move forward **in parallel without stepp
 Take the tickets ready for development from the tracker module: acceptance criteria written, scope set, dependencies resolved. When the tracker is `scrumia-github-project`:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../../scrumia-github-project/scripts/board.sh ready --milestone "<sprint>"
+scrumia-board ready --milestone "<sprint>"
 ```
 
 A milestone is the sprint's boundary. Without it you are reading the whole ready column and calling it a sprint. Check `filter_suspect` in the answer before concluding a milestone is empty — an unknown milestone name and an empty one look identical.
 
-Another tracker module fills the slot differently, and that path may not resolve at all: ask it for what's ready in its own terms rather than assuming this one's layout.
+`scrumia-board` is the name that module publishes on the session's PATH; this skill holds no path to it and must not construct one, because where that module is installed is not knowable from here. Another tracker module fills the slot differently, and the name will not be found at all: ask it for what's ready in its own terms rather than assuming this one's layout. A name that is not found is a slot answered differently, never a cue to read the board by hand — an unfiltered `gh project` read is silently truncated at 30 items.
 
 Then discard the conflicts. Two tickets touching the same files get serialized or merged; they don't go out together. The most reliable signal is the scope declared in the ticket; failing that, two tickets on the same app feature almost always overlap.
 
 Then ask the execution policy about each surviving ticket:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../scripts/pick-model.sh <n>
+scrumia-pick-model <n>
 ```
 
 A ticket answering `split_or_model` doesn't enter the sprint as-is: try to split it first, and only carry it in on its fallback model if the work proves indivisible. A refusal decided here is a **deviation**: keep the reason the work could not be divided, and pass it to the execution in Step 3 so it lands on the ticket's own record. A ticket answering `split` goes back to refinement. Keep each ticket's returned model — Step 3 needs it.
@@ -45,7 +45,7 @@ One dynamic workflow per ticket, in parallel, each with `isolation: worktree`. E
 
 Give each execution the ticket number and the model it runs on — nothing else. It loads its own context via the plugged-in modules; passing it your summary of the ticket would add a distortion.
 
-The one exception is a **deviation**: where the model you pass is not the one `pick-model.sh` answered — a human overrode it in Step 2, or Step 1 refused a split — say so, and pass the reason with it. It cannot reconstruct a reason it was never told, and a model handed over with no explanation reads exactly like a policy answer. Tell it not to re-derive the choice either: the decision was made here.
+The one exception is a **deviation**: where the model you pass is not the one `scrumia-pick-model` answered — a human overrode it in Step 2, or Step 1 refused a split — say so, and pass the reason with it. It cannot reconstruct a reason it was never told, and a model handed over with no explanation reads exactly like a policy answer. Tell it not to re-derive the choice either: the decision was made here.
 
 Recording it is the tracker module's business, not this one's: `scrumia-github-project` writes it on the issue at its ticket flow's Step 0. Another module fills the slot differently — pass it the deviation all the same, and if it turns out to record nothing, that is a gap to report rather than a reason to keep the reason to yourself.
 
@@ -62,7 +62,7 @@ Each execution follows the same outline:
 
 The modules carrying these steps are those declared in `CLAUDE.md`. If a slot is empty, the corresponding step is simplified, not silently skipped: say so in the PR.
 
-Step 5's role review spawns the role by its agent type — an execution is a main agent, so it may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([the roles' doc](../../../../docs/agents.md)); fall back to a subprocess, prompt on stdin:
+Step 5's role review spawns the role by its agent type — an execution is a main agent, so it may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([the roles' doc](https://github.com/tibs245/scrumia/blob/main/docs/agents.md)); fall back to a subprocess, prompt on stdin:
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-business \

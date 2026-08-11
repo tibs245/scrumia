@@ -7,7 +7,7 @@ Answer where this project stands and what to do next. You recommend — you do n
 ## Read, in this order
 
 1. `.scrumia/config.yaml` and the ScrumIA section of `CLAUDE.md`: which module fills which slot, and which slots are empty.
-2. The board, through the module in the `tracker` slot. With `scrumia-github-project` that is `scripts/board.sh read`, never a composed `gh project` call — an unfiltered read is silently truncated at 30 items. Another module fills the slot differently: ask it in its own terms rather than assuming this one's layout.
+2. The board, through the module in the `tracker` slot. With `scrumia-github-project` that is `scrumia-board read`, never a composed `gh project` call — an unfiltered read is silently truncated at 30 items. Another module fills the slot differently: ask it in its own terms rather than assuming this one's layout.
 
 There is no state file in the repo to read, and there must not be: duplicated state diverges within a week and then keeps being believed.
 

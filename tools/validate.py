@@ -131,6 +131,8 @@ def check_commands() -> None:
     """Every commands/<name>.md needs a description, and the names it cites must resolve."""
     known = {p.name for p in (ROOT / "plugins").iterdir() if p.is_dir()}
     known |= {s.parent.name for s in (ROOT / "plugins").glob("*/skills/*/SKILL.md")}
+    # A published bin/ name is a hand-off like any other, and rots the same way.
+    known |= {b.name for b in (ROOT / "plugins").glob("*/bin/*")}
     for cmd_md in sorted((ROOT / "plugins").glob("*/commands/*.md")):
         rel = cmd_md.relative_to(ROOT)
         fields = frontmatter(cmd_md)
@@ -161,6 +163,25 @@ def check_hooks() -> None:
                 error(f"{rel}: not executable (chmod +x)")
 
 
+CANONICAL_BLOB = "https://github.com/tibs245/scrumia/blob/main/"
+
+CONTAINMENT_HINT = (
+    "a module is installed one path segment deeper than it sits here, so this resolves "
+    f"somewhere else once installed — publish a name under bin/, or cite {CANONICAL_BLOB}<path>"
+)
+
+
+def plugin_root_of(rel: Path) -> Path | None:
+    """The plugin a repo-relative path belongs to, or None outside plugins/.
+
+    Resolved, because the targets it is compared against are: on macOS a temp root
+    is a symlink, and an unresolved root never contains a resolved child.
+    """
+    if rel.parts[0] != "plugins" or len(rel.parts) < 2:
+        return None
+    return (ROOT / "plugins" / rel.parts[1]).resolve()
+
+
 def check_doc_links() -> None:
     """Relative markdown links in docs/, plugins/ and features/ must resolve.
 
@@ -169,6 +190,10 @@ def check_doc_links() -> None:
     only). We resolve it to the linking file's skill directory. A lingering
     ${CLAUDE_PLUGIN_ROOT} in a skill file is flagged: it would reach the agent
     unsubstituted.
+
+    Inside plugins/, a link must also stay inside its own plugin (ADR-0018), and a
+    canonical blob URL must name a file that exists — otherwise the escape hatch
+    the rule opens becomes the next place links rot unchecked.
     """
     link_re = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
     for md in sorted([
@@ -178,11 +203,17 @@ def check_doc_links() -> None:
         ROOT / "README.md",
     ]):
         rel = md.relative_to(ROOT)
+        plugin_dir = plugin_root_of(rel)
         skill_dir = None
         if rel.parts[0] == "plugins" and len(rel.parts) >= 4 and rel.parts[2] == "skills":
             skill_dir = ROOT / rel.parts[0] / rel.parts[1] / "skills" / rel.parts[3]
         for match in link_re.finditer(md.read_text(encoding="utf-8")):
             target = match.group(1)
+            if target.startswith(CANONICAL_BLOB):
+                cited = ROOT / target[len(CANONICAL_BLOB):]
+                if not cited.exists():
+                    error(f"{rel}: canonical URL names no file in this repo → {target}")
+                continue
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
             if target.startswith("${CLAUDE_PLUGIN_ROOT}"):
@@ -195,12 +226,15 @@ def check_doc_links() -> None:
                 resolved = (skill_dir / target[len("${CLAUDE_SKILL_DIR}/"):]).resolve()
             else:
                 resolved = (md.parent / target).resolve()
+            if plugin_dir is not None and not resolved.is_relative_to(plugin_dir):
+                error(f"{rel}: link leaves plugins/{plugin_dir.name} → {target} — {CONTAINMENT_HINT}")
+                continue
             if not resolved.exists():
                 error(f"{rel}: broken link → {target}")
 
 
 def check_skill_scripts() -> None:
-    """Scripts a skill tells the agent to run must resolve and be executable.
+    """Scripts a skill tells the agent to run must resolve, stay in the plugin, and be executable.
 
     check_doc_links only sees markdown links, so a ${CLAUDE_PLUGIN_ROOT} sitting
     in a bash block used to pass silently — and reach the agent unsubstituted.
@@ -209,16 +243,31 @@ def check_skill_scripts() -> None:
     script_re = re.compile(r"\$\{CLAUDE_SKILL_DIR\}/([\w./-]+\.(?:sh|py))")
     for md in sorted(ROOT.glob("plugins/**/SKILL.md")):
         rel = md.relative_to(ROOT)
+        plugin_dir = plugin_root_of(rel)
         text = md.read_text(encoding="utf-8")
         if plugin_root_re.search(text):
             error(f"{rel}: ${{CLAUDE_PLUGIN_ROOT}} anywhere in a skill is not substituted — use ${{CLAUDE_SKILL_DIR}}")
         skill_dir = md.parent
         for match in script_re.finditer(text):
             script = (skill_dir / match.group(1)).resolve()
+            if plugin_dir is not None and not script.is_relative_to(plugin_dir):
+                error(f"{rel}: script call leaves plugins/{plugin_dir.name} → {match.group(0)} — {CONTAINMENT_HINT}")
+                continue
             if not script.exists():
                 error(f"{rel}: references missing script → {match.group(0)}")
             elif not os.access(script, os.X_OK):
                 error(f"{script.relative_to(ROOT)}: not executable (chmod +x)")
+
+
+def check_published_names() -> None:
+    """Everything under a plugin's bin/ is executable: PATH is how another module reaches it."""
+    for bin_dir in sorted((ROOT / "plugins").glob("*/bin")):
+        for entry in sorted(bin_dir.iterdir()):
+            rel = entry.relative_to(ROOT)
+            if not entry.is_file():
+                error(f"{rel}: bin/ holds published executables, nothing else")
+            elif not os.access(entry, os.X_OK):
+                error(f"{rel}: not executable (chmod +x) — a name on PATH that cannot run")
 
 
 def check_french_leftovers() -> None:
@@ -575,6 +624,7 @@ def main() -> int:
     check_hooks()
     check_doc_links()
     check_skill_scripts()
+    check_published_names()
     check_french_leftovers()
     check_composition_drift()
     check_feature_mandatory_files()
