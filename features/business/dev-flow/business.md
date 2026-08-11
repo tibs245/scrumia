@@ -84,26 +84,39 @@ PR mixing docs and code, is not yet pinned down.
 
 **Every commit carries a type and a scope**: `<type>(<scope>): <subject>`. The scope is
 mandatory here, on top of a standard that makes it optional, because which modules a
-change touches has to be readable from history without opening a diff. Which types exist,
-which namespaces a scope may draw its token from, and what each is worth for a version
-are `docs/adr/0017-version-bump-and-commit-signal.md`'s — defined there once and
-enumerated in no spec, this one included. `features/business/release-versioning/` states
-what they are worth; this feature states that they are written.
+change touches has to be readable from history without opening a diff. Which types exist
+and what each namespace is worth for a version are
+`docs/adr/0017-version-bump-and-commit-signal.md`'s — the namespace list itself is the
+ADR's alone, named nowhere else. `features/business/release-versioning/` states what they
+are worth; this feature states that they are written, and, below, how many tokens one
+commit's scope may carry.
+
+**ADR-0017 §2's comma form was module-only and closed**: *"Nothing but that case may carry
+more than one token"*, on a scope it defines as *"one token."* Both retire on this one
+clause, by human ruling — the ADR is not re-edited, and everywhere else it still governs;
+only how many tokens a commit's scope may carry, and across which of the ADR's four
+namespaces, is this feature's to state from here on.
 
 **A commit spanning several scopes is split into one commit per scope by default.** Where
 the change genuinely doesn't make sense split apart, the scope carries them comma-separated
-(`feat(specs,core): …`) — across any of ADR-0017 §2's four namespaces, not modules only. The
-repo's own instance: `design/tokens.css` (`repo`) mirrored into `site/assets/tokens.css`
-(`site`) by one commit (`ec58969`), across `repo` and an app, not two modules. Naming more
-than one token changes nothing about what bumps: only the module tokens actually named still
-bump, at ADR-0017 §2's level and no other — an app, a feature or `repo` token riding
-alongside one buys it nothing.
+(`feat(specs,core): …`) — across any of the four namespaces, not modules only. The repo's
+own case: `design/tokens.css` (`repo`) mirrored into `site/assets/tokens.css` (`site`) by
+one commit, `ec58969` — atomic across `repo` and an app, not two modules. That commit
+predates this rule and carries no scope at all; read as an instance of the *shape* a commit
+like it takes here, not as one that already used the comma form. Naming more than one token
+changes nothing about what bumps: only the module tokens actually named still bump, at
+ADR-0017 §2's level and no other — an app, a feature or `repo` token riding alongside one
+buys it nothing. `*` never stands in for a module: every module a commit changes is still
+named individually, comma-separated alongside `*` or any other token — the mandatory scope
+exists so a per-module bump is derivable from history, and a module hidden under `*` would
+defeat that.
 
 **`<type>(*):` is a separate escape hatch, not a fifth namespace.** `*` stands for "touches
-more scopes than are worth naming individually" — useful once a commit spans more than
-three, where listing them all stops being informative. It carries no bump derivation of its
-own; a commit that also needs a module to bump still names that module's real token
-alongside it, e.g. `refactor(specs,*): …`.
+more scopes than are worth naming individually" — typically past three, where listing them
+all stops being informative; nothing forbids it earlier, and nothing requires it once the
+count is crossed; it names an informativeness judgement, not a count. It carries no bump
+derivation of its own; a commit that also needs a module to bump still names that module's
+real token alongside it, e.g. `refactor(specs,*): …`.
 
 **The same vocabulary names the branch and titles the reviewable proposal.** One list,
 three uses, so a branch prefix that appears in no type list cannot exist.

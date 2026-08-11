@@ -161,9 +161,10 @@ Then it is allowed; and when the target is the default branch, or a branch anoth
 
 ```gherkin
 Given a commit atomic across a `repo`-scoped file and an app-scoped file — `design/tokens.css`
-  mirrored into `site/assets/tokens.css` by one commit, the change not sensibly splittable
+  mirrored into `site/assets/tokens.css` by one commit, the change not sensibly splittable,
+  the shape `ec58969` would have taken had it carried a scope under this rule
 When the commit is written
-Then the scope carries both tokens comma-separated (`chore(repo,site): …`) rather than being
+Then the scope carries both tokens comma-separated (`design(repo,site): …`) rather than being
   refused for naming two tokens outside two modules — ADR-0017 §2's comma form generalizes to
   any of the four namespaces, not modules only
 ```
@@ -173,6 +174,14 @@ Given a commit whose comma-separated scope names a module alongside an app, a fe
 When the version bump is derived
 Then only the module token named bumps, at ADR-0017 §2's level and no other — the non-module
   tokens change nothing about what bumps
+```
+
+```gherkin
+Given a commit that changes a module, scoped `refactor(*): …` with the module named nowhere
+When it is checked against this feature's commit rule
+Then it is non-conforming — `*` never stands in for a module, so a per-module bump stays
+  derivable from history; the conforming form names the module alongside `*`
+  (`refactor(<module>,*): …`)
 ```
 
 ```gherkin
