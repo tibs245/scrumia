@@ -99,9 +99,8 @@ the label is a signal, not the source of truth.
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
 `scope/*` has exactly one programmatic reader, `pick-model.sh`, and what its cell means
-is specified once, in `features/business/execution-policy/`. It had a second —
-`scrumia-ticket` Step 6, which gated the required review on the tier — a review gate
-that has since been retired. Gate 2 routes by the diff's actual scope instead
+is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —
+routes by the diff's actual scope, not by this label
 (`docs/adr/0005-validation-gates.md`), because a wrong label is precisely the failure a
 review guards against, and a label cannot guard against itself. The manager still reads the label at entry, to route who is asked while
 the ticket runs (`features/business/agent-team/business.md`), and at exit it still says
