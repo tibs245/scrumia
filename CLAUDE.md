@@ -18,21 +18,22 @@ ScrumIA is the composition it ships: this repo runs on its own plugins.
 `settings.team.roles` like the other three (`docs/adr/0014`). Route interface questions
 to it — it is the only role that judges what a user actually sees.
 
-### Implementation and practices, per app
+### What each app is built against
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `site` | `site` | none | none |
-| `tools` | `tools` | none | none |
+| App | Path | Extends |
+|---|---|---|
+| `site` | `site` | none |
+| `tools` | `tools` | none |
 
-Both apps carry no implementation module, so follow the conventions of the neighboring
-code. `plugins/` is the product itself — markdown, not code — and is deliberately absent
-from this table: no implementation module speaks for it.
+Both apps carry no module in their own `extends`, so follow the conventions of the
+neighboring code. `plugins/` is the product itself — markdown, not code — and is
+deliberately absent from this table: no module speaks for it.
 
-When an implementation module does get plugged in, resolve the app from the path of the
-file you're about to edit, open that module's `SKILL.md`, and load only the guides its
+When an app's `extends` does name a module, resolve the app from the path of the file
+you're about to edit, open that module's `SKILL.md`, and load only the guides its
 routing table points to. The implementation module wins over a generic practice; a
-project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both.
+project override (`.scrumia/impl/`, `.scrumia/practices/`) wins over both — the list
+itself carries no order and settles nothing.
 
 ### Specs contract
 

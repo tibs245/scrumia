@@ -796,17 +796,21 @@ apps:
     <pre>ScrumIA composition — ScrumIA (tibs245/scrumia)
 
   Slot       Module
-  ─────────────────────────────────
-  specs      scrumia-specs
-  tracker    scrumia-github-project
-  team       scrumia-teams
-  discovery  scrumia-discovery
-  design     scrumia-design
+  ───────────────────────
+  specs      not declared
+  tracker    not declared
+  team       not declared
+  discovery  not declared
+  design     not declared
 
   App    Path   Implementation  Practices
   ───────────────────────────────────────
   site   site   none            none
   tools  tools  none            none
+
+  No key in .scrumia/config.yaml for: specs, tracker, team, discovery, design.
+    Add each one with an explicit null: a missing key reads as an oversight, not
+    as a declared absence.
 
   Change any of this with /scrumia-core:scrumia-compose.</pre>
   </div>
