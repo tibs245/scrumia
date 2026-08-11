@@ -14,6 +14,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   a project's history looks like from the first ticket run after the update; nothing
   rewrites the commits already written. The scope's four namespaces are stated in the
   skill itself, so a project reaches no repository-relative file to write one.
+- `scrumia-ticket`'s commit-scope paragraph now matches the generalized comma form: a
+  commit atomic across several scopes names them all regardless of namespace, not modules
+  only, and `<type>(*):` covers a commit spanning more scopes than are worth naming
+  individually.
 
 ## [0.4.0] - 2026-08-10
 ### Added
