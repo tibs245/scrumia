@@ -107,6 +107,33 @@ module's own name when the sentence needs it — never through a runtime lookup.
 Replacing a module means checking the others that name it; that check is a few
 minutes of grep, done rarely, not a per-call cost.
 
+## A module reaches nothing outside itself
+
+BR-4 governs how a module **names** another. This governs how it **reaches** anything at
+all, which is a different question and was never answered: a reference written inside a
+module resolves inside that module, or it does not resolve.
+
+A module is installed at a path it does not choose. In this repository it sits at
+`plugins/<name>/`; installed from a marketplace it sits one segment deeper, under a
+version — and that version is neither knowable when the reference is written nor unique,
+since two of them sit side by side in a cache. So a relative path climbing out of a
+module's own root lands somewhere different in the two layouts, and nowhere at all in a
+project that is not the module's home repository. It fails silently: a link nothing
+opens, a script that is simply absent.
+
+Two ways out, and only two:
+
+- **A file another module ships** — the owning module publishes it as a *named
+  executable* under its own `bin/`, which the harness puts on the session's PATH with the
+  install path already resolved. The caller runs the name and holds no path at all.
+- **A document belonging to no module** — a rationale or a spec in the home repository.
+  The module inlines what it needs, or cites an absolute public URL. A
+  repository-relative link assumes a consuming project has a file it has never had.
+
+Running a name is not the dynamic resolution ADR-0009 rejected: the name is written down,
+constant, and greppable — which a relative path is not — and nothing chooses *which*
+module answers it. See [ADR-0018](../../../docs/adr/0018-modules-reach-by-name.md).
+
 ## How the composition is reported
 
 A composition an agent retypes is a composition that drifts, and the drift is
@@ -151,6 +178,12 @@ them would be the least trustworthy output in the composition.
   kernel's status script and does not paraphrase the table it prints. Reporting
   the composition is not resolving it: BR-4 still forbids resolving a slot to a
   module at runtime.
+- **BR-7** — Every reference a module writes resolves inside that module. A file
+  another module ships is reached by running the name that module publishes on
+  PATH — never by a path climbing out of the caller's own root — and a document
+  belonging to no module is inlined or cited by absolute URL. Running a published
+  name is not resolving a slot, so BR-4 stands: the name is constant and greppable,
+  and nothing decides at runtime which module answers it.
 
 ## Vocabulary
 
