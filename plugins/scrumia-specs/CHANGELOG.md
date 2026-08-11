@@ -6,7 +6,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 ### Added
 - `registers.json`, `extends.json` and `dependencies.json` — this module opens the
   `write-spec` and `find-spec` registers, contributes the spec-before-code rule to
-  `implement` and the spec/code gap to `review`, and declares what it consumes.
+  `implement` and the spec/code gap to `review`, and declares the names it runs.
+- `scrumia-specs-find` asks the `find-spec` register what else this project loads with a
+  spec — the register it opens was, until now, promised and never consulted.
 ### Changed
 - The changelog entry drops its `PR:` field and gains a `Category:` — an entry names
   only what exists when it is written. The catalog and the template state the new shape.

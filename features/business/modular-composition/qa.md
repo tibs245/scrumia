@@ -135,10 +135,10 @@ Then it states the gap with a specific, named message — "no specs module docum
 ### AC-11 — A declared edge that nothing satisfies is reported by name
 
 ```gherkin
-Given a module declaring the published names it runs and the registers it reads
+Given a module declaring the published names it runs, and opening one or more registers
 When one of those names is provided by no installed module — the commonest cause being
-  a plugin enabled without a session restart — or one of those registers is opened by
-  nobody, or the module contributes to a register nobody opens
+  a plugin enabled without a session restart — or the module contributes to a register
+  nobody opens, or it opens a register no skill of its own ever asks for
 Then the check names each case and fails, and the absence is never read as "this module
   contributes nothing"
 ```

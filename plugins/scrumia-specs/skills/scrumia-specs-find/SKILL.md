@@ -24,6 +24,17 @@ If the global index is missing, fall back to walking the tree from step 2 and re
 
 When several features seem to own the same rule, that's a signal to report back: a business rule should have only one authority. Report it rather than picking the most plausible one.
 
+## What else this project loads with a spec
+
+```bash
+scrumia-extends find-spec
+```
+
+A module the project runs may hold context a spec alone does not carry — the design
+identity behind a UX rule, a security baseline behind a constraint. It arrives here from
+the module that owns it, rather than being listed in this skill about modules it does not
+own. An empty table means the specs tree is the whole context.
+
 ## Loading a ticket's context
 
 In this order, stopping as soon as possible:

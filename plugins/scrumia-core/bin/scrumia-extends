@@ -281,14 +281,6 @@ cmd_check() {
     fi
   done < <(jq -r '.[] | .module as $m | (.dependencies.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
 
-  while IFS=$'\t' read -r mod reg; do
-    [ -n "$reg" ] || continue
-    if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
-      echo "$mod reads the register '$reg', which no installed module opens" >&2
-      failed=$((failed + 1))
-    fi
-  done < <(jq -r '.[] | .module as $m | (.dependencies.reads // [])[] | $m + "\t" + .' <<<"$MODULES")
-
   # A contribution to a register nobody opens is inert — it will never be printed, and
   # nothing else would ever say so.
   while IFS=$'\t' read -r mod reg; do

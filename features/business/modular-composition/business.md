@@ -130,9 +130,11 @@ module is discovered from the environment the harness already provides, so contr
 costs one file. What a module may not do is reach outside itself — a fragment path that
 leaves the module is refused (BR-7).
 
-**What a module consumes is declared, not inferred**: the published names it runs and
-the registers it reads. The caller declaring its own edges is the provenance nothing had
-when a broken call site could only be found by reading prose.
+**What a module runs is declared, not inferred**: the published names it executes. The
+caller declaring its own edges is the provenance nothing had when a broken call site could
+only be found by reading prose. Registers are not declared a second time here — opening one
+is already the promise to consult it, and a module that consults one it does not open is
+simply a caller of that register's tool, which needs no declaration to be checked.
 
 **A name is declared with the source it comes from.** The session PATH is one flat
 namespace shared with every enabled plugin, and a naming convention two marketplaces both
@@ -310,10 +312,12 @@ the composition.
   recomposed by the agent from one module's prose about another, and never merged into
   the fragments' content. The table orders contributions; inside a module, that module's
   own routing table orders its files.
-- **BR-11** — A module declares the outward edges it depends on — the published names it
-  runs, each qualified by the source that publishes it, and the registers it reads — and
-  the check reports each one nothing satisfies, including a name whose actual publisher
-  ships from another source. A name that is absent is never read as "this module
+- **BR-11** — A module declares the published names it runs, each qualified by the source
+  that publishes it, and the check reports every one nothing satisfies — including a name
+  whose actual publisher ships from another source. A name that is absent is never read as
+  "this module contributes nothing": that reading turns a plugin awaiting a restart into a
+  silent claim that no rules apply. Opening a register is itself the promise to consult it,
+  so a register a module opens and never asks for is reported; it is not declared twice. A name that is absent is never read as "this module
   contributes nothing": that reading turns a plugin awaiting a restart into a silent claim
   that no rules apply. Qualifying a declaration is not resolving it: what a skill invokes
   is still the bare name, and nothing consults a source to decide what to run.

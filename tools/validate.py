@@ -442,18 +442,24 @@ def check_extension_data() -> None:
                         f"{rel}: runs '{entry}', but '{name}' is published by {publisher.name}, "
                         f"from '{actual}'"
                     )
-            for register in deps.get("reads", []):
-                # A skill that declares reading a register and never runs the tool reads
-                # as covered and applies nothing — the one failure a declaration check
-                # cannot see, so the grep for the call is the check.
-                if not any(
-                    f"scrumia-extends {register}" in f.read_text(encoding="utf-8")
-                    for f in plugin.glob("skills/*/SKILL.md")
-                ):
-                    error(
-                        f"{rel}: reads '{register}', but no skill in plugins/{plugin.name} "
-                        f"runs `scrumia-extends {register}`"
-                    )
+            for key in deps:
+                if key != "runs":
+                    error(f"{rel}: unknown key '{key}' — a dependency is a published name this module runs")
+
+        # Opening a register is a promise to apply its directives, and the grep for the
+        # invocation is the only thing that can see the promise being broken: a skill that
+        # opens an extension point, reads as covered, and applies nothing. ADR-0020 names
+        # this as the failure a declaration check structurally cannot catch.
+        for register in sorted(opened):
+            if not any(
+                f"scrumia-extends {register}" in f.read_text(encoding="utf-8")
+                for f in plugin.glob("skills/*/SKILL.md")
+            ):
+                error(
+                    f"plugins/{plugin.name}: opens the register '{register}', but no skill it "
+                    f"ships runs `scrumia-extends {register}` — the directives are promised "
+                    f"and never applied"
+                )
 
 
 def check_extends_tool_runs() -> None:
