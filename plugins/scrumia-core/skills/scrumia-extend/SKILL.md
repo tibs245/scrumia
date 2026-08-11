@@ -1,6 +1,6 @@
 ---
 name: scrumia-extend
-description: The ScrumIA extension protocol — how a main skill opens a register, how any module contributes directives to it as pure data, and how scrumia-extends renders the table an agent picks from. Load it before writing or changing a module's extends.json, registers.json or dependencies.json, or before adding an extension point to a skill.
+description: The ScrumIA extension protocol — how a main skill opens a register, how any module contributes directives to it as pure data, and how scrumia-extends renders the table an agent picks from. Load it before writing or changing a module's extends.json, registers.json or dependencies.jsonl, or before adding an extension point to a skill.
 ---
 
 # Extending a skill
@@ -25,11 +25,15 @@ All three sit at the **module root**, next to `.claude-plugin/`. All three are p
 no path outside the module, no condition, no prose that instructs. A module ships the ones
 it needs and omits the rest — omitting all three is a valid module.
 
+The first two are JSON because they are keyed — a register groups its directives, and the
+key is written once. The third is JSONL because it is a flat list, where a grouping key
+would have nothing to group.
+
 | File | Answers | Shape |
 |---|---|---|
 | `registers.json` | which registers this module **opens** | register → `{ skill, purpose }` |
 | `extends.json` | what this module **contributes** | register → array of directives |
-| `dependencies.json` | what this module **runs** | `{ runs: [<source>:<name>] }` |
+| `dependencies.jsonl` | what this module **runs** | one `<source>:<name>` per line |
 
 ### `registers.json` — what this module opens
 
@@ -83,15 +87,19 @@ refused by `tools/validate.py`, for the reason
 [ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)
 gives.
 
-### `dependencies.json` — what this module runs
+### `dependencies.jsonl` — what this module runs
 
-The outward edges, declared by the caller rather than inferred from prose:
+The outward edges, declared by the caller rather than inferred from prose. One record per
+line, because the content is a list and nothing else — a wrapper object around a single
+array would be ceremony, and a line-per-entry file appends cleanly and diffs as one line:
 
-```json
-{
-  "runs": ["tibs245/scrumia:scrumia-board", "tibs245/scrumia:scrumia-pick-model"]
-}
+```jsonl
+"tibs245/scrumia:scrumia-board"
+"tibs245/scrumia:scrumia-pick-model"
 ```
+
+A line is a published name. An object carrying one under `run` is accepted too, so a
+second field can arrive later without every module's file changing shape at once.
 
 `runs` lists the published names this module executes, each **qualified by its source** —
 `<source>:<name>`, where the source is the marketplace the publishing module ships from
@@ -169,7 +177,7 @@ has to be committed after adding a module.
 2. In the skill, at the step where the directives apply, run
    `scrumia-extends <register>` — with `--app` or `--path` when the work is an app's —
    and state that the rows are applied, `required` first.
-3. Leave `dependencies.json` alone. `reads` is for a register another module opens; one
-   you open yourself belongs in `registers.json` and nowhere else.
+3. Leave `dependencies.jsonl` alone — it lists names this module *runs*, not registers.
+   A register you open belongs in `registers.json` and nowhere else.
 4. Run `scrumia-extends --check`, then this repository's validator if you are working in
    it — step 2 is checked by a grep, not by a declaration.

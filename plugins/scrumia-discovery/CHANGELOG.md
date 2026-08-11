@@ -4,7 +4,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `registers.json` and `dependencies.json` — this module opens the `scope-idea` and
+- `registers.json` and `dependencies.jsonl` — this module opens the `scope-idea` and
   `split` registers, and both skills ask what this project scopes against.
 
 ## [0.4.0] - 2026-08-10

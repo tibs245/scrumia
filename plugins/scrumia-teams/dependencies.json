@@ -1,7 +1,0 @@
-{
-  "runs": [
-    "tibs245/scrumia:scrumia-board",
-    "tibs245/scrumia:scrumia-pick-model",
-    "tibs245/scrumia:scrumia-extends"
-  ]
-}

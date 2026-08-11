@@ -341,7 +341,7 @@ def check_composition_drift() -> None:
 
 
 def check_extension_data() -> None:
-    """A module's extends.json, registers.json and dependencies.json hold only data
+    """A module's extends.json, registers.json and dependencies.jsonl hold only data
     that resolves inside that module.
 
     The vocabularies are deliberately open (ADR-0020): a register nobody opens, an
@@ -417,9 +417,28 @@ def check_extension_data() -> None:
                     elif not target.exists():
                         error(f"{rel}: '{register}' → {label} reads a file that does not exist → {frag}")
 
-        deps, rel = data_of(plugin, "dependencies.json")
-        if deps:
-            for entry in deps.get("runs", []):
+        dep_path = plugin / "dependencies.jsonl"
+        if dep_path.exists():
+            rel = dep_path.relative_to(ROOT)
+            runs, malformed = [], False
+            for n, line in enumerate(dep_path.read_text(encoding="utf-8").splitlines(), 1):
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    error(f"{rel}:{n}: not a JSON record — one dependency per line")
+                    malformed = True
+                    continue
+                if isinstance(record, str):
+                    runs.append(record)
+                elif isinstance(record, dict) and isinstance(record.get("run"), str):
+                    runs.append(record["run"])
+                else:
+                    error(f"{rel}:{n}: a line is a published name, or an object carrying one under `run`")
+                    malformed = True
+            del malformed
+            for entry in runs:
                 source, _, name = entry.rpartition(":")
                 if not source:
                     error(
@@ -442,9 +461,6 @@ def check_extension_data() -> None:
                         f"{rel}: runs '{entry}', but '{name}' is published by {publisher.name}, "
                         f"from '{actual}'"
                     )
-            for key in deps:
-                if key != "runs":
-                    error(f"{rel}: unknown key '{key}' — a dependency is a published name this module runs")
 
         # Opening a register is a promise to apply its directives, and the grep for the
         # invocation is the only thing that can see the promise being broken: a skill that

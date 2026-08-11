@@ -11,7 +11,7 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   reports a declared edge nothing satisfies.
 - `scrumia-extend` — the extension protocol itself: what a register is, what the three
   data files a module may ship declare, and how to open an extension point in a skill.
-- `dependencies.json` — this module declares the published names it runs, each qualified
+- `dependencies.jsonl` — this module declares the published names it runs, each qualified
   by the source that publishes it (`tibs245/scrumia:scrumia-board`). PATH is one flat
   namespace shared with every enabled plugin, so a bare name says which command and never
   whose; `--check` resolves the name and compares the publisher's own declared source
