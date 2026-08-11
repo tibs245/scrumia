@@ -30,6 +30,10 @@ Then the module is at fault, not the project — the project owed no reading and
   that applies below `1.0.0`
 ```
 
+**"No longer holds" means no longer works** — the same "must act on" reading AC-12
+states. Naming something differently, or telling a project's future runs to behave
+differently, is not "no longer holds" by itself; AC-12's test applies here too.
+
 ## Edge cases
 
 ### AC-3 — A scope that names no module moves no number
@@ -127,7 +131,7 @@ Then the commit's signal decides the number, and the review at gate 2 reconciles
   because no release run exists to catch it later
 ```
 
-### AC-12 — A change a project must act on carries the breaking signal, whatever its type
+### AC-12 — A change a project must act on carries the breaking signal, and "must act on" means to keep working
 
 ```gherkin
 Given a commit that renames or removes something on the published surface, or changes what
@@ -138,9 +142,14 @@ Then it is non-conforming: the signal is owed by the change, not offered by the 
 ```
 
 **"Must act on" narrows to "must act on to keep working"**, not "will notice a
-difference" (human ruling — see `CHANGELOG.md`). The test: does the change break anything
-on an old project, or under its old practices? A project's own already-produced commits
-staying valid and no config key it already set moving are both evidence the answer is no.
+difference". `business.md`'s minor row already reads it this way — something the project
+sees changed, and nothing it already does stops working, owes nothing but reading the
+changelog — this criterion states the same reading as a breaking-signal test rather than
+leaving it to be re-derived. The test: does the change break anything on an old project,
+or under its old practices? A project's own already-produced commits staying valid and no
+config key it already set moving are both evidence toward "no" — neither is sufficient
+alone: a published name the project invokes in its old spelling breaks even when both
+hold, which is why the deprecation window exists at all.
 
 ```gherkin
 Given a change to the published surface whose only effect is that the project's *future*
