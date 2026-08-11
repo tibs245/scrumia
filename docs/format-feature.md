@@ -5,6 +5,13 @@ The operational reference is the catalog:
 
 This document explains **why** the format is the way it is.
 
+**This repository restates the format rule at two more sites, neither shipped to a
+consumer project — a project installing `scrumia-specs` has no `docs/` or `site/` of
+its own.** This file and `docs/architecture.md` restate it in prose; `site/i18n/{en,fr}/modules/scrumia-specs.json` (`refusals`, `philosophy`) restates it for
+`site/**/modules/*.html`, which is **generated** from that JSON by
+`tools/build_site.py` — edit the JSON and rebuild, both languages. Sweep these two in
+addition to the catalog's own list, but only when working in this repository itself.
+
 ## What we replace
 
 A monolithic PRD has four defects, and they make each other worse:

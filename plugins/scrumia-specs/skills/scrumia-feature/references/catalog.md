@@ -35,9 +35,9 @@ consumers need not hard-code them, and marks none of them required
 
 ## Where a format rule is restated
 
-A rule about the feature format lives here first, but it is restated at seven other
-sites — a sweep that stops at the obvious ones leaves a retired rule live somewhere an
-agent still runs it. Ordered by how much damage a stale copy does:
+A rule about the feature format lives here first, but it is restated at other sites this
+module ships — a sweep that stops at the obvious ones leaves a retired rule live
+somewhere an agent still runs it. Ordered by how much damage a stale copy does:
 
 1. `scrumia-specs-setup/SKILL.md` Step 3 — the composition line handed to `scrumia-init`
    for a **consumer project's** `CLAUDE.md`. Always loaded, and the only statement of the
@@ -48,16 +48,17 @@ agent still runs it. Ordered by how much damage a stale copy does:
    the catalogue table, and "Updating an existing feature"'s step on deleting a file that
    became meaningless, which a mandatory-file rule must carve out of.
 4. `assets/index.template.md` — the note under the "Files present" sample table.
-5. `docs/format-feature.md` and `docs/architecture.md`.
-6. `site/i18n/{en,fr}/modules/scrumia-specs.json` (`refusals`, `philosophy`) — its
-   `site/**/modules/*.html` are **generated**: edit the JSON and rebuild with
-   `tools/build_site.py`, both languages.
-7. `scrumia-discovery/skills/scrumia-split/SKILL.md` Step 2 — enumerates which files to
+5. `scrumia-discovery/skills/scrumia-split/SKILL.md` Step 2 — enumerates which files to
    create for a new feature, in contract-key terms. A consumer in another module, easy to
    miss, and the place a mandatory-file rule gets silently re-derived.
 
 Grep the rule's **phrasing** across these, not the file list — the wording differs by
 site, and a rename here doesn't announce itself anywhere else.
+
+This repository additionally restates the rule in its own `docs/` and `site/` —
+[`docs/format-feature.md`](https://github.com/tibs245/scrumia/blob/main/docs/format-feature.md)
+names those. Neither ships to a consumer project: a project installing this module gets
+none of `docs/` or `site/`, so they are this repository's sweep, not this catalog's.
 
 ## The membership tests
 
