@@ -60,11 +60,17 @@ generalises ADR-0018's mechanism 1 from *"the harness resolves a name I wrote"* 
 harness tells me which modules are here"*. An extension is therefore one JSON file: no
 shim to publish, no logic to maintain, nothing that can be wrong except the data.
 
-### What a module consumes is declared, not inferred
+### What a module runs is declared, not inferred
 
-`dependencies.json` lists the published names a module runs and the registers it reads.
-The caller declares what it calls — which is the provenance nobody had, and the reason a
-broken call site could only ever be found by reading prose.
+`dependencies.json` lists the published names a module executes. The caller declares what
+it calls — which is the provenance nobody had, and the reason a broken call site could
+only ever be found by reading prose.
+
+**Registers are not declared here.** A draft carried a second list naming the registers a
+module consults; it was dropped before this ADR was accepted. Opening a register is
+already the promise to consult it, so the two lists were the same set — and where they
+differed, the shorter one hid the very defect the check exists for. The set that carries
+the promise is `registers.json`, and it is the one the check runs over.
 
 **A name is declared with its source**: `tibs245/scrumia:scrumia-board`. ADR-0018 records
 that the session PATH is "one flat namespace shared with every other enabled plugin" and

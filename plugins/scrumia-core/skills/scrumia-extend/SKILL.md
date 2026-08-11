@@ -29,7 +29,7 @@ it needs and omits the rest — omitting all three is a valid module.
 |---|---|---|
 | `registers.json` | which registers this module **opens** | register → `{ skill, purpose }` |
 | `extends.json` | what this module **contributes** | register → array of directives |
-| `dependencies.json` | what this module **consumes** | `{ runs: [names], reads: [registers] }` |
+| `dependencies.json` | what this module **runs** | `{ runs: [<source>:<name>] }` |
 
 ### `registers.json` — what this module opens
 
@@ -83,14 +83,13 @@ refused by `tools/validate.py`, for the reason
 [ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)
 gives.
 
-### `dependencies.json` — what this module consumes
+### `dependencies.json` — what this module runs
 
 The outward edges, declared by the caller rather than inferred from prose:
 
 ```json
 {
-  "runs":  ["tibs245/scrumia:scrumia-board", "tibs245/scrumia:scrumia-pick-model"],
-  "reads": ["implement", "review"]
+  "runs": ["tibs245/scrumia:scrumia-board", "tibs245/scrumia:scrumia-pick-model"]
 }
 ```
 
@@ -108,13 +107,16 @@ a module either — the dependency is still the name, not whoever publishes it t
 what is added is *from which marketplace*, which is the thing that stays true when the
 publishing module is renamed or replaced.
 
-`reads` lists the registers this module's skills consult. Register names are not
-qualified: a register is a composition-local concept, not an entry in an OS-wide
-namespace.
+**Registers are not declared here.** A module that opens one has already said so in
+`registers.json`, and that declaration *is* the promise to consult it — restating it as a
+dependency would be a second list that must agree with the first and eventually will not.
+Every register a module opens must appear in one of its own skills as
+`scrumia-extends <register>`; `tools/validate.py` greps for exactly that, because a skill
+that opens an extension point and never asks reads as covered and applies nothing.
 
 `scrumia-extends --check` fails on a name nothing publishes, on a name whose actual
-publisher ships from a different source than the one declared, on a register nobody opens,
-and on a contribution to a register nobody opens — that last one being the silent case:
+publisher ships from a different source than the one declared, on two modules opening the
+same register, and on a contribution to a register nobody opens — that last one being the silent case:
 directives that will never be printed, and nothing else would ever say so. An unqualified
 entry is reported without failing: this repository's own validator refuses one, but a
 consuming project is not blocked by another author's laxness. A publisher that declares no
@@ -167,8 +169,7 @@ has to be committed after adding a module.
 2. In the skill, at the step where the directives apply, run
    `scrumia-extends <register>` — with `--app` or `--path` when the work is an app's —
    and state that the rows are applied, `required` first.
-3. Add the register to the module's `dependencies.json` under `reads`.
-4. Run `scrumia-extends --check`.
-
-A skill that opens a register and never runs the tool is the one failure the check cannot
-see: it reads as covered, and applies nothing.
+3. Leave `dependencies.json` alone. `reads` is for a register another module opens; one
+   you open yourself belongs in `registers.json` and nowhere else.
+4. Run `scrumia-extends --check`, then this repository's validator if you are working in
+   it — step 2 is checked by a grep, not by a declaration.

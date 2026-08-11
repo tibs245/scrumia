@@ -111,10 +111,10 @@ this repository must not ship one.
 | A `runs` name published from another source | error | error |
 | A `runs` name with no source at all | reported, passes | error |
 | A publisher declaring no repository | reported, passes | warning |
-| A register read that nobody opens | error | — |
 | A contribution to a register nobody opens | error | — |
 | Two modules opening one register | error | — |
-| A module that declares reading a register and never runs the tool | — | error |
+| A register the module opens that no skill of its own asks for | — | error |
+| A key in `dependencies.json` other than `runs` | — | error |
 | A register nothing contributes to | nothing — an empty table is an answer | — |
 
 Two rows deserve their reason spelled out.
@@ -124,11 +124,18 @@ never be printed, by anything, ever — and no other signal exists. A register n
 string, so one typo turns a module's whole contribution into a file nobody reads. It is an
 error for that reason alone.
 
-**"A module that declares reading a register and never runs the tool"** is checked by
-grepping that module's own skills for the invocation. It catches the one failure a
-declaration check structurally cannot: a skill that opens an extension point, reads as
-covered, and applies nothing. The check is crude — it matches a command string — and it is
-kept because the alternative is no check at all.
+**"A register the module opens that no skill of its own asks for"** is checked by
+grepping that module's skills for the invocation. It catches the one failure a declaration
+check structurally cannot: a skill that opens an extension point, reads as covered, and
+applies nothing.
+
+The set it runs over is `registers.json`, and that is deliberate. A draft of
+`dependencies.json` carried a second list, `reads`, naming the registers a module consults.
+It bought nothing — a module that opens a register already promises to consult it, so the
+two lists were the same set — and where they *did* differ they hid the defect the check
+exists for: `scrumia-specs` opened `find-spec`, `scrumia-specs-find` never asked, `reads`
+did not list it, and a check scoped to `reads` said nothing. Two lists that must agree
+eventually will not, so there is one, and it is the one that carries the promise.
 
 ## Constraints the implementation lives under
 
