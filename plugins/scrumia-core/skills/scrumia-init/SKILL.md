@@ -51,19 +51,19 @@ List the installed modules by reading `enabledPlugins` in `.claude/settings.json
 
 Read the keys whose value is `true`, and split each on `@` to get the module name. **A key set to `false` is installed but disabled** — treating it as plugged in would promise a capability the session doesn't have. Check both files: a module enabled in `settings.local.json` is real but not shared with whoever clones the repo.
 
-Then propose a composition. A slot without a module is acceptable — the project runs in degraded mode, it just has to be said.
+Then propose a composition. A need nothing covers is acceptable — the project runs in degraded mode, it just has to be said.
 
-| Slot | Role | Reference module |
-|---|---|---|
-| `specs` | Where specs live, in what shape | `scrumia-specs` |
-| `tracker` | Where state lives: tickets, columns, PRs | `scrumia-github-project` |
-| `team` | Standing roles and sprint execution | `scrumia-teams` |
-| `discovery` | Scoping an idea into framed work | `scrumia-discovery` |
-| `implementation` | How we code, **per app** | one module per stack (`scrumia-impl-rust`, `scrumia-impl-solidjs`) |
-| `practices` | Cross-cutting practices, **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
-| `design` | The design system | `scrumia-design` |
+| Question | Reference module |
+|---|---|
+| Where specs live, in what shape | `scrumia-specs` |
+| Where state lives: tickets, columns, PRs | `scrumia-github-project` |
+| Standing roles and sprint execution | `scrumia-teams` |
+| Scoping an idea into framed work | `scrumia-discovery` |
+| How we code, **per app** | one module per stack (`scrumia-impl-rust`, `scrumia-impl-solidjs`) |
+| Cross-cutting practices, **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
+| The design system | `scrumia-design` |
 
-Two slots take several modules at once, app by app: `implementation` (a SolidJS app and a Rust app don't share practices) and `practices` (TDD on the API, not on the prototype next door). Both mappings are explicit, per app.
+The last two are declared **per app** rather than once for the project: a SolidJS app and a Rust app share no stack, and TDD can apply to the API and not to the prototype next door. Each app carries its own `extends` list for exactly that.
 
 If a slot the user wants is not installed, give the command (`/plugin install <module>@scrumia`) and note that newly enabled plugins load **at the next session**.
 
@@ -75,20 +75,28 @@ project:
   name: "<name>"
   repo: "<owner>/<repo>"
 
-# Which module fills which slot. An empty slot = capability absent, owned.
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: scrumia-discovery
-  design: scrumia-design
+# The modules this project runs. Flat, unordered, present modules only.
+extends:
+  - scrumia-specs
+  - scrumia-github-project
+  - scrumia-teams
+  - scrumia-discovery
+  - scrumia-design
+
+# Arbitrations and exclusions only — never the full action table, which is derived.
+# Read by scrumia-assemble. Three answers: `human` (a person covers it, counted as
+# covered), `not-applicable` (the step does not exist here, out of the denominator),
+# and a module name where two could both decide. A key absent means nobody decided.
+actions:
+  brief/state-need: human
+  sign-off/approve-ready: human
+  merge/approve: human
 
 apps:
   - name: "<app>"
     path: "apps/<app>"      # required, repo-relative — the boundary an agent resolves a file against
     type: "frontend | backend | mobile | worker | cli"
-    implementation: null    # the module that says how to code here
-    practices: []           # cross-cutting practices for this app, e.g. [scrumia-practice-tdd, scrumia-practice-tanstack-query]
+    extends: []             # this app's own modules, e.g. [scrumia-impl-rust, scrumia-practice-tdd]
 
 # Settings passed to modules. Every key below is commented with what reads it —
 # a setting with no named reader does not belong here (see CLAUDE.md instead).
@@ -129,7 +137,9 @@ settings:
       max_tickets: 5          # read by scrumia-sprint to cap the batch — beyond it, human review saturates
 ```
 
-An absent module is declared `null` rather than omitted: the difference between "not chosen yet" and "deliberately without" matters. An app without practices carries `practices: []` — no practice imposed, the implementation module's conventions suffice. `path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
+`extends` lists only what is present — a flat list has no per-slot key to leave empty, so a need nobody covers is reported rather than written back as a null. What a project decides *about* a need goes in `actions:` instead, which is the difference between "not chosen yet" and "deliberately without". An app with no modules of its own carries `extends: []`; the surrounding code's conventions apply. `path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
+
+**The list is not ordered.** ESLint's `extends` carries last-wins semantics this one does not have: precedence is stated, never positional (see the `## Shared rules` block in Step 5).
 
 `roles[].model` is gone too, and its disappearance is the interesting one. A standing role's model lives in its agent's own frontmatter, which the platform reads at load time — no config key can change it at runtime, so the one that sat here only ever described the frontmatter without governing it. What replaces it is `execution.matrix`, which applies where a model is genuinely chosen at call time: the per-ticket executor `scrumia-sprint` launches. To change a standing role's model, edit its agent file; to change how tickets are executed, edit the matrix.
 
@@ -158,31 +168,40 @@ This is the step that makes the composition operative. Replace only what sits be
 This project is driven by a composition of modules. Each module has a scope.
 Before acting, check which module covers what you are about to do.
 
-| Slot | Plugged module | What to know |
+| Module | What to know |
+|---|---|
+| `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
+| `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
+| `scrumia-teams` | Standing roles: manager, business, tech. |
+| `scrumia-discovery` | An idea goes through scoping before becoming a ticket. |
+| `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
+
+### Per app
+
+| App | Path | Extends |
 |---|---|---|
-| Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
-| Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
-| Team | `scrumia-teams` | Standing roles: manager, business, tech. |
-| Discovery | `scrumia-discovery` | An idea goes through scoping before becoming a ticket. |
-| Design | `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
+| `web` | `apps/web` | `scrumia-impl-solidjs`, `scrumia-practice-tdd` |
+| `api` | `apps/api` | `scrumia-impl-rust`, `scrumia-practice-tdd`, `scrumia-practice-solid` |
 
-### Implementation and practices, per app
+### What to load, and in what order
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `web` | `apps/web` | `scrumia-impl-solidjs` | `scrumia-practice-tdd` |
-| `api` | `apps/api` | `scrumia-impl-rust` | `scrumia-practice-tdd`, `scrumia-practice-solid` |
+Do not work this out from the tables above. Resolve the app from the path of the file
+you are about to edit, then ask:
 
-When you write code in an app, load its implementation module's main skill and the
-reference skill of each of its practices. The implementation module wins over a
-generic practice; the project override (`.scrumia/impl/`, `.scrumia/practices/`)
-wins over both. An app without a module follows the neighboring code's conventions.
+```bash
+scrumia-assemble load build/apply-implementation
+```
 
-Concretely: resolve the app from the path of the file you're about to edit (`apps[].path`
-above), open the skill index (`SKILL.md`) of each module declared for that app, and load
-only the guides its routing table points you to for the change at hand — not the whole
-module. Within the app, stay inside each module's `section.json` globs; outside them, the
-module has nothing to say and neighboring conventions apply.
+It prints the contributing modules in the order that applies here, each with a resolved
+path to the file to open. Inside a module, that module's own routing table and dependency
+graph decide what to open next — the assembly orders contributors, not a module's own
+files, and it never replaces reading them.
+
+The order it prints is computed, not authored: a project override
+(`.scrumia/impl/`, `.scrumia/practices/`) beats an app's own module, which beats a
+project-wide one; within a tier, a technology module beats a cross-cutting practice.
+That is *specific beats generic*, and it is why the list in `extends` carries no order
+of its own. An app with no modules follows the neighbouring code's conventions.
 
 ### Specs contract
 
@@ -223,6 +242,8 @@ remote: claude-design
 - Project state lives in the tracker, not in the repo.
 - A spec contains only its current version; history lives in git and the tickets.
 - The composition's configuration is in `.scrumia/config.yaml`.
+- Before acting on a step, ask `scrumia-assemble load <action>` what to open. Never
+  recompose that yourself out of one module's prose about another.
 <!-- scrumia:end -->
 ````
 
@@ -279,15 +300,22 @@ This file being committed, the composition is versioned with the project. Tell t
 
 Summarize what this run *did*: what was created, what drifted, what remains to be done by hand. Then point the way based on the project's actual state: no spec → scoping; specs but no ticket → the tracker module; tickets ready → the team.
 
-**Close by printing the composition instead of retyping it:**
+**Build the assemblies, then close by printing the composition instead of retyping it:**
 
 ```bash
+scrumia-assemble build
 ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 ```
 
+`scrumia-assemble build` asks each module named in `extends` to describe itself and
+writes `.scrumia/assemblies/` — what an agent opens for each action, in a computed order.
+Commit it: it is generated, and it is read. If it stops on a module it could not reach,
+that module is enabled but the session has not restarted since; say so rather than
+building around it.
+
 Its output *is* the closing summary — the slot table, the slots left empty on purpose, the apps carrying no implementation module. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
 
-If the script reports a slot as `not declared`, that is this skill's own output to fix: Step 3 writes every slot key explicitly, `null` included.
+If the script reports an action nothing covers, that is a finding to report, not something to write back into the config: `extends` names what is present, and `actions:` records only what this project decided about a need — never a placeholder for one nobody has considered.
 
 ## What you don't do
 

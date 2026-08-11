@@ -3,6 +3,10 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `composition.json` and `scrumia-specs-manifest` — this module declares the actions it
+  provides, the fragment to open for each, and how a person reaches it, so the
+  composed assemblies are built from it rather than from prose about it.
 ### Changed
 - The changelog entry drops its `PR:` field and gains a `Category:` — an entry names
   only what exists when it is written. The catalog and the template state the new shape.

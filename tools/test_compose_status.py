@@ -87,67 +87,77 @@ PROJECT_CONFIG = """
 project:
   name: "Demo"
   repo: "acme/demo"
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: null
-  design: scrumia-design
+extends:
+  - scrumia-specs
+  - scrumia-github-project
+  - scrumia-teams
+  - scrumia-design
+actions:
+  merge/approve: human
+  build/apply-implementation: not-applicable
 apps:
   - name: "site"
     path: "site"
-    implementation: null
-    practices: []
+    extends: []
 """
 
 CROWDED_CONFIG = """
 project:
   name: "Wide"
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: null
-  design: scrumia-design
+extends:
+  - scrumia-specs
+  - scrumia-github-project
 apps:
   - name: "web"
     path: "apps/web"
-    implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd, scrumia-practice-solid, scrumia-practice-tanstack-query]
+    extends: [scrumia-impl-solidjs, scrumia-practice-tdd, scrumia-practice-solid, scrumia-practice-tanstack-query]
 """
 
-# `design` omitted entirely — BR-2's configuration defect, not a declared absence.
-UNDECLARED_CONFIG = """
+# The retired shape, tolerated for one minor: read, and said out loud.
+LEGACY_CONFIG = """
 project:
   name: "Demo"
 composition:
   specs: scrumia-specs
   tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: null
+  design: null
+apps:
+  - name: "web"
+    path: "apps/web"
+    implementation: scrumia-impl-solidjs
+    practices: [scrumia-practice-tdd]
+"""
+
+# Nothing plugged in: a flat list has no per-slot key to leave empty, so the
+# absence has to be said rather than shown as a column of nulls.
+EMPTY_CONFIG = """
+project:
+  name: "Bare"
+extends: []
 apps: []
 """
 
 
-def test_ac1_readable_and_names_empty_slots() -> None:
-    print("AC-1 — reads well in a real terminal, names the deliberately empty slots")
+def test_ac1_readable_and_names_what_is_plugged_in() -> None:
+    print("AC-1 — reads well in a real terminal, names every module it runs")
     config = config_with(PROJECT_CONFIG)
     out = ANSI.sub("", run_tty(env_for(config, COLUMNS="100"))).replace("\r\n", "\n")
 
     check("names the project", "Demo" in out and "acme/demo" in out)
-    check("lists every declared slot", all(s in out for s in
-          ("specs", "tracker", "team", "discovery", "design")))
-    check("names the empty slot as deliberate",
-          "discovery" in out and "empty on purpose" in out)
-    check("does not call the empty slot a module",
-          "discovery  null" not in out and "discovery  none" not in out)
-    check("points at the module that would fill it",
-          "scrumia-discovery@scrumia" in out)
-    check("shows the per-app slots", "site" in out and "Implementation" in out)
+    check("lists every module extends names", all(m in out for m in
+          ("scrumia-specs", "scrumia-github-project", "scrumia-teams", "scrumia-design")))
+    check("names no module the project does not run", "scrumia-discovery" not in out)
+    check("shows each app and what it extends", "site" in out and "Extends" in out)
+    check("reports the actions this project answers itself",
+          "merge/approve" in out and "human" in out)
+    check("a not-applicable answer keeps its own wording",
+          "build/apply-implementation" in out and "not-applicable" in out)
+    check("points at what derives the rest", "scrumia-assemble" in out)
 
-    rows = [l for l in out.split("\n") if re.match(r"^  (specs|tracker|team|discovery|design) ", l)]
+    rows = [l for l in out.split("\n")
+            if re.match(r"^  (merge/approve|build/apply-implementation) ", l)]
     offsets = {len(l) - len(l.lstrip()[len(l.split()[0]):].lstrip()) for l in rows}
-    check("the module column is aligned", len(rows) == 5 and len(offsets) == 1,
+    check("the answer column is aligned", len(rows) == 2 and len(offsets) == 1,
           f"{len(rows)} rows, offsets {offsets}")
 
     lines = out.split("\n")
@@ -168,12 +178,13 @@ def test_ac1_narrow_terminal() -> None:
 
         over = [l for l in out.split("\n") if len(l) > cols and foldable(l)]
         check(f"nothing foldable overflows at {cols} columns", not over, f"{over[:1]!r}")
-        check(f"still names the empty slot at {cols} columns", "empty on purpose" in out)
-        check(f"the install command stays on one line at {cols} columns",
-              sum("claude plugin install" in l for l in out.split("\n")) == 1)
+        check(f"still names every module at {cols} columns",
+              all(m in out for m in ("scrumia-specs", "scrumia-design")))
+        check(f"still reports the project's own answers at {cols} columns",
+              "merge/approve" in out and "human" in out)
     os.unlink(config)
 
-    # A long practices list is the widest thing the table can carry; it must
+    # A long per-app extends list is the widest thing the table can carry; it must
     # push the layout narrow rather than run off the side.
     crowded = config_with(CROWDED_CONFIG)
     for cols in (80, 100):
@@ -232,21 +243,28 @@ def test_ac3_read_only_and_no_argument() -> None:
           code == 1 and "scrumia-init" in err and out == "", f"exit {code}")
 
 
-def test_ac3_undeclared_slot_is_not_an_empty_slot() -> None:
-    print("AC-3 (BR-2) — an omitted key reads differently from a declared null")
-    config = config_with(UNDECLARED_CONFIG)
+def test_ac3_the_retired_shape_is_read_and_said_out_loud() -> None:
+    print("AC-3 — the retired composition:/practices: keys are read, and named as retired")
+    config = config_with(LEGACY_CONFIG)
     _, out, _ = run_piped(env_for(config))
-    design = [l for l in out.split("\n") if "design" in l]
-    check("the omitted slot is reported as not declared",
-          any("not declared" in l for l in design), design)
-    check("it is never called empty on purpose",
-          not any("empty on purpose" in l for l in design), design)
-    check("the declared null keeps its own wording",
-          any("discovery" in l and "empty on purpose" in l for l in out.split("\n")))
-    check("it tells the reader to add an explicit null", "explicit null" in out)
-    check("the advice is given once, not repeated per slot",
-          out.count("explicit null") == 1, out.count("explicit null"))
+    check("the modules it names are still reported",
+          "scrumia-specs" in out and "scrumia-github-project" in out)
+    check("a null entry contributes nothing rather than a row",
+          "null" not in out and "none" not in out.split("Extends")[0])
+    check("the per-app implementation and practices fold into that app's extends",
+          "scrumia-impl-solidjs" in out and "scrumia-practice-tdd" in out)
+    check("the reader is told the shape is retired", "retired" in out)
+    check("the advice is given once, not repeated per key",
+          out.count("retired") == 1, out.count("retired"))
     os.unlink(config)
+
+    bare = config_with(EMPTY_CONFIG)
+    _, out, _ = run_piped(env_for(bare))
+    check("an empty extends is stated, not shown as a blank table",
+          "extends is empty" in out, out[:200])
+    check("nothing is called not declared, since there is no key to omit",
+          "not declared" not in out)
+    os.unlink(bare)
 
 
 def test_ac3_config_text_is_never_expanded() -> None:
@@ -283,11 +301,11 @@ def main() -> int:
     if not os.access(SCRIPT, os.X_OK):
         print(f"error: {SCRIPT.relative_to(ROOT)} is not executable")
         return 1
-    test_ac1_readable_and_names_empty_slots()
+    test_ac1_readable_and_names_what_is_plugged_in()
     test_ac1_narrow_terminal()
     test_ac2_colour_gating()
     test_ac3_read_only_and_no_argument()
-    test_ac3_undeclared_slot_is_not_an_empty_slot()
+    test_ac3_the_retired_shape_is_read_and_said_out_loud()
     test_ac3_config_text_is_never_expanded()
     test_ac4_both_skills_end_by_running_it()
     print(f"\n{len(FAILURES)} failure(s)")

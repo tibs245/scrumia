@@ -3,6 +3,10 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `composition.json` and `scrumia-teams-manifest` — this module declares the actions it
+  provides, the fragment to open for each, and how a person reaches it, so the
+  composed assemblies are built from it rather than from prose about it.
 ### Changed
 - The execution-policy tool is published as the name `scrumia-pick-model`, which the harness
   puts on the session's PATH, and every skill and role runs that name instead of a path.

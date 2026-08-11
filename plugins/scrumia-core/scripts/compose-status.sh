@@ -8,9 +8,6 @@ set -fuo pipefail
 
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
 
-# `implementation` and `practices` are the two slots that repeat per app, so
-# they belong to the apps table rather than to this list.
-SLOTS="specs tracker team discovery design"
 
 die() { echo "compose-status.sh: $1" >&2; exit 1; }
 
@@ -18,7 +15,7 @@ usage() {
   cat >&2 <<'EOF'
 compose-status.sh
 
-Prints this project's ScrumIA composition — slot by slot, then app by app.
+Prints this project's ScrumIA composition — the modules it runs, then app by app.
 Takes no argument. Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and
 writes nothing. Colour is dropped when stdout is not a terminal, and when
 NO_COLOR is set to a non-empty value.
@@ -44,17 +41,6 @@ load_config() {
   [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
 }
 
-# A hint for an empty slot, not a claim that only this module could fill it.
-reference_module() {
-  case "$1" in
-    specs)     echo "scrumia-specs" ;;
-    tracker)   echo "scrumia-github-project" ;;
-    team)      echo "scrumia-teams" ;;
-    discovery) echo "scrumia-discovery" ;;
-    design)    echo "scrumia-design" ;;
-    *)         echo "" ;;
-  esac
-}
 
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
   BOLD=$'\033[1m'; DIM=$'\033[2m'; WARN=$'\033[33m'; RESET=$'\033[0m'
@@ -106,49 +92,54 @@ WIDTH=$(term_width)
 NAME=$(jq -r '.project.name // "this project"' <<<"$CFG")
 REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
 
-# Three states, not two: BR-2 makes an omitted key a configuration defect,
-# which reads differently from a slot declared empty on purpose.
-EMPTY="" UNDECLARED=""
-SLOT_ROWS="" SLOT_W=4 MOD_W=6
-declared=$(jq -r '.composition // {} | keys_unsorted[]' <<<"$CFG")
-extra=$(comm -13 <(tr ' ' '\n' <<<"$SLOTS" | sort) <(sort <<<"$declared"))
+# The list is flat, so there is no per-slot key to leave empty. What replaces the
+# old three states is `actions:` — this project's own arbitrations and exclusions.
+LEGACY=false
+jq -e 'has("extends")' >/dev/null <<<"$CFG" || LEGACY=true
 
-for slot in $SLOTS $extra; do
-  [ -n "$slot" ] || continue
-  state=$(jq -r --arg s "$slot" '
-    if (.composition // {} | has($s) | not) then "undeclared"
-    elif (.composition[$s] == null) then "empty"
-    else .composition[$s] end' <<<"$CFG")
-  case "$state" in
-    undeclared) UNDECLARED="$UNDECLARED $slot"; label="not declared" ;;
-    empty)      EMPTY="$EMPTY $slot";           label="empty on purpose" ;;
-    *)          label="$state" ;;
-  esac
-  [ ${#slot} -gt "$SLOT_W" ] && SLOT_W=${#slot}
-  [ ${#label} -gt "$MOD_W" ] && MOD_W=${#label}
-  SLOT_ROWS="$SLOT_ROWS$slot	$label	$state"$'\n'
+MODULES=$(jq -r '
+  (.extends // ((.composition // {}) | to_entries | map(select(.value != null) | .value)))[]' <<<"$CFG")
+
+MOD_ROWS="" MOD_W=6
+for m in $MODULES; do
+  [ -n "$m" ] || continue
+  [ ${#m} -gt "$MOD_W" ] && MOD_W=${#m}
+  MOD_ROWS="$MOD_ROWS$m"$'\n'
 done
 
-APP_ROWS="" APP_W=3 PATH_W=4 IMPL_W=14 PRAC_W=9
-while IFS=$'\t' read -r app apath impl practices; do
+ACT_ROWS="" ACT_W=6 STATE_W=5
+while IFS=$'\t' read -r a state; do
+  [ -n "$a" ] || continue
+  [ ${#a} -gt "$ACT_W" ] && ACT_W=${#a}
+  [ ${#state} -gt "$STATE_W" ] && STATE_W=${#state}
+  ACT_ROWS="$ACT_ROWS$a"$'\t'"$state"$'\n'
+done < <(jq -r '(.actions // {}) | to_entries | .[] | [.key, (.value|tostring)] | @tsv' <<<"$CFG")
+
+APP_ROWS="" APP_W=3 PATH_W=4 EXT_W=7
+while IFS=$'\t' read -r app apath ext; do
   [ -n "$app" ] || continue
   [ -n "$apath" ] || apath="(no path)"
   [ ${#app} -gt "$APP_W" ] && APP_W=${#app}
   [ ${#apath} -gt "$PATH_W" ] && PATH_W=${#apath}
-  [ ${#impl} -gt "$IMPL_W" ] && IMPL_W=${#impl}
-  [ ${#practices} -gt "$PRAC_W" ] && PRAC_W=${#practices}
-  APP_ROWS="$APP_ROWS$app	$apath	$impl	$practices"$'\n'
+  [ ${#ext} -gt "$EXT_W" ] && EXT_W=${#ext}
+  APP_ROWS="$APP_ROWS$app"$'\t'"$apath"$'\t'"$ext"$'\n'
 done < <(jq -r '.apps // [] | .[] | [
     .name // "?",
     .path // "",
-    (.implementation // "none"),
-    ((.practices // []) | if length == 0 then "none" else join(", ") end)
+    ((.extends // ([.implementation] + (.practices // []) | map(select(. != null))))
+      | if length == 0 then "none" else join(", ") end)
   ] | @tsv' <<<"$CFG")
 
-SLOT_TABLE_W=$((SLOT_W + 2 + MOD_W))
-APP_TABLE_W=$((APP_W + 2 + PATH_W + 2 + IMPL_W + 2 + PRAC_W))
+# 28 is the width of the "Modules this project extends" heading, and 21 that of the
+# action table's second column: a heading that overflows is as unreadable as a row.
+MOD_TABLE_W=28
+APP_TABLE_W=$((APP_W + 2 + PATH_W + 2 + EXT_W))
+ACT_TABLE_W=0
+[ -n "$ACT_ROWS" ] && ACT_TABLE_W=$((ACT_W + 2 + 21))
 NARROW=false
-{ [ $((SLOT_TABLE_W + 2)) -gt "$WIDTH" ] || [ $((APP_TABLE_W + 2)) -gt "$WIDTH" ]; } && NARROW=true
+for w in "$MOD_TABLE_W" "$APP_TABLE_W" "$ACT_TABLE_W"; do
+  [ $((w + 2)) -gt "$WIDTH" ] && NARROW=true
+done
 
 echo
 if [ "$NARROW" = true ]; then
@@ -162,58 +153,64 @@ fi
 echo
 
 if [ "$NARROW" = true ]; then
-  while IFS=$'\t' read -r slot label state; do
-    [ -n "$slot" ] || continue
-    case "$state" in
-      undeclared|empty) printf '  %s%s%s\n    %s%s%s\n' "$BOLD" "$slot" "$RESET" "$WARN" "$label" "$RESET" ;;
-      *)                printf '  %s%s%s\n    %s\n' "$BOLD" "$slot" "$RESET" "$label" ;;
-    esac
-  done <<<"$SLOT_ROWS"
+  while IFS= read -r m; do
+    [ -n "$m" ] || continue
+    printf '  %s%s%s\n' "$BOLD" "$m" "$RESET"
+  done <<<"$MOD_ROWS"
 else
-  printf '  %s%s  %s%s\n' "$DIM" "$(pad Slot "$SLOT_W")" "Module" "$RESET"
-  printf '  %s%s%s\n' "$DIM" "$(rule "$SLOT_TABLE_W" $((WIDTH - 2)))" "$RESET"
-  while IFS=$'\t' read -r slot label state; do
-    [ -n "$slot" ] || continue
-    case "$state" in
-      undeclared|empty) printf '  %s  %s%s%s\n' "$(pad "$slot" "$SLOT_W")" "$WARN" "$label" "$RESET" ;;
-      *)                printf '  %s  %s\n' "$(pad "$slot" "$SLOT_W")" "$label" ;;
-    esac
-  done <<<"$SLOT_ROWS"
+  printf '  %s%s%s\n' "$DIM" "Modules this project extends" "$RESET"
+  printf '  %s%s%s\n' "$DIM" "$(rule 28 $((WIDTH - 2)))" "$RESET"
+  while IFS= read -r m; do
+    [ -n "$m" ] || continue
+    printf '  %s\n' "$m"
+  done <<<"$MOD_ROWS"
 fi
+[ -n "$MODULES" ] || wrap '  ' "$WARN" "Nothing is plugged in: extends is empty."
 
 if [ -n "$APP_ROWS" ]; then
   echo
   if [ "$NARROW" = true ]; then
-    while IFS=$'\t' read -r app apath impl practices; do
+    while IFS=$'\t' read -r app apath ext; do
       [ -n "$app" ] || continue
       printf '  %s%s%s (%s)\n' "$BOLD" "$app" "$RESET" "$apath"
-      wrap '    ' "" "implementation: $impl"
-      wrap '    ' "" "practices: $practices"
+      wrap '    ' "" "extends: $ext"
     done <<<"$APP_ROWS"
   else
-    printf '  %s%s  %s  %s  %s%s\n' "$DIM" "$(pad App "$APP_W")" "$(pad Path "$PATH_W")" \
-      "$(pad Implementation "$IMPL_W")" "Practices" "$RESET"
+    printf '  %s%s  %s  %s%s\n' "$DIM" "$(pad App "$APP_W")" "$(pad Path "$PATH_W")" \
+      "Extends" "$RESET"
     printf '  %s%s%s\n' "$DIM" "$(rule "$APP_TABLE_W" $((WIDTH - 2)))" "$RESET"
-    while IFS=$'\t' read -r app apath impl practices; do
+    while IFS=$'\t' read -r app apath ext; do
       [ -n "$app" ] || continue
-      printf '  %s  %s  %s  %s\n' "$(pad "$app" "$APP_W")" "$(pad "$apath" "$PATH_W")" \
-        "$(pad "$impl" "$IMPL_W")" "$practices"
+      printf '  %s  %s  %s\n' "$(pad "$app" "$APP_W")" "$(pad "$apath" "$PATH_W")" "$ext"
     done <<<"$APP_ROWS"
   fi
 fi
 
-echo
-for slot in $EMPTY; do
-  ref=$(reference_module "$slot")
-  wrap '  ' "$WARN" "The $slot slot is empty on purpose."
-  [ -n "$ref" ] && printf '    claude plugin install %s@scrumia --scope project\n' "$ref"
-done
-if [ -n "$UNDECLARED" ]; then
-  list=""
-  for slot in $UNDECLARED; do list="${list:+$list, }$slot"; done
-  wrap '  ' "$WARN" "No key in $CONFIG for: $list."
-  wrap '    ' "" "Add each one with an explicit null: a missing key reads as an oversight, not as a declared absence."
+# Only what the config itself declares. Which action each module provides, and which
+# are covered, is derived by scrumia-assemble — this script resolves nothing.
+if [ -n "$ACT_ROWS" ]; then
+  echo
+  if [ "$NARROW" = true ]; then
+    while IFS=$'\t' read -r a state; do
+      [ -n "$a" ] || continue
+      printf '  %s%s%s\n    %s\n' "$BOLD" "$a" "$RESET" "$state"
+    done <<<"$ACT_ROWS"
+  else
+    printf '  %s%s  %s%s\n' "$DIM" "$(pad Action "$ACT_W")" "This project's answer" "$RESET"
+    printf '  %s%s%s\n' "$DIM" "$(rule $((ACT_W + 2 + 21)) $((WIDTH - 2)))" "$RESET"
+    while IFS=$'\t' read -r a state; do
+      [ -n "$a" ] || continue
+      printf '  %s  %s\n' "$(pad "$a" "$ACT_W")" "$state"
+    done <<<"$ACT_ROWS"
+  fi
 fi
-[ -n "$EMPTY$UNDECLARED" ] && echo
+
+echo
+if [ "$LEGACY" = true ]; then
+  wrap '  ' "$WARN" "This config still uses the retired composition:/practices: keys."
+  wrap '    ' "" "They are read for one more minor. Migrate to extends: with /scrumia-core:scrumia-compose."
+  echo
+fi
+wrap '  ' "$DIM" "What each module provides, and what nothing covers: scrumia-assemble build."
 wrap '  ' "$DIM" "Change any of this with /scrumia-core:scrumia-compose."
 echo

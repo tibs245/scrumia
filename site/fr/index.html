@@ -795,19 +795,27 @@ apps:
   <div class="code">
     <pre>ScrumIA composition — ScrumIA (tibs245/scrumia)
 
-  Slot       Module
-  ─────────────────────────────────
-  specs      scrumia-specs
-  tracker    scrumia-github-project
-  team       scrumia-teams
-  discovery  scrumia-discovery
-  design     scrumia-design
+  Modules this project extends
+  ────────────────────────────
+  scrumia-specs
+  scrumia-github-project
+  scrumia-teams
+  scrumia-discovery
+  scrumia-design
 
-  App    Path   Implementation  Practices
-  ───────────────────────────────────────
-  site   site   none            none
-  tools  tools  none            none
+  App    Path   Extends
+  ─────────────────────
+  site   site   none
+  tools  tools  none
 
+  Action                      This project's answer
+  ─────────────────────────────────────────────────
+  brief/state-need            human
+  sign-off/approve-ready      human
+  merge/approve               human
+  build/apply-implementation  not-applicable
+
+  What each module provides, and what nothing covers: scrumia-assemble build.
   Change any of this with /scrumia-core:scrumia-compose.</pre>
   </div>
 

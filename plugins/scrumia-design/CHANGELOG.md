@@ -3,6 +3,10 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `composition.json` and `scrumia-design-manifest` — this module declares the actions it
+  provides, the fragment to open for each, and how a person reaches it, so the
+  composed assemblies are built from it rather than from prose about it.
 
 ## [0.4.0] - 2026-08-10
 ### Added
