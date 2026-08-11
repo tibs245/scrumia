@@ -252,9 +252,9 @@ make room is how it is failed.
 
 **No repo check reads a live GitHub label's description** — `tools/validate.py` runs
 against files in the working tree, and a label seeded at install time lives only on
-GitHub. A review of anything touching scope labelling or gate 2 has to check it by hand,
-`gh label list`, since it is one of this criterion's four surfaces and the only one no
-static check sees drift.
+GitHub. A review of anything touching scope labelling has to check it by hand, `gh label
+list`, since it is one of this criterion's three surfaces and the only one that is not
+in the working tree to grep.
 
 ## Out of scope
 
