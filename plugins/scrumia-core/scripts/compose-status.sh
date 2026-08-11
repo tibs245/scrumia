@@ -30,7 +30,7 @@ EOF
 
 command -v jq >/dev/null 2>&1 || die "jq not found"
 
-# Same loader as board.sh and pick-model.sh: one of the two YAML readers the
+# Same loader as scrumia-board and scrumia-pick-model: one of the two YAML readers the
 # machine already has, never a third dependency.
 load_config() {
   [ -f "$CONFIG" ] || die "no $CONFIG — run /scrumia-core:scrumia-init first"
