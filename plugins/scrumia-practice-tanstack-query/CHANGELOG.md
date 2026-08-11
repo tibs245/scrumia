@@ -3,6 +3,9 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `extends.json` — the query-key contract, `queryOptions` and the no-duplication refusal
+  are contributed to the `implement` and `review` registers.
 
 ## [0.4.0] - 2026-08-10
 ### Added

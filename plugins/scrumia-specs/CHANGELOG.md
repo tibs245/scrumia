@@ -4,9 +4,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `composition.json` and `scrumia-specs-manifest` — this module declares the actions it
-  provides, the fragment to open for each, and how a person reaches it, so the
-  composed assemblies are built from it rather than from prose about it.
+- `registers.json`, `extends.json` and `dependencies.json` — this module opens the
+  `write-spec` and `find-spec` registers, contributes the spec-before-code rule to
+  `implement` and the spec/code gap to `review`, and declares what it consumes.
 ### Changed
 - The changelog entry drops its `PR:` field and gains a `Category:` — an entry names
   only what exists when it is written. The catalog and the template state the new shape.

@@ -4,9 +4,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `composition.json` and `scrumia-teams-manifest` — this module declares the actions it
-  provides, the fragment to open for each, and how a person reaches it, so the
-  composed assemblies are built from it rather than from prose about it.
+- `registers.json` and `dependencies.json` — this module opens the `convene` and `sprint`
+  registers. `scrumia-standup` picks up a role another module ships from the `convene`
+  register rather than from a list it maintained about modules it does not own.
 ### Changed
 - The execution-policy tool is published as the name `scrumia-pick-model`, which the harness
   puts on the session's PATH, and every skill and role runs that name instead of a path.

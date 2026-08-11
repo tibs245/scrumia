@@ -1,0 +1,15 @@
+{
+  "implement": [
+    { "name": "The spec is written first", "type": "norm", "when": "required",
+      "summary": "Load the feature that owns the rule before writing code, and update it when the rule moves",
+      "read": "skills/scrumia-specs-find/SKILL.md" },
+    { "name": "One test per acceptance criterion", "type": "norm", "when": "required",
+      "summary": "Criteria carry stable identifiers and become the tests — that is what makes them acceptance criteria",
+      "read": "skills/scrumia-feature/references/catalog.md" }
+  ],
+  "review": [
+    { "name": "Spec and code moved together", "type": "norm", "when": "required",
+      "summary": "A behaviour changed with no spec entry, or a spec changed with no code, is the gap a diff-only reviewer cannot see",
+      "read": "skills/scrumia-feature/references/catalog.md" }
+  ]
+}

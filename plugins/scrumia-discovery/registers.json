@@ -1,0 +1,10 @@
+{
+  "scope-idea": {
+    "skill": "scrumia-brainstorm",
+    "purpose": "Scope an idea through challenge until it can be split"
+  },
+  "split": {
+    "skill": "scrumia-split",
+    "purpose": "Turn a scoping into features and the tickets that carry them"
+  }
+}

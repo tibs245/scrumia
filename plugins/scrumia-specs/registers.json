@@ -1,0 +1,10 @@
+{
+  "write-spec": {
+    "skill": "scrumia-feature",
+    "purpose": "Write or update a feature's specification before any code exists"
+  },
+  "find-spec": {
+    "skill": "scrumia-specs-find",
+    "purpose": "Load the minimal spec context a ticket or a review actually needs"
+  }
+}

@@ -92,9 +92,6 @@ extends:
   - scrumia-github-project
   - scrumia-teams
   - scrumia-design
-actions:
-  merge/approve: human
-  build/apply-implementation: not-applicable
 apps:
   - name: "site"
     path: "site"
@@ -148,17 +145,12 @@ def test_ac1_readable_and_names_what_is_plugged_in() -> None:
           ("scrumia-specs", "scrumia-github-project", "scrumia-teams", "scrumia-design")))
     check("names no module the project does not run", "scrumia-discovery" not in out)
     check("shows each app and what it extends", "site" in out and "Extends" in out)
-    check("reports the actions this project answers itself",
-          "merge/approve" in out and "human" in out)
-    check("a not-applicable answer keeps its own wording",
-          "build/apply-implementation" in out and "not-applicable" in out)
-    check("points at what derives the rest", "scrumia-assemble" in out)
+    check("points at what carries the rest", "scrumia-extends --list" in out)
+    check("resolves no register itself",
+          "implement" not in out and "required" not in out)
 
-    rows = [l for l in out.split("\n")
-            if re.match(r"^  (merge/approve|build/apply-implementation) ", l)]
-    offsets = {len(l) - len(l.lstrip()[len(l.split()[0]):].lstrip()) for l in rows}
-    check("the answer column is aligned", len(rows) == 2 and len(offsets) == 1,
-          f"{len(rows)} rows, offsets {offsets}")
+    rows = [l for l in out.split("\n") if re.match(r"^  site +site", l)]
+    check("the app table's columns are aligned", len(rows) == 1, f"{len(rows)} rows")
 
     lines = out.split("\n")
     check("no line overflows the terminal", all(len(l) <= 100 for l in lines),
@@ -180,8 +172,10 @@ def test_ac1_narrow_terminal() -> None:
         check(f"nothing foldable overflows at {cols} columns", not over, f"{over[:1]!r}")
         check(f"still names every module at {cols} columns",
               all(m in out for m in ("scrumia-specs", "scrumia-design")))
-        check(f"still reports the project's own answers at {cols} columns",
-              "merge/approve" in out and "human" in out)
+        # The footer wraps at these widths, so the name is what has to survive,
+        # not the whole invocation.
+        check(f"still points at what carries the rest at {cols} columns",
+              "scrumia-extends" in out)
     os.unlink(config)
 
     # A long per-app extends list is the widest thing the table can carry; it must

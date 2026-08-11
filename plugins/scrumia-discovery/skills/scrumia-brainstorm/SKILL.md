@@ -55,6 +55,16 @@ Don't write the features yourself. Call `/scrumia-discovery:scrumia-split` with 
 
 If the human wants to stop before splitting, create a `scope/XL` issue that captures the scoping and the open questions. Nothing gets lost, nothing rots in a notes file.
 
+## What this project scopes against
+
+```bash
+scrumia-extends scope-idea
+```
+
+A module the project runs may carry a constraint an idea has to survive before it is worth
+splitting — a regulatory boundary, a platform limit, a cost ceiling. It arrives here from
+the module that owns it. An empty table means the challenge below is the whole bar.
+
 ## Bringing in Business and Tech
 
 You can delegate during scoping:

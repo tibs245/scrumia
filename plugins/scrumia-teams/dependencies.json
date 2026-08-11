@@ -1,0 +1,4 @@
+{
+  "runs": ["scrumia-board", "scrumia-pick-model", "scrumia-extends"],
+  "reads": ["convene", "sprint"]
+}

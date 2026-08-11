@@ -3,6 +3,9 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `extends.json` — the five guides and four refusals are contributed to the `implement`,
+  `review` and `audit` registers, so a skill applies them without naming this module.
 
 ## [0.4.0] - 2026-08-10
 ### Added

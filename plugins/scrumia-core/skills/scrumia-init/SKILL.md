@@ -83,15 +83,6 @@ extends:
   - scrumia-discovery
   - scrumia-design
 
-# Arbitrations and exclusions only — never the full action table, which is derived.
-# Read by scrumia-assemble. Three answers: `human` (a person covers it, counted as
-# covered), `not-applicable` (the step does not exist here, out of the denominator),
-# and a module name where two could both decide. A key absent means nobody decided.
-actions:
-  brief/state-need: human
-  sign-off/approve-ready: human
-  merge/approve: human
-
 apps:
   - name: "<app>"
     path: "apps/<app>"      # required, repo-relative — the boundary an agent resolves a file against
@@ -137,7 +128,7 @@ settings:
       max_tickets: 5          # read by scrumia-sprint to cap the batch — beyond it, human review saturates
 ```
 
-`extends` lists only what is present — a flat list has no per-slot key to leave empty, so a need nobody covers is reported rather than written back as a null. What a project decides *about* a need goes in `actions:` instead, which is the difference between "not chosen yet" and "deliberately without". An app with no modules of its own carries `extends: []`; the surrounding code's conventions apply. `path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
+`extends` lists only what is present — a flat list has no per-slot key to leave empty, so a need nobody covers is reported rather than written back as a null. A module installed but named in no `extends` is inert: it is on disk, and this project does not run it. An app with no modules of its own carries `extends: []`; the surrounding code's conventions apply. `path` is required on every entry: it is what lets an agent, given the file it is about to touch, resolve which app's modules apply — without it, per-app activation has nothing to key on.
 
 **The list is not ordered.** ESLint's `extends` carries last-wins semantics this one does not have: precedence is stated, never positional (see the `## Shared rules` block in Step 5).
 
@@ -161,6 +152,8 @@ A module without a setup skill has nothing to create — implementation and prac
 
 This is the step that makes the composition operative. Replace only what sits between the markers; create the file if it doesn't exist.
 
+**Everything between `<!-- scrumia:start -->` and `<!-- scrumia:end -->` is generated, in full, by this step.** A re-run — first install, or after adding a module — replaces it wholesale. A skill, in this repository or any other module, must never depend on a hand-written sentence sitting inside that region: it survives only until the next `scrumia-init` run, and a fresh install never had it at all. Nor is the template the place to put it: a line added there reaches every project, whether it runs the module that needs it or not. A rule that belongs to a module is contributed by that module, as a directive under a register, and reaches an agent through `scrumia-extends` — the protocol is `scrumia-core`'s `scrumia-extend` skill. What stays in the template is the instruction to ask.
+
 ````markdown
 <!-- scrumia:start -->
 ## ScrumIA composition
@@ -183,25 +176,26 @@ Before acting, check which module covers what you are about to do.
 | `web` | `apps/web` | `scrumia-impl-solidjs`, `scrumia-practice-tdd` |
 | `api` | `apps/api` | `scrumia-impl-rust`, `scrumia-practice-tdd`, `scrumia-practice-solid` |
 
-### What to load, and in what order
+### What rules apply, and where they are written
 
-Do not work this out from the tables above. Resolve the app from the path of the file
-you are about to edit, then ask:
+Do not work this out from the tables above, and do not take one module's word for what
+another one says. Ask:
 
 ```bash
-scrumia-assemble load build/apply-implementation
+scrumia-extends implement --path <the file you are about to edit>
+scrumia-extends review --app <app>
+scrumia-extends --list                    # every register the installed modules open
 ```
 
-It prints the contributing modules in the order that applies here, each with a resolved
-path to the file to open. Inside a module, that module's own routing table and dependency
-graph decide what to open next — the assembly orders contributors, not a module's own
-files, and it never replaces reading them.
+It prints one table — the directive's name, its type, whether it is required, one line of
+what it says, and the file to open — assembled from the modules this project runs. Take
+what the task needs; `required` rows apply to every unit of work in scope.
 
-The order it prints is computed, not authored: a project override
-(`.scrumia/impl/`, `.scrumia/practices/`) beats an app's own module, which beats a
-project-wide one; within a tier, a technology module beats a cross-cutting practice.
-That is *specific beats generic*, and it is why the list in `extends` carries no order
-of its own. An app with no modules follows the neighbouring code's conventions.
+The order is computed, not authored: this project's own `.scrumia/extends.json` first,
+then the modules an app extends, then the project-wide ones. That is *specific beats
+generic, and a project override beats both*, and it is why `extends` carries no order of
+its own. Nothing is stored — the table is computed when asked, so it cannot be stale, and
+adding a module changes it with nothing to rebuild.
 
 ### Specs contract
 
@@ -242,8 +236,9 @@ remote: claude-design
 - Project state lives in the tracker, not in the repo.
 - A spec contains only its current version; history lives in git and the tickets.
 - The composition's configuration is in `.scrumia/config.yaml`.
-- Before acting on a step, ask `scrumia-assemble load <action>` what to open. Never
-  recompose that yourself out of one module's prose about another.
+- Before applying a rule that belongs to another module, ask `scrumia-extends <register>`
+  for it. Never restate it from one module's prose about another, and never infer it from
+  which modules are listed above.
 <!-- scrumia:end -->
 ````
 
@@ -300,22 +295,22 @@ This file being committed, the composition is versioned with the project. Tell t
 
 Summarize what this run *did*: what was created, what drifted, what remains to be done by hand. Then point the way based on the project's actual state: no spec → scoping; specs but no ticket → the tracker module; tickets ready → the team.
 
-**Build the assemblies, then close by printing the composition instead of retyping it:**
+**Check the composition's edges, then close by printing it instead of retyping it:**
 
 ```bash
-scrumia-assemble build
+scrumia-extends --check
 ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 ```
 
-`scrumia-assemble build` asks each module named in `extends` to describe itself and
-writes `.scrumia/assemblies/` — what an agent opens for each action, in a computed order.
-Commit it: it is generated, and it is read. If it stops on a module it could not reach,
-that module is enabled but the session has not restarted since; say so rather than
-building around it.
+`scrumia-extends --check` reports the declared edges nothing satisfies: a published name
+no installed module provides, a register a module reads that nobody opens, a contribution
+to a register nobody opens. There is nothing to build and nothing to commit — the
+directive table is computed on demand. A name reported missing usually means the plugin is
+enabled but the session has not restarted since; say so rather than working around it.
 
 Its output *is* the closing summary — the slot table, the slots left empty on purpose, the apps carrying no implementation module. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
 
-If the script reports an action nothing covers, that is a finding to report, not something to write back into the config: `extends` names what is present, and `actions:` records only what this project decided about a need — never a placeholder for one nobody has considered.
+If `--check` reports an unmet edge, that is a finding to report, not something to write back into the config: `extends` names the modules this project runs, and a gap it exposes is answered by plugging a module in or by accepting the gap — never by a placeholder that makes the check pass.
 
 ## What you don't do
 

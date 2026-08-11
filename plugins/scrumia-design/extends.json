@@ -1,0 +1,25 @@
+{
+  "implement": [
+    { "name": "Design system first", "type": "norm", "when": "required",
+      "summary": "Read the identity and the tokens before writing anything a user looks at; never inline a value",
+      "read": "skills/scrumia-design-system/SKILL.md" }
+  ],
+  "review": [
+    { "name": "Drift and mutedness weigh the same", "type": "norm", "when": "required",
+      "summary": "An invented value and a consistent interface with no identity are both findings",
+      "read": "skills/scrumia-design-system/decisions/D-01-two-columns.md" },
+    { "name": "Design audit", "type": "method", "when": "optional",
+      "summary": "Measure an interface against the system — the drift column and the mutedness column",
+      "read": "skills/scrumia-design-audit/SKILL.md" }
+  ],
+  "audit": [
+    { "name": "Design audit", "type": "method", "when": "optional",
+      "summary": "Take stock of an interface against the design system, drift and mutedness on equal footing",
+      "read": "skills/scrumia-design-audit/SKILL.md" }
+  ],
+  "convene": [
+    { "name": "Designer", "type": "reference", "when": "optional",
+      "summary": "The standing role that judges what a user actually sees — route interface questions to it",
+      "read": "agents/scrumia-designer.md" }
+  ]
+}

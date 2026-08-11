@@ -1,0 +1,18 @@
+{
+  "refine": {
+    "skill": "scrumia-refine",
+    "purpose": "Bring a backlog ticket to the state where it can be started"
+  },
+  "implement": {
+    "skill": "scrumia-ticket",
+    "purpose": "Write the code that satisfies a ticket's acceptance criteria"
+  },
+  "review": {
+    "skill": "scrumia-review",
+    "purpose": "Judge a change before it merges"
+  },
+  "audit": {
+    "skill": "scrumia-status",
+    "purpose": "Measure an existing codebase against the rules it claims to follow"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "runs": ["scrumia-board", "scrumia-pick-model"],
+  "reads": []
+}

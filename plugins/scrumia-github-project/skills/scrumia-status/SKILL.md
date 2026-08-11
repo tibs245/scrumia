@@ -26,6 +26,18 @@ A view computed on demand. Nothing is written to disk: a persisted state diverge
 
 Board columns map directly to the sections below: `To dev` / `In progress` / `In review` tickets and open PRs feed **In progress**; `Ready for dev` feeds **Ready to go**. `Backlog` and `Done` don't get enumerated — they only surface if something in them triggers a point of attention.
 
+## What the project measures itself against
+
+```bash
+scrumia-extends audit
+```
+
+The `audit` register is where the installed modules contribute the methods for measuring
+an existing codebase against the rules it claims to follow — a SOLID audit, a TDD audit, a
+design audit. They are `optional` by nature: this skill takes stock, and reaches for one
+when the gap it is describing is that module's to measure. Name the ones it did not run,
+so "nothing found" is never mistaken for "nothing looked".
+
 ## What you report
 
 Short. Three blocks, in this order.

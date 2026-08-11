@@ -4,9 +4,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `composition.json` and `scrumia-github-project-manifest` — this module declares the actions it
-  provides, the fragment to open for each, and how a person reaches it, so the
-  composed assemblies are built from it rather than from prose about it.
+- `registers.json` and `dependencies.json` — this module opens the `refine`, `implement`,
+  `review` and `audit` registers, and declares the published names it runs. Its four main
+  skills now ask `scrumia-extends` what governs the work instead of restating another
+  module's rules.
 ### Changed
 - The board tool is published as the name `scrumia-board`, which the harness puts on the
   session's PATH, and every skill and command runs that name instead of a path. Reaching it

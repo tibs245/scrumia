@@ -1,0 +1,4 @@
+{
+  "runs": ["scrumia-extends"],
+  "reads": ["write-spec"]
+}

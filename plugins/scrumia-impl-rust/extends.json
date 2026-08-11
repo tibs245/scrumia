@@ -1,0 +1,41 @@
+{
+  "implement": [
+    { "name": "Project layout", "type": "norm", "when": "required",
+      "summary": "Modules by domain, thin lib.rs, workspace from the second deployable unit on",
+      "read": "skills/scrumia-rust/guides/01-project-layout.md" },
+    { "name": "Domain types", "type": "norm", "when": "required",
+      "summary": "Invalid states unrepresentable — the organising principle of the whole module",
+      "read": "skills/scrumia-rust/guides/02-domain-types.md" },
+    { "name": "Errors", "type": "norm", "when": "required",
+      "summary": "Typed errors per layer, Result at the boundaries, no leaky public error type",
+      "read": "skills/scrumia-rust/guides/03-errors.md" },
+    { "name": "Testing", "type": "norm", "when": "required",
+      "summary": "One test per invariant, not per function; the compiler is the first suite",
+      "read": "skills/scrumia-rust/guides/04-testing.md" },
+    { "name": "Lints and safety comments", "type": "norm", "when": "required",
+      "summary": "The clippy baseline, and unsafe isolated behind a SAFETY: comment",
+      "read": "skills/scrumia-rust/guides/05-lints.md" },
+    { "name": "No unwrap/expect in production", "type": "refusal", "when": "required",
+      "summary": "Outside tests and declared prototypes, a panic path is a design gap",
+      "read": "skills/scrumia-rust/decisions/D-01-no-unwrap-expect.md" },
+    { "name": "No clone to silence the borrow checker", "type": "refusal", "when": "required",
+      "summary": "A defensive clone hides the ownership question rather than answering it",
+      "read": "skills/scrumia-rust/decisions/D-02-no-clone-to-appease-borrowck.md" },
+    { "name": "No single-implementer traits", "type": "refusal", "when": "required",
+      "summary": "A generic trait with one implementer buys indirection and no substitution",
+      "read": "skills/scrumia-rust/decisions/D-03-no-single-implementer-traits.md" },
+    { "name": "No Deref as inheritance", "type": "refusal", "when": "required",
+      "summary": "Deref is coercion, not a base class — using it as one breaks the reader",
+      "read": "skills/scrumia-rust/decisions/D-04-no-deref-inheritance.md" }
+  ],
+  "review": [
+    { "name": "Rust refusals", "type": "refusal", "when": "required",
+      "summary": "unwrap/expect, defensive clone, single-implementer traits, Deref-as-inheritance",
+      "read": "skills/scrumia-rust/SKILL.md" }
+  ],
+  "audit": [
+    { "name": "Rust audit", "type": "method", "when": "optional",
+      "summary": "Measure an existing crate against these guides, each finding citing the one it breaks",
+      "read": "skills/scrumia-rust-audit/SKILL.md" }
+  ]
+}

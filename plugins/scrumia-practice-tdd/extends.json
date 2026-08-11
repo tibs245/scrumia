@@ -1,0 +1,38 @@
+{
+  "implement": [
+    { "name": "No production code without a red test", "type": "refusal", "when": "required",
+      "summary": "The founding rule, and why it is stated this hard for an agent in particular",
+      "read": "skills/scrumia-tdd/decisions/D-01-no-code-without-red-test.md" },
+    { "name": "The cycle", "type": "norm", "when": "required",
+      "summary": "Red, green, refactor — what each step is allowed to change",
+      "read": "skills/scrumia-tdd/guides/01-the-cycle.md" },
+    { "name": "Acceptance criteria to tests", "type": "method", "when": "required",
+      "summary": "Turn each AC identifier into a named test, so coverage maps to the spec",
+      "read": "skills/scrumia-tdd/guides/03-ac-mapping.md" },
+    { "name": "Mock boundary", "type": "norm", "when": "required",
+      "summary": "What is faked and what is not — the line that keeps a test about behaviour",
+      "read": "skills/scrumia-tdd/guides/02-mock-boundary.md" },
+    { "name": "Where TDD stops", "type": "norm", "when": "required",
+      "summary": "The work this practice explicitly does not govern — stated so it is not inferred",
+      "read": "skills/scrumia-tdd/guides/04-where-tdd-stops.md" },
+    { "name": "Agent bias", "type": "reference", "when": "optional",
+      "summary": "Why an agent drifts out of the cycle, and the shape of the drift",
+      "read": "skills/scrumia-tdd/decisions/D-02-agent-bias.md" }
+  ],
+  "review": [
+    { "name": "Useless tests catalog", "type": "refusal", "when": "required",
+      "summary": "The test shapes that pass, add a line to the count, and prove nothing",
+      "read": "skills/scrumia-tdd/guides/05-useless-tests-catalog.md" },
+    { "name": "One test per acceptance criterion", "type": "norm", "when": "required",
+      "summary": "A criterion with no named test is the gap to report, whatever the coverage figure says",
+      "read": "skills/scrumia-tdd/guides/03-ac-mapping.md" }
+  ],
+  "audit": [
+    { "name": "TDD audit", "type": "method", "when": "optional",
+      "summary": "Measure an existing suite against the cycle and the useless-test catalog",
+      "read": "skills/scrumia-tdd-audit/SKILL.md" },
+    { "name": "TDD refactor", "type": "method", "when": "optional",
+      "summary": "Bring an untested unit under test without rewriting it first",
+      "read": "skills/scrumia-tdd-refactor/SKILL.md" }
+  ]
+}

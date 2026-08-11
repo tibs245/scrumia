@@ -62,6 +62,17 @@ Themes are token redefinitions, never separate stylesheets. A component that nee
 
 `spec.md` states when to reach for the component, when not to, and what it refuses to do. The refusal is the useful half: "this button does not carry a destructive action, use `button-danger`" prevents the variant that would otherwise be added next week.
 
+## What else governs an interface here
+
+```bash
+scrumia-extends design
+```
+
+Whatever the composition adds to what a user sees — an accessibility floor, a motion
+budget, a house constraint in `.scrumia/extends.json` — arrives here rather than being
+carried in this module's prose. An empty table means this module's own rules are the whole
+answer.
+
 ## Before writing a component
 
 Four questions, in this order. Stopping at the first "yes" is the point.

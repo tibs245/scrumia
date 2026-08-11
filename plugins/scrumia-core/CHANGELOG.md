@@ -4,17 +4,22 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `scrumia-assemble` — builds, prints and checks the composed assemblies: one file per
-  action naming which module's fragment to open, in an order it computes rather than
-  one an author typed. `load` reads a built file and refuses when its inputs moved,
-  rather than recomputing an answer at call time.
-- `composition.json` and `scrumia-core-manifest` — this module describes itself by a
-  name another module can run, instead of being described from outside.
-- `data/actions.json` — the kernel's closed action vocabulary. Providers are declared
-  by each module, never listed here.
+- `scrumia-extends` — prints the directives that extend one register, for this project:
+  name, type, whether it is required, one line of what it says, and the file to open.
+  It computes on demand and stores nothing, so there is no artefact to rebuild or to
+  find stale. `--list` names every register the installed modules open; `--check`
+  reports a declared edge nothing satisfies.
+- `scrumia-extend` — the extension protocol itself: what a register is, what the three
+  data files a module may ship declare, and how to open an extension point in a skill.
+- `dependencies.json` — this module declares the published names it runs.
 ### Changed
-- `compose-status.sh` reports `extends` and the project's own `actions:` answers. The
-  retired `composition:`/`practices:` shape is still read, and now says so.
+- `compose-status.sh` reports `extends` and the apps' own lists, and points at
+  `scrumia-extends --list` for what each module contributes. The retired
+  `composition:`/`practices:` shape is still read, and now says so.
+- `scrumia-init` Step 5 states that everything between the `scrumia:start`/`scrumia:end`
+  markers is regenerated in full — so a skill must never depend on a hand-written
+  sentence there, and a rule that belongs to a module is contributed by that module
+  rather than added to the template every project receives.
 - `/next` and the config `scrumia-init` writes cite the tracker and team modules' published
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
 

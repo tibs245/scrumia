@@ -35,6 +35,17 @@ This is what makes a spec verifiable rather than declarative. If you prefer a le
 
 An App feature with no Business parent is suspect: either it's purely technical (accepted, say so explicitly in its `index.md`), or the Business feature is missing.
 
+## What else this project asks of a spec
+
+```bash
+scrumia-extends write-spec
+```
+
+A module the project runs may require something of a feature that this catalog does not
+name — a legal note, a security section, a performance budget. It arrives here, from the
+module that owns the rule, rather than being restated in this skill or guessed at. An
+empty table means the catalog below is the whole obligation.
+
 ## The catalog
 
 `references/catalog.md` details each file, its content, its reader, and when it is expected. **Read it before creating a feature.** Ready-to-fill templates in `assets/`.

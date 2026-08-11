@@ -14,13 +14,6 @@ ScrumIA composition — ScrumIA (tibs245/scrumia)
   site   site   none
   tools  tools  none
 
-  Action                      This project's answer
-  ─────────────────────────────────────────────────
-  brief/state-need            human
-  sign-off/approve-ready      human
-  merge/approve               human
-  build/apply-implementation  not-applicable
-
-  What each module provides, and what nothing covers: scrumia-assemble build.
+  What each module contributes, and to which register: scrumia-extends --list.
   Change any of this with /scrumia-core:scrumia-compose.
 
