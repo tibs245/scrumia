@@ -340,6 +340,79 @@ def check_composition_drift() -> None:
             )
 
 
+DEPRECATED_APP_KEYS = ("implementation", "practices")
+
+
+def check_deprecated_composition_keys() -> None:
+    """Warn once when .scrumia/config.yaml still carries what extends: replaced (ADR-0019).
+
+    Both spellings are read during the deprecation window, so this warns rather than
+    errors — a project mid-migration still passes CI. Matched structurally (which
+    top-level section a line sits in), never on the word alone: settings.practices.<module>
+    and settings.implementation.<module> are settings namespaces a practice or
+    implementation module still reads, not the retired slot keys that happen to share a
+    word with them (same trap the scrumia-init migration itself had to name).
+    """
+    config_path = ROOT / ".scrumia" / "config.yaml"
+    if not config_path.exists():
+        return
+
+    found: set[str] = set()
+    section: str | None = None
+    for raw in config_path.read_text(encoding="utf-8").splitlines():
+        line = raw.split("#", 1)[0].rstrip()
+        if not line.strip():
+            continue
+        if not raw[:1].isspace():
+            section = line.split(":", 1)[0].strip()
+            if section == "composition":
+                found.add("composition:")
+            continue
+        if section == "apps":
+            key = line.strip().split(":", 1)[0]
+            if key in DEPRECATED_APP_KEYS:
+                found.add(f"apps[].{key}:")
+
+    if found:
+        warn(
+            f"{config_path.relative_to(ROOT)}: still uses deprecated "
+            f"{', '.join(sorted(found))} — extends: replaces them (ADR-0019); both "
+            f"spellings are read for now, but run scrumia-init to convert this project"
+        )
+
+
+CROSS_MODULE_PATH_RE = re.compile(r"\bplugins/([\w-]+)/")
+
+
+def check_module_citations_by_name() -> None:
+    """A module cites another only by the name the harness resolves, never a path.
+
+    check_doc_links and check_skill_scripts already gate a link or script call that
+    leaves its own plugin (ADR-0018) — resolution and containment. This is narrower and
+    additional: even a path that would resolve is banned, in prose that is neither a
+    markdown link nor a script call — the class of citation those two checks do not see,
+    because a plugin literally spelling out another module's path can sit in a fenced
+    example block with no link syntax at all. A path cannot be counted as a real edge by
+    the coverage calculation modular-composition/qa.md AC-2 depends on; naming is what
+    AC-11 requires instead.
+    """
+    for md in sorted(ROOT.glob("plugins/**/*.md")):
+        rel = md.relative_to(ROOT)
+        own_plugin = plugin_root_of(rel)
+        if own_plugin is None:
+            continue
+        text = md.read_text(encoding="utf-8")
+        for match in CROSS_MODULE_PATH_RE.finditer(text):
+            cited = match.group(1)
+            if cited == own_plugin.name:
+                continue  # a module citing its own path is not a cross-module citation
+            error(
+                f"{rel}: cites '{cited}' by a path (plugins/{cited}/…) — name the module "
+                f"instead, in prose the harness resolves (AC-11); a path is not a real "
+                f"edge the coverage calculation can count"
+            )
+
+
 def check_feature_mandatory_files() -> None:
     """Every leaf feature carries index.md, qa.md, CHANGELOG.md and business.md.
 
@@ -627,6 +700,8 @@ def main() -> int:
     check_published_names()
     check_french_leftovers()
     check_composition_drift()
+    check_deprecated_composition_keys()
+    check_module_citations_by_name()
     check_feature_mandatory_files()
     check_no_tracker_refs()
     check_business_value_heading()

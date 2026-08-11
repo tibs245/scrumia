@@ -222,6 +222,162 @@ def write_feature_index(feature: Path, sections: str = "") -> None:
     )
 
 
+# --- check_deprecated_composition_keys ---
+
+def write_config(root: Path, body: str) -> Path:
+    scrumia_dir = root / ".scrumia"
+    scrumia_dir.mkdir(parents=True, exist_ok=True)
+    path = scrumia_dir / "config.yaml"
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def run_warnings(root: Path, check_name: str) -> list[str]:
+    """Point one validate.py check at a fixture root and read its warnings."""
+    v.ROOT = root
+    v.WARNINGS.clear()
+    getattr(v, check_name)()
+    return list(v.WARNINGS)
+
+
+def test_top_level_composition_key_is_flagged() -> None:
+    print("a top-level composition: map is a deprecation warning")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_config(tmp, "project:\n  name: \"x\"\n\ncomposition:\n  specs: scrumia-specs\n")
+        warnings = run_warnings(tmp, "check_deprecated_composition_keys")
+        check("composition: is named", any("composition:" in w for w in warnings), str(warnings))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_per_app_practices_and_implementation_are_flagged_once() -> None:
+    print("apps[].implementation: and apps[].practices: across two apps warn once, not four times")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_config(tmp, (
+            "apps:\n"
+            "  - name: \"site\"\n"
+            "    implementation: null\n"
+            "    practices: []\n"
+            "  - name: \"tools\"\n"
+            "    implementation: null\n"
+            "    practices: []\n"
+        ))
+        warnings = run_warnings(tmp, "check_deprecated_composition_keys")
+        check("exactly one warning", len(warnings) == 1, str(warnings))
+        check("both keys named in it",
+              "apps[].implementation:" in warnings[0] and "apps[].practices:" in warnings[0],
+              warnings[0])
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_settings_practices_namespace_is_not_flagged() -> None:
+    print("settings.practices.<module> is a settings namespace a module still reads, not the retired slot")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_config(tmp, (
+            "settings:\n"
+            "  practices:\n"
+            "    scrumia-practice-tdd:\n"
+            "      test_runner: cargo\n"
+        ))
+        warnings = run_warnings(tmp, "check_deprecated_composition_keys")
+        check("no findings — matched by section, not by word", warnings == [], str(warnings))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_extends_only_config_is_not_flagged() -> None:
+    print("a config already migrated to extends: produces no deprecation warning")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_config(tmp, (
+            "extends:\n"
+            "  - scrumia-specs\n\n"
+            "apps:\n"
+            "  - name: \"site\"\n"
+            "    extends: [scrumia-impl-solidjs]\n"
+        ))
+        warnings = run_warnings(tmp, "check_deprecated_composition_keys")
+        check("no findings", warnings == [], str(warnings))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_missing_config_is_not_flagged() -> None:
+    print("a project with no .scrumia/config.yaml at all is not an error for this check")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        warnings = run_warnings(tmp, "check_deprecated_composition_keys")
+        check("no findings", warnings == [], str(warnings))
+    finally:
+        shutil.rmtree(tmp)
+
+
+# --- check_module_citations_by_name (AC-11) ---
+
+def test_bare_path_citation_of_another_module_is_caught() -> None:
+    print("citing a sibling module by a bare 'plugins/<module>/…' path in prose is an error")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin_skill(
+            tmp,
+            "Before writing code here, read plugins/scrumia-other/skills/scrumia-do/SKILL.md.\n",
+        )
+        errors = run_check(tmp, "check_module_citations_by_name")
+        check("the path citation is reported",
+              any("cites 'scrumia-other' by a path" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_path_citation_inside_a_fenced_example_is_still_caught() -> None:
+    print("the same citation sitting in a fenced code example is still caught — no link, no script call")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin_skill(
+            tmp,
+            "```markdown\n"
+            "Before writing code here, read plugins/scrumia-other/skills/scrumia-do/SKILL.md\n"
+            "```\n",
+        )
+        errors = run_check(tmp, "check_module_citations_by_name")
+        check("the fenced-example citation is reported",
+              any("cites 'scrumia-other' by a path" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_citing_own_module_by_path_is_not_flagged() -> None:
+    print("a module spelling out its own path is not a cross-module citation")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin_skill(tmp, "This lives at plugins/scrumia-widget/skills/scrumia-do/.\n")
+        errors = run_check(tmp, "check_module_citations_by_name")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_citing_a_module_by_name_is_not_flagged() -> None:
+    print("naming the other module in backticks, with no path, passes")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_plugin_skill(tmp, "Ask `scrumia-other`'s main skill for the acceptance-file vocabulary.\n")
+        errors = run_check(tmp, "check_module_citations_by_name")
+        check("no findings", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_repo_plugins_pass_the_real_citation_gate() -> None:
+    print("the repo's own plugins/**/*.md pass check_module_citations_by_name as it runs today")
+    errors = run_check(REPO, "check_module_citations_by_name")
+    check("no cross-module path citation in the real tree", errors == [], str(errors))
+
+
 # --- check_feature_mandatory_files ---
 
 def test_feature_missing_mandatory_file_is_caught() -> None:
@@ -926,6 +1082,16 @@ def main() -> int:
                  test_canonical_url_naming_no_file_is_caught,
                  test_canonical_url_naming_a_real_file_passes,
                  test_non_executable_published_name_is_caught,
+                 test_top_level_composition_key_is_flagged,
+                 test_per_app_practices_and_implementation_are_flagged_once,
+                 test_settings_practices_namespace_is_not_flagged,
+                 test_extends_only_config_is_not_flagged,
+                 test_missing_config_is_not_flagged,
+                 test_bare_path_citation_of_another_module_is_caught,
+                 test_path_citation_inside_a_fenced_example_is_still_caught,
+                 test_citing_own_module_by_path_is_not_flagged,
+                 test_citing_a_module_by_name_is_not_flagged,
+                 test_repo_plugins_pass_the_real_citation_gate,
                  test_feature_missing_mandatory_file_is_caught,
                  test_feature_with_all_mandatory_files_passes,
                  test_feature_index_invented_section_is_caught,
