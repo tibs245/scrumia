@@ -94,7 +94,7 @@ the label is a signal, not the source of truth.
 
 | Label | Read by | For |
 |---|---|---|
-| `scope/*` | `scrumia-teams/scripts/pick-model.sh` | the scope × risk cell of the execution matrix |
+| `scope/*` | `scrumia-teams/scripts/pick-model.sh`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-teams/scripts/pick-model.sh` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
