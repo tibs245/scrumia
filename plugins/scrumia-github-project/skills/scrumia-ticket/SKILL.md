@@ -135,6 +135,7 @@ Skip this step in the degraded case from Step 1: no specs module documented, no 
 Otherwise, if the ticket changes a behavior, the spec changes **before** the code — not after:
 
 - Consult the feature's `feature_index` file for which of its `catalog` files covers what changed — its "why this file exists" listing is what points you there without this skill assuming a fixed name. On the producer side if it's an interface contract.
+- **Before writing a word into that file, load the specs module's own authoring rules** — not just which file to open, but how it wants that file written. For `scrumia-feature`, that's [its `SKILL.md`](../../../scrumia-specs/skills/scrumia-feature/SKILL.md) §§ *Never put history in a spec* and *`business.md`'s boundary*: the must/must-not checklist that keeps a spec stating current truth rather than narrating how it got there. A different specs module without a documented authoring checklist degrades to "no authoring checklist documented — proceed on judgment" rather than silently skipping this bullet.
 - Update that file, and the file named by `acceptance_file` if the criteria themselves move.
 - In every case, add an entry to the file named by `changelog`, with the issue number.
 
