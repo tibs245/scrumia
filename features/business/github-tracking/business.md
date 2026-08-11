@@ -33,7 +33,7 @@ A ticket crosses six columns, in order:
 
 A card just added to the board — `gh issue create --project` or `gh project item-add`
 — carries **no Status at all**, not `Backlog`: it sits in none of the six until someone
-places it. `board.sh read` reports that as its own `(no status)` group rather than
+places it. `scrumia-board read` reports that as its own `(no status)` group rather than
 folding it into `Backlog`, because a card nobody placed is worth seeing, not papering
 over.
 
@@ -74,15 +74,15 @@ sit. `qa.md` specifies the board-reading scenario this implies.
 
 ## Vocabulary
 
-**Milestone = sprint.** One milestone bounds one sprint. `board.sh ready --milestone
+**Milestone = sprint.** One milestone bounds one sprint. `scrumia-board ready --milestone
 "<name>"` is a question with an answer — what is ready to start, for this sprint.
-`board.sh ready` without a milestone is not a sprint, it is the whole ready column.
+`scrumia-board ready` without a milestone is not a sprint, it is the whole ready column.
 
 **Epic = a ticket whose children are native GitHub sub-issues**, linked with
 `gh issue edit <parent> --add-sub-issue <child>`, never with a checklist typed into the
 parent's body. GitHub computes the parent's progress itself
 (`subIssuesSummary` → `{total, completed, percentCompleted}`), read through
-`board.sh epic <n>`. A checklist is a second count: it stops matching the moment a
+`scrumia-board epic <n>`. A checklist is a second count: it stops matching the moment a
 child closes without someone ticking the box, so recounting children by hand is not an
 alternative reading, it is a bug waiting to happen.
 
@@ -94,11 +94,11 @@ the label is a signal, not the source of truth.
 
 | Label | Read by | For |
 |---|---|---|
-| `scope/*` | `scrumia-teams/scripts/pick-model.sh`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
-| `risk/*` | `scrumia-teams/scripts/pick-model.sh` | the same matrix, the other axis |
+| `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
+| `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
 
-`scope/*` has exactly one programmatic reader, `pick-model.sh`, and what its cell means
+`scope/*` has exactly one programmatic reader, `scrumia-pick-model`, and what its cell means
 is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —
 routes by the diff's actual scope, not by this label
 (`docs/adr/0005-validation-gates.md`), because a wrong label is precisely the failure a
@@ -210,7 +210,7 @@ exactly like a complete answer. A board past that size read without an explicit 
 or filter is silently half-read, and nothing in the raw output says so.
 
 Consequently: no skill composes `gh project` calls directly. Every board read goes
-through `board.sh`, which always passes an explicit limit, compares the result against
+through `scrumia-board`, which always passes an explicit limit, compares the result against
 GitHub's own `totalCount`, and reports `truncated: true` the moment the two disagree.
 A widened `--limit` is a workaround for one read, not a fix — the rule is to filter
 (by milestone, by status, by query), not to keep raising a number that a bigger board

@@ -37,7 +37,7 @@ settings:
         enabled: true
       - name: tech
         enabled: true
-    execution:               # read by scripts/pick-model.sh — see Step 3
+    execution:               # read by scrumia-pick-model — see Step 3
       unlabeled: sonnet
       unrated_risk: medium
       labels:
@@ -72,7 +72,7 @@ Ask the user what they want to change, presenting the consequences rather than t
 
 Adding a role is possible: it takes an agent file in `agents/`, a scope that overlaps no existing role, and an explicit line of refusal. A role without a line of refusal is a duplicate.
 
-**Entries carrying a `from:` key are not yours.** Another module can fill a slot and ship the standing role that guards it — `scrumia-design` does this with `designer` ([ADR-0014](../../../../docs/adr/0014-roles-ship-with-their-capability.md)). Its definition lives in that module, not in `agents/`, and removing the entry here silently unplugs it. Report such a role as active, leave it alone, and send any change to it back to its own module's setup skill.
+**Entries carrying a `from:` key are not yours.** Another module can fill a slot and ship the standing role that guards it — `scrumia-design` does this with `designer` ([ADR-0014](https://github.com/tibs245/scrumia/blob/main/docs/adr/0014-roles-ship-with-their-capability.md)). Its definition lives in that module, not in `agents/`, and removing the entry here silently unplugs it. Report such a role as active, leave it alone, and send any change to it back to its own module's setup skill.
 
 ## Step 3 — Set the execution policy
 
@@ -84,10 +84,10 @@ Which model is the strong one is not something the names say. The cells climb a 
 
 **Seed no cell above `opus`.** `fable` sits at the top of that order and bills at twice opus per token, which is exactly why it must not arrive through a default: a matrix that names it spends at that rate on every ticket the cell matches, silently, forever. If the human wants a specific ticket run there, they say so on that ticket — a one-off instruction the executor follows, not a policy written into the grid. Treat a `fable` cell you find in an existing config as a question for the human, not as a value to preserve.
 
-Nobody reads this matrix by hand, including you. `scripts/pick-model.sh <issue>` reads it and answers:
+Nobody reads this matrix by hand, including you. `scrumia-pick-model <issue>` reads it and answers:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../scripts/pick-model.sh 42
+scrumia-pick-model 42
 ```
 
 ```json
@@ -100,7 +100,7 @@ Callers act on `instruction`. A skill that re-derives the decision from the YAML
 
 A cell holds a model, or `split_or_<model>`. The second form is a preference, not a verdict: **try to split, and if the work is genuinely indivisible, run it on the named model and record why the split was refused.** Oversized work is a reason to think again, not a dead end — which is why the fallback travels with the decision rather than leaving the caller stuck.
 
-That record, and the one a human override leaves, go on the ticket itself — what the policy chose, what ran, and why — so that a cell deviated from again and again can be counted rather than remembered. Where exactly it lands is the tracker module's to say; `pick-model.sh`'s answer carries the obligation, not the venue.
+That record, and the one a human override leaves, go on the ticket itself — what the policy chose, what ran, and why — so that a cell deviated from again and again can be counted rather than remembered. Where exactly it lands is the tracker module's to say; `scrumia-pick-model`'s answer carries the obligation, not the venue.
 
 Two keys cover what the labels don't say. `unlabeled` is the model for a ticket carrying no scope label at all — it runs, and the answer asks for refinement rather than inventing an estimate nobody made. `unrated_risk` is the risk column assumed when only the scope is known; the answer flags the assumption so it can be contradicted.
 

@@ -6,15 +6,15 @@ which field, which retry — not why the rule exists.
 
 ## Confirming a short read (AC-4)
 
-A filtered, non-empty `board.sh` read confirms its own `totalCount` before returning
+A filtered, non-empty `scrumia-board` read confirms its own `totalCount` before returning
 it: it re-issues the same query, backing off between checks, until two consecutive
 reads agree or a small retry budget runs out. This is retry-with-backoff internal to
-`board.sh`; it changes no output field — a caller reads the same JSON shape whether
+`scrumia-board`; it changes no output field — a caller reads the same JSON shape whether
 the first read landed at rest or had to converge across a few retries.
 
 ## The `closed_without_pr` field shape (AC-8)
 
-`board.sh read`'s items carry the issue's own `state` (`OPEN`/`CLOSED`), fetched in
+`scrumia-board read`'s items carry the issue's own `state` (`OPEN`/`CLOSED`), fetched in
 one batched call rather than one per item. A closed card outside the `Done` column —
 the only place a close is expected — is pulled out of the column it reports as live
 work and returned instead under `closed_without_pr`, with a `closed_without_pr_count`

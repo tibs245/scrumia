@@ -9,6 +9,6 @@ $ARGUMENTS
 
 Treat any argument as the scope to report on — a milestone, or a board query. With none, report the whole project.
 
-Read the board through `scripts/board.sh`, never a composed `gh project` call: an unfiltered read is silently truncated at 30 items, and a truncated board reads exactly like a short one.
+Read the board through `scrumia-board`, never a composed `gh project` call: an unfiltered read is silently truncated at 30 items, and a truncated board reads exactly like a short one.
 
 Report state; change none of it. Moving a card is the job of the step that earns the move.

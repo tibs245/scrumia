@@ -41,10 +41,10 @@ If absent, propose these values and write them. The columns reflect the real flo
 | Label | Usage | Read by |
 |---|---|---|
 | `scrumia` | Marks tickets driven by the composition | filters, to separate them from tickets opened by hand |
-| `scope/S` `scope/M` `scope/L` `scope/XL` | How far the change reaches, set at refinement | `pick-model.sh`, and `scrumia-manager` at entry (routes who is asked); the PR review is routed by the diff, not by this label |
-| `risk/low` `risk/medium` `risk/high` `risk/critical` | What it costs to get this wrong | `pick-model.sh` |
+| `scope/S` `scope/M` `scope/L` `scope/XL` | How far the change reaches, set at refinement | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked); the PR review is routed by the diff, not by this label |
+| `risk/low` `risk/medium` `risk/high` `risk/critical` | What it costs to get this wrong | `scrumia-pick-model` |
 | `needs-<role>` | Escalation requested to a role — one per active role in `settings.team.roles`, including those a non-team module provides (`needs-design`) | `scrumia-manager` |
-| `epic` | Marks a unit of value; its children are **native sub-issues** | `scrumia-status`, `board.sh epic` |
+| `epic` | Marks a unit of value; its children are **native sub-issues** | `scrumia-status`, `scrumia-board epic` |
 
 `gh label create <name> --color <hex> --description <text>`, ignoring duplicate errors.
 
@@ -63,7 +63,7 @@ gh label create "risk/high"     --color d93f0b --description "Money, personal da
 gh label create "risk/critical" --color b60205 --description "Irreversible: destructive migration, payment, outbound notification"
 ```
 
-The `scope/*` wording turns on **a rule's blast radius, not a file's location**: a rule read beyond its feature is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule is not `scope/L` on that clause, however many spec files its diff lists. The test is the execution policy's to state — [`features/business/execution-policy/business.md`](../../../../features/business/execution-policy/business.md) § *The scope axis measures reach, not medium* here, or whichever feature owns the axis in the project being set up — and each description carries the tier condition [ADR-0015](../../../../docs/adr/0015-scope-measures-reach.md) states, word for word, followed by the path of the feature that owns the test. Substitute that path when another feature owns it; do not re-word the condition to make room. A longer path than this project's needs the owning feature's name instead of its full path — `scope/L` above sits at exactly 100 characters, so anything longer is rejected with a 422 and `gh label create` fails mid-setup. The reference has to stay findable, not stay long. Read the descriptions back with `gh label list` once seeded: nothing else catches an over-budget one.
+The `scope/*` wording turns on **a rule's blast radius, not a file's location**: a rule read beyond its feature is a contract another app depends on, a vocabulary another feature reads, an invariant another feature enforces. A ticket that edits files under the specs root and changes no such rule is not `scope/L` on that clause, however many spec files its diff lists. The test is the execution policy's to state — [`features/business/execution-policy/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/execution-policy/business.md) § *The scope axis measures reach, not medium* here, or whichever feature owns the axis in the project being set up — and each description carries the tier condition [ADR-0015](https://github.com/tibs245/scrumia/blob/main/docs/adr/0015-scope-measures-reach.md) states, word for word, followed by the path of the feature that owns the test. Substitute that path when another feature owns it; do not re-word the condition to make room. A longer path than this project's needs the owning feature's name instead of its full path — `scope/L` above sits at exactly 100 characters, so anything longer is rejected with a 422 and `gh label create` fails mid-setup. The reference has to stay findable, not stay long. Read the descriptions back with `gh label list` once seeded: nothing else catches an over-budget one.
 
 A GitHub label description stops at 100 characters, and the owner reference spends 38 of them. That budget is why the conditions are written as tightly as they are — and why the same tight wording is what the refinement skill's table, the manager's routing table and ADR-0015 all carry. The narrowest surface sets the wording for every surface, so that a labeller reading one of them is reading the same sentence as a labeller reading any other. Re-run this step after the test changes; nothing else propagates it to GitHub.
 
@@ -75,7 +75,7 @@ If the project already labels its tickets, keep its vocabulary and map it in `se
 
 A board is not a list you scroll; past a hundred cards, nobody reads it whole and neither should a skill. Three GitHub mechanisms carry that, and ScrumIA uses all three rather than paginating:
 
-- **Milestones are sprints.** One milestone per sprint gives every read a natural boundary: `board.sh ready --milestone "Sprint 12"` is a question with an answer, `board.sh ready` is a backlog dump. Create them as sprints are planned, not upfront.
+- **Milestones are sprints.** One milestone per sprint gives every read a natural boundary: `scrumia-board ready --milestone "Sprint 12"` is a question with an answer, `scrumia-board ready` is a backlog dump. Create them as sprints are planned, not upfront.
 - **Epics are native sub-issues**, not a naming convention. GitHub computes `subIssuesSummary` itself; a hand-maintained checklist in a parent issue's body is a second source of truth that drifts the first time someone closes a child without ticking the box.
 - **Labels are filters before they are documentation.** Every label above earns its place by being something a query selects on.
 
@@ -121,12 +121,12 @@ Once the project exists (created or found), resolve and persist what the other s
 - `tracker.board.field_id` — the Status field's ID.
 - `tracker.board.options.<column>` — one option ID per configured column.
 
-`${CLAUDE_SKILL_DIR}/../../scripts/board.sh columns` returns the field id and every option id in the shape above — run it and copy the result rather than composing `gh project field-list` by hand. Readers of these fields: `scrumia-ticket` (card moves at execution), `scrumia-status` (board read), `scrumia-refine` (`Backlog` → `Ready for dev`), all of them through `board.sh`. The syntax and the traps behind it are in [`scrumia-status`'s reference](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md).
+`scrumia-board columns` returns the field id and every option id in the shape above — run it and copy the result rather than composing `gh project field-list` by hand. Readers of these fields: `scrumia-ticket` (card moves at execution), `scrumia-status` (board read), `scrumia-refine` (`Backlog` → `Ready for dev`), all of them through `scrumia-board`. The syntax and the traps behind it are in [`scrumia-status`'s reference](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md).
 
 Once written, verify the whole chain in one call:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../scripts/board.sh doctor
+scrumia-board doctor
 ```
 
 It reports authentication, the `project` scope, and whether the board is actually reachable under the configured owner. A green `doctor` is the difference between "setup finished" and "setup will fail on the first ticket".

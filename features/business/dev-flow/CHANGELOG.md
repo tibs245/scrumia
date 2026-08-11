@@ -8,6 +8,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Changed
 - Breaking: no
 
+## 2026-08-11 — The execution policy's tool is cited as `scrumia-pick-model`, the name it publishes
+- Issue: #185
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-11 — Brainstorming content validation gate (Gate 0)
 - Issue: #142
 - Category: Added
