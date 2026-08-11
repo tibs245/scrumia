@@ -132,7 +132,7 @@
   "install_c1": "# ajouter la place de marché, installer le kernel",
   "install_c2": "# puis, dans le repo à configurer",
   "install_composition_heading": "Votre composition",
-  "install_composition_intro": "Voici ce que ScrumIA voit dans ce dépôt, lu depuis <code>.scrumia/config.yaml</code>. Rien n'est deviné : chaque slot est réel, chaque module installé ou vide à dessein.",
+  "install_composition_intro": "Voici ce que ScrumIA voit dans ce dépôt, lu depuis <code>.scrumia/config.yaml</code>. Rien n'est deviné : chaque slot que le fichier déclare est affiché ici, et un slot laissé vide le serait aussi — le vide est une réponse, pas un oubli.",
   "install_composition_output": "ScrumIA composition — ScrumIA (tibs245/scrumia)\n\n  Slot       Module\n  ─────────────────────────────────\n  specs      scrumia-specs\n  tracker    scrumia-github-project\n  team       scrumia-teams\n  discovery  scrumia-discovery\n  design     scrumia-design\n\n  App    Path   Implementation  Practices\n  ───────────────────────────────────────\n  site   site   none            none\n  tools  tools  none            none\n\n  Change any of this with /scrumia-core:scrumia-compose.",
   "install_after": "<code>scrumia-init</code> cartographie vos apps, propose une composition, offre la commande d'installation pour chaque module dont il a besoin, et écrit la composition dans <code>CLAUDE.md</code>. Le relancer vérifie au lieu de réécrire."
 }
