@@ -180,6 +180,8 @@ Consumption doesn't mean loading every module's full reference. Following the ru
 
 A new module is justified when **a real project would want to fill that slot differently**. Otherwise, it's one more skill in an existing module.
 
+**Which existing module is decided by placement, not by prose: a skill sits in the module that owns the knowledge its finding needs, never in the module that owns its output.** Every shipped audit skill is the proof — `scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`, `scrumia-solidjs-audit`, `scrumia-design-audit` sit in `practices`, `implementation` and `design`, none in `tracker`, even though every one of them ends in issues filed there. "The module that already owns the output" would put a debt audit in `tracker` and force it to carry Rust, SOLID and design signal all at once, or reduce to a wrapper over skills that already exist — check a proposed placement against `ls plugins/*/skills/` before accepting it, since the capability it describes is often already shipped.
+
 1. Create `plugins/scrumia-<name>/` with its `.claude-plugin/plugin.json`
 2. Fill a slot — existing, or new and documented
 3. Document the settings read under `settings.<slot>`
