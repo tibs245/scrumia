@@ -3,6 +3,15 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `scrumia-review` checks the worktree's `HEAD` against `origin/<branch>` and any SHA a
+  review brief names before judging, runs a negative control against any `gh search`
+  command a diff writes into a spec, skill or script, flags a restated rule beside a
+  `features/` citation that duplicates a trigger or obligation rather than a reason,
+  flags a cross-cutting rule newly nested under a SKILL.md step past an earlier yield
+  point, greps for stale cross-skill behavior claims on a `plugins/` change, and checks
+  that a reservation's issue carries a board card before calling it handled.
+
 ### Changed
 - The board tool is published as the name `scrumia-board`, which the harness puts on the
   session's PATH, and every skill and command runs that name instead of a path. Reaching it
