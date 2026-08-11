@@ -64,6 +64,29 @@ whether that can be measured.
 
 The catalog is open: `perf.md`, `i18n.md`, `analytics.md` are legitimate if the feature justifies them. When you add one that's not in the catalog, document it in `references/catalog.md` with its boundary in the same three-part shape — otherwise the next person will reinvent a different name for the same thing.
 
+## `business.md`'s boundary
+
+`business.md` is sourced from business rules and needs alone — persona, scenario, need
+— and nothing else. What flows out of it differs by reader:
+
+- `qa.md`'s acceptance criteria are downstream of `business.md`'s rules, one way only —
+  `qa.md` reads `business.md`, `business.md` never reads `qa.md` back to justify a rule.
+- An ADR is not always downstream. `business.md` may point to one as the live authority
+  on something it states ("the type vocabulary is ADR-0017's"), and some ADRs point back
+  to `business.md` for the concrete test they only decide the shape of
+  (`docs/adr/0015-scope-measures-reach.md` reads `execution-policy/business.md` this way).
+
+```mermaid
+graph LR
+    N["Business rules & needs<br/>persona · scenario · need"] -->|source| B[business.md]
+    B -->|cites, never restates| A[ADRs]
+    B -->|read by| Q["qa.md acceptance criteria"]
+```
+
+Either direction, the relationship with an ADR is a **pointer, not a narration**:
+`business.md` never restates what an ADR decided, quotes its former wording, or explains
+how the decision was reached — it names which one is current authority and stops there.
+
 ## Composition block
 
 This module's contract with the rest of ScrumIA — see `docs/adr/0016-global-feature-index.md`, which supersedes `docs/adr/0012-specs-contract.md`. `scrumia-init` copies this block verbatim into `CLAUDE.md`'s `## Specs contract` section, between the `scrumia:start` markers. Consumers (`scrumia-ticket`, `scrumia-split`, the team agents) read it from there instead of hard-coding this module's file names; a module replacing this one at the `specs` slot must ship its own block in the same shape.
@@ -101,7 +124,31 @@ These thresholds are guardrails, not laws. Exceeding one calls for checking, not
 
 ## Never put history in a spec
 
-A spec contains only **its current version**. No "formerly", no "since v2", no struck-through sections.
+A spec contains only **its current version**. What that means, concretely:
+
+**A feature file must contain:**
+- The current rule or behavior, stated in the present tense
+- A live ownership pointer to another spec or ADR that is the current authority on
+  something the file states (e.g. "the type vocabulary is ADR-0017's") — that's
+  ownership, not history
+- In `qa.md` specifically: testable criteria (Given/When/Then scenarios, identified by
+  `AC-n`) — the other files carry no obligation to
+
+**A feature file must not contain:**
+- Quoted or paraphrased former wording — no "formerly", no "since v2", no
+  struck-through sections
+- Past-tense narration of how or why a change happened — a sentence that describes the
+  change instead of the current rule. "By human ruling", "retired", "absorbed", "folded
+  into" are the usual tell, not an exhaustive list to pattern-match on: the same words
+  read fine describing current behavior ("not folded into `Backlog`"), so judge the
+  sentence, not the token
+- A ticket, issue or PR number anywhere outside `CHANGELOG.md`
+- A specific commit, sprint or other past event cited as evidence for why a rule now
+  reads the way it does
+
+Run this checklist on the file you're about to write, not only on review — a spec that
+narrates how it got here is the most frequent defect this module's audits find (see
+*Auditing a feature*, below).
 
 History lives in three places, and only one per use:
 
