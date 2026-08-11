@@ -15,13 +15,11 @@ This repo's `CLAUDE.md:29-30` — *"`plugins/` is the product itself … no impl
 module speaks for it"* — sits **inside** the markers and is **not** in the template.
 It is hand-written and destructible.
 
-**Why:** found reviewing #31. `scrumia-ticket` Step 4 was changed to instruct agents that
-"`CLAUDE.md` says which paths no implementation module speaks for, and read it there".
-Two failures at once: a re-run of `scrumia-init` deletes the sentence in this repo, and in
-any *fresh consumer install* the sentence was never written, so a distributable module
-asserts content that `scrumia-core` does not emit. Same family as
-[[contract-block-carries-names-not-status]] — reading a guarantee into `CLAUDE.md` that
-its generator never makes.
+**Why this trips reviews up:** a plugin skill can be tempted to point at a hand-written
+sentence inside the markers as if it were a guaranteed part of every consumer's
+`CLAUDE.md`. Two failures at once follow: a re-run of `scrumia-init` deletes the sentence
+in *this* repo, and in any fresh consumer install the sentence was never written, so a
+distributable module asserts content that `scrumia-core` does not emit.
 
 **How to apply:** before approving any skill that says "read it in `CLAUDE.md`", open
 `scrumia-core/skills/scrumia-init/SKILL.md` Step 5 and confirm the template actually emits
