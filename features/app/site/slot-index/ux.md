@@ -9,12 +9,17 @@ case, not restated here.
 
 ## States
 
-**Exactly seven rows, no eighth example.** Every row is one of the project's
-real slots, read from `.scrumia/config.yaml` at the time this was written —
-`specs`, `tracker`, `team`, `discovery`, `implementation`, `practices`,
-`design`. None is illustrative; a made-up "and if you leave a slot empty?"
-row would be exactly the kind of claim `design/identity.md`'s "mechanism over
-claim" rule exists to block.
+**Exactly six rows, no seventh example.** Every row is one of the project's
+real questions, read from `.scrumia/config.yaml` at the time this was written —
+`specs`, `tracker`, `team`, `discovery`, `implementation`, `design`. The row
+that used to be `practices` no longer exists on its own: since
+`docs/adr/0019-extends-replaces-composition-and-practices.md`, a practice is
+declared through the same `extends` list as the app's implementation module,
+so the `implementation` row's fill is what that app's `extends` list names —
+implementation module and practices together, comma-separated, or `nothing
+installed` when the list is empty. None of the six is illustrative; a
+made-up "and if you leave a slot empty?" row would be exactly the kind of
+claim `design/identity.md`'s "mechanism over claim" rule exists to block.
 
 **An empty row states its emptiness in words.** `.slot-fill` reads `nothing
 installed`; the dashed leader reinforces that word but is never the only

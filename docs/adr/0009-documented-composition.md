@@ -1,6 +1,6 @@
 # ADR-0009 — Documented composition, no dynamic resolution
 
-**Status**: accepted — 2026-08-07
+**Status**: accepted — 2026-08-07 — one point amended by [0019](0019-extends-replaces-composition-and-practices.md): what gets derived (`extends`, an actions table) instead of what this ADR named (`composition:`, a slot table). The decision this ADR makes — resolution at composition time, never at call time, no capability registry — stands unmodified.
 
 ## Context
 

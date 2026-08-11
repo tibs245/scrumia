@@ -9,8 +9,8 @@ One scenario per rule in `ux.md`, `tech.md`, `business.md` and `api-contract.md`
 ```gherkin
 Given the `#composer` section of the home page
 When it is inspected
-Then it draws seven rows with `slot-index`'s anatomy — sign, name, question,
-  leader, fill — one per slot of `modular-composition`, and no `<fieldset>`,
+Then it draws six rows with `slot-index`'s anatomy — sign, name, question,
+  leader, fill — one per question of `modular-composition`, and no `<fieldset>`,
   `<legend>` or step number survives
 And every row's fill restates the current composition, so answering a question
   changes what the index says rather than adding to a list of answers
@@ -19,7 +19,7 @@ And every row's fill restates the current composition, so answering a question
 ### AC-2 — Leaving a slot empty is offered as a choice, and its consequence is stated
 
 ```gherkin
-Given any of the seven slots
+Given any of the six rows
 When its row is opened
 Then a `leave it empty` option is among its choices, and its description states
   what that absence costs — a named degradation, never a claim that the agents
@@ -35,9 +35,12 @@ And when it is chosen, the row falls to the empty state — muted name, dashed
 Given a composition chosen in the composer
 When the two artifacts are read
 Then the install block lists `/plugin install` for exactly the modules the
-  seven rows name, and the config block carries `project:`, all five
-  `composition:` keys with `null` spelled out, and one `apps[]` entry per
-  chosen stack with `name`, `path`, `type`, `implementation` and `practices`
+  six rows name, and the config block carries `project:`, a project-level
+  `extends:` list naming only the non-empty project-wide rows (an unchosen
+  one is absent, never spelled as `null` — `extends` has no per-row key to
+  leave empty), and one `apps[]` entry per chosen stack with `name`, `path`,
+  `type` and its own `extends:` list carrying that app's implementation
+  module and its chosen practices together
 And a practice appears only under the apps whose type it applies to
 And each artifact has its own copy button, which copies that artifact's text
 And with JavaScript disabled both artifacts still show the default
@@ -72,9 +75,9 @@ Then no row closes in the other, because the composer's rows are grouped under
 
 ```gherkin
 Given the emitted `.scrumia/config.yaml`
-When any `composition:` key reads `null`
+When a project-wide module is absent from the `extends:` list
 Then a row of the composer offered that choice and the visitor or a preset
-  selected it — in particular `design`, which has its own row rather than a
+  left it empty — in particular `design`, which has its own row rather than a
   silent default
 ```
 
@@ -100,7 +103,7 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
 
 ## Out of scope
 
-- What the seven slots are, their questions, and what an absent capability
+- What the six rows are, their questions, and what an absent capability
   means — owned by `features/business/modular-composition/`.
 - The `#slots` section that reports this repo's own composition — owned by
   `features/app/site/slot-index/`.

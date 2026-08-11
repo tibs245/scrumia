@@ -4,7 +4,7 @@
 
 | Feature | Stratum | Status | In brief |
 |---|---|---|---|
-| [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same seven slots the slot-index feature reports, offered as choices. |
+| [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same six questions the slot-index feature reports, offered as choices. |
 | [ground-and-shell](app/site/ground-and-shell/index.md) | app/site | active | Everything on the site that is not a section: the token vocabulary the pages are written in, the lit ground they sit on, and the chrome… |
 | [hero](app/site/hero/index.md) | app/site | active | The first thing a reader sees: an eyebrow, a three-line architecture-scale headline, one sentence of lead copy, one filled control, Hop's… |
 | [module-pages](app/site/module-pages/index.md) | app/site | active | One page per marketplace module, in every language the site ships, generated rather than written. |
@@ -16,5 +16,5 @@
 | [execution-policy](business/execution-policy/index.md) | business | active | Which model executes a ticket, decided from two labels the manager already sets at refinement: scope/ — how far the change reaches — and… |
 | [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
-| [modular-composition](business/modular-composition/index.md) | business | active | ScrumIA answers a fixed set of project-steering questions — specs, tracking, team, discovery, implementation, practices, design — through… |
+| [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through extends, a flat, unordered list in . |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |

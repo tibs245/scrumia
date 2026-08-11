@@ -9,7 +9,7 @@ One scenario per rule in `ux.md` and `tech.md`. Each scenario must be able to fa
 ```gherkin
 Given a reader with JavaScript disabled, or whose script failed to run
 When the home page loads and they activate a row's summary
-Then all seven rows and their names, questions and fills are readable
+Then all six rows and their names, questions and fills are readable
 And the activated row's answer opens, and the previously open row closes,
   entirely through the browser's native `<details name="slot">` behaviour
 ```
@@ -17,9 +17,9 @@ And the activated row's answer opens, and the previously open row closes,
 ### AC-2 — The empty state is stated in words, not only in stroke style (a11y)
 
 ```gherkin
-Given the `implementation` and `practices` rows, which are empty
-  in this repo's real composition
-When any of them is read, with or without colour vision
+Given the `implementation` row, whose fill is this repo's apps' `extends`
+  lists, empty in this repo's real composition
+When it is read, with or without colour vision
 Then its `.slot-fill` reads `nothing installed`, and its dashed leader is a
   reinforcement of that word, never the only signal
 ```
@@ -43,13 +43,13 @@ And `slot-card/spec.md` no longer exists — migrated, not duplicated
 Given a reader operating by keyboard alone
 When they tab to a row's summary and press Enter or Space
 Then the row opens, a visible focus ring is drawn around the summary in both
-  the light and dark themes, and the same holds for every one of the seven
+  the light and dark themes, and the same holds for every one of the six
   rows
 ```
 
 ## Out of scope
 
-- What the seven slots are, and their questions — owned by
+- What the six questions are — owned by
   `features/business/modular-composition/index.md`.
 - Retiring `design/components/slot-card/preview.html` and its Claude Design
   card — the local retirement is done; the Claude Design side has not caught

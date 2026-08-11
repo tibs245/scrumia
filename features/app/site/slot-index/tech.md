@@ -2,7 +2,7 @@
 
 ## Structure
 
-**No JavaScript opens or closes a row.** `name="slot"` groups the seven
+**No JavaScript opens or closes a row.** `name="slot"` groups the six
 `<details>` elements into one native accordion; opening one closes the last,
 entirely through the browser's own semantics. The alternative — a script
 tracking which row is open — was rejected: `design/components/slot-index/spec.md`

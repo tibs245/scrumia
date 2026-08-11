@@ -24,7 +24,12 @@ being pasted into a repo.
 
 ## Interface constraints
 
-**`implementation` and `practices` are per app.** They are the two slots
-that repeat, so they are checkbox rows, and a practice attaches only to the
-app types it applies to. Assigning a frontend data-fetching practice to a
-backend app is the bug this rule exists to prevent.
+**`implementation` is per app, and its row now carries practices too.** Since
+`docs/adr/0019-extends-replaces-composition-and-practices.md`, a practice is
+declared in the same `extends` list as the app's implementation module — the
+composer's `implementation` row keeps its single-select radio for the
+implementation module and gains checkbox sub-choices for the practices that
+apply to the app's type, both feeding the same per-app `extends` list. A
+practice attaches only to the app types it applies to; assigning a frontend
+data-fetching practice to a backend app is the bug this rule exists to
+prevent, unchanged from before the merge.

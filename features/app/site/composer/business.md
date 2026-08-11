@@ -10,7 +10,7 @@ modularity claim stated everywhere else on the site is abstract until
 someone builds with it — the composer is where "swap a module" stops being a
 sentence and becomes something the visitor just did. Measured: not
 instrumented today — no analytics track how far a visitor gets through the
-seven slots or whether they copy an artifact.
+six rows or whether they copy an artifact.
 
 Business parent: none beyond the site epic.
 

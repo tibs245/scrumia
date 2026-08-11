@@ -4,132 +4,167 @@ One scenario per rule in `business.md`. Each scenario must be able to fail.
 
 ## Nominal
 
-### AC-1 — A slot exists independently of any module filling it
+### AC-1 — An action's requirement exists independently of any module providing it
 
 ```gherkin
-Given the seven slots named in `index.md` (`specs`, `tracker`, `team`,
-  `discovery`, `implementation`, `practices`, `design`)
-When a project has not chosen a module for one of them
-Then `plugins/scrumia-core/scripts/compose-status.sh` still reports it rather
-  than dropping it: for a project-wide slot, its `SLOTS` list still names the
-  slot and the report still prints a row for it, labelled "empty on purpose"
-  or "not declared"; for `implementation` or `practices`, which repeat per
-  app, the affected app's row in the apps table still prints "none" for that
-  column instead of omitting the app or the column
+Given a project's declared steps and the actions they require
+When no module has been configured to provide one of those actions
+Then the action still exists as a requirement — asking "who provides this" stays a
+  valid, answerable question, and nothing in the mechanism treats an unprovided
+  action as though the requirement itself had disappeared
 ```
 
-### AC-2 — A module fills a slot through configuration, not convention
+This asserts BR-1 at its own level of abstraction. What `compose-status.sh` actually
+prints for an unprovided action is AC-8's territory, not this one's — coupling this
+criterion to one script's exact output is the coupling defect this rewrite avoids
+reintroducing.
+
+### AC-2 — Coverage is derived from declared actions, counted by caller, not asserted
 
 ```gherkin
-Given a module's `.claude-plugin/plugin.json` and its own `SKILL.md`
-When a project sets `composition.<slot>: <module-name>` in `.scrumia/config.yaml`
-  and enables the plugin in `.claude/settings.json`
-Then `scrumia-init` names that module for that slot in `CLAUDE.md`'s composition
-  table, and agents read the table rather than inferring the slot from which
-  plugins happen to be installed
+Given a module that declares it provides an action for a project's declared step
+When nothing in the composed project actually reaches that module by name for that
+  action
+Then a coverage report names the action a hole — declared but uncalled — rather than
+  counting it covered on the strength of the declaration alone
+```
+
+### AC-3 — A decision action has exactly one provider; a contribution action may have several
+
+```gherkin
+Given two modules both declaring the same action for the same step
+When that action is a decision (BR-7) — moving a card, picking a model, settling a
+  business rule
+Then the composition reports a conflict at composition time, naming both modules,
+  rather than picking one silently or letting `extends`'s list order arbitrate
+Given the same situation
+When that action is a contribution (BR-7) — reviewing a PR, applying a practice to a
+  Build
+Then both modules are accepted as legitimate providers and neither is reported as a
+  conflict
+```
+
+### AC-4 — Three absence states report distinctly
+
+```gherkin
+Given a project's declared steps
+When an action for one step has no module configured at all, another is explicitly
+  `not-applicable`, and a third is explicitly `human`
+Then a coverage report counts the first as a hole, excludes the second from the
+  coverage denominator entirely, and counts the third as covered — the same input
+  producing three different arithmetic outcomes rather than one absence reading as
+  every other
+```
+
+### AC-5 — A coverage claim names the one recipient set it measures
+
+```gherkin
+Given the four recipient sets (run, kernel, adoption, authoring)
+When a coverage report is produced
+Then it states which set the numbers describe, and a claim covering `run` never
+  presents its ratio as though it accounted for `kernel`, `adoption` or `authoring`
+  as well
 ```
 
 ## Edge cases
 
-### AC-3 — An empty slot is a declared absence, not an oversight
+### AC-6 — `practices` is declared per app, not project-wide
 
 ```gherkin
-Given a project that has not adopted a module for a given slot
+Given a monorepo with two apps, one needing TDD applied to its Build and one not
+When each app declares its own `extends` list under `apps:`
+Then the app that lists `scrumia-practice-tdd` gets it applied to its Build, the app
+  that does not list it gets none, and no project-level `extends` entry can apply a
+  practice module to an app that did not declare it
+```
+
+### AC-7 — Specific beats generic; a project override beats both
+
+```gherkin
+Given an implementation module and a practice module that contradict each other for
+  the same app — the practice recommends a pattern the implementation module refuses
+When an agent applies either while coding in that app
+Then the implementation module's answer wins, and if the project has written
+  `.scrumia/impl/<module>.md` or `.scrumia/practices/<module>.md` for the contested
+  point, the project override wins over both
+```
+
+### AC-8 — An unprovided action is a declared absence, not an oversight
+
+```gherkin
+Given a project whose composition leaves some declared step's action without a
+  provider
 When `.scrumia/config.yaml` is written or regenerated
-Then the slot's key is present with value `null` — never omitted — so a reader
-  can tell "not chosen yet" apart from "no key defined for this at all", and
-  `CLAUDE.md` names the absence in prose beneath its composition table, which
-  lists only the modules actually plugged in
+Then the gap is reported explicitly — never by a silently absent line — so a reader
+  can tell "no provider yet" apart from "no report was ever run", and
+  `scrumia-core/scripts/compose-status.sh` prints each declared step's actions with
+  their provider, their absence state (missing / `not-applicable` / `human`), and
+  drops colour when stdout is not a terminal or `NO_COLOR` is set to a non-empty
+  value
 ```
 
-The table carries no row for an empty slot on purpose: a row naming an absent
-module sends an agent to a skill that does not exist. The declaration BR-2
-requires lives in `.scrumia/config.yaml`'s explicit `null`; `CLAUDE.md` states
-the same absence in the register a reader acts on — a sentence, not a dead row.
-
-### AC-4 — A skill degrades by a named message when the module it needs is absent
+### AC-9 — A skill degrades by a named message when the action it needs is unprovided
 
 ```gherkin
-Given a slot's module is absent at runtime — `CLAUDE.md`'s `## Specs contract`
-  section (or the equivalent section for another slot) is missing because no
-  module is plugged into that slot
-When a skill that would consume that slot's capability runs — for example
-  `scrumia-ticket` reaching its Step 1, needing the specs contract to load the
-  parent feature
-Then it states the gap with a specific, named message — "no specs module
-  documented — ask the human or proceed without spec updates" — and continues
-  the rest of its work in that degraded mode; it does not raise an error, and it
-  does not silently guess a file layout that happens to work for one specs
-  module
+Given an action a skill would consume has no provider in the current composition —
+  for example `scrumia-ticket` reaching its Step 1, needing the specs contract an
+  action nobody provides
+When that skill runs
+Then it states the gap with a specific, named message — "no specs module documented
+  — ask the human or proceed without spec updates" — and continues the rest of its
+  work in that degraded mode; it does not raise an error, and it does not silently
+  guess a file layout that happens to work for one module
 ```
 
-### AC-5 — A module is cited by name in prose, never resolved dynamically
+### AC-10 — A module is cited by name the harness resolves, never by a path
 
 ```gherkin
-Given two modules plugged into different slots that need to interoperate —
-  for example the tracker slot's `scrumia-ticket` reading the specs slot's
-  acceptance-file vocabulary
-When one module's skill needs to reach a capability the other slot owns
-Then it names the slot (or the specific module, where the sentence needs it) in
-  its own prose, and reads whatever that slot's module documented in `CLAUDE.md`
-  — there is no runtime call, verb, or registry that resolves the slot to a
-  module on the agent's behalf
+Given two modules that need to interoperate — for example the tracker's ticket skill
+  reading the specs module's acceptance-file vocabulary
+When one module's skill reaches a capability the other provides
+Then it names the other module in its own prose, in a form the harness resolves —
+  never a relative path — and reads whatever that module documented in `CLAUDE.md`;
+  there is no runtime call, verb, or registry that resolves the name to a module on
+  the agent's behalf
 ```
 
-### AC-6 — A third-party module plugs in without joining the base repo
+A module reaching another by a relative path cannot be counted as a real edge by the
+coverage calculation AC-2 depends on — this criterion is what makes AC-2 measurable,
+not a separate concern from it.
+
+### AC-11 — A third-party module plugs in without joining the base repo
 
 ```gherkin
-Given a slot with no ScrumIA-authored module answering a project's need — for
-  example a tracker module for a system other than GitHub
+Given no ScrumIA-authored module answers a project's need for some action — for
+  example a tracker action for a system other than GitHub
 When a project or a third party writes that module
 Then it ships from its own repository, declared in `marketplace.json` through a
-  `github`, `git-subdir`, `npm` or `archive` source instead of a relative path,
-  and it still only needs to satisfy the three things any module owes (`SKILL.md`,
-  scope, never assume another module is present) to be composable
+  `github`, `git-subdir`, `npm` or `archive` source instead of a relative path, and
+  it still only needs to satisfy the three things any module owes (`SKILL.md`, the
+  actions it provides, never assume another module is present) to be composable
 ```
 
-### AC-7 — A module ships the standing role that guards its slot
+### AC-12 — A module ships the standing role that guards its capability
 
 ```gherkin
-Given a module filling a slot and providing a standing role for that slot's
-  capability, whose definition lives in that module rather than in the team
-  module's agents/ directory
+Given a module providing a capability and shipping the standing role that guards it,
+  whose definition lives in that module rather than in the team module's agents
+  directory
 When the composition is read to find out which roles are active
-Then the role appears in the single settings.team.roles list, carrying a `from:`
+Then the role appears in the single `settings.team.roles` list, carrying a `from:`
   naming its provider, and routing needs no knowledge of where the definition lives
 ```
 
-### AC-8 — The composition is reported from the file, and the two kinds of absence read differently
-
-Sharpens AC-3: the declaration lives in `.scrumia/config.yaml`, and this is what
-a human actually sees of it.
-
-```gherkin
-Given a project whose `.scrumia/config.yaml` names a module for some slots, sets
-  one slot to `null`, and — as the defect BR-2 describes — omits another slot's
-  key entirely
-When `scrumia-core/scripts/compose-status.sh` runs, on its own or as the closing
-  step of `scrumia-init` or `scrumia-compose`
-Then it prints each slot with the module filling it; calls the `null` slot empty
-  on purpose and names the module that would fill it; reports the omitted key as
-  *not declared* instead, so an oversight never reads as a choice; drops colour
-  when stdout is not a terminal or `NO_COLOR` is set to a non-empty value; keeps
-  its columns readable in a narrow terminal; takes no argument in a configured
-  repo; and writes nothing anywhere
-```
-
-The script reports `.scrumia/config.yaml` and stops there. Whether a module named
-in it is actually enabled, and whether `CLAUDE.md` still matches, are AC-2's
-territory and `scrumia-compose`'s job to diagnose around this output.
-
 ## Out of scope
 
-- **Module versioning and migration on a breaking change** — what a major, minor
-  or patch bump means for a project already using a module, how long a renamed thing
+- **Module versioning and migration on a breaking change** — what a major, minor or
+  patch bump means for a project already using a module, how long a renamed thing
   keeps working, and when that project finds out. Specified by
   `features/business/release-versioning/`; this feature only establishes that a module
   exists and can be composed, not how it evolves once adopted.
-- **Any single module's own settings or file layout** — each module documents
-  what it reads under `settings.<slot>` in its own `SKILL.md`; this feature does
-  not duplicate any module's contract, only the shared rule that a contract must
-  exist.
+- **Any single module's own settings or file layout** — each module documents what it
+  reads under its own settings key in its own `SKILL.md`; this feature does not
+  duplicate any module's contract, only the shared rule that a contract must exist.
+- **The `x-<module>/<action>` opaque-prefix escape hatch for third-party action names**
+  — reserved, not adopted, by `docs/adr/0019-extends-replaces-composition-and-practices.md`.
+  No acceptance criterion exists for a mechanism this feature does not yet implement.

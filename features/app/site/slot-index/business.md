@@ -3,7 +3,7 @@
 ## Value
 
 For a visitor who wants to know what this repo itself runs on. It brings the
-seven questions `modular-composition` defines, each shown with what
+six questions `modular-composition` defines, each shown with what
 currently answers it — or the honest admission that nothing does — so a
 visitor sees the mechanism rather than taking a claim on faith. It matters
 because "modular" is a claim any project can make; showing the actual
