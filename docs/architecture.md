@@ -44,7 +44,7 @@ A feature is a directory of targeted files. The optional ones are created only i
 
 `qa.md` is central rather than an appendix: acceptance criteria carry stable identifiers, are written before the implementation, and become the tests.
 
-The price: a bit more judgment at writing time than with a fixed template. See [`format-feature.md`](format-feature.md) and [ADR-0004](adr/0004-feature-splitting.md).
+The price: a bit more judgment at writing time than with a fixed template. See [`format-feature.md`](../plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md) and [ADR-0004](adr/0004-feature-splitting.md).
 
 ### `scrumia-github-project` — state outside the repo
 
@@ -126,7 +126,7 @@ One repo per project. The feature lives next to the code it describes, so the ag
 - [`modules.md`](modules.md) — the existing modules and their scope
 - [`modules-implementation.md`](modules-implementation.md) — the contract of an implementation module
 - [`agents.md`](agents.md) — the three roles
-- [`format-feature.md`](format-feature.md) — the chosen spec format
+- [`format-feature.md`](../plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md) — the chosen spec format, shipped beside `scrumia-feature`
 - [`format-changelog.md`](format-changelog.md) — what a changelog owes its reader
 - [`dev-flow.md`](dev-flow.md) — the end-to-end flow
 - [`roadmap.md`](roadmap.md) — the current progress

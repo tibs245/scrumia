@@ -131,7 +131,7 @@ Installing or updating a module that ships agents requires a **restart**: `/relo
 - [Modules](docs/modules.md) — the twelve modules and their scope
 - [Implementation modules](docs/modules-implementation.md) — the contract and how practices compose
 - [The three roles](docs/agents.md)
-- [Feature format](docs/format-feature.md)
+- [Feature format](plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md)
 - [Changelog format](docs/format-changelog.md)
 - [The end-to-end flow](docs/dev-flow.md)
 - [Architecture decisions](docs/adr/) — twelve ADRs, with their rejected alternatives
