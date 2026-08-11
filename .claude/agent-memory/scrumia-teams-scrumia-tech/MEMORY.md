@@ -1,4 +1,4 @@
 # Tech memory — ScrumIA
 
-No entries. See `features/business/agent-team/business.md` § *What role memory may hold*
-before writing one.
+No entries. Before writing one, check it isn't shareable knowledge that belongs in a
+skill, an ADR or a feature instead — see #194.
