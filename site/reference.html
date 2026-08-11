@@ -84,7 +84,7 @@
 <section id="modules">
   <h2>The modules</h2>
 
-  <h3><code>scrumia-core</code> — the kernel</h3>
+  <h3><a href="modules/scrumia-core.html"><code>scrumia-core</code></a> — the kernel</h3>
   <p>Fills no slot and does nothing on its own. It describes the composition and makes it legible to agents. The only non-optional module.</p>
   <div class="table-wrap">
     <table>
@@ -96,7 +96,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-rules</code> — no slot</h3>
+  <h3><a href="modules/scrumia-rules.html"><code>scrumia-rules</code></a> — no slot</h3>
   <p>Sits beside <code>scrumia-core</code>: the rules-hierarchy format itself — index, guides, decisions — that lets a module's knowledge skill, or a project's own conventions, load only the guide a task routes to instead of one growing file. Fills no slot. <strong>Assumes</strong> nothing beyond <code>scrumia-core</code>. <strong>Costs</strong> one more layer to author correctly — a section is overhead below three distinct concerns.</p>
   <div class="table-wrap">
     <table>
@@ -109,7 +109,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-specs</code> — slot <code>specs</code></h3>
+  <h3><a href="modules/scrumia-specs.html"><code>scrumia-specs</code></a> — slot <code>specs</code></h3>
   <p>Per-feature specs, TDD-oriented. A contextual file catalogue rather than one document. <strong>Assumes</strong> specs live in the repo next to the code. <strong>Costs</strong> more judgement when writing than a fixed template.</p>
   <div class="table-wrap">
     <table>
@@ -122,7 +122,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-github-project</code> — slot <code>tracker</code></h3>
+  <h3><a href="modules/scrumia-github-project.html"><code>scrumia-github-project</code></a> — slot <code>tracker</code></h3>
   <p>Issues, sub-issues, GitHub Projects columns, branches and PRs. A <code>PreToolUse</code> hook blocks stateful files in the repo. <strong>Assumes</strong> an authenticated <code>gh</code>. <strong>Costs</strong> a hard GitHub dependency and nothing offline.</p>
   <div class="table-wrap">
     <table>
@@ -137,7 +137,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-teams</code> — slot <code>team</code></h3>
+  <h3><a href="modules/scrumia-teams.html"><code>scrumia-teams</code></a> — slot <code>team</code></h3>
   <div class="grid grid-3">
     <div class="card card-manager">
       <span class="tag">opus · memory: project</span>
@@ -166,7 +166,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-discovery</code> — slot <code>discovery</code></h3>
+  <h3><a href="modules/scrumia-discovery.html"><code>scrumia-discovery</code></a> — slot <code>discovery</code></h3>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
@@ -177,7 +177,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-impl-rust</code> — slot <code>implementation</code></h3>
+  <h3><a href="modules/scrumia-impl-rust.html"><code>scrumia-impl-rust</code></a> — slot <code>implementation</code></h3>
   <p>Invalid states made unrepresentable, <code>Result</code> at the boundaries, typed errors per layer. <strong>Refuses</strong> <code>unwrap()</code> in production, clones that appease the borrow checker, single-implementer traits.</p>
   <div class="table-wrap">
     <table>
@@ -189,7 +189,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-impl-solidjs</code> — slot <code>implementation</code></h3>
+  <h3><a href="modules/scrumia-impl-solidjs.html"><code>scrumia-impl-solidjs</code></a> — slot <code>implementation</code></h3>
   <p>Fine-grained reactivity without React reflexes, behaviour-first component tests, structure by feature. <strong>Refuses</strong> destructured props, effects used as derivations, components that fetch.</p>
   <div class="table-wrap">
     <table>
@@ -201,7 +201,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-practice-tdd</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-tdd.html"><code>scrumia-practice-tdd</code></a> — slot <code>practices</code></h3>
   <p>Refines one point of the implementation contract: <strong>how we test</strong>. The cycle operationalized for an agent, the mock boundary, AC-to-test mapping.</p>
   <div class="table-wrap">
     <table>
@@ -214,7 +214,7 @@
     </table>
   </div>
 
-  <h3><code>scrumia-practice-solid</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-solid.html"><code>scrumia-practice-solid</code></a> — slot <code>practices</code></h3>
   <p>Refines one point of the implementation contract: <strong>which design principles</strong>. The five principles, each with its application limit — over-application is audited on equal footing with violations.</p>
   <div class="table-wrap">
     <table>
@@ -226,7 +226,7 @@
       </tbody>
     </table>
   </div>
-  <h3><code>scrumia-practice-tanstack-query</code> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-practice-tanstack-query.html"><code>scrumia-practice-tanstack-query</code></a> — slot <code>practices</code></h3>
   <p>Refines one point of the implementation contract: <strong>how the app talks to the server and caches what it gets back</strong> — query keys, invalidation, optimistic updates, the boundary against client-only state. Ported from real monorepo use: 9 guides, 13 decisions. <strong>Assumes</strong> a stack TanStack Query ships for (React, Solid, Vue, Svelte). <strong>Costs</strong> a caching model to learn — the audit and refactor skills that would measure and close the gap aren't built yet.</p>
   <div class="table-wrap">
     <table>
@@ -236,7 +236,7 @@
       </tbody>
     </table>
   </div>
-  <h3><code>scrumia-design</code> — slot <code>design</code></h3>
+  <h3><a href="modules/scrumia-design.html"><code>scrumia-design</code></a> — slot <code>design</code></h3>
   <p>Identity, tokens and components live in the repo; a Claude Design project is the review surface, not the source of truth. One rule underneath: a value the tokens don't carry is a finding, never an inlined exception. Ships the <code>designer</code> standing role — the only module that does so from outside the <code>team</code> slot, because a role with no design system to guard would judge on taste.</p>
   <div class="table-wrap">
     <table>
