@@ -84,8 +84,10 @@ recorded in `features/business/modular-composition/` as BR-7, beside it.
 **What we accept**
 
 - **The harness's PATH behaviour is observed, not contracted.** Verified on Claude Code
-  2.1.226: every enabled plugin's `<root>/bin` is on PATH, whether or not the directory
-  exists, in both the repository and the versioned cache layouts. Nothing published
+  2.1.227, by running a probe executable dropped into each layout in turn: every enabled
+  plugin's `<root>/bin` is on PATH, whether or not the directory existed when the session
+  started, in the repository layout and in the versioned cache
+  (`~/.claude/plugins/cache/<marketplace>/<name>/<version>/bin`) alike. Nothing published
   promises it will stay. If it changes, the callers break loudly — the name is not found —
   rather than silently, which is strictly better than what they did before.
 - **A bare name only resolves for an enabled plugin.** That is the same precondition the
