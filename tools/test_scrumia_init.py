@@ -20,10 +20,10 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = ROOT / "plugins" / "scrumia-core" / "skills" / "scrumia-init" / "SKILL.md"
 RETIRED = ("composition:", "implementation:", "practices:")
-# ADR-0019 retired `practices` as a slot, not as a settings namespace.
-SETTINGS_NS = re.compile(r"settings[.:]?\s*\w*[.\s]*(implementation|practices)")
-# Naming a key as gone is the opposite of instructing an agent to write it.
-DISOWNED = re.compile(r"retired|deprecat|stale|no longer|old spelling", re.IGNORECASE)
+# The two steps whose job is to talk about the old spelling: 3b converts it, 8 warns
+# that the status script still reads it. Neither writes a config.
+ALLOWED_TO_NAME_THEM = ("Step 3b", "Step 8")
+FENCE = re.compile(r"```.*?```", re.DOTALL)
 FAILURES: list[str] = []
 
 
@@ -111,13 +111,15 @@ def main() -> int:
     check("the conversion is reported, not silent",
           "report" in migration and "silent" in migration)
 
-    print("The retired keys survive nowhere but the migration")
-    elsewhere = {h: b for h, b in secs.items() if not h.startswith("Step 3b")}
+    print("The retired keys survive nowhere but the steps that exist to name them")
+    # Fences are stripped, not grepped: nesting is invisible to a line match, so the
+    # kept `settings.practices.<module>` reads like the retired `apps[].practices`.
+    elsewhere = {h: FENCE.sub("", b) for h, b in secs.items()
+                 if not h.startswith(ALLOWED_TO_NAME_THEM)}
     for key in RETIRED:
         hits = [f"{h or '(preamble)'}: {l.strip()}"
-                for h, b in elsewhere.items() for l in b.splitlines()
-                if key in l and not SETTINGS_NS.search(l) and not DISOWNED.search(l)]
-        check(f"no live {key} outside the migration", not hits, "; ".join(hits))
+                for h, b in elsewhere.items() for l in b.splitlines() if key in l]
+        check(f"no live {key} in prose outside those steps", not hits, "; ".join(hits))
 
     print()
     if FAILURES:

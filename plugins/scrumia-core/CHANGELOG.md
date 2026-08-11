@@ -17,9 +17,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   its run report — read that report, because nothing records the choice afterwards. Declaring
   an exclusion explicitly is not yet possible and is tracked as its own change.
 - A capability nothing covers is reported rather than written into your config as a
-  placeholder. Until the composition report itself moves to `extends:` — the next release —
-  `compose-status.sh` reads the old key only, so it will call a migrated project's modules
-  "not declared". Take that report as stale, not as your config being wrong.
+  placeholder. `compose-status.sh` does not read `extends:` yet, so on a migrated project it
+  calls every module "not declared" and advises adding the slots back as explicit nulls —
+  don't. `scrumia-init` and `scrumia-compose` both flag that output as stale and tell you what
+  `extends` actually names. This entry goes away with the same change that fixes the script.
 
 ### Deprecated
 - `composition:`, and the per-app `implementation:` and `practices:` keys. `scrumia-init` still
