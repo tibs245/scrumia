@@ -4,9 +4,60 @@ Given/When/Then, one scenario per case. These are process-level criteria: verifi
 by reading the ticket, its labels, `.scrumia/config.yaml` and the specs — not by
 application code.
 
-## Nominal
+## Brainstorming content validation (Gate 0)
 
-### AC-1 — No verifiable acceptance criterion, no execution
+### AC-1 — An agent proposes verdict on five criteria; the human decides
+
+```gherkin
+Given an idea an agent assesses against five criteria: the problem is real, the
+  solution solves it, it belongs to a named feature, it contradicts no existing rule,
+  it carries at least one verifiable acceptance criterion
+When the agent proposes a verdict (refused, routed, pending, or ready)
+Then the human decides — no agent closes or routes an idea without the human's decision
+```
+
+### AC-2 — Refused ideas state their reason; the reason survives the refusal
+
+```gherkin
+Given an idea an agent judges non-pertinent or contradicted by an existing rule
+When the agent reports the refusal
+Then it cites the rule or principle it contradicts, and this reason is recorded so it
+  can be revisited if the idea is re-proposed
+```
+
+### AC-3 — An idea that lacks a verifiable criterion or a feature name is not refused; it is pending
+
+```gherkin
+Given an idea that carries no verifiable acceptance criterion, or is not assigned to
+  a named feature
+When it is checked against the ticket boundary
+Then it is marked pending rather than refused — the agent names what is missing, and
+  the idea remains available for the human to address
+```
+
+### AC-4 — An idea that is well-formed but belongs to another feature is routed, not refused
+
+```gherkin
+Given an idea that is sound and verifiable, but the replacement test says it belongs
+  to a different feature than where it was proposed
+When the agent makes this assessment
+Then it proposes re-routing with the target feature named, and the human decides
+  whether to move it or close it
+```
+
+### AC-5 — A ready idea becomes one or more tickets
+
+```gherkin
+Given an idea that passes all five criteria and carries at least one verifiable
+  acceptance criterion and a feature name
+When it is marked ready
+Then it becomes a ticket (or multiple tickets, if the idea spans more than one) that
+  names the feature and carries its acceptance criteria
+```
+
+## Nominal execution
+
+### AC-6 — No verifiable acceptance criterion, no execution
 
 ```gherkin
 Given a ticket with no acceptance criterion that can fail
@@ -17,7 +68,7 @@ Then it is refused, a comment on the issue names precisely what's missing, and
 
 ## Edge cases
 
-### AC-2 — A business rule found missing mid-execution is escalated, not invented
+### AC-7 — A business rule found missing mid-execution is escalated, not invented
 
 ```gherkin
 Given an execution run that finds a business rule missing, or contradicted by
@@ -27,7 +78,7 @@ Then the run stops, comments on the issue, and calls on the business role instea
   of deciding the rule itself
 ```
 
-### AC-3 — Discovery absent: the human scopes directly, and says so
+### AC-8 — Discovery absent: the human scopes directly, and says so
 
 ```gherkin
 Given the discovery slot is empty in `.scrumia/config.yaml`
@@ -36,7 +87,7 @@ Then the human scopes it by hand into a ticket, and the absence of a scoping pas
   is stated rather than silently improvised
 ```
 
-### AC-4 — Guided autonomy adds a human check before execution starts
+### AC-9 — Guided autonomy adds a human check before execution starts
 
 ```gherkin
 Given `settings.autonomy.level` is `guided`
@@ -44,7 +95,7 @@ When a ticket finishes scoping
 Then the human validates the transition to execution before an agent starts it
 ```
 
-### AC-5 — Only an explicitly widened `auto_merge` lets gate 3 go unattended
+### AC-10 — Only an explicitly widened `auto_merge` lets gate 3 go unattended
 
 ```gherkin
 Given `settings.autonomy.level` is `autonomous` and `settings.autonomy.auto_merge`
@@ -59,7 +110,7 @@ When CI is green and gate 2 raised no blocker
 Then nothing merges without the human, whatever `settings.autonomy.level` says
 ```
 
-### AC-6 — A label that under-states the diff does not shrink the review
+### AC-11 — A label that under-states the diff does not shrink the review
 
 ```gherkin
 Given a ticket labelled `scope/S` whose diff touches `features/business/**` and
@@ -90,7 +141,7 @@ Then the extra review still happens and the gap is not reported as a scoping
   having mislabelled
 ```
 
-### AC-7 — Where a tracker feature and this one disagree on the process, this one governs
+### AC-12 — Where a tracker feature and this one disagree on the process, this one governs
 
 ```gherkin
 Given a tracker feature's spec states a code-cycle process rule that contradicts
@@ -100,7 +151,7 @@ Then this feature's rule stands and the tracker feature's is the one corrected,
   without the reader having to infer which of the two governs
 ```
 
-### AC-8 — A code-cycle rule is filed on exactly one side, by the replacement test
+### AC-13 — A code-cycle rule is filed on exactly one side, by the replacement test
 
 ```gherkin
 Given a new rule about how code ships, being filed to a parent feature
@@ -110,7 +161,7 @@ Then it is filed here if it stays true word for word, to the tracker feature if 
   becomes meaningless, and to exactly one of the two — never to both
 ```
 
-### AC-9 — A review reads a commit, never a dirty working tree
+### AC-14 — A review reads a commit, never a dirty working tree
 
 ```gherkin
 Given an execution that has written its implementation
@@ -119,7 +170,7 @@ Then the work is already committed on the ticket's branch, and the reviewer read
   commit rather than a dirty tree
 ```
 
-### AC-10 — A yield that is not a review commits too
+### AC-15 — A yield that is not a review commits too
 
 ```gherkin
 Given an execution that stops mid-run and hands the next move to someone else — an
@@ -129,7 +180,7 @@ Then its in-flight work is already committed on the ticket's branch, so the bran
   leaves behind carries that work rather than resolving to its base commit
 ```
 
-### AC-11 — A commit carries a type, a scope, and a reference to its work item
+### AC-16 — A commit carries a type, a scope, and a reference to its work item
 
 ```gherkin
 Given a commit written as `feat: <subject>`, with no scope
@@ -147,7 +198,7 @@ Then the lookup is incomplete and the branch is non-conforming — a partial ans
   referencing every commit is redundant rather than wrong
 ```
 
-### AC-12 — Rewriting history stops at the branch boundary
+### AC-17 — Rewriting history stops at the branch boundary
 
 ```gherkin
 Given a correction squashed into an earlier commit with a force push

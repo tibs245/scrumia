@@ -10,7 +10,11 @@ BMAD's flaw is mobilizing the human uniformly, including when the decision is al
 
 ## Decision
 
-### Three gates, of increasing cost
+### Four gates: one on brainstorming, three on execution
+
+**Gate 0 — Brainstorming content validation.** The proposal (idea, scope, acceptance criteria) is reviewed for pertinence, business value, coherence with the project, and against existing rules. An agent proposes verdict; the human decides. Blocking, before a ticket is created.
+
+### Three gates on execution, of increasing cost
 
 **Gate 1 — Automatic.** CI, linter, tests. Blocking, no human. A failure here never escalates higher.
 

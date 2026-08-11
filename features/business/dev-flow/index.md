@@ -34,6 +34,6 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 | File | Read it when |
 |---|---|
 | `business.md` | need who decides what on each path, where the human gate sits, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
-| `qa.md` | need the refusal rule, the autonomy gates, or what routes gate 2's review, as falsifiable scenarios |
+| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), or what routes gate 2's review, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 

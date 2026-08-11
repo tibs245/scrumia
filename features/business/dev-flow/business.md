@@ -32,6 +32,14 @@ produces).
   decides in the human's place.
 - If the discovery slot is empty, the human scopes by hand and says so rather than
   improvising a scoping pass. This is a degraded path, not a broken one.
+- **Before an idea becomes a ticket**, it passes a content-validation gate (Gate 0,
+  per ADR-0005). An agent proposes a verdict against five criteria: the problem is
+  real; the solution solves it; it belongs to a named feature (or is a stated
+  bootstrap exception); it does not contradict an existing rule (if it restates one,
+  the replacement test decides which feature owns it — a re-route, not a refusal); it
+  carries at least one verifiable acceptance criterion. The human decides on the
+  agent's proposal in all cases. Four outcomes: **refused** (reason recorded), **routed**
+  (belongs elsewhere), **pending** (questions remain open), **ready** (becomes ticket(s)).
 
 **Execution**
 
@@ -59,11 +67,11 @@ produces).
 
 ## Where the human gate sits (ADR-0005)
 
-The three-gate model governs the **execution** path. Brainstorming carries no gate
-of its own, because the human is already the decision-maker throughout it.
+Four gates govern both paths. Gate 0 is on brainstorming; Gates 1–3 are on execution.
 
 | Gate | Path | Who | Blocks on |
 |---|---|---|---|
+| 0 — Content validation | Brainstorming | Agent proposes; human decides | Refusal, re-route, or pending clarity |
 | 1 — Automatic | Execution | CI, linter, tests | A red check |
 | 2 — Agent | Execution | The roles, routed by the diff's actual scope | A **Blocked** verdict |
 | 3 — Human | Execution | The human | The merge — always, unless `settings.autonomy.auto_merge` is set past `none` and the PR falls within what it covers |
