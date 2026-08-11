@@ -79,7 +79,7 @@ recorded in `features/business/modular-composition/` as BR-7, beside it.
 - The eighteen documentation links resolve for any reader, in any layout.
 - A module's dependency on another is greppable by a constant string, which is what makes
   "an action a module provides but nobody calls" measurable at all.
-- The check is mechanical, so the class of defect cannot come back silently.
+- The check is mechanical for the two shapes it sees, so those cannot come back silently.
 
 **What we accept**
 
@@ -103,6 +103,10 @@ recorded in `features/business/modular-composition/` as BR-7, beside it.
   `blob/main/<path>` exists in the working tree, not that `main` currently carries it.
   A file renamed and the link not updated is caught; a link correct here but stale on
   `main` is not.
+- **Only link-shaped and `${CLAUDE_SKILL_DIR}` references are gated.** A bare path written
+  in prose — "run `tools/build_features_index.py`", or an inline-code citation of a
+  `docs/adr/` file — matches neither syntax and stays a review matter. The decision binds
+  those too; the validator does not yet see them, and live ones remain.
 - **One script stays where it is.** `scrumia-core`'s `scripts/compose-status.sh` is only
   ever called from inside its own plugin, so it breaks nothing and is deliberately left
   alone — this decision moves what escapes, not everything that could move.
