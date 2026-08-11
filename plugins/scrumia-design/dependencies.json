@@ -1,4 +1,8 @@
 {
-  "runs": ["scrumia-extends"],
-  "reads": ["design"]
+  "runs": [
+    "tibs245/scrumia:scrumia-extends"
+  ],
+  "reads": [
+    "design"
+  ]
 }

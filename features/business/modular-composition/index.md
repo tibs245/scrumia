@@ -33,9 +33,12 @@ is stored, so nothing can go stale. `business.md` § *Vocabulary* is the authori
 | File | Read it when |
 |---|---|
 | `business.md` | Deciding what `extends` is, what a register or a directive is, or what a module owes to be pluggable and to contribute |
+| `tech.md` | Understanding how the mechanism resolves — the pipeline, where the order comes from, what fails and what reports it, and the practices for writing an extension |
 | `qa.md` | Checking the composition mechanism's own acceptance criteria, including how a missing capability degrades |
 | `CHANGELOG.md` | Checking history of changes to this spec |
 
-No `ux.md` or `api-contract.md`: this feature has no interface and no API of its
-own — it governs how modules declare and read configuration, not something a user
-or another app calls.
+No `ux.md`: this feature has no interface of its own. No `api-contract.md` either,
+although the three data files are a schema several modules produce and one tool parses:
+the field-by-field reference ships inside `scrumia-core`'s `scrumia-extend` skill, so a
+project reads the version matching the tooling it installed rather than this repository's
+`main`. Restating it here would guarantee the two diverge.

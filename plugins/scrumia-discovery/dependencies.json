@@ -1,4 +1,9 @@
 {
-  "runs": ["scrumia-extends"],
-  "reads": ["scope-idea", "split"]
+  "runs": [
+    "tibs245/scrumia:scrumia-extends"
+  ],
+  "reads": [
+    "scope-idea",
+    "split"
+  ]
 }

@@ -1,4 +1,7 @@
 {
-  "runs": ["scrumia-board", "scrumia-pick-model"],
+  "runs": [
+    "tibs245/scrumia:scrumia-board",
+    "tibs245/scrumia:scrumia-pick-model"
+  ],
   "reads": []
 }

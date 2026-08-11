@@ -3,6 +3,16 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-11 — A dependency names the source it comes from (BR-11, AC-12)
+- Issue: #281
+- Category: Changed
+- Breaking: no
+
+## 2026-08-11 — `tech.md` states how the extension mechanism resolves
+- Issue: #281
+- Category: Added
+- Breaking: no
+
 ## 2026-08-11 — A skill is extended by data, and the table is computed when asked (BR-1, BR-2, BR-8..BR-12)
 - Issue: #281
 - Category: Added

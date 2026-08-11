@@ -1,0 +1,179 @@
+# Modular composition — how the extension mechanism works
+
+`business.md` states the rules; `docs/adr/0020-skill-extension-protocol.md` states the
+decision and what it rejected. This file states the **mechanism**: what resolves what, in
+which order, and what happens when a piece is missing.
+
+The authoring reference — the exact fields of each data file, and how to open an extension
+point in a skill — ships with the skill that teaches it, `scrumia-core`'s `scrumia-extend`.
+It is deliberately not restated here: a consuming project must read the version that
+matches the tooling it has installed, not whatever this repository's `main` branch carries
+at the moment someone opens a link. What this file adds is what that skill cannot see —
+how the pieces fit, and how the mechanism fails.
+
+## The pipeline
+
+Four inputs, one output, nothing stored in between.
+
+```
+  $PATH                      ┌───────────────────────────┐
+  (harness-provided)  ──────▶│ 1. discover module roots  │
+                             │    every "…/bin" entry →  │
+                             │    its parent, if it has  │
+                             │    .claude-plugin/        │
+                             └─────────────┬─────────────┘
+                                           │  module · root · source
+                                           ▼
+  .scrumia/config.yaml       ┌───────────────────────────┐
+  extends: […]        ──────▶│ 2. keep what this project │
+  apps[].extends: […] ──────▶│    runs, for this app     │
+                             └─────────────┬─────────────┘
+                                           │  the in-scope modules
+                                           ▼
+  <root>/extends.json        ┌───────────────────────────┐
+  (one per module)    ──────▶│ 3. collect the rows for   │
+                             │    the asked register     │
+                             └─────────────┬─────────────┘
+                                           │  rows, unordered
+                                           ▼
+  .scrumia/extends.json      ┌───────────────────────────┐
+  (the project's own) ──────▶│ 4. order by scope, then   │
+                             │    obligation, then name  │
+                             └─────────────┬─────────────┘
+                                           ▼
+                                  one table, printed
+                                  nothing written
+```
+
+**Step 1 is the load-bearing one.** The harness prepends `<pluginRoot>/bin` to the session
+PATH for every *enabled* plugin, with the install path — version segment included —
+already resolved. That is the same fact ADR-0018 relies on to run a published name; here it
+is read the other way round, to learn which modules are present. It is what removes the
+need for any module to publish an executable, or to know where any other module lives.
+
+`$SCRUMIA_MODULE_DIR` replaces step 1 with a directory of `<module>/` checkouts. This
+repository and CI use it, because no harness is running there. The consequence is stated in
+ADR-0020 and repeated here because it is the mechanism's blind spot: **CI can only ever
+exercise the override, never the product's own path.**
+
+**Step 2 is what makes a module inert.** A module discovered in step 1 and named in no
+`extends` list is dropped here — it is installed, and this project does not run it.
+
+## Where each thing is resolved, and by what
+
+| Question | Answered by | When |
+|---|---|---|
+| Which modules exist here? | the harness, through PATH | every call |
+| Which of them does this project run? | `.scrumia/config.yaml` | every call |
+| Which app does this file belong to? | the longest `apps[].path` prefixing it | on `--path` |
+| What does a module contribute? | its own `extends.json` | every call |
+| Where is a fragment? | the module root, joined with `read` | at print time |
+| Which module publishes a name? | its `bin/`, cross-checked against PATH | on `--check` only |
+
+Nothing in that table is cached, and nothing in it is written down. That is the whole
+reason there is no staleness class to detect: the answer is recomputed, and recomputing is
+cheap because every input is a file already on disk.
+
+## The order is computed, and it is the precedence
+
+Scope is assigned in step 4, from *where a contributing module was named*, never from
+anything the module says about itself:
+
+| Scope | Source | Rank |
+|---|---|---|
+| project-local | `.scrumia/extends.json` | 0 |
+| app | the app's own `extends` list | 1 |
+| project-wide | the top-level `extends` list | 2 |
+
+Then `required` before `optional`, then module name, then directive name — so two runs on
+the same inputs print the same table, and a reader can check the order rather than trust it.
+
+**Why scope rather than a `grain` field.** An earlier draft had each module declare whether
+it was a technology module or a cross-cutting one, and ranked on that. It made every module
+carry a claim about its standing relative to modules it has never heard of — unverifiable,
+and wrong the first time someone writes a cross-cutting module that should win. Scope moves
+the same judgement to the only place that has the information: the project, which decided
+what to plug in where. A project that wants a different answer writes the row itself, in
+`.scrumia/extends.json`, at rank 0.
+
+## What fails, and what says so
+
+The split is deliberate: **strict where the code is authored, tolerant where it is
+consumed.** A consuming project must not be blocked by a third-party module's laxness, and
+this repository must not ship one.
+
+| Symptom | `scrumia-extends --check` | `tools/validate.py` |
+|---|---|---|
+| A fragment path leaves its module | — (not its job) | error |
+| A fragment path names no file | — | error |
+| A register names a skill the module does not ship | — | error |
+| A `runs` name nothing publishes | error | error |
+| A `runs` name published from another source | error | error |
+| A `runs` name with no source at all | reported, passes | error |
+| A publisher declaring no repository | reported, passes | warning |
+| A register read that nobody opens | error | — |
+| A contribution to a register nobody opens | error | — |
+| Two modules opening one register | error | — |
+| A module that declares reading a register and never runs the tool | — | error |
+| A register nothing contributes to | nothing — an empty table is an answer | — |
+
+Two rows deserve their reason spelled out.
+
+**"A contribution to a register nobody opens" is the silent one.** Those directives will
+never be printed, by anything, ever — and no other signal exists. A register name is a free
+string, so one typo turns a module's whole contribution into a file nobody reads. It is an
+error for that reason alone.
+
+**"A module that declares reading a register and never runs the tool"** is checked by
+grepping that module's own skills for the invocation. It catches the one failure a
+declaration check structurally cannot: a skill that opens an extension point, reads as
+covered, and applies nothing. The check is crude — it matches a command string — and it is
+kept because the alternative is no check at all.
+
+## Constraints the implementation lives under
+
+- **`bash` + `jq`, and nothing else.** `scrumia-extends` is reached the same way
+  `scrumia-board` and `scrumia-pick-model` are, in sessions that may have no Python
+  environment configured. The YAML is read by `yq` or by `python3` + PyYAML, whichever the
+  machine already has — the same loader those two tools use, never a third dependency.
+- **`/bin/bash` is 3.2 on macOS.** It mis-parses a `case` pattern's `)` inside a command
+  substitution, which cost one debugging pass here; the affected code uses a suffix test
+  instead, with the reason in a comment beside it.
+- **The tool writes nothing, anywhere.** Not a cache, not a temp file, not a lock. That is
+  what lets it be safe to call from inside any skill, at any point, including concurrently
+  across the worktrees a sprint opens.
+- **Exit status carries meaning only for `--check`.** Printing a table for a register
+  nothing extends is success: an empty answer is an answer.
+
+## Debt assumed
+
+- **A directive's `summary` is prose about prose, and nothing checks it.** A summary that
+  stops describing its fragment is invisible to every gate. What the mechanism buys is that
+  the drift is now one line sitting beside the path it describes, instead of a paragraph in
+  a different module. *Exit condition*: none planned — closing it means reading English.
+- **`--check` is not run automatically in a consuming project.** A plugin enabled without a
+  session restart contributes nothing, silently, until someone asks. *Exit condition*: a
+  session-start hook, once the harness offers one that can report without blocking.
+- **The grep that proves a skill runs the tool matches a string.** Renaming the tool, or
+  invoking it through a variable, defeats it. *Exit condition*: none worth paying for — the
+  check is a backstop, and a stricter one would fail on legitimate phrasing.
+
+## Practices for writing an extension
+
+- **One fragment, one scope.** A guide covering three principles can only be contributed
+  whole, to every register at once, at whatever obligation fits the loosest of the three.
+  Splitting is what buys the ability to say *this one is required for implementation, that
+  one is optional for review*.
+- **Write the `summary` as what the fragment says, not what it is about.** "One reason to
+  change per unit" is usable without opening the file; "About the Single Responsibility
+  Principle" is not, and an agent that has to open every row to find out which matter has
+  gained nothing over reading the whole module.
+- **`required` is a promise that every unit of work in scope obeys it.** A directive marked
+  required that only applies sometimes teaches an agent to discount the column.
+- **Contribute to `review` and `audit` separately, and differently.** The same fragment
+  usually enters `implement` as a `norm` and `review` as a `refusal` — what to do, and what
+  to look for. A module that contributes the identical row to three registers has probably
+  not decided what each register is for.
+- **Never encode a consumer.** No skill name, no module name, no "only when the app is
+  Rust". If a directive should only reach some apps, that is the project's `extends`, per
+  app, doing its job — not a condition inside data that is supposed to hold none.

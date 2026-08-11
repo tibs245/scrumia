@@ -112,11 +112,17 @@ discover_roots() {
     [ -n "$root" ] || continue
     name=$(jq -r '.name // ""' "$root/.claude-plugin/plugin.json" 2>/dev/null)
     [ -n "$name" ] || name=$(basename "$root")
-    MODULES=$(jq -c --arg m "$name" --arg r "$root" \
+    # The module's own claim about where it came from, normalised to owner/repo. It is
+    # what a caller's qualified dependency is checked against; a module that declares
+    # none makes that check unverifiable rather than failed.
+    src=$(jq -r '(.repository // .homepage // "")
+      | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' \
+      "$root/.claude-plugin/plugin.json" 2>/dev/null)
+    MODULES=$(jq -c --arg m "$name" --arg r "$root" --arg s "$src" \
       --slurpfile ex <(read_json "$root/extends.json") \
       --slurpfile rg <(read_json "$root/registers.json") \
       --slurpfile dp <(read_json "$root/dependencies.json") \
-      '. + [{module: $m, root: $r, extends: $ex[0], registers: $rg[0], dependencies: $dp[0]}]' \
+      '. + [{module: $m, root: $r, source: $s, extends: $ex[0], registers: $rg[0], dependencies: $dp[0]}]' \
       <<<"$MODULES")
   done <<<"$ROOTS"
 
@@ -229,25 +235,48 @@ cmd_list() {
   ' <<<"$MODULES"
 }
 
-# True when some discovered module ships an executable of this name under its own bin/.
-is_published() {
+# Prints "<module>\t<source>" for the discovered module that ships an executable of this
+# name under its own bin/, and nothing when no discovered module does.
+publisher_of() {
   local root
-  while IFS= read -r root; do
-    [ -n "$root" ] && [ -x "$root/bin/$1" ] && return 0
-  done < <(jq -r '.[] | select(.root != ".") | .root' <<<"$MODULES")
+  while IFS=$'\t' read -r root mod src; do
+    [ -n "$root" ] && [ -x "$root/bin/$1" ] && { printf '%s\t%s\n' "$mod" "$src"; return 0; }
+  done < <(jq -r '.[] | select(.root != ".") | [.root, .module, .source] | @tsv' <<<"$MODULES")
   return 1
 }
 
 cmd_check() {
   local failed=0
-  # A name a module declares running must be on PATH. A missing one is the commonest
-  # symptom of a plugin enabled but not yet restarted into — worth naming as such.
-  while IFS=$'\t' read -r mod name; do
-    [ -n "$name" ] || continue
+  # A `runs` entry is qualified — <source>:<name> — because PATH is one flat namespace
+  # shared with every enabled plugin, so a bare name says which command, never whose.
+  # What is *executed* stays the bare name: the qualification is a claim to check, not
+  # something to invoke.
+  while IFS=$'\t' read -r mod entry; do
+    [ -n "$entry" ] || continue
+    local want name found pub_mod pub_src
+    want=${entry%:*}; name=${entry##*:}
+    if [ "$want" = "$entry" ]; then
+      want=""
+      note "$mod declares running '$name' unqualified — name it <source>:<name>, since PATH is shared with every enabled plugin"
+    fi
+
     # Under $SCRUMIA_MODULE_DIR no harness is running, so PATH proves nothing on its own:
     # a name is also met when a discovered module publishes it under its own bin/.
-    if ! command -v "$name" >/dev/null 2>&1 && ! is_published "$name"; then
+    found=$(publisher_of "$name") || found=""
+    if [ -z "$found" ] && ! command -v "$name" >/dev/null 2>&1; then
       echo "$mod declares running '$name', which is neither on PATH nor published by an installed module — enable the module that publishes it, then restart the session" >&2
+      failed=$((failed + 1))
+      continue
+    fi
+
+    [ -n "$want" ] || continue
+    IFS=$'\t' read -r pub_mod pub_src <<<"$found"
+    if [ -z "$found" ]; then
+      note "$mod runs '$name' from '$want': on PATH, published by no installed module — the source cannot be checked here"
+    elif [ -z "$pub_src" ]; then
+      note "$mod runs '$name' from '$want': published by $pub_mod, which declares no repository — the source cannot be checked"
+    elif [ "$pub_src" != "$want" ]; then
+      echo "$mod declares running '$want:$name', but the '$name' it would reach is published by $pub_mod, from '$pub_src' — a name on PATH is first-come, so this is a different command wearing the same name" >&2
       failed=$((failed + 1))
     fi
   done < <(jq -r '.[] | .module as $m | (.dependencies.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
