@@ -12,7 +12,7 @@ project declares once and a tool reads for everyone.
 ## Links
 
 - Implemented by: no App feature. The policy is enacted by
-  `plugins/scrumia-teams/scripts/pick-model.sh`, shipped by whichever module fills the
+  `scrumia-pick-model`, shipped by whichever module fills the
   `team` slot, and consumed by `scrumia-sprint` and by `scrumia-ticket`'s Step 0.
 - The grid's cells and the capability order they climb are project data — see
   `business.md` § *The grid is project data; what it must satisfy is not*.

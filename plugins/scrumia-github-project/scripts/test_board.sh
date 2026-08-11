@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Tests board.sh's cmd_read state handling — AC-1/AC-2/AC-4/AC-8, qa.md. `gh`
+# Tests scrumia-board's cmd_read state handling — AC-1/AC-2/AC-4/AC-8, qa.md. `gh`
 # is stubbed with a fixture: no network call, no dependency on the live board.
 
 set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BOARD_SH="$HERE/board.sh"
+BOARD_SH="$HERE/../bin/scrumia-board"
 FAILURES=0
 
 check() {

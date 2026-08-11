@@ -53,7 +53,7 @@ Issues, sub-issues, GitHub Projects columns, branches and PRs.
 
 A `PreToolUse` hook blocks the creation of state files in the repo. It only sees `Write`/`Edit` — a Bash redirect is not covered. It narrows the main door, it is not a sandbox.
 
-`scripts/board.sh` is the only thing here that talks to GitHub Projects — the skills call it rather than composing `gh project` themselves, because reading a board correctly means filtering it (`docs/adr/0013`, and the skill's own `references/projects-v2.md`).
+`scrumia-board` is the only thing here that talks to GitHub Projects — the skills call it rather than composing `gh project` themselves, because reading a board correctly means filtering it (`docs/adr/0013`, and the skill's own `references/projects-v2.md`).
 
 **What it assumes**: `gh` authenticated, and state outside the repo.
 **What it costs**: GitHub dependency, nothing offline. This slot also owns the **code cycle** — branches, worktrees, PRs, merge — not just tracking. A module tracking elsewhere (Jira, Linear) would have to reimplement that, so **issues in Jira with PRs on GitHub is not composable today**: see `docs/adr/0013-tracker-stays-one-slot.md`, which defers the split and names what reopens it.

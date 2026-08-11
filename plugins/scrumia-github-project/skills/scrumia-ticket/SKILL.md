@@ -18,13 +18,15 @@ Read the issue (`gh issue view <n> --json title,body,labels`). Stop immediately 
 
 In those cases, comment on the issue stating precisely what's missing, and point back to the Manager or to `scrumia-brainstorm`. **Do not guess the intent.** A ticket executed on an assumed intent produces a PR to throw away, and that costs more than asking for clarification.
 
-Then, if a team module is plugged in, ask what this ticket's size and risk imply. `scrumia-teams` ships the policy as a script; in a standard marketplace install it sits alongside this plugin:
+Then, if a team module is plugged in, ask what this ticket's size and risk imply. `scrumia-teams` ships the policy as a script it publishes by name on the session's PATH:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../../scrumia-teams/scripts/pick-model.sh <n>
+scrumia-pick-model <n>
 ```
 
-**If that path doesn't resolve** — a different team module fills the slot, or the plugins aren't installed side by side — don't hunt for it and don't reimplement the policy from the labels: execute on the current model and say so in the PR. This skill must not depend on another module's layout.
+Run the name. This skill holds no path to that module and must not construct one: where it is installed is not knowable from here, which is the whole point of it publishing a name ([ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)).
+
+**If the name is not found** — a different team module fills the slot, or that module is not enabled — don't hunt for the file and don't reimplement the policy from the labels: execute on the current model and say so in the PR. This skill must not depend on another module's layout.
 
 Do what `instruction` says; don't re-derive it from the labels. Three answers are possible:
 
@@ -36,7 +38,7 @@ If no team module is plugged in, there is no policy to read: execute on the curr
 
 ### Record a deviation before the work starts
 
-Two things make this run deviate from the policy: **a human overrode the model** — you were told to run on something other than what `pick-model.sh` answered — or **you refused the split** a `split_or_<model>` cell preferred. Either one gets one comment on the issue, posted **now**, before Step 2:
+Two things make this run deviate from the policy: **a human overrode the model** — you were told to run on something other than what `scrumia-pick-model` answered — or **you refused the split** a `split_or_<model>` cell preferred. Either one gets one comment on the issue, posted **now**, before Step 2:
 
 ```bash
 gh issue comment <n> --body-file - <<'EOF'
@@ -48,7 +50,7 @@ EOF
 Use the heredoc, not `--body '…'`: a reason is English prose and the first apostrophe in it ends the quote and breaks the command.
 
 - `<kind>` is `override` or `split_refused`. An **override is a human's decision by definition** — if nobody chose it, you have not overridden the policy, you have failed to follow it. Do not file that as an override.
-- `cell` is the scope and risk `pick-model.sh` read back, in the axes' own vocabulary (`L/low`), not the project's label spelling. Where it reports `scope_rated: false`, write `unlabeled/<risk>`.
+- `cell` is the scope and risk `scrumia-pick-model` read back, in the axes' own vocabulary (`L/low`), not the project's label spelling. Where it reports `scope_rated: false`, write `unlabeled/<risk>`.
 - `policy` is what it answered, verbatim — a model name, `split_or_<model>`, or `split`.
 - `ran` is the model you are actually executing on.
 - `by` is `human` and the handle whose decision it was for an override; for a refused split it is you — name this skill.
@@ -94,7 +96,7 @@ up to three times, a few seconds apart. If it still fails after that, the lock i
 its owner died holding it. Report the lock file's path and stop; never delete a lock file
 in a shared `.git` yourself: four siblings may be live inside it.
 
-`<type>` comes from the project's commit-type vocabulary — one list serving the branch prefix, the commit and the PR title. It is defined once, in [`docs/adr/0017-version-bump-and-commit-signal.md`](../../../../docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*; read it there rather than from a copy, and add nothing to it here. A project whose composition carries no such decision falls back to the neighbouring commits' own prefixes.
+`<type>` comes from the project's commit-type vocabulary — one list serving the branch prefix, the commit and the PR title. It is defined once, in [`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*; read it there rather than from a copy, and add nothing to it here. A project whose composition carries no such decision falls back to the neighbouring commits' own prefixes.
 
 Inside the project directory, not `../<repo>-<n>`: Claude Code's permissions are scoped to the project directory, and a worktree created outside it triggers extra prompts or fails outright in restricted modes. The cost is a folder to keep out of the diff — `.worktrees/` is gitignored by `scrumia-project-setup`.
 
@@ -105,7 +107,7 @@ Raising it is a review-bandwidth decision, never a git one.
 Move the card to the `in_progress` step:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../scripts/board.sh move <n> in_progress
+scrumia-board move <n> in_progress
 ```
 
 The flow step maps to this board's actual column name through the config ([`projects-v2.md`](${CLAUDE_SKILL_DIR}/../scrumia-status/references/projects-v2.md)). If the move fails, continue anyway and say so in the final report: a dead column is not a blocked ticket.
@@ -120,11 +122,11 @@ git add -A && git commit -m "<type>(<scope>): <what changed>
 Refs: #<n>"
 ```
 
-The scope is not optional, and the `Refs:` trailer goes on **every** commit of the branch — a lookup returning some of a ticket's commits reads exactly like one returning all of them. `<scope>` names what the commit changes: a module (its plugin name with the vendor prefix dropped), an app (from `apps[]` in `.scrumia/config.yaml`), a feature (the directory holding its `index.md` under the specs root), or the literal `repo` for what belongs to none of the three. **A change atomic across several of them names them all, comma-separated** — this generalizes past ADR-0017 §2's original module-only form and its closing "nothing else carries two tokens," which the ADR is not re-edited to say but no longer governs on this point (`features/business/dev-flow/business.md` § *What a commit carries*). Only the module tokens named still bump, at that level and no other; naming an app, a feature or `repo` alongside one buys it nothing, and none of them may hide a module — every module a commit changes is still named individually. Once a commit spans more scopes than are worth naming individually — typically past three — `<type>(*):` covers the rest without listing them; `*` derives no bump on its own and never stands in for a module, so a module that must bump is still named alongside it (`refactor(specs,*):`). Why the scope is mandatory, and what each token buys, are in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *What a commit carries* and [ADR-0017](../../../../docs/adr/0017-version-bump-and-commit-signal.md) § *The signal*.
+The scope is not optional, and the `Refs:` trailer goes on **every** commit of the branch — a lookup returning some of a ticket's commits reads exactly like one returning all of them. `<scope>` names what the commit changes: a module (its plugin name with the vendor prefix dropped), an app (from `apps[]` in `.scrumia/config.yaml`), a feature (the directory holding its `index.md` under the specs root), or the literal `repo` for what belongs to none of the three. **A change atomic across several of them names them all, comma-separated** — this generalizes past ADR-0017 §2's original module-only form and its closing "nothing else carries two tokens," which the ADR is not re-edited to say but no longer governs on this point (`features/business/dev-flow/business.md` § *What a commit carries*). Only the module tokens named still bump, at that level and no other; naming an app, a feature or `repo` alongside one buys it nothing, and none of them may hide a module — every module a commit changes is still named individually. Once a commit spans more scopes than are worth naming individually — typically past three — `<type>(*):` covers the rest without listing them; `*` derives no bump on its own and never stands in for a module, so a module that must bump is still named alongside it (`refactor(specs,*):`). Why the scope is mandatory, and what each token buys, are in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *What a commit carries* and [ADR-0017](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The signal*.
 
 **If the project documents no such convention**, keep the shape but read the alphabet off its own history rather than importing this one: this paragraph describes ScrumIA's, and a consuming project may spell its scopes differently.
 
-The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](../../../../features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
+The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
 
 This sits before Step 3 because Step 2 is where the branch starts existing and Step 3 can already yield. The steps that name it — 3, 5, 6, and *When you're blocked* — are where it bites in practice, not the extent of it.
 
@@ -135,7 +137,7 @@ Skip this step in the degraded case from Step 1: no specs module documented, no 
 Otherwise, if the ticket changes a behavior, the spec changes **before** the code — not after:
 
 - Consult the feature's `feature_index` file for which of its `catalog` files covers what changed — its "why this file exists" listing is what points you there without this skill assuming a fixed name. On the producer side if it's an interface contract.
-- **Before writing a word into that file, load the specs module's own authoring rules** — not just which file to open, but how it wants that file written. For `scrumia-feature`, that's [its `SKILL.md`](../../../scrumia-specs/skills/scrumia-feature/SKILL.md) §§ *Never put history in a spec* and *`business.md`'s boundary*: the must/must-not checklist that keeps a spec stating current truth rather than narrating how it got there. A different specs module without a documented authoring checklist degrades to "no authoring checklist documented — proceed on judgment" rather than silently skipping this bullet.
+- **Before writing a word into that file, load the specs module's own authoring rules** — not just which file to open, but how it wants that file written. For `scrumia-feature`, that's the skill of that name — invoke it, or read the `SKILL.md` the harness resolves for it; this skill holds no path into another module ([ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)) — §§ *Never put history in a spec* and *`business.md`'s boundary*: the must/must-not checklist that keeps a spec stating current truth rather than narrating how it got there. A different specs module without a documented authoring checklist degrades to "no authoring checklist documented — proceed on judgment" rather than silently skipping this bullet.
 - Update that file, and the file named by `acceptance_file` if the criteria themselves move.
 - In every case, add an entry to the file named by `changelog`, with the issue number.
 
@@ -178,7 +180,7 @@ git status --porcelain   # must print nothing before a role is spawned
 
 `git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else.
 
-If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](../../../../docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
+If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
 | What the diff touches | Required review |
 |---|---|
@@ -189,7 +191,7 @@ If a team module is plugged in, route the review by what your diff actually touc
 
 This is the same table `scrumia-review` applies at gate 2, deliberately: the two must never disagree about who owed this PR a review.
 
-**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR — and per [ADR-0015](../../../../docs/adr/0015-scope-measures-reach.md), report that gap as a signal of failed scoping **only when the axis's own questions would have answered higher**. The label reads a rule's reach; the exit grid reads the diff's paths. Since 0015 decoupled them they disagree routinely and correctly — a specs-only diff whose rule nothing beyond its feature consumes is a correct `scope/M` that still draws a business reviewer — and calling that a mislabel fires on a whole class of correctly-labelled ticket.
+**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR — and per [ADR-0015](https://github.com/tibs245/scrumia/blob/main/docs/adr/0015-scope-measures-reach.md), report that gap as a signal of failed scoping **only when the axis's own questions would have answered higher**. The label reads a rule's reach; the exit grid reads the diff's paths. Since 0015 decoupled them they disagree routinely and correctly — a specs-only diff whose rule nothing beyond its feature consumes is a correct `scope/M` that still draws a business reviewer — and calling that a mislabel fires on a whole class of correctly-labelled ticket.
 
 The table has no scope tier in it, `scope/XL` included: ADR-0015 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
@@ -200,7 +202,7 @@ claude -p --agent scrumia-teams:scrumia-tech \
   --allowedTools "Read,Glob,Grep,Bash" < review-prompt.txt
 ```
 
-Both run the actual role. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
+Both run the actual role. [The roles' doc](https://github.com/tibs245/scrumia/blob/main/docs/agents.md) carries the restart rule and why the failure is silent.
 
 A **Blocked** review gets fixed before opening the PR — and the fix is committed before the role is asked again, which is another yield. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 
@@ -223,7 +225,7 @@ If Step 0 recorded a deviation, echo it here — kind, cell, what the policy cho
 Then comment on the issue with the PR link, and move the card to the `in_review` step:
 
 ```bash
-${CLAUDE_SKILL_DIR}/../../scripts/board.sh move <n> in_review
+scrumia-board move <n> in_review
 ```
 
 If the move fails, continue anyway and say so in the final report: a dead column is not a blocked ticket.

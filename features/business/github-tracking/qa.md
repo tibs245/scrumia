@@ -48,7 +48,7 @@ the suspect flag `false`; the fifth card appeared on a retry a few seconds later
 sprint built from that first read would have silently dropped a ticket nobody noticed
 was missing.
 
-How `board.sh` satisfies this criterion is in `tech.md`.
+How `scrumia-board` satisfies this criterion is in `tech.md`.
 
 ### AC-5 — An unfiltered read past the page size is reported as partial, not as the board
 
@@ -161,5 +161,5 @@ Then every commit of that ticket is returned — a lookup that returns only some
 - Composing a non-GitHub tracker with GitHub pull requests. Not a gap in this spec —
   a gap in the slot, per ADR-0013, closed only when that ADR is reopened.
 - Authentication and reachability failures — `gh` not logged in, the `project` scope
-  missing, the board unreachable. `board.sh doctor` names which one; that is
+  missing, the board unreachable. `scrumia-board doctor` names which one; that is
   operational resilience, not a tracking business rule.

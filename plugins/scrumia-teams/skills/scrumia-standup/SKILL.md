@@ -34,11 +34,11 @@ claude -p --agent scrumia-teams:scrumia-manager \
   --allowedTools "Read,Glob,Grep,Bash" < prompt-manager.txt
 ```
 
-`--allowedTools` is variadic: it swallows a positional prompt, hence stdin. [The roles' doc](../../../../docs/agents.md) carries the restart rule and why the failure is silent.
+`--allowedTools` is variadic: it swallows a positional prompt, hence stdin. [The roles' doc](https://github.com/tibs245/scrumia/blob/main/docs/agents.md) carries the restart rule and why the failure is silent.
 
 Convene them in parallel; they don't talk to each other, and a role that waits on another produces the averaged synthesis this team is built to avoid.
 
-Tell each one the same three things: it is being convened, nothing is to be executed, and it must not write — no file, no commit, no `board.sh move`. Then ask for what that role owns and nothing else. Give the manager its startup sequence (config, slots, memory, board); ask the others for their read of the current state through their own lens.
+Tell each one the same three things: it is being convened, nothing is to be executed, and it must not write — no file, no commit, no `scrumia-board move`. Then ask for what that role owns and nothing else. Give the manager its startup sequence (config, slots, memory, board); ask the others for their read of the current state through their own lens.
 
 Pass on the facts already established in the session so they don't re-derive them, and only those you actually verified.
 
@@ -60,4 +60,4 @@ If what was actually wanted is a batch of tickets executed, that's `scrumia-spri
 
 ## On "standing"
 
-The word means persistent memory and externalised state, not a live process. A role remembers across sessions through `memory: project` and rebuilds everything else from the tracker. Nothing keeps running between two convocations, and nothing needs to — see [ADR-0002](../../../../docs/adr/0002-standing-roles.md).
+The word means persistent memory and externalised state, not a live process. A role remembers across sessions through `memory: project` and rebuilds everything else from the tracker. Nothing keeps running between two convocations, and nothing needs to — see [ADR-0002](https://github.com/tibs245/scrumia/blob/main/docs/adr/0002-standing-roles.md).

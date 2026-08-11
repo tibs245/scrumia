@@ -4,6 +4,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Changed
+- The board tool is published as the name `scrumia-board`, which the harness puts on the
+  session's PATH, and every skill and command runs that name instead of a path. Reaching it
+  by path only ever worked in this module's own repository: installed, the module sits one
+  version segment deeper and the path resolved to nothing at all.
+- `scrumia-sprint`'s call into this module — and any other module's — is now a name, so this
+  module can be installed anywhere without its callers knowing where.
+- Every link into this repository's ADRs and specs is an absolute URL: a relative one assumed
+  a consuming project had files it has never had.
+
 - `scrumia-ticket` step 3 now asks for a line under a shipped module's `[Unreleased]`
   when the ticket changes that module, not only for the spec changelog entry.
 - `scrumia-ticket` Step 3 now routes an executor to the specs module's own authoring
@@ -23,6 +32,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   individually.
 - `scrumia-project-setup`'s label table now names `scrumia-manager` as a reader of
   `scope/*`, alongside `pick-model.sh`, so the row no longer implies a single reader.
+
+### Deprecated
+- `scripts/board.sh` — kept as a shim that warns and delegates. It is removed at the second
+  release after the one shipping this; run `scrumia-board`.
 
 ## [0.4.0] - 2026-08-10
 ### Added
