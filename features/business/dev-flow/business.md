@@ -84,12 +84,12 @@ PR mixing docs and code, is not yet pinned down.
 
 **Every commit carries a type and a scope**: `<type>(<scope>): <subject>`. The scope is
 mandatory here, on top of a standard that makes it optional, because which modules a
-change touches has to be readable from history without opening a diff. Which types exist
-and what each namespace is worth for a version are
-`docs/adr/0017-version-bump-and-commit-signal.md`'s — the namespace list itself is the
-ADR's alone, named nowhere else. `features/business/release-versioning/` states what they
-are worth; this feature states that they are written, and, below, how many tokens one
-commit's scope may carry.
+change touches has to be readable from history without opening a diff. Which types exist,
+which namespaces a scope may draw its token from, and what each is worth for a version
+are `docs/adr/0017-version-bump-and-commit-signal.md`'s — defined there once and
+enumerated in no spec, this one included. `features/business/release-versioning/` states
+what they are worth; this feature states that they are written, and, below, how many
+tokens one commit's scope may carry.
 
 **ADR-0017 §2's comma form was module-only and closed**: *"Nothing but that case may carry
 more than one token"*, on a scope it defines as *"one token."* Both retire on this one
