@@ -122,6 +122,26 @@ The script reports `.scrumia/config.yaml` and stops there. Whether a module name
 in it is actually enabled, and whether `CLAUDE.md` still matches, are AC-2's
 territory and `scrumia-compose`'s job to diagnose around this output.
 
+### AC-9 — A module's references resolve inside it, in either layout
+
+```gherkin
+Given a module whose installed root carries a version segment the repository
+  layout does not, and which needs a script another module ships, plus a
+  rationale belonging to no module at all
+When every reference it writes is resolved from its own root — the
+  `${CLAUDE_SKILL_DIR}` paths in its skills and the relative links in its
+  markdown
+Then each one lands inside that root: the other module's script is reached by
+  running the name that module publishes on PATH, with no path held by the
+  caller, and the rationale is inlined or cited by absolute URL
+And the repository's validator fails on any reference whose resolved target
+  leaves the module's root, so the rule is enforced rather than remembered
+```
+
+A reference that escapes resolves in the repository layout and nowhere else, so
+neither a green validator nor a working session in the home repository is evidence
+of anything. The layout it has to be checked against is the installed one.
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor
