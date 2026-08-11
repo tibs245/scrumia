@@ -3,6 +3,11 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- The designer's "What you write to your project memory" section names the check to run
+  before writing an entry — would this note land elsewhere, even if that hasn't happened
+  yet — and cites `features/business/agent-team/business.md` § *What role memory may
+  hold* for the full test.
 
 ## [0.4.0] - 2026-08-10
 ### Added
