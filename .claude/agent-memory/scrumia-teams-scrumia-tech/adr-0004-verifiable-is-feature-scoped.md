@@ -12,13 +12,11 @@ construction?". Its Context line, *"A usable criterion must be verifiable by an 
 without subjective judgment"*, is about the **splitting criterion** the ADR is choosing,
 not about an acceptance criterion.
 
-**Why:** #31 added to `features/business/dev-flow/business.md` § *No criterion is
-uncoverable* the claim that *verifiable* (§ The two paths), `qa.md` AC-1's "an
-acceptance criterion that can fail" and ADR-0004's *verifiable* are "one property under
-three names". They are not identical: the same feature licenses covering a criterion by
-**an audit by the role that owns the judgement**, which is precisely subjective
-judgement — the thing ADR-0004's sentence excludes. A reader following that pointer can
-land back on the over-demanding false finding the PR exists to prevent.
+**Why this trips reviews up:** dev-flow licenses covering a criterion by **an audit by
+the role that owns the judgement** — which is precisely the subjective judgement
+ADR-0004's Context sentence excludes. Treating the two *verifiable*s as one property
+under three names (this ADR, dev-flow, `qa.md` AC-1) reads plausibly and produces an
+over-demanding false finding.
 
 **How to apply:** do not cite ADR-0004 as the definition of criterion-level
 falsifiability. Cite `qa.md` AC-1. If the three-way reconciliation must stand, scope it —
