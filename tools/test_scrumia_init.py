@@ -20,6 +20,10 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = ROOT / "plugins" / "scrumia-core" / "skills" / "scrumia-init" / "SKILL.md"
 RETIRED = ("composition:", "implementation:", "practices:")
+# ADR-0019 retired `practices` as a slot, not as a settings namespace.
+SETTINGS_NS = re.compile(r"settings[.:]?\s*\w*[.\s]*(implementation|practices)")
+# Naming a key as gone is the opposite of instructing an agent to write it.
+DISOWNED = re.compile(r"retired|deprecat|stale|no longer|old spelling", re.IGNORECASE)
 FAILURES: list[str] = []
 
 
@@ -65,7 +69,7 @@ def main() -> int:
     check("Step 3 writes .scrumia/config.yaml", bool(step3))
     cfg = config_template(step3)
 
-    print("AC-6 — the modules an app is built against are declared per app")
+    print("AC-6 — a practice reaches an app only through that app's own extends")
     apps = cfg.get("apps") or []
     check("the template carries an apps[] list", bool(apps))
     for app in apps:
@@ -77,15 +81,20 @@ def main() -> int:
               ", ".join(sorted({"implementation", "practices"} & set(app))))
         check(f"{name}: carries a path", bool(app.get("path")))
 
-    print("AC-2 — the composition is declared by naming modules, not by asserting slots")
-    check("the template declares extends at project level", isinstance(cfg.get("extends"), list))
+    # AC-6's falsifiable half: no project-level entry may apply a practice to an app
+    # that did not declare it, so a practice module must never sit in the outer list.
+    outer = cfg.get("extends") or []
+    strays = [m for m in outer if isinstance(m, str) and "-practice-" in m]
+    check("no practice module in the project-level extends", not strays, ", ".join(strays))
+
+    print("The composition is declared by naming modules, not by asserting slots")
+    check("the template declares extends at project level", isinstance(outer, list))
     check("no composition: slot map survives", "composition" not in cfg)
     check("every extends entry names a module",
-          all(isinstance(m, str) and m for m in cfg.get("extends") or []),
-          repr(cfg.get("extends")))
+          all(isinstance(m, str) and m for m in outer), repr(outer))
 
     print("AC-1 — a need nobody covers keeps existing, without a placeholder to carry it")
-    lists = [cfg.get("extends") or []] + [a.get("extends") or [] for a in apps]
+    lists = [outer] + [a.get("extends") or [] for a in apps]
     check("no null placeholder anywhere in extends",
           all(m is not None for lst in lists for m in lst))
     step8 = next((v for k, v in secs.items() if k.startswith("Step 8")), "")
@@ -106,7 +115,8 @@ def main() -> int:
     elsewhere = {h: b for h, b in secs.items() if not h.startswith("Step 3b")}
     for key in RETIRED:
         hits = [f"{h or '(preamble)'}: {l.strip()}"
-                for h, b in elsewhere.items() for l in b.splitlines() if key in l]
+                for h, b in elsewhere.items() for l in b.splitlines()
+                if key in l and not SETTINGS_NS.search(l) and not DISOWNED.search(l)]
         check(f"no live {key} outside the migration", not hits, "; ".join(hits))
 
     print()

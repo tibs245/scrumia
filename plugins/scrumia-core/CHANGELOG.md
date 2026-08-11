@@ -8,9 +8,18 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
 - The config `scrumia-init` writes declares modules through `extends:` — one flat, unordered
   list per project, plus one per app carrying that app's implementation module and its
-  practice modules together. A module you did not choose is absent from the list rather than
-  present as `null`, so what nothing covers is now stated in the composition report instead of
-  as a placeholder in your config. `scrumia-compose` reads and edits the same key.
+  practice modules together. **Run `scrumia-init` to convert your `.scrumia/config.yaml`**; it
+  reads the old keys and rewrites them, and shows you the conversion before writing it.
+  `scrumia-compose` reads and edits the same key.
+- **A slot you deliberately set to `null` is dropped by that conversion**, and the new schema
+  has nowhere to put it back: `extends` names the modules that are there, so "not chosen yet"
+  and "deliberately without" now read the same. The conversion names every dropped `null` in
+  its run report — read that report, because nothing records the choice afterwards. Declaring
+  an exclusion explicitly is not yet possible and is tracked as its own change.
+- A capability nothing covers is reported rather than written into your config as a
+  placeholder. Until the composition report itself moves to `extends:` — the next release —
+  `compose-status.sh` reads the old key only, so it will call a migrated project's modules
+  "not declared". Take that report as stale, not as your config being wrong.
 
 ### Deprecated
 - `composition:`, and the per-app `implementation:` and `practices:` keys. `scrumia-init` still

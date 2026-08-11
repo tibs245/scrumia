@@ -145,7 +145,7 @@ Two further keys an earlier version of this template carried are gone on purpose
 
 ## Step 3b — Migrate a project already written on `composition:`
 
-`extends` replaced a `composition:` map keyed by slot, and per-app `implementation` and `practices` keys. Projects installed before that change still carry the old spelling, and there is no installer to run against them ([ADR-0001](https://github.com/tibs245/scrumia/blob/main/docs/adr/0001-distribution-as-plugins.md)) — this skill is the migration path. In verification mode, if the config on disk carries any of the three old keys, convert it and say what you did.
+`extends` replaced exactly three keys: the top-level `composition:` map, and `implementation` and `practices` **on an app entry**. Projects installed before that change still carry the old spelling, and there is no installer to run against them ([ADR-0001](https://github.com/tibs245/scrumia/blob/main/docs/adr/0001-distribution-as-plugins.md)) — this skill is the migration path. In verification mode, if the config on disk carries any of those three, convert it and say what you did.
 
 The conversion is mechanical:
 
@@ -156,14 +156,21 @@ The conversion is mechanical:
 | `apps[].implementation` naming a module | an entry in that app's `extends` |
 | `apps[].practices` — each module listed | an entry in that same app's `extends` |
 | `apps[].implementation: null`, `apps[].practices: []` | nothing. An app left with an empty list carries no `extends` key at all |
+| **`settings.implementation.<module>`, `settings.practices.<module>`** | **nothing — leave them exactly as they are** |
+
+**The last row is the one that costs a project real configuration if you get it wrong.** `settings.implementation.<module>` and `settings.practices.<module>` are settings namespaces a module still reads, not retired slot keys that happen to share a word: ADR-0019 retired `practices` as a *slot* and says a practice module "keeps every rule ADR-0010 gave it … including documenting `settings.practices.<module>`" unchanged. Hoisting them into an `extends` list, or deleting them alongside the app keys, silently discards things like `test_runner: cargo` and `ac_mapping: strict`, and the next ticket in that app runs on the module's defaults with nothing to say why. Match on the **path** to the key, never on the word.
+
+**Edit the file in place; never parse and re-serialise it.** This config is comment-dense on purpose — every settings key carries the name of what reads it — and a round-trip through a YAML writer drops every one of those comments while leaving a file that still parses. Change the lines the table names and leave the rest of the bytes alone.
 
 Write the implementation module first in an app's list, for a reader's benefit only — the list carries no precedence, and a converted config must not be presented as though the order it came out in meant something.
+
+**A conversion is not finished at the config.** Carry it through the rest of this run: Step 5 regenerates `CLAUDE.md`'s tables from the converted file, and Step 6 checks each per-app stub against it. A migrated config sitting beside a `CLAUDE.md` still split into `Implementation | Practices` columns is precisely the drift this skill exists to catch, and it is this run that created it.
 
 **Name every dropped `null` in the report.** A slot deliberately left empty was a decision someone made, and the conversion deletes the only place that decision was written. The report is where it survives — "`design` was empty and is now simply absent from `extends`" — so the user can tell a converted gap from one this run invented.
 
 **Never rewrite the old keys away silently, and never in the same pass that installs a project.** Show the conversion, then write it. Deleting a key a project's own tooling might still read is exactly the failure the window below exists to prevent.
 
-**Both spellings keep working, for a window counted in releases.** `composition:` and the per-app keys stay readable through the release that deprecates them and the one after it, and may be removed no earlier than the second release after that — the window `features/business/release-versioning/` defines for anything a module publishes, which this is ([business.md](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md) § *What a module owes to be upgradable*). ADR-0019 says "one minor" in passing; the release-counted window is the one that governs, since `modular-composition` defers this question to `release-versioning` by name rather than answering it itself.
+**Both spellings keep working, for a window counted in releases.** `composition:` and the per-app keys stay readable through the release that deprecates them and the one after it, and may be removed no earlier than the second release after that — the window `features/business/release-versioning/` defines for anything a module publishes, which this is ([business.md](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md) § *What a module owes to be upgradable*). `modular-composition` defers this question to `release-versioning` by name rather than answering it itself, so that is where the count comes from.
 
 While the window is open, reading an old key emits **one** warning — naming the key, its replacement, and the fact that removal is coming — and then proceeds. Not one per key, not one per app: a config carrying `composition:` plus three apps still on both old per-app keys would otherwise emit seven, for a single decision the user has already been told about.
 
@@ -322,7 +329,9 @@ ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 
 Its output *is* the closing summary — what each declared need resolves to, what nothing covers, and the apps built against no module at all. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
 
-A need the script reports as covered by nothing is **not** a defect in this skill's output. Under `extends` there is no key to write for it — the list names the modules that are there, and the report is where the gap is stated. Say it in the report as a gap the project owns, and name the module that would cover it; do not go back and invent a placeholder in the config to make the line disappear.
+**Until the script itself moves to `extends`, its output is stale on any config this skill now writes, and you must say so rather than repeat it.** `compose-status.sh` still reads the retired `composition:` and per-app keys, so against a converted config it reports every module as `not declared`, every app as having none, and closes by advising the user to add each slot back "with an explicit null" — the one thing Step 3 forbids. Print it, then state plainly which modules `extends` actually names and that the script has not caught up. Correcting a report that contradicts the file it claims to read is not the paraphrase the paragraph above prohibits: that rule exists so an agent never substitutes memory for the config, and here the config is what you are siding with.
+
+A need the script reports as covered by nothing is, separately, **not** a defect in this skill's output. Under `extends` there is no key to write for it — the list names the modules that are there, and the report is where the gap is stated. Say it in the report as a gap the project owns, and name the module that would cover it; do not go back and invent a placeholder in the config to make the line disappear.
 
 ## What you don't do
 

@@ -70,4 +70,6 @@ ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 
 On a view, that output is most of the answer already: the modules `extends` names, what nothing covers, and what each app is built against.
 
+**One caveat, until the script moves to `extends`:** it still reads the retired `composition:` and per-app keys, so on a config written in the current schema it reports every module as `not declared` and every app as having none, and advises adding the slots back as explicit nulls. Say which modules `extends` actually names and that the script has not caught up — reading the config against a report that disagrees with it is this skill's job, not a paraphrase of a report you were told to relay.
+
 What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — so it cannot tell you whether a named module is actually enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. Those gaps are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.

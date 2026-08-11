@@ -134,8 +134,8 @@ paths:
 
 Two conventions that matter:
 
-- **An absent module is declared `null`**, not omitted. The difference between "not chosen yet" and "deliberately without" is otherwise lost.
-- **Each module documents the keys it reads** under `settings`. An implicit setting is a setting you can't change.
+- **An absent module is simply not in the list.** `extends` carries no `null` placeholder — a flat list has no per-slot key to leave empty — so a capability nothing covers is derived and reported rather than written down. The cost is that "not chosen yet" and "deliberately without" no longer read differently in the file; declaring an exclusion explicitly is a gap ADR-0019 left open.
+- **Each module documents the keys it reads** under `settings`. An implicit setting is a setting you can't change. `settings.implementation.<module>` and `settings.practices.<module>` are untouched by `extends`: it retired `practices` as a slot, not as a settings namespace.
 
 ## Overriding without forking
 

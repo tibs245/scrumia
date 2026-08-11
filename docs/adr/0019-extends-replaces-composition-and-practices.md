@@ -145,7 +145,14 @@ without it.
 
 - **`composition:` → `extends` is a breaking config change**, consumed by every project
   that installed ScrumIA, with no installer (ADR-0001). `scrumia-init` reads the old key
-  and writes the new one; `composition:` stays tolerated, with a warning, for one minor.
+  and writes the new one; `composition:` stays tolerated, with a warning, for the
+  deprecation window `features/business/release-versioning/` defines — counted in
+  **releases**, not in version levels: readable at the release that deprecates it and the
+  one after, removable no earlier than the one after that. This ADR does not set that
+  window and an earlier draft's "one minor" did not survive contact with it:
+  `features/business/modular-composition/` defers the question to `release-versioning` by
+  name, and `scrumia-core` sits below `1.0.0`, where a rename-level change ships *as* a
+  minor — so "one minor" would remove the key in the very release that deprecated it.
   `compose-status.sh`, `check_composition_drift()`, the fixture, both `site/i18n/*/index.json`
   and this repo's own `CLAUDE.md` table all need the migration applied to them, not just
   documented — tracked as implementation tickets from this scoping's split.
