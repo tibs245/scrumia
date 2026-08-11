@@ -137,6 +137,21 @@ Then it is non-conforming: the signal is owed by the change, not offered by the 
   version derived from a commit that withheld it under-states what the project must do
 ```
 
+**"Must act on" narrows to "must act on to keep working"**, not "will notice a
+difference" (human ruling — see `CHANGELOG.md`). The test: does the change break anything
+on an old project, or under its old practices? A project's own already-produced commits
+staying valid and no config key it already set moving are both evidence the answer is no.
+
+```gherkin
+Given a change to the published surface whose only effect is that the project's *future*
+  commits or runs look different under it — nothing already produced by the project stops
+  being valid, and no config key it already set moves
+When it is checked against "must act on"
+Then it owes no breaking signal: the project reads about the difference the next time it
+  acts, it is not forced to act because of it — and a commit typed and scoped without `!`
+  for exactly this reason is conforming, not withholding
+```
+
 ## Out of scope
 
 - **What a commit message must carry, and who may rewrite a branch** — the mandatory type
