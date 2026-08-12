@@ -27,7 +27,7 @@ other should point at it. That is a pointer, not a second placement.
 | a rule that holds for every project running a given module | that module |
 | a rule that holds for this project | the project — one of the shapes `local-extension` names |
 | something that changes what the product does or must do | a feature |
-| a debate, a thought, an event, an unresolved disagreement | a ticket |
+| a discussion, a thought, an event, an unresolved disagreement | a ticket |
 | something to correct now, small enough to carry its own justification | the change itself |
 | everything else, and only after the test below says so | agent memory |
 
@@ -61,16 +61,16 @@ is project material sitting under a memory-shaped path, and the tree routes it l
 other. Reading the rule as "files under this path are memory" would let the whole question
 be settled by a directory name, which is how the failure got here.
 
-## A debate looks for an issue before it creates one
+## A discussion looks for an issue before it creates one
 
-Most debates are about something already written down. The tree searches before it
+Most discussions are about something already written down. The tree searches before it
 creates, and the search covers issues in every state — an unresolved thought is more often
 about something that was closed than about something open. A search restricted to what is
 currently on the board will miss exactly the cases the tree was built for.
 
 Where nothing matching exists, a new issue is created, carrying a label that a query can
 exclude. The label earns its place by being something a query selects on, which here means
-something the status and next-step readings subtract: an issue holding a debate is not
+something the status and next-step readings subtract: an issue holding a discussion is not
 work waiting to be refined, and counting it as such is how a backlog becomes unreadable.
 Which label, and where it is declared, is `github-tracking`'s.
 
@@ -89,9 +89,9 @@ because it works better.
 ## An empty destination is named, never improvised
 
 Where a destination's capability is not present in the composition — no tracker to hold a
-debate, no specs module to hold a feature — the tree names the gap and the module that
-would fill it, and it does not invent a substitute. Writing a debate into a file because
-no tracker exists creates state in the repository, which is the thing the composition
+discussion, no specs module to hold a feature — the tree names the gap and the module that
+would fill it, and it does not invent a substitute. Writing a discussion into a file
+because no tracker exists creates state in the repository, which is the thing the composition
 refuses everywhere else.
 
 ## Business rules
@@ -109,9 +109,9 @@ refuses everywhere else.
   material whatever its path.
 - **BR-5** — An entry in agent memory that would have survived the handover is a
   placement failure and is reported as one, with the destination it should have had.
-- **BR-6** — A debate searches issues in every state before creating one, and never
+- **BR-6** — A discussion searches issues in every state before creating one, and never
   searches the board — the board carries what is in flight, not what has been settled.
-- **BR-7** — A new issue holding a debate carries a label the status and next-step
+- **BR-7** — A new issue holding a discussion carries a label the status and next-step
   readings exclude. The label's spelling and declaration are `github-tracking`'s.
 - **BR-8** — The tree runs after the write, as a reminder. It intercepts nothing and
   refuses nothing.
@@ -125,6 +125,6 @@ refuses everywhere else.
   writing is done by whatever owns the destination.
 - **The handover test** — whether a fact would usefully survive being handed to someone
   else with the repository. The single boundary of agent memory.
-- **Debate** — something unresolved that is not yet a rule and may never become one: a
+- **Discussion** — something unresolved that is not yet a rule and may never become one: a
   disagreement, a thought, an event worth remembering. Its destination is a ticket
   because a ticket is the one place ScrumIA already keeps *why*.

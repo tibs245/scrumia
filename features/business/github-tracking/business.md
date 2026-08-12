@@ -97,6 +97,14 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
+| `discussion` | `scrumia-status` and the next-step reading, which **subtract** it | an issue holding something unresolved that is not work waiting to be started |
+
+`discussion` is the only label read as a subtraction, and that is what earns it a place
+here rather than in a module's prose. An issue carrying it is not a ticket awaiting
+refinement: counting it as one is how a backlog becomes unreadable, and a label nothing
+queries would be documentation rather than a filter. What sends an issue there is
+`features/business/knowledge-placement/`'s; that it is queryable, and by whom, is this
+feature's.
 
 `scope/*` has exactly one programmatic reader, `scrumia-pick-model`, and what its cell means
 is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —

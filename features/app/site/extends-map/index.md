@@ -19,7 +19,8 @@ This is the section that carries the argument the site currently does not make �
   - `features/business/modular-composition/index.md` — what a register, a directive and
     a contribution are, and the order the table renders in
   - `features/business/local-extension/index.md` — the three locations a contributing
-    module may live in, which the diagram has to make visible or deliberately omit
+    module may live in, deliberately absent from this section's figure and carried by
+    `reference.html` instead
   - `design/identity.md` — the mechanism-over-claim rule this section is most at risk of
     breaking
   - `design/tokens.css` — the vocabulary of values this feature may use
