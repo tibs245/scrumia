@@ -22,8 +22,9 @@ Then it is created inside the project, and the pass states the reach it inferred
   human can contradict it
 Given instead a need stated as belonging to anyone running ScrumIA
 When the same pass runs
-Then a marketplace is the location, and the pass says what publishing commits the author
-  to before creating anything
+Then a marketplace is the location, and before creating anything the pass states the two
+  obligations publishing carries — a version whose bumps `release-versioning` governs, and
+  a deprecation window before a renamed thing disappears
 ```
 
 ### AC-3 — Promotion rewrites no file
@@ -62,14 +63,15 @@ Then the pre-existing findings are surfaced first, and are not silently inherite
   though the pass had produced them
 ```
 
-### AC-6 — An edit names the bump and defines nothing
+### AC-6 — An edit names the commit signal, and derives no level
 
 ```gherkin
 Given a change to a module that alters what one of its skills instructs an agent to do
 When the authoring pass reports the change
-Then it names the bump the change calls for and points at
-  `features/business/release-versioning/` for what that bump promises, without restating
-  the promise or the window
+Then it names the type and the scope the commit will carry, and points at
+  `features/business/release-versioning/` for what follows from them
+And it does not state a level — not "minor", not "major" — because the level is read off
+  the commit there, and below `1.0.0` the same word names two different things
 ```
 
 ## Refusals

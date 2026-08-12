@@ -184,7 +184,22 @@ Then a finding names the entry point, because content reachable only through the
   content the index carries rather than routes
 ```
 
-### AC-14 — Every audit question is closed, single-concern and answerable from one file
+### AC-14 — An optional section a module needs, and omits, is a finding
+
+```gherkin
+Given a module that reads three settings and whose README carries no "Settings it reads"
+When the audit runs over it
+Then a finding names the omission, because the absence asserts something the module
+  contradicts
+Given instead a module that reads none and omits the same section
+When the same audit runs
+Then no finding is raised — the absence is true, which is what makes it information
+```
+
+Also the audit's: a README past the ~80-line guardrail, judged on what the extra lines are
+doing rather than on the count, which is the proxy BR-2 refuses.
+
+### AC-15 — Every audit question is closed, single-concern and answerable from one file
 
 ```gherkin
 Given the audit's checklist
@@ -198,7 +213,7 @@ This is the criterion that keeps the audit affordable. A question needing the wh
 in context is one that cannot run on a cheap model, and an audit that cannot run cheaply is
 one that runs once.
 
-### AC-15 — Both surfaces report in one shape
+### AC-16 — Both surfaces report in one shape
 
 ```gherkin
 Given findings produced by the procedural check and findings produced by the audit

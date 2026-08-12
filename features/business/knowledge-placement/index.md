@@ -38,7 +38,9 @@ separate question. The tree reminds; it does not block.
 | `qa.md` | Checking this feature's acceptance criteria |
 | `CHANGELOG.md` | History of changes to this spec |
 
-No `legal.md`: the tree routes a project's own material and reads nothing personal. No
-`security.md`: every destination it names is one the project already writes to by other
-means.
+No `legal.md`: what the tree routes is a project's own working material, and every
+destination it names is one the project already writes to by other means. It does route
+preferences about a person into shared artefacts — BR-4 admits as much — but that is the
+project recording how it works, not personal data it processes. No `security.md`, for the
+same reason.
 

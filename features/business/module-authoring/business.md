@@ -49,9 +49,11 @@ passed once stops passing without anyone noticing — which is the failure the c
 exists to catch, arriving through the one door left open.
 
 What an edit adds over a creation is the question a creation cannot ask: **what does this
-change cost a project that has already adopted the module?** Authoring names the bump the
-change calls for. What that bump promises, and what the project owes on receiving it, is
-`release-versioning`'s and is not restated here.
+change cost a project that has already adopted the module?** Authoring names the change's
+**type and scope** — the commit signal — and stops. The level follows from them, and
+`release-versioning` is explicit that it is read off the commit rather than chosen; a pass
+announcing "this is a minor" asserts a conclusion from inputs that are not written yet, and
+below `1.0.0` — where every module still sits — "minor" names two different things at once.
 
 ## Two refusals
 
@@ -95,8 +97,8 @@ reads none of — it writes nothing, and the absence is the statement.
   ceremony.
 - **BR-4** — Editing a module runs the same pass and the same check as creating one.
   There is no lighter path.
-- **BR-5** — An edit names the version bump it calls for. What the bump promises is
-  `release-versioning`'s and is not restated at authoring time.
+- **BR-5** — An edit names the type and scope its commit carries. The level the bump takes
+  is derived from them by `release-versioning`, never announced here.
 - **BR-6** — A module is not created for a single rule. The pass names the destination
   that fits instead, and creates nothing.
 - **BR-7** — A new slot is not invented to hold a new module. A module filling no slot is

@@ -64,8 +64,8 @@ Then the tree rejects that placement, names the destination that fits, and state
 Given a fact about how this machine is configured, useless to anyone cloning the
   repository
 When the tree runs
-Then agent memory is the destination, and the tree does not route it to the project or to
-  a module in order to avoid using memory at all
+Then agent memory is the destination, and no other is proposed — a run that returns the
+  project or a module for this fact fails the criterion
 ```
 
 A tree that never chooses memory has replaced one wrong default with another.
