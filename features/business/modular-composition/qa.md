@@ -277,6 +277,37 @@ The two failures are not symmetric, and the asymmetry is the point. A consumer t
 on a migrated key is fixed the day the migration lands; a consumer that quietly substitutes
 its defaults keeps producing well-formed answers nobody has reason to doubt.
 
+### AC-20 — Across the layers, the layer decides and the shape never does
+
+```gherkin
+Given one layer carrying a module's key under the retired `settings.<slot>` nest and
+  another layer carrying the same key in the current shape
+When the module reads it
+Then the later layer answers whichever shape it wrote the key in
+Given instead one layer carrying that key in both shapes at once
+When the same read runs
+Then the current shape wins, key by key, and the retired nest answers only for what the
+  current shape does not carry
+Given a module naming a retired nest that no layer carries
+When the same read runs
+Then the configuration resolves, carrying nothing on that nest's account — a project whose
+  migration is finished is not a project whose modules stop resolving
+```
+
+### AC-21 — A key written with no value is an absence, at any depth
+
+```gherkin
+Given a key written bare in one layer, over a layer that carries a value for it
+When the module reads it
+Then the layer beneath answers, whether the bare key sits at the top of the block or
+  inside one — a key written bare is a key not yet migrated, never a value
+Given a layer whose every key is written bare
+When the same read runs
+Then that layer is not named among the layers that answered — naming a layer whose value
+  is discarded is worse than naming none, on the one output whose whole job is to make the
+  cascade checkable
+```
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor or

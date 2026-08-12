@@ -97,23 +97,46 @@ Testing the shapes in this order, and naming the empty composition, is what keep
 looking like a correct run.
 
 **Which shape a module's own settings are read in.** ADR-0021 moves what `settings.<slot>`
-held into that module's `params:`, so the same key exists in two shapes during the
-migration. A consumer reads both, and *merges* them key by key:
+held into that module's `params:`, so the same key exists in two shapes while a project
+migrates. The resolver, not the consumer, reconciles them: a module names the nest its
+configuration used to sit under when it asks, and every layer is **normalised to the
+current shape before the layers combine**.
 
-| Present in the resolved block | Read |
+| Where the key sits | Read |
 |---|---|
-| the key at the top level | it — the migrated shape wins |
-| the key only under the retired `settings.<slot>` nest | it, for the deprecation window |
-| both | merged, the top-level key winning per key, never per block |
+| at the top level of a layer | it — the current shape wins within its layer |
+| only under that layer's retired `settings.<slot>` nest | it, for the deprecation window |
+| both, in one layer | merged, the top-level key winning per key, never per block |
+| both, in different layers | the later layer's, whichever shape carries it |
 
-Merging per key rather than choosing a block is the part that is not obvious. A project
-migrates one key at a time; a consumer that picked whichever block looked newer would drop
-every key the other still carried onto its own built-in defaults — a well-formed answer
-nobody configured, which is BR-16's failure arriving through the migration meant to avoid
-it. The retired nest's reading window is a deprecation like any other, and
+The last row is the one that has to be normalised for. A project migrates one key at a
+time, and the layer it has not migrated is layer 3 — never committed, so nothing carries it
+forward. Reconciled after the layers are merged, shape decides where BR-14 says the layer
+does, and the per-machine layer is the one discarded. Reconciled within each layer first,
+the merge order is the only thing left that can decide, which is what BR-14 states.
+
+Merging per key rather than choosing a block is the other part that is not obvious: a
+resolver that picked whichever block looked newer would drop every key the other still
+carried onto the consumer's built-in defaults — a well-formed answer nobody configured,
+which is BR-16's failure arriving through the migration meant to avoid it.
+
+A nest no layer carries resolves clean and empty. A fully migrated project names one that
+is gone, and a resolver that failed on it would stop every consumer the moment the
+migration succeeded.
+
+The retired nest's reading window is a deprecation like any other, and
 `features/business/release-versioning/` decides when it closes. The release that removes it
 is named where a project updating a module actually reads — that module's own changelog,
-under `Deprecated` — because a feature carries no version to count releases from.
+under `Deprecated` — because a feature carries no version to count releases from. It closes
+in the consumers first and in the resolver last: the resolver cannot drop the mapping while
+a module still names one.
+
+**A key written with no value carries nothing, at any depth.** The merge propagates an
+explicit null, so a key written bare would otherwise erase the layer it defers to — and
+writing keys bare is what migrating one at a time produces. Nulls are dropped from every
+layer before the layers combine, so the layer beneath answers, whether the bare key sits at
+the top of a block or inside one. A layer left carrying nothing that way is not named among
+the layers that answered: the provenance names what resolved, never what merely exists.
 
 ## Where each thing is resolved, and by what
 
