@@ -130,7 +130,15 @@ Then it states the gap with a specific, named message — "no specs module docum
   — ask the human or proceed without spec updates" — and continues the rest of its
   work in that degraded mode; it does not raise an error, and it does not silently
   guess a file layout that happens to work for one module
+Given instead the absent capability is the resolver the module's own configuration passes
+  through
+Then AC-19 governs and there is no degraded mode: the skill has no configuration to run
+  the rest of its work on, so it stops
 ```
+
+The exception is narrow on purpose. A skill missing a *collaborator* still knows what it
+was configured to do; a skill missing the resolution of its own configuration knows
+nothing, and every step it took anyway would be well-formed.
 
 ### AC-11 — A declared edge that nothing satisfies is reported by name
 

@@ -7,6 +7,10 @@ set -uo pipefail
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
 MODULE_ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 DEFAULT_LIMIT=200
+# Set by the `doctor` dispatch alone, and initialised here so the environment cannot:
+# with the gate off, a command reaching the API on an unresolved board answers from
+# whatever card it finds, which is the failure this whole seam removes.
+SOFT_SETTINGS=no
 # Bounds for cmd_read's confirm-retry (AC-4); overridable so tests don't sleep for real.
 DEFAULT_RETRY_MAX=2
 DEFAULT_RETRY_DELAY=1
@@ -52,7 +56,7 @@ load_config() {
   # Every command but `doctor` stops here: running the board on this script's own
   # defaults is the quiet failure. `doctor` reports it instead, because a diagnostic that
   # cannot run when the composition is broken diagnoses nothing.
-  load_settings || { [ "${SOFT_SETTINGS:-no}" = yes ] || die "$SETTINGS_ERROR"; }
+  load_settings || { [ "$SOFT_SETTINGS" = yes ] || die "$SETTINGS_ERROR"; }
   # A user-owned board can track an org-owned repo, so the two owners differ.
   OWNER=$(jq -r --arg d "$REPO_OWNER" '.owner // $d' <<<"$TRACKER")
   PROJECT_NUMBER=$(jq -r '.project_number // empty' <<<"$TRACKER")
@@ -102,11 +106,11 @@ load_settings() {
     return 1
   fi
   if ! out=$(scrumia-extends --settings "$key"); then
-    SETTINGS_ERROR="scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults"
+    SETTINGS_ERROR="scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults. Run scrumia-extends --settings $key by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
     return 1
   fi
   if ! jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out"; then
-    SETTINGS_ERROR="scrumia-extends --settings $key returned no object — settings for $key are unresolved"
+    SETTINGS_ERROR="scrumia-extends --settings $key returned no object — settings for $key are unresolved. Check that $CONFIG parses, then run scrumia-extends --settings $key by hand"
     return 1
   fi
 
@@ -153,6 +157,11 @@ cmd_doctor() {
   if [ -n "${SETTINGS_ERROR:-}" ]; then
     settings_ok=false
     detail="$SETTINGS_ERROR"
+  elif [ -z "$PROJECT_NUMBER" ] || [ -z "$FIELD_ID" ]; then
+    # The resolver ran and no layer carried this module's board — the third of AC-19's
+    # cases. Reporting it as resolved is the failure `doctor` was exempted to report.
+    settings_ok=false
+    detail="the settings resolved, and no layer of the cascade carries this module's board — run scrumia-project-setup"
   fi
   if gh auth status >/dev/null 2>&1; then
     auth_ok=true

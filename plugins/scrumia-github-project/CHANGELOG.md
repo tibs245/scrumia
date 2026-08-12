@@ -65,6 +65,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   agent that already does: what it answers, what it refuses, what it ships.
 
 ### Deprecated
+- `settings.tracker` in `.scrumia/config.yaml` — this module's keys move into its own
+  `params:` under the `modules:` mapping (ADR-0021). Both shapes are read and merged key by
+  key, so a project migrates one key at a time; the retired nest is removed at the second
+  release after the one shipping this.
 - `scripts/board.sh` — kept as a shim that warns and delegates. It is removed at the second
   release after the one shipping this; run `scrumia-board`.
 
