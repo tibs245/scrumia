@@ -36,11 +36,16 @@ TPL = SITE / "templates"
 I18N = SITE / "i18n"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 MODULES_DATA = SITE / "modules.json"
+PLUGINS_DIR = ROOT / "plugins"
+SCRUMIA_CONFIG = ROOT / ".scrumia" / "config.yaml"
 TOKENS_SRC = ROOT / "design" / "tokens.css"
 TOKENS_OUT = SITE / "assets" / "tokens.css"
 REPO_URL = "https://github.com/tibs245/scrumia"
 SITE_URL = "https://tibs245.github.io/scrumia/"
 PAGES = ["index", "workflow", "reference", "about"]
+# The two registers #extends draws (#296) — named rather than auto-picked, re-checked
+# against the live composition by extends_map_specials on every build.
+EXTENDS_FIGURE = {"populated": "implement", "empty": "sprint"}
 LANGS = {
     "en": {"out": SITE, "prefix": "", "root": ""},
     "fr": {"out": SITE / "fr", "prefix": "fr/", "root": "../"},
@@ -224,6 +229,116 @@ def module_link_specials(modules: list[dict]) -> dict[str, str]:
     return {f"@modlink_{m['name']}": f"modules/{m['name']}.html" for m in modules}
 
 
+def load_project_modules() -> list[str]:
+    """The modules this project runs, read from `.scrumia/config.yaml`'s `extends:`
+    list — the same source `scrumia-extends` reads, so the figure never names a
+    module this composition does not actually run."""
+    try:
+        import yaml
+    except ImportError:
+        ERRORS.append("PyYAML not installed — cannot read .scrumia/config.yaml for the extends map")
+        return []
+    try:
+        cfg = yaml.safe_load(SCRUMIA_CONFIG.read_text(encoding="utf-8")) or {}
+    except FileNotFoundError:
+        ERRORS.append(f"{SCRUMIA_CONFIG.relative_to(ROOT)}: missing")
+        return []
+    except yaml.YAMLError as e:
+        ERRORS.append(f"{SCRUMIA_CONFIG.relative_to(ROOT)}: invalid YAML — {e}")
+        return []
+    return list(cfg.get("extends") or [])
+
+
+def read_json_object(path: Path) -> dict:
+    """A module's own `registers.json` or `extends.json`. Malformed is reported, not
+    read as empty — a typo in an extension must not ship as a silent "contributes
+    nothing" (mirrors `scrumia-extends`' own `read_json`)."""
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        ERRORS.append(f"{path.relative_to(ROOT)}: invalid JSON — {e}")
+        return {}
+    if not isinstance(data, dict):
+        ERRORS.append(f"{path.relative_to(ROOT)}: not a JSON object")
+        return {}
+    return data
+
+
+def load_extends_map() -> dict:
+    """The registers this project's own modules open and extend, walked directly
+    from `plugins/*/registers.json` and `extends.json` rather than shelled out to
+    `scrumia-extends`: a build has no guarantee of a PATH carrying every module's
+    `bin/`, which is a harness feature (ADR-0018), not a build-time one."""
+    registers: dict[str, dict] = {}
+    directives: dict[str, list[dict]] = {}
+    for name in load_project_modules():
+        root = PLUGINS_DIR / name
+        for reg, info in read_json_object(root / "registers.json").items():
+            registers[reg] = {"module": name, "skill": info.get("skill", "")}
+        for reg, rows in read_json_object(root / "extends.json").items():
+            for row in rows if isinstance(rows, list) else []:
+                directives.setdefault(reg, []).append({
+                    "module": name,
+                    "name": row.get("name", "(unnamed)"),
+                    "summary": row.get("summary", ""),
+                })
+    return {"registers": registers, "directives": directives}
+
+
+def extends_map_specials() -> dict[str, str]:
+    """The `#extends` section's figure and table (#296): one populated register, one
+    empty one. Both are re-verified against the live composition on every build —
+    AC-2 (nothing invented) and AC-3 (the empty case is genuine) are guarded by the
+    same check that produces the copy, so a composition drift fails the build
+    instead of shipping a figure that is quietly no longer true."""
+    data = load_extends_map()
+    regs, dirs = data["registers"], data["directives"]
+
+    def pick(reg: str, want_empty: bool):
+        if reg not in regs:
+            ERRORS.append(f"extends-map: register '{reg}' is opened by no module this project runs")
+            return None
+        contributors = dirs.get(reg, [])
+        mods = sorted({d["module"] for d in contributors})
+        if want_empty and mods:
+            ERRORS.append(
+                f"extends-map: '{reg}' was picked as the empty-register example but is now "
+                f"extended by {mods} — pick a register that still carries no contribution")
+            return None
+        if not want_empty and len(mods) < 2:
+            ERRORS.append(
+                f"extends-map: '{reg}' was picked as the populated example but only {mods} "
+                "extend it — pick a register more than one module contributes to")
+            return None
+        return {"module": regs[reg]["module"], "skill": regs[reg]["skill"],
+                "contributors": contributors, "mods": mods}
+
+    populated = pick(EXTENDS_FIGURE["populated"], want_empty=False)
+    empty = pick(EXTENDS_FIGURE["empty"], want_empty=True)
+    if populated is None or empty is None:
+        return {}
+
+    rows = sorted(populated["contributors"], key=lambda d: (d["module"], d["name"]))
+    # A comma list, not "and"-joined: the prose that reads it runs in English and
+    # French from the same special, and only one of them spells the conjunction "and".
+    inline_mods = ", ".join(f"<code>{html.escape(m)}</code>" for m in populated["mods"])
+    return {
+        "@ext_full_register": EXTENDS_FIGURE["populated"],
+        "@ext_full_module": populated["module"],
+        "@ext_full_skill": populated["skill"],
+        "@ext_full_contributors": "".join(f"<li>{html.escape(m)}</li>" for m in populated["mods"]),
+        "@ext_full_contributors_inline": inline_mods,
+        "@ext_empty_register": EXTENDS_FIGURE["empty"],
+        "@ext_empty_module": empty["module"],
+        "@ext_empty_skill": empty["skill"],
+        "@ext_directive_rows": "".join(
+            f"<tr><td><code>{html.escape(r['name'])}</code></td><td>{html.escape(r['summary'])}</td>"
+            f"<td><code>{html.escape(r['module'])}</code></td></tr>" for r in rows),
+    }
+
+
 def load_common(lang: str) -> dict[str, str]:
     """Chrome strings, read outside the render path; load_strings reports a broken file."""
     try:
@@ -288,13 +403,17 @@ def build() -> int:
     check_orphan_prose({m["name"] for m in modules})
     emoji_specials = {f"@emoji_{m['name']}": m["emoji"] for m in modules}
     link_specials = module_link_specials(modules)
+    extends_specials = extends_map_specials()
     module_pages = [f"modules/{m['name']}" for m in modules]
 
     for lang, cfg in LANGS.items():
         cfg["out"].mkdir(parents=True, exist_ok=True)
         labels = load_common(lang)
         for page in PAGES:
-            render_page(lang, cfg, page, TPL / f"{page}.html", {**emoji_specials, **link_specials})
+            # extends_specials feeds #extends alone; harmless to carry on other
+            # pages since a special only surfaces where a template references it.
+            extra = {**emoji_specials, **link_specials, **(extends_specials if page == "index" else {})}
+            render_page(lang, cfg, page, TPL / f"{page}.html", extra)
         for module in modules:
             render_page(lang, cfg, f"modules/{module['name']}", TPL / "module.html",
                         module_specials(module, labels))

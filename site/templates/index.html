@@ -546,6 +546,59 @@ apps:
        data-note-practices-noapp="{{comp_note_practices_noapp}}"></div>
 </section>
 
+<section id="extends">
+  <h2>{{ext_title}}</h2>
+  <p class="section-intro">{{ext_claim}}</p>
+
+  <!-- Two real registers of this repository's own composition, computed by
+       tools/build_site.py (extends_map_specials) — never hand-typed here, so the
+       figure cannot name a module or a register this project does not run. -->
+  <div class="ext-figure summon">
+    <div class="ext-cols" aria-hidden="true">
+      <span>{{ext_col_declares}}</span>
+      <span>{{ext_col_register}}</span>
+      <span>{{ext_col_contributes}}</span>
+    </div>
+
+    <div class="ext-row">
+      <p class="ext-declares"><span class="ext-label">{{ext_col_declares}}</span><code>{{@ext_full_module}}</code> <span class="ext-skill">{{@ext_full_skill}}</span></p>
+      <p class="ext-register"><span class="ext-label">{{ext_col_register}}</span><code>{{@ext_full_register}}</code><span class="ext-lead" aria-hidden="true"></span></p>
+      <div class="ext-contributes"><span class="ext-label">{{ext_col_contributes}}</span><ul>{{@ext_full_contributors}}</ul></div>
+    </div>
+
+    <div class="ext-row ext-row-empty">
+      <p class="ext-declares"><span class="ext-label">{{ext_col_declares}}</span><code>{{@ext_empty_module}}</code> <span class="ext-skill">{{@ext_empty_skill}}</span></p>
+      <p class="ext-register"><span class="ext-label">{{ext_col_register}}</span><code>{{@ext_empty_register}}</code><span class="ext-lead ext-lead-empty" aria-hidden="true"></span></p>
+      <p class="ext-contributes ext-contributes-none"><span class="ext-label">{{ext_col_contributes}}</span>{{ext_no_contribution}}</p>
+    </div>
+  </div>
+
+  <!-- The figure's own facts, restated in words: AC-8 wants a reader who cannot
+       see the figure to still receive the argument, not a caption of its shapes. -->
+  <ul class="ext-facts">
+    <li>{{ext_fact1}}</li>
+    <li>{{ext_fact2_a}} <code>{{@ext_full_register}}</code> {{ext_fact2_b}} {{@ext_full_contributors_inline}}.</li>
+    <li>{{ext_fact3_a}} <code>{{@ext_empty_register}}</code> {{ext_fact3_b}}</li>
+    <li>{{ext_fact4}}</li>
+  </ul>
+
+  <!-- The table is downstream of the ask, not stored beside the modules above —
+       its own summon block, arriving after the figure's, says so in motion too. -->
+  <div class="ext-invoke summon">
+    <p class="ext-ask">{{ext_ask}}</p>
+<pre><code>scrumia-extends {{@ext_full_register}}</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>{{th_ext_directive}}</th><th>{{th_ext_says}}</th><th>{{th_ext_module}}</th></tr></thead>
+        <tbody>{{@ext_directive_rows}}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>{{ext_outro}}</p>
+</section>
+
 <section id="modules">
   <h2>{{mods_title}}</h2>
   <p class="section-intro">{{mods_intro}}</p>

@@ -612,6 +612,59 @@ apps:
        data-note-practices-noapp="Practices attach to apps. With no app declared they install and activate nothing until apps appear in the file."></div>
 </section>
 
+<section id="extends">
+  <h2>Extends</h2>
+  <p class="section-intro">A skill declares where it can be extended; any module answers, and nothing is stored — so nothing goes stale.</p>
+
+  <!-- Two real registers of this repository's own composition, computed by
+       tools/build_site.py (extends_map_specials) — never hand-typed here, so the
+       figure cannot name a module or a register this project does not run. -->
+  <div class="ext-figure summon">
+    <div class="ext-cols" aria-hidden="true">
+      <span>Declares</span>
+      <span>Register</span>
+      <span>Contributes</span>
+    </div>
+
+    <div class="ext-row">
+      <p class="ext-declares"><span class="ext-label">Declares</span><code>scrumia-github-project</code> <span class="ext-skill">scrumia-ticket</span></p>
+      <p class="ext-register"><span class="ext-label">Register</span><code>implement</code><span class="ext-lead" aria-hidden="true"></span></p>
+      <div class="ext-contributes"><span class="ext-label">Contributes</span><ul><li>scrumia-design</li><li>scrumia-specs</li></ul></div>
+    </div>
+
+    <div class="ext-row ext-row-empty">
+      <p class="ext-declares"><span class="ext-label">Declares</span><code>scrumia-teams</code> <span class="ext-skill">scrumia-sprint</span></p>
+      <p class="ext-register"><span class="ext-label">Register</span><code>sprint</code><span class="ext-lead ext-lead-empty" aria-hidden="true"></span></p>
+      <p class="ext-contributes ext-contributes-none"><span class="ext-label">Contributes</span>no contribution</p>
+    </div>
+  </div>
+
+  <!-- The figure's own facts, restated in words: AC-8 wants a reader who cannot
+       see the figure to still receive the argument, not a caption of its shapes. -->
+  <ul class="ext-facts">
+    <li>A skill opens a register without naming who will fill it.</li>
+    <li>Any installed module can contribute to it without naming the skill back — here, <code>implement</code> is answered by <code>scrumia-design</code>, <code>scrumia-specs</code>.</li>
+    <li>A register can carry no contribution at all, and that is a normal state, not a gap — here, <code>sprint</code> carries none yet.</li>
+    <li>The table below is not read from anywhere: it is computed the moment it is asked for, so it cannot go stale.</li>
+  </ul>
+
+  <!-- The table is downstream of the ask, not stored beside the modules above —
+       its own summon block, arriving after the figure's, says so in motion too. -->
+  <div class="ext-invoke summon">
+    <p class="ext-ask">Ask, and this project's own composition answers:</p>
+<pre><code>scrumia-extends implement</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Directive</th><th>What it says</th><th>From</th></tr></thead>
+        <tbody><tr><td><code>Design system first</code></td><td>Read the identity and the tokens before writing anything a user looks at; never inline a value</td><td><code>scrumia-design</code></td></tr><tr><td><code>One test per acceptance criterion</code></td><td>Criteria carry stable identifiers and become the tests — that is what makes them acceptance criteria</td><td><code>scrumia-specs</code></td></tr><tr><td><code>The spec is written first</code></td><td>Load the feature that owns the rule before writing code, and update it when the rule moves</td><td><code>scrumia-specs</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>This is what can be <em>added</em> without replacing anything — see <a href="#slots">Slots</a> for what can be <em>replaced</em> instead. Writing a contribution of your own is <a href="reference.html">the reference</a>'s job, not this page's.</p>
+</section>
+
 <section id="modules">
   <h2>Modules</h2>
   <p class="section-intro">Twelve shipped. Each is a standard Claude Code plugin — install what you need.</p>

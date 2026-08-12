@@ -733,6 +733,56 @@ section > h2::before {
   .shelf { padding-left: 0; }
 }
 
+/* ---------- Extends ---------- *
+ * DECLARES / REGISTER / CONTRIBUTES — identity.md's labelled-column idiom, drawn
+ * from the composition instead of a request. Mobile-first, like the run: the
+ * vertical list AC-7 asks for is the base state, three columns the enhancement.
+ */
+
+.ext-figure { margin: var(--space-8) 0 var(--space-6); }
+.ext-cols { display: none; }
+
+.ext-row { border-top: 1px solid var(--border); padding: var(--space-4) 0; display: grid; gap: var(--space-2); }
+.ext-row:last-of-type { border-bottom: 1px solid var(--border); }
+
+.ext-label {
+  display: inline-block; min-width: 6.5rem;
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-faint);
+}
+.ext-declares, .ext-register, .ext-contributes { margin: 0; }
+.ext-declares code, .ext-register code { color: var(--text); font-size: var(--text-base); }
+.ext-skill { color: var(--text-soft); font-size: var(--text-sm); }
+.ext-contributes ul { margin: 0; padding: 0; list-style: none; }
+.ext-contributes li, .ext-contributes-none {
+  font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-soft);
+}
+.ext-contributes-none { color: var(--text-faint); }
+.ext-lead { display: none; }
+
+.ext-facts { margin: 0 0 var(--space-6); padding-left: var(--space-5); color: var(--text-soft); max-width: var(--measure); }
+.ext-facts li { margin: 0 0 var(--space-2); line-height: var(--leading-snug); }
+.ext-facts code { color: var(--text); }
+
+.ext-ask { margin: 0 0 var(--space-2); color: var(--text-soft); }
+
+/* The column labels repeat once per row below this width — a spelled-out label
+   costs less than a reader guessing which field a bare value belongs to. Past it
+   the shared header above takes over, same words, said once. */
+@media (min-width: 900px) {
+  .ext-cols {
+    display: grid; grid-template-columns: 1fr 1fr 2fr; gap: var(--space-4);
+    padding: 0 0 var(--space-2);
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-faint);
+  }
+  .ext-row { grid-template-columns: 1fr 1fr 2fr; gap: var(--space-4); align-items: start; }
+  .ext-label { display: none; }
+  .ext-register { display: flex; align-items: center; gap: var(--space-3); }
+  .ext-lead { display: block; flex: 1; height: 0; border-bottom: 1px dotted var(--border-strong); opacity: 0.7; }
+  .ext-row-empty .ext-lead { border-bottom-style: dashed; border-bottom-color: var(--border); opacity: 1; }
+}
+
 /* ---------- Modules ---------- */
 
 .modules { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
@@ -1138,6 +1188,13 @@ footer a:hover { color: var(--accent); }
 .js .slots.is-in > .slot:nth-child(5) { --i: 4; }
 .js .slots.is-in > .slot:nth-child(6) { --i: 5; }
 .js .slots.is-in > .slot:nth-child(7) { --i: 6; }
+
+/* The two rows of the extends figure, then the invocation before the table it
+   produces — the same DOM-order-is-arrival-order rule as the hero and the run. */
+.js .ext-figure.is-in > *:nth-child(2) { --i: 1; }
+.js .ext-figure.is-in > *:nth-child(3) { --i: 2; }
+.js .ext-invoke.is-in > *:nth-child(2) { --i: 1; }
+.js .ext-invoke.is-in > *:nth-child(3) { --i: 2; }
 
 @media (prefers-reduced-motion: reduce) {
   /* Reveal without movement, and drop every transition to a single frame —
