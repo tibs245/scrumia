@@ -4,15 +4,16 @@
 
 ## In brief
 
-A project declares which modules it runs through `extends`, a flat, unordered list in
-`.scrumia/config.yaml`; a module installed and named nowhere is inert. A main skill
-declares what it is for and stops — what it must apply is contributed by other modules as
-**data**, keyed by a **register** (a named extension point), and rendered into one table
-at the moment the skill asks for it. A contribution names no consumer, which is what lets
-one fragment serve implementation, review and audit without being written three times.
-`implementation` and cross-cutting practices are both declared through `extends`, per app;
-nothing forces a project to take the whole composition to get one part of it, and nothing
-is stored, so nothing can go stale. `business.md` § *Vocabulary* is the authority on
+A project declares which modules it runs through `modules`, an unordered mapping in
+`.scrumia/config.yaml` keyed `<source>:<module>`; a module installed and named nowhere is
+inert. A main skill declares what it is for and stops — what it must apply is contributed
+by other modules as **data**, keyed by a **register** (a named extension point), and
+rendered into one table at the moment the skill asks for it. A contribution names no
+consumer, which is what lets one fragment serve implementation, review and audit without
+being written three times. Implementation and cross-cutting practices are declared in an
+app's own `modules`; nothing forces a project to take the whole composition to get one
+part of it, and nothing is stored, so nothing can go stale. A module's own settings
+cascade through three layers, the last of them per-machine. `business.md` § *Vocabulary* is the authority on
 "slot", "register", "directive" and "fragment".
 
 ## Links

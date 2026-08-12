@@ -17,3 +17,6 @@ review-prompt.txt
 
 # A shared checkout lives on one machine, not in the repository: features/business/local-extension/
 .scrumia/.env.local
+
+# Per-machine settings overrides — layer 3 of the cascade: features/business/modular-composition/
+.scrumia/config.local.yaml
