@@ -190,7 +190,8 @@ create.
 **First, is there a tracker?** Read which module fills the `tracker` slot the same way you
 read any other slot in Step 2. Where the slot is empty, this branch stops: say that the
 destination is a ticket, that this composition has no module that holds one, and name the
-capability that would fill it. **Create nothing, and write nothing into the repository** —
+module that would fill it — the slot by name, and a module that fills it where the
+composition offers one to name. **Create nothing, and write nothing into the repository** —
 not a file, not a list, not a line in a document that happens to be nearby. A discussion
 written into the repository because no tracker exists is project state in the repository,
 which is the thing the composition refuses everywhere else, and it is worse than no
@@ -198,12 +199,13 @@ placement because it looks like one. Naming the gap is a complete answer, the sa
 naming a feature that does not exist yet is.
 
 **Then search — over issues in every state, and never over the board.** These are two
-different surfaces and only one of them can answer the question. The board carries what is
-in flight; a discussion is almost always about something that was already settled, and
-settled things have left the board. A search that went through the board would come back
-empty on exactly the cases this step exists for, and an empty result reads identically to
-"nothing like this was ever raised" — so the wrong surface does not fail, it answers
-wrongly. Search closed and open together, in one read:
+different surfaces and only one of them can answer the question. A board read is scoped to
+live work: what has shipped is filtered out of it, and something filed as a discussion may
+never have been on it. A discussion is almost always about something already settled, so a
+search that went through the board would come back empty on exactly the cases this step
+exists for — and an empty result reads identically to "nothing like this was ever raised".
+The wrong surface does not fail; it answers wrongly. Search closed and open together, in
+one read:
 
 ```bash
 # with scrumia-github-project in the tracker slot — the name it publishes, never a path
@@ -232,9 +234,9 @@ waiting to be started can subtract it. The label's spelling, where it is declare
 reads it are
 [`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s
 — read it there, and do not invent a spelling: a label nothing queries is documentation
-rather than a filter, and one spelled freshly at filing time is queried by nothing. That
-feature also says whether the new issue takes a board card; it does not, and the reason is
-its to give.
+rather than a filter, and one spelled freshly at filing time is queried by nothing. Whether
+the new issue takes a board card is that feature's too; read the answer there rather than
+from here, so that changing it changes one file.
 
 A fact that is simply **not a rule** is not unresolved. Nothing about it is open, and nobody
 has to settle it — it takes questions 5 and 6 like anything else. Reading "not a rule yet"

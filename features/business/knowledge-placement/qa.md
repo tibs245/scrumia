@@ -117,12 +117,21 @@ Then the closed issue is found and proposed, because the search covers every sta
 ```gherkin
 Given no existing issue matching a discussion
 When a new one is created for it
-Then it carries the label `features/business/github-tracking/` declares for that purpose,
-  and the status and next-step readings do not count it as a ticket awaiting refinement
+Then it carries the label `features/business/github-tracking/` declares for that purpose
+Given that issue placed where the readings would otherwise count it
+When the status and next-step readings run
+Then neither counts it as a ticket awaiting refinement
 ```
 
 This criterion fails in the way that matters if the label is created and nothing subtracts
 it: a label nothing queries is documentation, not a filter.
+
+The second half needs its own Given because the first does not reach it. Where the tracker
+files a discussion outside what the readings enumerate, the exclusion passes by absence
+whatever the label says, and the criterion would be satisfied by a filter that does not
+exist. `features/business/github-tracking/` states where such an issue is filed and holds
+the criterion that puts one in front of the readings; this one covers the label being
+carried, and the exclusion holding when the issue is there to be counted.
 
 ### AC-12 — The board is never the search surface
 

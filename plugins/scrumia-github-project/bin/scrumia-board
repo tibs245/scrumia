@@ -443,12 +443,9 @@ cmd_epic() {
      sub_issues: $kids}' <<<"$out"
 }
 
-# Issues, not the board — the one command here that deliberately leaves Projects v2 alone.
-# They are different surfaces and only this one reaches something already settled: a card
-# leaves the board when its work does, so a board search answers "nothing like this was
-# ever raised" for precisely the issues it was asked about (BR-6,
-# features/business/knowledge-placement/). Hence no `--state` flag: a search that reaches
-# only what is open cannot satisfy the criterion this command exists for, and making that
+# Deliberately leaves Projects v2 alone: a board read is scoped to live work, so it answers
+# "never raised" for anything settled — the one answer this search must not give (BR-6,
+# features/business/knowledge-placement/). No `--state` flag for the same reason: making it
 # overridable would make the failure a caller's to avoid rather than impossible.
 cmd_issues() {
   local terms="" limit=30

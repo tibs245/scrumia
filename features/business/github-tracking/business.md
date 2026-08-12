@@ -97,7 +97,7 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
-| `discussion` | the board read, which **subtracts** it on behalf of `scrumia-status` and the next-step reading | an issue holding something unresolved that is not work waiting to be started |
+| `discussion` | the board read, which **subtracts** it for `scrumia-status` and the next-step reading; the status reading itself on its issue-list fallback; and any `--label discussion` issue query | an issue holding something unresolved that is not work waiting to be started |
 
 `discussion` is the only label read as a subtraction, and that is what earns it a place
 here rather than in a module's prose. An issue carrying it is not a ticket awaiting
@@ -107,10 +107,17 @@ queries would be documentation rather than a filter. What sends an issue there i
 feature's.
 
 **The subtraction is performed once, in the board read, not in each reading.** Both
-readings that owe it reach the board through the same tool, so a subtraction written into
-their prose is a subtraction each of them can forget independently — and the one that
-forgets is indistinguishable, in its output, from the one that did not. Doing it in the
-read makes it unforgettable for both, and for any third reading added later.
+readings that owe it reach the board through the same tool on the ordinary path, so a
+subtraction written into their prose is a subtraction each of them can forget
+independently — and the one that forgets is indistinguishable, in its output, from the one
+that did not. Doing it in the read makes it unforgettable for both, and for any third
+reading added later.
+
+Where a reading cannot reach the board read at all — the status reading falls back to a
+plain issue list when the board is unreachable or unconfigured — the exclusion falls back
+to that reading, which applies it on the label itself and says in its report that it did.
+That is the one place the subtraction is a reader's own, and it is stated rather than left
+to be noticed.
 
 **Subtracting is not dropping.** A discussion-labelled item leaves the columns and arrives
 in a group of its own, named and counted — the same treatment this file already gives an
@@ -121,9 +128,14 @@ below exists to prevent; a reader looking for their own discussion issue still f
 **A discussion issue is filed off the board** — created without `--project`, so it takes
 no card. The board carries what is in flight, and something nobody intends to start is
 not; a card with no Status is a card someone has to place, which is work the issue was
-filed to avoid creating. The subtraction above is therefore a backstop rather than the
-mechanism: it catches the issues a human carded by hand, which is the only way one arrives
-on the board.
+filed to avoid creating. The subtraction in the board read is therefore a backstop: it
+catches the issues a human carded by hand, which is the only way one arrives on the board.
+
+That leaves the label queried on the path it actually takes, not only on the exceptional
+one, which is the test it had to pass to be declared at all. Off the board it is read by
+the status reading's issue-list fallback, and by anyone — human or skill — asking
+`--label discussion` what is open and unsettled. A label whose only reader were the
+backstop would be the documentation this table refuses.
 
 This is the opposite of what an issue filed for work owes — a reservation raised during a
 review, say, is not handled until its card exists, because a cardless ticket is exactly as
@@ -253,10 +265,12 @@ The corollary trap — an invalid or stale filter reading as legitimately empty 
 specified in `qa.md`.
 
 **The board and the issues are two surfaces, and looking for something already settled
-reaches only the second.** A card leaves the board when its work does, so a board search
-for a closed ticket comes back empty and reads as "nothing like this was ever raised" —
-wrong, silently, and in the one direction that matters to anyone checking whether a
-question has been asked before. The module therefore publishes an issue search alongside
+reaches only the second.** Settled work is out of every ordinary board read — `Done` is
+filtered by default, and a discussion issue was never carded at all — so a board search
+for it comes back empty and reads as "nothing like this was ever raised": wrong, silently,
+and in the one direction that matters to anyone checking whether a question has been asked
+before. The card itself survives the close, per § *Closed without a PR* above; what does
+not survive is its reachability through a read that exists to show live work. The module therefore publishes an issue search alongside
 the board read, covering open and closed together, and it is not a board read with a wider
 filter: the surfaces differ, and the answer names which one it read so the two can never
 be mistaken for each other. What sends a reader there is
