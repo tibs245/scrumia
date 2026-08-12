@@ -26,7 +26,7 @@ Then a `leave it empty` option is among its choices, and its description states
   break
 And when it is chosen, the row falls to the empty state — muted name, dashed
   leader, `nothing installed` in words — and the emitted YAML carries the same
-  consequence as a comment on the `null`
+  consequence as a comment standing where that module would have been keyed
 ```
 
 ### AC-3 — The output is copyable and matches what `scrumia-init` would verify
@@ -35,9 +35,10 @@ And when it is chosen, the row falls to the empty state — muted name, dashed
 Given a composition chosen in the composer
 When the two artifacts are read
 Then the install block lists `/plugin install` for exactly the modules the
-  seven rows name, and the config block carries `project:`, all five
-  `composition:` keys with `null` spelled out, and one `apps[]` entry per
-  chosen stack with `name`, `path`, `type`, `implementation` and `practices`
+  seven rows name, and the config block carries `project:`, a `modules:` mapping
+  holding one `<source>:<module>` key per module those rows chose and nothing
+  else, and one `apps[]` entry per chosen stack with `name`, `path`, `type` and
+  its own `modules:` mapping
 And a practice appears only under the apps whose type it applies to
 And each artifact has its own copy button, which copies that artifact's text
 And with JavaScript disabled both artifacts still show the default
@@ -72,10 +73,12 @@ Then no row closes in the other, because the composer's rows are grouped under
 
 ```gherkin
 Given the emitted `.scrumia/config.yaml`
-When any `composition:` key reads `null`
-Then a row of the composer offered that choice and the visitor or a preset
+When a slot's module is named by no key of the `modules:` mapping
+Then a row of the composer offered that absence and the visitor or a preset
   selected it — in particular `design`, which has its own row rather than a
   silent default
+And the absence is stated as a comment in the mapping rather than left to the
+  mapping's silence, which reads the same whether a slot was refused or forgotten
 ```
 
 ### AC-7 — Choosing works with JavaScript disabled

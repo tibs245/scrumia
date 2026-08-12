@@ -19,8 +19,8 @@ applied, not a decoration.
 **The consequence survives the copy.** An empty slot's cost is stated three
 times, each in the idiom of where it sits: in the option's description at
 decision time, in the open row's gap line after the fact, and as a comment
-on the `null` in the emitted YAML — the only one of the three that survives
-being pasted into a repo.
+standing where the module would have been keyed in the emitted YAML — the
+only one of the three that survives being pasted into a repo.
 
 ## Interface constraints
 
