@@ -29,6 +29,7 @@ starts, and how many tickets a sprint can run at once without saturating human r
 | `scrumia-manager` (agent) | Owns the board, ticket routing, sprint cadence; arbitrates business vs. tech and escalates what it cannot resolve. |
 | `scrumia-business` (agent) | Owns business rules, vocabulary consistency, legal and compliance constraints. |
 | `scrumia-tech` (agent) | Owns cross-app architecture, API contracts, technical debt, implementation review. |
+| `/sprint`, `/standup` | Slash commands — each loads the matching skill above and passes its arguments through. |
 
 ## Settings it reads
 

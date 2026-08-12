@@ -8,7 +8,10 @@ outgrows a single file. Fills no slot: every other module can build on it, none 
 When a `conventions.md`, a lint config or a repeated review comment has grown past what an
 agent can afford to load in full for every unrelated task — and what to split it into: an
 **index** it reads first and always, **guides** it loads only on demand, one concern each,
-and **decisions** it loads only when a human is challenging a rule.
+and **decisions** it loads only when a human is challenging a rule. A `section.json`
+declares the globs a section governs. Module-shipped sections live inside the owning
+module's own skill directory; project-local ones live under `.scrumia/rules/<section>/`,
+registered in the project's `CLAUDE.md`.
 
 ## What it refuses
 

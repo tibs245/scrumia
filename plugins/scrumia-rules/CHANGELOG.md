@@ -5,8 +5,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 ## [Unreleased]
 ### Changed
 - `README.md` reordered into the module-anatomy template — the four required sections,
-  in order, and nothing else: "When you need it" and "Format at a glance" fold into "What
-  it answers", "Skills" is renamed "What it ships". No content dropped.
+  in order, and nothing else: "When you need it" folds into "What it answers", "Skills"
+  is renamed "What it ships". The `section.json`/anatomy detail from "What it is" moves
+  into "What it answers"; the ASCII directory tree under "Format at a glance" is dropped —
+  the format reference (`scrumia-rules`'s own `SKILL.md`) is where that belongs, not a
+  README addressed to someone who hasn't adopted the module yet.
 
 ## [0.4.0] - 2026-08-10
 ### Added

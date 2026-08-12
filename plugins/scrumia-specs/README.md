@@ -28,6 +28,7 @@ ticket or a review actually needs.
 | `scrumia-feature` | Creates, updates or audits one feature — the file catalog, not a fixed template. |
 | `scrumia-specs-find` | Finds the feature that owns a rule, traces dependencies between features, or loads the minimal context a ticket needs. |
 | `scrumia-specs-setup` | Installs the `features/business` and `features/app/<app>` tree, and hands `scrumia-init` this module's composition line. |
+| `/feature` | Slash command — loads `scrumia-feature` and passes its argument through. |
 
 ## Settings it reads
 

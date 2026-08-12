@@ -31,6 +31,7 @@ truncating it at 30 items.
 | `scrumia-review` | Reviews an open PR by routing to the reviewers its diff actually calls for. |
 | `scrumia-status` | A read-only snapshot of the board, the features and the gaps between them — computed live, nothing stored. |
 | `scrumia-board` | Published on `PATH`. The only way any skill or human talks to the board: `move`, `find`, `read`, `ready`, `epic`, `doctor`. |
+| `/refine`, `/ticket`, `/review`, `/status` | Slash commands — each loads the matching skill above and passes its arguments through. |
 
 ## Settings it reads
 

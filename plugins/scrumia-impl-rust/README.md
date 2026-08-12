@@ -38,3 +38,8 @@ An app that lists `scrumia-impl-rust` in its own `extends`; within it, `.rs` fil
 `Cargo.toml` are what the guides apply to. An optional
 `.scrumia/impl/scrumia-impl-rust.md` records a project's house exceptions without forking
 the module.
+
+## Decisions
+
+Four, `D-01` through `D-04` — one per refusal above, for a reviewer who wants the
+reasoning rather than just the rule.
