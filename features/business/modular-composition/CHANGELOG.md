@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — `tech.md` names the debt a `local:` or `shared:` key carries until it resolves
+- Issue: #302
+- Category: Added
+- Breaking: no
+
 ## 2026-08-12 — `extends:`, `composition:` and `practices:` are deprecated
 - Issue: #302
 - Category: Deprecated

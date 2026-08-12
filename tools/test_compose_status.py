@@ -185,6 +185,8 @@ project:
   name: "Bare name"
 modules:
   "scrumia-specs": {}
+  ":scrumia-teams": {}
+  "github:scrumia-design": {}
   "local:acme-docs-rules": {}
 """
 
@@ -276,7 +278,7 @@ def test_ac3_read_only_and_no_argument() -> None:
     check("exits 0 with no argument in a configured repo", code == 0, f"exit {code}, {err.strip()}")
     check("prints something to stdout", len(out.strip()) > 0)
     check("stderr carries the migration notice and nothing else",
-          err.startswith("compose-status.sh: warning") and "migrate to 'modules:'" in err,
+          err.startswith("compose-status.sh:") and "migrate to 'modules:'" in err,
           err.strip())
     check("no file created, changed or touched", before == after,
           str(set(before) ^ set(after))[:200])
@@ -361,7 +363,13 @@ def test_ac17_the_key_carries_the_source() -> None:
           "'scrumia-specs' is not a declaration" in out, out[:400])
     check("and the grammar it should have used is stated",
           "<source>:<module>" in out, out[:400])
-    check("a sourced key beside it is not accused",
+    # One grammar, two readers: a key one of them refuses and the other lists as a
+    # module running is the drift the qualified key exists to remove.
+    check("a key whose source half is missing is refused too",
+          "':scrumia-teams' is not a declaration" in out, out[:600])
+    check("a source outside the three BR-13 enumerates is refused",
+          "'github:scrumia-design' is not a declaration" in out, out[:600])
+    check("a sourced key beside them is not accused",
           "'local:acme-docs-rules' is not a declaration" not in out)
     os.unlink(bare)
 
@@ -369,17 +377,19 @@ def test_ac17_the_key_carries_the_source() -> None:
 def test_ac18_the_local_layer_is_reported_as_such() -> None:
     print("AC-18 — the per-machine layer is named where it changes what resolves")
     config = config_with(MODULES_CONFIG)
-    _, without, _ = run_piped(env_for(config))
+    _, without, err = run_piped(env_for(config))
     check("nothing is claimed when there is no local layer",
-          "local layer" not in without, without[:200])
+          "local layer" not in without and "local layer" not in err, without[:200])
 
     local = config_with(LOCAL_LAYER)
-    _, with_layer, _ = run_piped(env_for(config, SCRUMIA_CONFIG_LOCAL=str(local)))
-    check("the layer in effect is named", "local layer is in effect" in with_layer,
-          with_layer[:300])
-    check("the file that holds it is named", str(local) in with_layer)
-    check("and the cost is stated, not hidden",
-          "not versioned" in with_layer, with_layer[-400:])
+    _, report, err = run_piped(env_for(config, SCRUMIA_CONFIG_LOCAL=str(local)))
+    check("the layer in effect is named", "local layer is in effect" in err, err[:300])
+    check("the file that holds it is named", str(local) in err)
+    check("and the cost is stated, not hidden", "not versioned" in err, err[-400:])
+    # The report is versioned and gated by a fixture; what one machine happens to
+    # override is the least reproducible thing the tool knows.
+    check("the report itself carries nothing machine-local",
+          "local layer" not in report and str(local) not in report, report[-300:])
     os.unlink(local)
     os.unlink(config)
 

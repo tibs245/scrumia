@@ -87,16 +87,16 @@ load_config() {
   # half-migrated file cannot resolve to nothing: a config carrying `modules:` read by a
   # tool testing only for `extends:` yields zero modules, every table renders empty, and
   # an empty table is an answer under BR-1 — so nothing would fail.
-  SHAPE=modules
+  SHAPE=modules; KEY_READ=modules
   if ! jq -e 'has("modules")' >/dev/null <<<"$CFG"; then
     if jq -e 'has("extends")' >/dev/null <<<"$CFG"; then
-      SHAPE=extends
+      SHAPE=extends; KEY_READ=extends
       note "warning: $CONFIG declares its modules under the retired 'extends:' — read for one more minor, migrate to 'modules:', keyed <source>:<module> (ADR-0021)"
     elif jq -e 'has("composition") or has("practices")' >/dev/null <<<"$CFG"; then
-      SHAPE=legacy
+      SHAPE=legacy; KEY_READ=composition
       note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to modules:"
     else
-      SHAPE=none
+      SHAPE=none; KEY_READ=modules
       note "warning: $CONFIG declares no 'modules:' — this composition is empty, so every register renders empty"
     fi
   fi
@@ -125,14 +125,29 @@ load_config() {
                  else [] end )
     , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG")
 
-  # A bare name would make the file mean whatever happens to be installed, which is the
-  # failure the qualified key removes — so it is named and resolves to nothing, rather
-  # than matched against whichever module of that name a machine happens to carry.
+  # A key the grammar does not admit would make the file mean whatever happens to be
+  # installed, which is the failure the qualified source removes — so it is named and
+  # resolves to nothing, rather than matched against whichever module of that name a
+  # machine happens to carry. BR-13 enumerates the three sources; a fourth is a typo.
   if [ "$SHAPE" = modules ]; then
     while IFS= read -r k; do
       [ -n "$k" ] || continue
       note "'$k' is not a declaration: a module is keyed <source>:<module> — <owner>/<repo>, 'shared' or 'local' (ADR-0021). Nothing resolves for it."
-    done < <(jq -r '[.project[], .apps[].modules[]] | map(select(.source == "" or .module == "")) | .[].key' <<<"$SCOPES")
+    done < <(jq -r '[.project[], .apps[].modules[]]
+      | map(select(.source == "" or .module == ""
+                   or (.source != "shared" and .source != "local"
+                       and (.source | test("^[^/]+/[^/]+$") | not))))
+      | .[].key' <<<"$SCOPES")
+  fi
+
+  # `modules:` written with nothing under it resolves to zero modules, and a register
+  # with no contributions is an answer under BR-1 — so without this the emptiest possible
+  # composition is the one that looks most like a correct run.
+  EMPTY_COMPOSITION=no
+  if jq -e '[.project[], .apps[].modules[]] | length == 0' >/dev/null <<<"$SCOPES"; then
+    EMPTY_COMPOSITION=yes
+    [ "$SHAPE" = none ] ||
+      note "warning: $CONFIG declares no module under '$KEY_READ:' — this composition is empty, so every register renders empty"
   fi
 }
 
@@ -232,11 +247,10 @@ read_json() {
 # That is ADR-0010's "specific beats generic, the project override beats both", expressed
 # where the project can see it.
 #
-# A declaration matches a discovered module by name, and by source where both carry one:
-# a marketplace key names the repository the module must claim, while `local:` and
-# `shared:` name a location the module's own manifest cannot know about, so those match on
-# the name alone. A module whose manifest declares no repository therefore answers only to
-# a `local:` or `shared:` key — an empty source matches no marketplace.
+# A marketplace key names the repository the discovered module must claim, so an empty
+# source matches no marketplace. `local:` and `shared:` match on the name alone, which is
+# provisional and looser than tech.md: until #291 resolves those two against a filesystem
+# location, `local:x` binds a marketplace `x` and credits it to `local`.
 rows_for() {
   jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" '
     def matches($m):
@@ -280,8 +294,15 @@ render_table() {
     "$( [ -n "$app" ] && printf ', app `%s`' "$app" )"
 
   if [ "$n" -eq 0 ]; then
-    printf 'Nothing extends `%s` in this composition. That is an answer, not a failure:\n' "$reg"
-    printf 'the register is open and no module the project runs contributes to it.\n'
+    # An empty table means two different things, and only one of them is fine.
+    if [ "${EMPTY_COMPOSITION:-no}" = yes ]; then
+      printf 'This project runs no module at all: `%s` in %s declares none.\n' "$KEY_READ" "$CONFIG"
+      printf 'Every register renders empty until one is declared — so this table says\n'
+      printf 'nothing about `%s` itself.\n' "$reg"
+    else
+      printf 'Nothing extends `%s` in this composition. That is an answer, not a failure:\n' "$reg"
+      printf 'the register is open and no module the project runs contributes to it.\n'
+    fi
     return
   fi
 
@@ -334,26 +355,32 @@ cmd_list() {
 # layer, which is never committed and overrides both in either shape it may use. The order
 # is written here because an order only applied can invert without anything failing.
 cmd_settings() {
-  local key=$1 app=$2 layers=""
+  local key=$1 app=$2 answer
   if [ -n "$key" ] &&
      ! jq -e --arg k "$key" 'any([.project[], .apps[].modules[]][]; .key == $k)' >/dev/null <<<"$SCOPES"; then
     note "no module is declared under '$key' in $CONFIG — resolving the layers that do not depend on it"
   fi
 
-  jq -e '(.settings // {}) != {}' >/dev/null <<<"$CFG" && layers="settings:"
-  [ -n "$key" ] && jq -e --arg k "$key" \
-      'any([.project[], .apps[].modules[]][]; .key == $k and (.params != {}))' >/dev/null <<<"$SCOPES" &&
-    layers="${layers:+$layers, }params: of $key"
-  [ -f "$CONFIG_LOCAL" ] && layers="${layers:+$layers, }$CONFIG_LOCAL"
-  note "resolved from ${layers:-nothing: no layer carries a value}"
-
-  jq -n --argjson s "$SCOPES" --argjson l "$CFG_LOCAL" --arg k "$key" --arg app "$app" '
+  # The provenance is derived from the layers that carried something, never from the
+  # layers that exist: a line naming a layer that did not answer is worse than no line,
+  # because it is the one output whose whole job is to make the cascade checkable.
+  answer=$(jq -c -n --argjson s "$SCOPES" --argjson l "$CFG_LOCAL" \
+    --arg k "$key" --arg app "$app" --arg lf "$CONFIG_LOCAL" '
     def params_of($set): ($set | map(select(.key == $k and $k != "")) | first | .params) // {};
-    ($s.settings // {})
-    * params_of($s.project)
-    * params_of([$s.apps[] | select(.name == $app) | .modules[]])
-    * ($l.settings // {})
-    * (if $k == "" then {} else ((($l.modules // {})[$k] // {}).params // {}) end)'
+    ($s.settings // {}) as $base
+    | params_of($s.project) as $proj
+    | params_of([$s.apps[] | select(.name == $app) | .modules[]]) as $app_params
+    | ($l.settings // {}) as $local_base
+    | (if $k == "" then {} else ((($l.modules // {})[$k] // {}).params // {}) end) as $local_params
+    | { resolved: ($base * $proj * $app_params * $local_base * $local_params)
+      , layers: [ (if $base != {} then "settings:" else empty end)
+                , (if $proj != {} then "params: of " + $k else empty end)
+                , (if $app_params != {} then "params: of " + $k + " in app " + $app else empty end)
+                , (if ($local_base != {} or $local_params != {}) then $lf else empty end) ] }')
+
+  note "resolved from $(jq -r 'if (.layers | length) == 0 then "nothing: no layer carries a value"
+                               else (.layers | join(", ")) end' <<<"$answer")"
+  jq '.resolved' <<<"$answer"
 }
 
 # Prints "<module>\t<source>" for the discovered module that ships an executable of this

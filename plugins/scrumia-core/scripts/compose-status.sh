@@ -17,7 +17,7 @@ die() { echo "compose-status.sh: $1" >&2; exit 1; }
 # Folds like the report, because stderr and stdout share one terminal — a prefix on every
 # line would leave nothing to fold into at 30 columns. Needs WIDTH.
 note() {
-  printf '%scompose-status.sh: warning%s\n' "$WARN" "${WARN:+$RESET}" >&2
+  printf '%scompose-status.sh:%s\n' "$WARN" "${WARN:+$RESET}" >&2
   wrap '  ' "$WARN" "$1" >&2
 }
 
@@ -134,12 +134,16 @@ MODULES=$(jq -r --arg shape "$SHAPE" '
     ((.composition // {}) | to_entries | map(select(.value != null) | .value))[] | [., ""]
   else empty end | @tsv' <<<"$CFG")
 
-# A bare name would make the file mean whatever happens to be installed, so it is named
-# rather than resolved (features/business/modular-composition/ BR-13).
+# BR-13's grammar, spelled as scrumia-extends spells it: two readers of one key that
+# disagree about what a declaration is are worse than either answer alone.
 UNSOURCED=""
 [ "$SHAPE" = modules ] && UNSOURCED=$(jq -r '
+  def malformed:
+    (test(":") | not)                                    # no source at all
+    or startswith(":") or endswith(":")                  # one half missing
+    or (sub(":[^:]*$"; "") | . != "shared" and . != "local" and (test("^[^/]+/[^/]+$") | not));
   [ (.modules // {} | keys[]), ((.apps // [])[] | .modules // {} | keys[]) ]
-  | map(select((test(":") | not) or endswith(":"))) | .[]' <<<"$CFG")
+  | map(select(malformed)) | .[]' <<<"$CFG")
 
 MOD_ROWS="" MOD_W=6
 while IFS=$'\t' read -r m params; do
@@ -231,10 +235,10 @@ if [ -n "$APP_ROWS" ]; then
 fi
 
 echo
-if [ -f "$CONFIG_LOCAL" ]; then
-  wrap '  ' "$DIM" "A local layer is in effect: $CONFIG_LOCAL overrides settings: and each module's params:. It is not versioned, so another machine resolves this composition's values differently."
-  echo
-fi
+# On stderr for the same reason the migration notice is: this one is machine-local, and
+# the report is a versioned artefact a fixture gates.
+[ -f "$CONFIG_LOCAL" ] &&
+  note "a local layer is in effect: $CONFIG_LOCAL overrides settings: and each module's params:. It is not versioned, so another machine resolves this composition's values differently."
 wrap '  ' "$DIM" "What each module contributes, and to which register: scrumia-extends --list."
 wrap '  ' "$DIM" "Change any of this with /scrumia-core:scrumia-compose."
 echo

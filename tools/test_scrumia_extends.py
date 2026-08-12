@@ -87,7 +87,26 @@ BARE_NAME = """
 project: { name: "Bare" }
 modules:
   "scrumia-practice-tdd": {}
+  ":scrumia-specs": {}
+  "github:scrumia-teams": {}
   "tibs245/scrumia:scrumia-design": {}
+"""
+
+EMPTY_MAPPING = """
+project: { name: "Declared nothing" }
+modules: {}
+"""
+
+APP_ONLY_PARAMS = """
+project: { name: "App only" }
+modules: {}
+apps:
+  - name: "web"
+    path: "apps/web"
+    modules:
+      "tibs245/scrumia:scrumia-specs":
+        params:
+          root: apps/web/features
 """
 
 RETIRED_LIST = """
@@ -192,8 +211,34 @@ def test_ac17_a_bare_name_is_not_a_declaration() -> None:
     check("the key is named in the report", "'scrumia-practice-tdd'" in err, err.strip())
     check("and it is called what it is",
           "is not a declaration" in err and "<source>:<module>" in err, err.strip())
+    check("a key whose source half is missing is refused too",
+          "':scrumia-specs' is not a declaration" in err, err.strip())
+    check("a source outside the three BR-13 enumerates is refused",
+          "'github:scrumia-teams' is not a declaration" in err, err.strip())
     check("an unresolved declaration is not a failure", code == 0, code)
     os.unlink(bare)
+
+
+def test_a_composition_declaring_nothing_does_not_look_correct() -> None:
+    print("A composition that declares no module is said to be empty, not merely unextended")
+
+    empty = config_with(EMPTY_MAPPING)
+    code, out, err = run(["implement"], empty)
+    check("the empty composition is named on stderr",
+          "declares no module" in err, err.strip())
+    # An empty table means two different things and only one of them is fine; the
+    # report has to say which, or the emptiest composition reads as a correct run.
+    check("and the report says the project runs no module, not that the register is quiet",
+          "runs no module at all" in out, out)
+    check("it is still not a failure", code == 0, code)
+    os.unlink(empty)
+
+    # The contrast: modules declared, none contributing to this register.
+    quiet = config_with(MARKETPLACE)
+    _, out, _ = run(["convene"], quiet)
+    check("a register nothing extends still answers that it is open",
+          "Nothing extends `convene`" in out and "runs no module at all" not in out, out)
+    os.unlink(quiet)
 
 
 def test_ac17_the_retired_list_is_still_read() -> None:
@@ -248,6 +293,24 @@ def test_ac18_a_setting_resolves_through_three_layers() -> None:
           "settings:" in err and key in err and str(local) in err, err.strip())
     os.unlink(local)
 
+    # The provenance is the one output whose whole job is to make the cascade
+    # checkable, so it must name what answered and never what merely exists.
+    _, _, err = run(["--settings", key], config)
+    check("a layer that carried nothing is not claimed",
+          "config.local" not in err and "nonexistent" not in err, err.strip())
+
+    app_only = config_with(APP_ONLY_PARAMS)
+    _, out, err = run(["--settings", key], app_only)
+    check("params reachable only through an app are not claimed without --app",
+          "params: of" not in err, err.strip())
+    check("and they are absent from the answer, matching what was claimed",
+          json.loads(out) == {}, out)
+    _, out, err = run(["--settings", key, "--app", "web"], app_only)
+    check("with the app named, the layer is both applied and reported",
+          json.loads(out) == {"root": "apps/web/features"} and "in app web" in err,
+          (out, err.strip()))
+    os.unlink(app_only)
+
     # A key several modules read cannot live inside one module's block: settings.team is
     # written by the team module and by scrumia-design (ADR-0014).
     for other in (key, "tibs245/scrumia:scrumia-design"):
@@ -264,6 +327,7 @@ def main() -> int:
     test_ac17_a_module_is_declared_by_source()
     test_ac17_a_bare_name_is_not_a_declaration()
     test_ac17_the_retired_list_is_still_read()
+    test_a_composition_declaring_nothing_does_not_look_correct()
     test_ac18_a_setting_resolves_through_three_layers()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
