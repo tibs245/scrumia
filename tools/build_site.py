@@ -229,10 +229,25 @@ def module_link_specials(modules: list[dict]) -> dict[str, str]:
     return {f"@modlink_{m['name']}": f"modules/{m['name']}.html" for m in modules}
 
 
+def declared_modules(cfg: dict) -> list[str]:
+    """The module names a composition declares, in the shape precedence
+    `features/business/modular-composition/tech.md` fixes: `modules:` is read when
+    present, the retired `extends:` otherwise.
+
+    Testing only for `extends:` is the failure that precedence exists to prevent —
+    a config on `modules:` would resolve to zero modules here, and every register
+    the figure draws would go empty rather than wrong.
+    """
+    if "modules" in cfg:
+        # A key is `<source>:<module>`, split at the last colon (ADR-0021).
+        return [key.rsplit(":", 1)[-1] for key in (cfg.get("modules") or {})]
+    return list(cfg.get("extends") or [])
+
+
 def load_project_modules() -> list[str]:
-    """The modules this project runs, read from `.scrumia/config.yaml`'s `extends:`
-    list — the same source `scrumia-extends` reads, so the figure never names a
-    module this composition does not actually run."""
+    """The modules this project runs, read from `.scrumia/config.yaml` — the same
+    source `scrumia-extends` reads, so the figure never names a module this
+    composition does not actually run."""
     try:
         import yaml
     except ImportError:
@@ -246,7 +261,7 @@ def load_project_modules() -> list[str]:
     except yaml.YAMLError as e:
         ERRORS.append(f"{SCRUMIA_CONFIG.relative_to(ROOT)}: invalid YAML — {e}")
         return []
-    return list(cfg.get("extends") or [])
+    return declared_modules(cfg)
 
 
 def read_json_object(path: Path) -> dict:

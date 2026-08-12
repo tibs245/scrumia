@@ -374,7 +374,7 @@
           <!-- A tracker of your own is a variant of empty, not a third fill: the
                slot has no module until you write one. -->
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-tracker" value="other" data-note="# à écrire — le contrat de l'emplacement tient en une page">
+            <input type="radio" name="c-tracker" value="other" data-note="# pas de suivi de notre côté — à écrire, le contrat de l'emplacement tient en une page">
             <b>Un suivi à vous</b><span>Jira, Linear, autre chose. L'emplacement a un contrat défini, donc le module est un travail borné — tant qu'il n'existe pas, l'emplacement est vide et se comporte comme tel.</span>
           </label>
           <label class="opt opt-3 opt-empty">
@@ -428,7 +428,7 @@
             <b>scrumia-discovery</b><span>Une étape de cadrage entre une idée et un ticket : la contester, la découper en features, écrire les specs sur une branche.</span>
           </label>
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-discovery" value="" data-note="# une idée va directement en ticket, sans cadrage">
+            <input type="radio" name="c-discovery" value="" data-note="# pas de cadrage — une idée va directement en ticket">
             <b>Le laisser vide</b><span>Une idée va directement en ticket, sans étape de cadrage, et les agents sont invités à le dire plutôt que d'en improviser une.</span>
           </label>
         </div>
@@ -569,24 +569,26 @@ project:
   name: your-project
   repo: you/your-repo   <span class="c"># remplacez ces deux lignes par les vôtres</span>
 
-composition:
-  specs: <span class="m">scrumia-specs</span>
-  tracker: <span class="m">scrumia-github-project</span>
-  team: <span class="m">scrumia-teams</span>
-  discovery: <span class="m">scrumia-discovery</span>
-  design: <span class="m">scrumia-design</span>
+modules:
+  "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-github-project</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-teams</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-discovery</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-design</span>": {}
 
 apps:
   - name: api
     path: apps/api
     type: backend
-    implementation: <span class="m">scrumia-impl-rust</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: web
     path: apps/web
     type: frontend
-    implementation: <span class="m">scrumia-impl-solidjs</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]</pre>
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}</pre>
     </div>
   </div>
 

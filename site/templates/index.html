@@ -503,24 +503,26 @@ project:
   name: your-project
   repo: you/your-repo   <span class="c">{{comp_c_project}}</span>
 
-composition:
-  specs: <span class="m">scrumia-specs</span>
-  tracker: <span class="m">scrumia-github-project</span>
-  team: <span class="m">scrumia-teams</span>
-  discovery: <span class="m">scrumia-discovery</span>
-  design: <span class="m">scrumia-design</span>
+modules:
+  "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-github-project</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-teams</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-discovery</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-design</span>": {}
 
 apps:
   - name: api
     path: apps/api
     type: backend
-    implementation: <span class="m">scrumia-impl-rust</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: web
     path: apps/web
     type: frontend
-    implementation: <span class="m">scrumia-impl-solidjs</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]</pre>
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}</pre>
     </div>
   </div>
 
