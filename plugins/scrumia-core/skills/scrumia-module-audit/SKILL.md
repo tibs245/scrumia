@@ -30,16 +30,18 @@ to be one.
 Otherwise, read the module's `README.md` once and record, as four booleans and nothing
 more, which of the optional sections it carries: **Settings it reads**, **What it expects
 to find**, **Decisions**, **Not shipped yet**. That record — not the file itself — is what
-Step 4 compares against; no later question re-opens the README to answer something else.
+Step 3 compares against; no later question holds the README alongside another file.
 
 If the module carries no README, stop: that is already `scrumia-module check`'s finding
 (`module-anatomy/BR-4`), and this audit has nothing to add until one exists.
 
-## Step 2 — Walk the module's prose, one file at a time
+## Step 2 — Walk every file the module ships, one at a time
 
-For every file the module ships that carries prose for a reader — each skill's `SKILL.md`,
-its `references/` or guide files, the README itself — ask the two questions below. Each is
-answered from that one file.
+For every file the module ships — each skill's `SKILL.md`, its `references/` or guide
+files, scripts, commands, the README itself — ask the six questions below, of that one
+file. Nothing here classifies a file first ("is this prose, or does it act, or is it a
+decision record?") before deciding which questions apply to it: every file gets every
+question, and most answer no to most of them.
 
 ### Q1 — Does this file answer more than one distinct question a reader could arrive with? (`module-anatomy/BR-2`)
 
@@ -53,7 +55,7 @@ Judge what the file is *for*, not how much of it there is.
 - Finding: `{ module, file, rule: "module-anatomy/BR-2", message: "answers <question A> and <question B> in one file" }`
 - No finding: the file is long, or short, and answers one question throughout.
 
-### Q2 — If this file is an index, does it also carry content found nowhere else? (`module-anatomy/BR-3`)
+### Q2 — If this file is an index, does it also state content of its own? (`module-anatomy/BR-3`)
 
 Applies only where the file's own job is to route — a module's top-level entry point, or a
 skill's own file once its guides were split out. Everything else answers "not applicable"
@@ -68,11 +70,9 @@ every file the index points to just to ask it.
 - Finding: `{ module, file, rule: "module-anatomy/BR-3", message: "carries <the content> rather than routing to it" }`
 - No finding: the file only lists what exists and says when to open each.
 
-## Step 3 — Walk the module's skills and scripts for what they read and need (`module-anatomy/BR-4`)
+### Q3–Q6 — What this file reads, needs, records or admits (`module-anatomy/BR-4`)
 
-For every file the module ships that could act — a skill's instructions, a script, a
-command — ask, of that file alone, four closed questions, each naming `module-anatomy/BR-4`
-and each answered from that one file:
+Four closed questions, each answered from this one file:
 
 - Does it read a project setting: any key in `.scrumia/config.yaml`, an environment
   variable, or a config file of its own?
@@ -87,13 +87,13 @@ and each answered from that one file:
 
 Record which files answered yes to which, and to what.
 
-## Step 4 — Compare the record against the README
+## Step 3 — Compare the record against the README
 
 This step is bookkeeping, not a new question: it combines yes/no answers already produced
-one file at a time in Steps 1 and 3, and asks nothing that needed two files open at once.
+one file at a time in Steps 1 and 2, and asks nothing that needed two files open at once.
 Four comparisons, one per optional section:
 
-| Step 3 found | README section | Result |
+| Step 2 found | README section | Result |
 |---|---|---|
 | a file reads a setting | no **Settings it reads** | finding — the absence asserts the module reads none, and it doesn't |
 | a file depends on something present | no **What it expects to find** | finding — same reason |
@@ -101,13 +101,13 @@ Four comparisons, one per optional section:
 | a file names something not yet built | no **Not shipped yet** | finding — same reason |
 | nothing found | section absent | no finding — the absence is true |
 
-**The reverse direction is not this audit's.** A README section present where Step 3 found
+**The reverse direction is not this audit's.** A README section present where Step 2 found
 nothing is not flagged here — `module-anatomy/BR-4` requires an absent section to be true,
 not a present one to be necessary, and AC-14 tests only the omission.
 
 - Finding: `{ module, file: "README.md", rule: "module-anatomy/BR-4", message: "reads a setting <name> but carries no 'Settings it reads' section" }` (and the equivalent for the other three rows)
 
-## Step 5 — The README length guardrail (`module-anatomy/BR-4`)
+## Step 4 — The README length guardrail (`module-anatomy/BR-4`)
 
 Read the README once more, on its own. Past roughly eighty lines: **are the extra lines
 restating `SKILL.md` content or narrating, rather than stating sections this module has
@@ -119,7 +119,7 @@ guardrail, not a threshold — judge what the extra lines are doing, never the c
 
 ## Report
 
-Report every finding from Steps 2, 4 and 5 in one list, each row carrying `module`, `file`,
+Report every finding from Steps 2, 3 and 4 in one list, each row carrying `module`, `file`,
 `rule`, and one line of what was not met — the same four fields `scrumia-module check
 --json`'s `findings` array carries, so a consumer merges this list with the procedural
 check's without knowing which surface produced which row. Match its conventions exactly:
