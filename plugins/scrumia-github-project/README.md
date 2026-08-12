@@ -36,12 +36,17 @@ truncating it at 30 items.
 ## Settings it reads
 
 The project's owner and number, the board's field and column ids, and the flow-step →
-column mapping `scrumia-board move` resolves through. `scrumia-board` resolves them through
-the composition's settings cascade — `settings.tracker` in `.scrumia/config.yaml`, then this
-module's own `params:`, then `.scrumia/config.local.yaml` — so a per-machine override
-reaches it, and it stops rather than running on its own defaults when none of the three
-carries what it needs. `scrumia-refine`, `scrumia-review` and `scrumia-ticket` also read
-`settings.autonomy.level` and `settings.autonomy.auto_merge`.
+column mapping `scrumia-board move` resolves through — historically under
+`settings.tracker`, and this module's own `params:` once a project has migrated.
+`scrumia-board` resolves them through the composition's settings cascade rather than
+reading the configuration file, so a per-machine override reaches it; when no layer carries
+the board's ids it says so and stops instead of guessing. `scrumia-refine`,
+`scrumia-review` and `scrumia-ticket` also read `settings.autonomy.level` and
+`settings.autonomy.auto_merge`.
+
+`scrumia-board doctor` is the exception, deliberately: it reports an unresolved composition
+as a failed check instead of stopping, because it is the command you run to find out what
+is broken.
 
 ## What it expects to find
 

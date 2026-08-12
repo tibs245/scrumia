@@ -37,7 +37,6 @@ jobs:
         run: python3 tools/test_compose_status.py
       - name: Check the module keys and the settings cascade
         run: python3 tools/test_scrumia_extends.py
-
       - name: Check that the modules consume the settings cascade
         run: python3 tools/test_settings_cascade.py
       - name: Check design token contrast and hue separation

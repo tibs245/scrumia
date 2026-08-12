@@ -12,13 +12,20 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   the composition's three-layer cascade, instead of reading `settings.team.execution` out of
   `.scrumia/config.yaml`. A matrix cell overridden in `.scrumia/config.local.yaml` now
   actually changes the answer, and a project that has moved the block into this module's
-  `params:` keeps working — both shapes are read while the migration is in flight, the
-  module's own `params:` first.
-- `scrumia-pick-model` answers **no model at all** when the policy cannot be resolved —
-  `scrumia-core` absent from the session, or no layer carrying an `execution` block —
-  instead of falling back to `unlabeled` and returning a plausible model name nobody
-  configured. A grid with a hole in one cell is unchanged: that is data, and it still
-  answers.
+  `params:` keeps working — both shapes are read and merged key by key while the migration
+  is in flight, the migrated key winning. The key its `params:` sit under comes from the
+  project's own declaration, so a `local:` or `shared:` source resolves like a marketplace
+  one.
+- `scrumia-pick-model` answers **no model at all** when no layer carries a grid — including
+  when `scrumia-core` is absent from the session — instead of falling back to `unlabeled`
+  and returning a plausible model name nobody configured. A grid with a hole in one cell is
+  unchanged: that is data, and it still answers. The values around the grid (`unlabeled`,
+  `unrated_risk`, the label prefixes) keep their built-in defaults, and each one that stands
+  in is now named on stderr.
+- `scrumia-core` is now load-bearing for this module: `scrumia-extends` was already declared
+  in `dependencies.jsonl`, but a project that ran this module without it used to get answers
+  anyway. It now stops. Nothing that composes correctly is affected; a composition that was
+  quietly incomplete finds out.
 - The execution-policy tool is published as the name `scrumia-pick-model`, which the harness
   puts on the session's PATH, and every skill and role runs that name instead of a path.
   Reaching it by path only ever worked in this module's own repository: installed, the module

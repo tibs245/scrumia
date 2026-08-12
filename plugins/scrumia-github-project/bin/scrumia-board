@@ -49,51 +49,76 @@ load_config() {
   REPO_OWNER=${REPO%%/*}
   REPO_NAME=${REPO##*/}
 
-  load_settings
+  # Every command but `doctor` stops here: running the board on this script's own
+  # defaults is the quiet failure. `doctor` reports it instead, because a diagnostic that
+  # cannot run when the composition is broken diagnoses nothing.
+  load_settings || { [ "${SOFT_SETTINGS:-no}" = yes ] || die "$SETTINGS_ERROR"; }
   # A user-owned board can track an org-owned repo, so the two owners differ.
   OWNER=$(jq -r --arg d "$REPO_OWNER" '.owner // $d' <<<"$TRACKER")
   PROJECT_NUMBER=$(jq -r '.project_number // empty' <<<"$TRACKER")
   FIELD_ID=$(jq -r '.board.field_id // empty' <<<"$TRACKER")
 }
 
-# The key this module is declared under: its own name, qualified by the repository it
-# claims (ADR-0021). Read from its own manifest rather than written as a literal, so a
-# fork resolves under the key a fork's configuration actually carries. Echoes nothing and
-# returns non-zero on failure — a `die` here would print its JSON into the caller's
-# variable and exit the subshell only.
+# The key this module's `params:` sit under. The project's own declaration decides it —
+# `local:`, `shared:` and a fork's marketplace are all legal sources (BR-13), and none of
+# them is predictable from this module's manifest — so the config is asked first and the
+# manifest is only the fallback for a project that declares no module of this name.
+# Echoes nothing and returns non-zero when neither answers; a `die` here would print its
+# JSON into the caller's variable and exit the subshell only.
 module_key() {
-  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src
-  [ -f "$manifest" ] || return 1
+  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src declared
   name=$(jq -r '.name // ""' "$manifest" 2>/dev/null)
+  [ -n "$name" ] || name=$(basename "$MODULE_ROOT")
+  [ -n "$name" ] || return 1
+
+  declared=$(jq -r --arg n "$name" '(.modules // {}) | keys[]? | select(sub("^.*:"; "") == $n)' \
+    <<<"$CFG" 2>/dev/null | head -1)
+  [ -n "$declared" ] && { printf '%s\n' "$declared"; return 0; }
+
   src=$(jq -r '(.repository // .homepage // "")
     | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' "$manifest" 2>/dev/null)
-  [ -n "$name" ] && [ -n "$src" ] || return 1
+  [ -n "$src" ] || return 1
   printf '%s:%s\n' "$src" "$name"
 }
 
 # This module's configuration, resolved through the three layers rather than read out of
 # `settings:` — which would see layer 1 only and silently discard the per-machine layer
 # (`modular-composition` BR-15). The resolver is reached by the name scrumia-core publishes
-# on PATH, never by a path into it (ADR-0018).
+# on PATH, never by a path into it (ADR-0018). Records the failure instead of exiting, so
+# `doctor` can report an unresolved composition as the diagnosis it exists to give.
 load_settings() {
   local key out
-  key=$(module_key) || die "cannot read $MODULE_ROOT/.claude-plugin/plugin.json — this module cannot name itself, so its settings cannot be resolved"
+  SETTINGS_ERROR=""; TRACKER='{}'
 
-  command -v scrumia-extends >/dev/null 2>&1 ||
-    die "scrumia-extends not found — enable scrumia-core and restart the session. Reading $CONFIG directly instead would resolve one layer of three and run this board on values nobody chose"
-  out=$(scrumia-extends --settings "$key") ||
-    die "scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults"
-  jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out" ||
-    die "scrumia-extends --settings $key returned no object — settings for $key are unresolved"
+  if ! key=$(module_key); then
+    # Layer 2 is the only layer keyed by a module, so an unnameable module loses that
+    # layer and keeps the other two — degraded, exactly as the resolver itself degrades.
+    warn "cannot derive this module's key from $CONFIG or its own manifest — resolving without its params: layer"
+    key=""
+  fi
+
+  if ! command -v scrumia-extends >/dev/null 2>&1; then
+    SETTINGS_ERROR="scrumia-extends not found — enable scrumia-core and restart the session. Reading $CONFIG directly instead would resolve one layer of three and run this board on values nobody chose"
+    return 1
+  fi
+  if ! out=$(scrumia-extends --settings "$key"); then
+    SETTINGS_ERROR="scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults"
+    return 1
+  fi
+  if ! jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out"; then
+    SETTINGS_ERROR="scrumia-extends --settings $key returned no object — settings for $key are unresolved"
+    return 1
+  fi
 
   # ADR-0021 moves what `settings.tracker` held into this module's own `params:`, so the
   # resolved block carries those keys at its top level. The retired nest is still read
-  # while projects migrate — the deprecation window release-versioning grants, not a
-  # permanent alternative — and it is read *second*: on a half-migrated project both
-  # shapes are present, and the layer the cascade ranks higher is the one that must win.
-  TRACKER=$(jq -c '{ owner: (.owner // .tracker.owner // null)
-                   , project_number: (.project_number // .tracker.project_number // null)
-                   , board: (.board // .tracker.board // {}) }' <<<"$out")
+  # while projects migrate, and the two are *merged* rather than chosen between: picking
+  # one whole shape would drop every key the other still carries onto this script's own
+  # defaults, which is the failure the cascade exists to remove. The new shape wins key by
+  # key. `with_entries` is load-bearing — jq's `*` propagates an explicit null, so an
+  # unmigrated key would overwrite the nest it is meant to defer to.
+  TRACKER=$(jq -c '(.tracker // {})
+                   * ({owner, project_number, board} | with_entries(select(.value != null)))' <<<"$out")
 }
 
 need_project() {
@@ -124,28 +149,35 @@ option_id() {
 }
 
 cmd_doctor() {
-  local auth_ok=false scope_ok=false board_ok=false detail=""
+  local auth_ok=false scope_ok=false board_ok=false detail="" settings_ok=true
+  if [ -n "${SETTINGS_ERROR:-}" ]; then
+    settings_ok=false
+    detail="$SETTINGS_ERROR"
+  fi
   if gh auth status >/dev/null 2>&1; then
     auth_ok=true
     gh auth status 2>&1 | grep -q "'project'" && scope_ok=true
   else
-    detail="gh not authenticated — run: gh auth login"
+    # An unresolved composition is the root cause of everything downstream, so it keeps
+    # the one `detail` slot rather than being masked by the symptom it produces.
+    [ -n "$detail" ] || detail="gh not authenticated — run: gh auth login"
   fi
   if [ -n "$PROJECT_NUMBER" ] && $auth_ok; then
     if gh project view "$PROJECT_NUMBER" --owner "$OWNER" --format json >/dev/null 2>&1; then
       board_ok=true
     else
-      detail="project $PROJECT_NUMBER unreachable under owner $OWNER"
+      [ -n "$detail" ] || detail="project $PROJECT_NUMBER unreachable under owner $OWNER"
     fi
   fi
   $scope_ok || [ -n "$detail" ] || detail="gh lacks the 'project' scope — run: gh auth refresh -s project"
   jq -n --arg repo "$REPO" --arg owner "$OWNER" --arg pn "$PROJECT_NUMBER" \
-        --arg fid "$FIELD_ID" --arg detail "$detail" \
+        --arg fid "$FIELD_ID" --arg detail "$detail" --argjson settings "$settings_ok" \
         --argjson auth "$auth_ok" --argjson scope "$scope_ok" --argjson board "$board_ok" '
-    {ok: ($auth and $board), repo: $repo, owner: $owner,
+    {ok: ($settings and $auth and $board), repo: $repo, owner: $owner,
      project_number: (if $pn == "" then null else ($pn|tonumber) end),
      field_id: (if $fid == "" then null else $fid end),
-     checks: {authenticated: $auth, project_scope: $scope, board_reachable: $board},
+     checks: {settings_resolved: $settings, authenticated: $auth,
+              project_scope: $scope, board_reachable: $board},
      detail: (if $detail == "" then null else $detail end)}'
 }
 
@@ -389,7 +421,7 @@ command -v jq >/dev/null 2>&1 || die "jq not found"
 
 cmd="${1:-}"; shift 2>/dev/null || true
 case "$cmd" in
-  doctor)  load_config; cmd_doctor ;;
+  doctor)  SOFT_SETTINGS=yes; load_config; cmd_doctor ;;
   columns) load_config; cmd_columns ;;
   find)    load_config; cmd_find "$@" ;;
   move)    load_config; cmd_move "$@" ;;
