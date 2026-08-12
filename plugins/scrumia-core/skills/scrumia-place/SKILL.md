@@ -193,9 +193,9 @@ other machine, and the person who will hit the same wall. Reject that placement 
 this test as the reason. Then name the destination, and where it comes from depends on how
 you got here:
 
-- **The fact was offered to memory** and you ran the tree over it anyway — the usual case
-  for an entry being re-placed. Step 3 has already answered; name what it gave.
-- **The fact reached here through question 6**, so Step 3 gave nothing. A fact that falls
+- **Step 3 answered** — a question fired, and you are here because the fact was offered to
+  memory and you ran the tree over it anyway. Name what Step 3 gave.
+- **Step 3 gave nothing**, so the fact reached here through question 6. A fact that falls
   through every question and still survives the handover means questions 1 to 3 were read
   too narrowly, not that it has no home: ask them again with its reach in hand. Where none
   of them fires even then, it is the project's, and the answer says plainly that its reach
@@ -229,8 +229,8 @@ this rule.
 
 ## What an answer says
 
-- the destination, named — which module, which of the project's three shapes, which
-  feature, which issue — or the statement that it does not exist yet;
+- the destination, named — which module, which of the project's shapes, which feature,
+  which issue — or the statement that it does not exist yet;
 - the question that decided it, in one line;
 - for a placement rejected out of memory, the handover test as the reason;
 - nothing else. One destination, and no runner-up.
