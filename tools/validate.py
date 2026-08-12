@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Validate the ScrumIA marketplace: manifests, skills, agents, commands, hooks, doc links.
+"""Validate the ScrumIA marketplace: the plugin manifest, the specs tree, and what neither.
+
+Every module rule `scrumia-module check` applies is delegated to it, never reimplemented
+here. What this gate keeps is what no surface applies — features/business/module-anatomy/'s
+BR-5, and main() names each residue where it sits.
 
 Run from the repo root: python3 tools/validate.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies.
@@ -91,6 +95,50 @@ def check_marketplace() -> dict[str, dict]:
     return entries
 
 
+def check_module_anatomy() -> None:
+    """Delegate to `scrumia-module check`, once per module, per features/business/module-anatomy/tech.md.
+
+    Reached by path, not by the name it publishes: CI runs no harness, so no plugin's bin/
+    is on PATH. Branching on `state` and never on the finding list is what keeps a run that
+    could not conclude from reading as a clean module.
+    """
+    tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
+    if not tool.exists():
+        error(f"{tool.relative_to(ROOT)}: missing — the gate holds no module rules of its own")
+        return
+    for plugin_dir in sorted(d for d in (ROOT / "plugins").iterdir() if d.is_dir()):
+        # A directory is a module when it declares itself one. Disk disagreeing with
+        # marketplace.json is check_marketplace's finding, and is not reported twice.
+        if not (plugin_dir / ".claude-plugin" / "plugin.json").exists():
+            continue
+        rel = plugin_dir.relative_to(ROOT)
+        try:
+            result = subprocess.run(
+                [str(tool), "check", "--json", str(plugin_dir)],
+                cwd=str(ROOT), capture_output=True, text=True, timeout=60,
+            )
+        except Exception as exc:  # noqa: BLE001 - reported, not raised
+            error(f"{rel}: scrumia-module failed to run — {exc}")
+            continue
+        reason = result.stderr.strip() or "no reason given"
+        try:
+            verdict = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            error(f"{rel}: scrumia-module returned no verdict (exit {result.returncode}) — {reason}")
+            continue
+        state, findings = verdict.get("state"), verdict.get("findings") or []
+        if state == "clean":
+            continue
+        if state == "findings" and findings:
+            for finding in findings:
+                error(f"{rel}/{finding['file']}: {finding['rule']} — {finding['message']}")
+            continue
+        error(
+            f"{rel}: scrumia-module could not conclude — state '{state}', "
+            f"exit {result.returncode}: {reason}"
+        )
+
+
 def check_skills() -> None:
     """Every skills/<dir>/SKILL.md needs a frontmatter whose name matches the dir."""
     seen: dict[str, str] = {}
@@ -167,35 +215,14 @@ def check_hooks() -> None:
 
 CANONICAL_BLOB = "https://github.com/tibs245/scrumia/blob/main/"
 
-CONTAINMENT_HINT = (
-    "a module is installed one path segment deeper than it sits here, so this resolves "
-    f"somewhere else once installed — publish a name under bin/, or cite {CANONICAL_BLOB}<path>"
-)
-
-
-def plugin_root_of(rel: Path) -> Path | None:
-    """The plugin a repo-relative path belongs to, or None outside plugins/.
-
-    Resolved, because the targets it is compared against are: on macOS a temp root
-    is a symlink, and an unresolved root never contains a resolved child.
-    """
-    if rel.parts[0] != "plugins" or len(rel.parts) < 2:
-        return None
-    return (ROOT / "plugins" / rel.parts[1]).resolve()
-
 
 def check_doc_links() -> None:
-    """Relative markdown links in docs/, plugins/ and features/ must resolve.
+    """Relative markdown links outside plugins/ resolve, and a canonical URL names a file.
 
-    Links may use ${CLAUDE_SKILL_DIR} (the only variable Claude Code substitutes
-    inside skill content — ${CLAUDE_PLUGIN_ROOT} works in hooks.json/MCP configs
-    only). We resolve it to the linking file's skill directory. A lingering
-    ${CLAUDE_PLUGIN_ROOT} in a skill file is flagged: it would reach the agent
-    unsubstituted.
-
-    Inside plugins/, a link must also stay inside its own plugin (ADR-0018), and a
-    canonical blob URL must name a file that exists — otherwise the escape hatch
-    the rule opens becomes the next place links rot unchecked.
+    Inside plugins/, resolution and containment are `scrumia-module check`'s. The
+    canonical blob URL stays here for every file: it names a file in *this* repository,
+    which no module's tree can see, and it is the escape hatch ADR-0018 opens — so it is
+    where links rot next if nothing watches it.
     """
     link_re = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
     for md in sorted([
@@ -205,10 +232,7 @@ def check_doc_links() -> None:
         ROOT / "README.md",
     ]):
         rel = md.relative_to(ROOT)
-        plugin_dir = plugin_root_of(rel)
-        skill_dir = None
-        if rel.parts[0] == "plugins" and len(rel.parts) >= 4 and rel.parts[2] == "skills":
-            skill_dir = ROOT / rel.parts[0] / rel.parts[1] / "skills" / rel.parts[3]
+        in_plugin = rel.parts[0] == "plugins"
         for match in link_re.finditer(md.read_text(encoding="utf-8")):
             target = match.group(1)
             if target.startswith(CANONICAL_BLOB):
@@ -216,60 +240,32 @@ def check_doc_links() -> None:
                 if not cited.exists():
                     error(f"{rel}: canonical URL names no file in this repo → {target}")
                 continue
-            if target.startswith(("http://", "https://", "mailto:")):
+            if in_plugin or target.startswith(("http://", "https://", "mailto:")):
                 continue
             if target.startswith("${CLAUDE_PLUGIN_ROOT}"):
-                error(f"{rel}: ${{CLAUDE_PLUGIN_ROOT}} is not substituted in skill/doc content — use ${{CLAUDE_SKILL_DIR}} → {target}")
+                error(f"{rel}: ${{CLAUDE_PLUGIN_ROOT}} is not substituted in doc content — use ${{CLAUDE_SKILL_DIR}} → {target}")
                 continue
             if target.startswith("${CLAUDE_SKILL_DIR}"):
-                if skill_dir is None:
-                    error(f"{rel}: uses ${{CLAUDE_SKILL_DIR}} outside a skill directory → {target}")
-                    continue
-                resolved = (skill_dir / target[len("${CLAUDE_SKILL_DIR}/"):]).resolve()
-            else:
-                resolved = (md.parent / target).resolve()
-            if plugin_dir is not None and not resolved.is_relative_to(plugin_dir):
-                error(f"{rel}: link leaves plugins/{plugin_dir.name} → {target} — {CONTAINMENT_HINT}")
+                error(f"{rel}: uses ${{CLAUDE_SKILL_DIR}} outside a skill directory → {target}")
                 continue
-            if not resolved.exists():
+            if not (md.parent / target).resolve().exists():
                 error(f"{rel}: broken link → {target}")
 
 
-def check_skill_scripts() -> None:
-    """Scripts a skill tells the agent to run must resolve, stay in the plugin, and be executable.
-
-    check_doc_links only sees markdown links, so a ${CLAUDE_PLUGIN_ROOT} sitting
-    in a bash block used to pass silently — and reach the agent unsubstituted.
-    """
-    plugin_root_re = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}")
-    script_re = re.compile(r"\$\{CLAUDE_SKILL_DIR\}/([\w./-]+\.(?:sh|py))")
-    for md in sorted(ROOT.glob("plugins/**/SKILL.md")):
-        rel = md.relative_to(ROOT)
-        plugin_dir = plugin_root_of(rel)
-        text = md.read_text(encoding="utf-8")
-        if plugin_root_re.search(text):
-            error(f"{rel}: ${{CLAUDE_PLUGIN_ROOT}} anywhere in a skill is not substituted — use ${{CLAUDE_SKILL_DIR}}")
-        skill_dir = md.parent
-        for match in script_re.finditer(text):
-            script = (skill_dir / match.group(1)).resolve()
-            if plugin_dir is not None and not script.is_relative_to(plugin_dir):
-                error(f"{rel}: script call leaves plugins/{plugin_dir.name} → {match.group(0)} — {CONTAINMENT_HINT}")
-                continue
-            if not script.exists():
-                error(f"{rel}: references missing script → {match.group(0)}")
-            elif not os.access(script, os.X_OK):
-                error(f"{script.relative_to(ROOT)}: not executable (chmod +x)")
-
-
 def check_published_names() -> None:
-    """Everything under a plugin's bin/ is executable: PATH is how another module reaches it."""
-    for bin_dir in sorted((ROOT / "plugins").glob("*/bin")):
-        for entry in sorted(bin_dir.iterdir()):
-            rel = entry.relative_to(ROOT)
-            if not entry.is_file():
-                error(f"{rel}: bin/ holds published executables, nothing else")
-            elif not os.access(entry, os.X_OK):
-                error(f"{rel}: not executable (chmod +x) — a name on PATH that cannot run")
+    """A bin/ entry that is a link to nothing — BR-7's clause the checker cannot see yet.
+
+    `scrumia-module` filters bin/ with `is_file()`, which follows the link, so a name
+    resolving nowhere is skipped and the module exits clean. Removing this with the rest
+    of the delegated checks would leave BR-7's `bin/` clause enforced in no surface at
+    all; it goes when tibs245/scrumia#312 lands, and not before.
+    """
+    for entry in sorted((ROOT / "plugins").glob("*/bin/*")):
+        if entry.is_symlink() and not entry.exists():
+            error(
+                f"{entry.relative_to(ROOT)}: a published name resolving nowhere — "
+                f"a name on PATH that cannot run, and the caller cannot see why"
+            )
 
 
 def check_french_leftovers() -> None:
@@ -342,149 +338,17 @@ def check_composition_drift() -> None:
             )
 
 
-def check_extension_data() -> None:
-    """A module's extends.json, registers.json and dependencies.jsonl hold only data
-    that resolves inside that module.
-
-    The vocabularies are deliberately open (ADR-0020): a register nobody opens, an
-    unknown `type` or `when`, are runtime findings scrumia-extends reports, not build
-    errors — closing them here would forbid a third-party module from declaring
-    anything this repository had not anticipated. What is closed is containment and
-    existence, which is ADR-0018's rule and is decidable from the tree alone.
-    """
-    # Who publishes what, and the source each publisher claims. A `runs` entry is
-    # checked against both: PATH is one flat namespace shared with every enabled plugin,
-    # so a bare name says which command and never whose.
-    published = {}
-    for entry in ROOT.glob("plugins/*/bin/*"):
-        if entry.is_file():
-            published.setdefault(entry.name, entry.parent.parent)
-
-    def source_of(plugin: Path) -> str:
-        meta = load_json(plugin / ".claude-plugin" / "plugin.json") or {}
-        url = meta.get("repository") or meta.get("homepage") or ""
-        return re.sub(r"^[a-z+]+://[^/]+/", "", url).removesuffix(".git").rstrip("/")
-
-    def data_of(plugin: Path, name: str):
-        path = plugin / name
-        if not path.exists():
-            return None, None
-        rel = path.relative_to(ROOT)
-        data = load_json(path)
-        if not isinstance(data, dict):
-            error(f"{rel}: must be a JSON object")
-            return None, rel
-        return data, rel
-
-    for plugin in sorted(ROOT.glob("plugins/*")):
-        if not (plugin / ".claude-plugin" / "plugin.json").exists():
-            continue
-
-        registers, rel = data_of(plugin, "registers.json")
-        opened = set()
-        if registers:
-            for name, entry in registers.items():
-                opened.add(name)
-                if not isinstance(entry, dict):
-                    error(f"{rel}: register '{name}' must be an object with a skill and a purpose")
-                    continue
-                skill = entry.get("skill")
-                if not skill:
-                    error(f"{rel}: register '{name}' names no main skill")
-                elif not (plugin / "skills" / skill / "SKILL.md").exists():
-                    error(f"{rel}: register '{name}' names skill '{skill}', which this module does not ship")
-                if not entry.get("purpose"):
-                    error(f"{rel}: register '{name}' states no purpose")
-
-        extends, rel = data_of(plugin, "extends.json")
-        if extends:
-            for register, rows in extends.items():
-                if not isinstance(rows, list):
-                    error(f"{rel}: '{register}' must be an array of directives")
-                    continue
-                for row in rows:
-                    if not isinstance(row, dict):
-                        error(f"{rel}: '{register}' holds a directive that is not an object")
-                        continue
-                    label = row.get("name") or "(unnamed)"
-                    for field in ("name", "summary", "read"):
-                        if not row.get(field):
-                            error(f"{rel}: '{register}' → {label} has no {field}")
-                    frag = row.get("read")
-                    if not frag:
-                        continue
-                    target = (plugin / frag).resolve()
-                    if not target.is_relative_to(plugin.resolve()):
-                        error(f"{rel}: '{register}' → {label} reads outside plugins/{plugin.name} → {frag} — {CONTAINMENT_HINT}")
-                    elif not target.exists():
-                        error(f"{rel}: '{register}' → {label} reads a file that does not exist → {frag}")
-
-        dep_path = plugin / "dependencies.jsonl"
-        if dep_path.exists():
-            rel = dep_path.relative_to(ROOT)
-            runs, malformed = [], False
-            for n, line in enumerate(dep_path.read_text(encoding="utf-8").splitlines(), 1):
-                if not line.strip():
-                    continue
-                try:
-                    record = json.loads(line)
-                except json.JSONDecodeError:
-                    error(f"{rel}:{n}: not a JSON record — one dependency per line")
-                    malformed = True
-                    continue
-                if isinstance(record, str):
-                    runs.append(record)
-                elif isinstance(record, dict) and isinstance(record.get("run"), str):
-                    runs.append(record["run"])
-                else:
-                    error(f"{rel}:{n}: a line is a published name, or an object carrying one under `run`")
-                    malformed = True
-            del malformed
-            for entry in runs:
-                source, _, name = entry.rpartition(":")
-                if not source:
-                    error(
-                        f"{rel}: runs '{name}' unqualified — name it <source>:<name>, since "
-                        f"PATH is shared with every enabled plugin and a bare name says "
-                        f"which command, never whose"
-                    )
-                    continue
-                publisher = published.get(name)
-                if publisher is None:
-                    error(f"{rel}: runs '{entry}', and no plugin publishes '{name}' under its bin/")
-                    continue
-                # The qualification is a claim about provenance, checked here. What a
-                # skill actually invokes stays the bare name (ADR-0018).
-                actual = source_of(publisher)
-                if not actual:
-                    warn(f"{rel}: runs '{entry}', published by {publisher.name}, which declares no repository — the source is unchecked")
-                elif actual != source:
-                    error(
-                        f"{rel}: runs '{entry}', but '{name}' is published by {publisher.name}, "
-                        f"from '{actual}'"
-                    )
-
-        # Opening a register is a promise to apply its directives, and the grep for the
-        # invocation is the only thing that can see the promise being broken: a skill that
-        # opens an extension point, reads as covered, and applies nothing. ADR-0020 names
-        # this as the failure a declaration check structurally cannot catch.
-        for register in sorted(opened):
-            if not any(
-                f"scrumia-extends {register}" in f.read_text(encoding="utf-8")
-                for f in plugin.glob("skills/*/SKILL.md")
-            ):
-                error(
-                    f"plugins/{plugin.name}: opens the register '{register}', but no skill it "
-                    f"ships runs `scrumia-extends {register}` — the directives are promised "
-                    f"and never applied"
-                )
-
-
 def check_extends_tool_runs() -> None:
     """scrumia-extends answers on this repository's own composition.
 
     Run against $SCRUMIA_MODULE_DIR, never PATH: CI has no harness, so no plugin's
     bin/ is on it. That asymmetry is ADR-0020's, recorded there as accepted.
+
+    This is the only place a `dependencies.jsonl` entry is checked against who actually
+    publishes the name and from which source — a question one module's tree cannot
+    answer, and which `scrumia-module` declines for exactly that reason. It is narrower
+    than the check it replaced: a bare name found on the runner's own PATH satisfies the
+    dependency unchecked, and a publisher declaring no repository only notes it.
     """
     tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
     if not tool.exists():
@@ -780,16 +644,20 @@ def check_plugin_changelogs() -> None:
 
 def main() -> int:
     check_marketplace()
+    check_module_anatomy()
+
+    # Kept under module-anatomy's BR-5: scrumia-module reads no frontmatter, no
+    # hooks.json and no changelog, and misses a bin/ name resolving nowhere (#312).
     check_skills()
     check_agents()
     check_commands()
     check_hooks()
-    check_doc_links()
-    check_skill_scripts()
+    check_plugin_changelogs()
     check_published_names()
+
+    check_doc_links()
     check_french_leftovers()
     check_composition_drift()
-    check_extension_data()
     check_extends_tool_runs()
     check_feature_mandatory_files()
     check_no_tracker_refs()
@@ -800,7 +668,6 @@ def main() -> int:
     check_feature_files_present()
     check_global_index_drift()
     check_spec_changelogs()
-    check_plugin_changelogs()
 
     for msg in WARNINGS:
         print(f"warning: {msg}")
