@@ -14,3 +14,6 @@ site/**/_probe.html
 # The role-review fallback writes its prompt into the worktree, and a run must reach
 # a clean `git status` before it spawns a role — so this must never be commit fodder.
 review-prompt.txt
+
+# A shared checkout lives on one machine, not in the repository: features/business/local-extension/
+.scrumia/.env.local
