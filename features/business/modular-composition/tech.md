@@ -208,6 +208,14 @@ neighbouring line, and diffing as exactly what changed.
 - **The grep that proves a skill runs the tool matches a string.** Renaming the tool, or
   invoking it through a variable, defeats it. *Exit condition*: none worth paying for — the
   check is a backstop, and a stricter one would fail on legitimate phrasing.
+- **A `local:` or `shared:` key matches a discovered module by name alone**, which is
+  looser than the paragraph above it: a key declaring `local:x` binds a marketplace module
+  named `x` and the composition credits it to `local` — a location it does not come from,
+  which is the reading `local-extension` BR-5 exists to prevent. What holds today is the
+  marketplace half: an `<owner>/<repo>` key binds only a module whose manifest claims that
+  repository. *Exit condition*: resolving `shared` and `local` against the location each
+  names, after which a name matching outside that location is a conflict to report rather
+  than a module to bind.
 
 ## Practices for writing an extension
 

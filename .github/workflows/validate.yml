@@ -33,6 +33,8 @@ jobs:
         run: python3 tools/test_composer.py
       - name: Check the composition summary against its acceptance criteria
         run: python3 tools/test_compose_status.py
+      - name: Check the module keys and the settings cascade
+        run: python3 tools/test_scrumia_extends.py
       - name: Check design token contrast and hue separation
         run: python3 tools/check_contrast.py
       - name: Rebuild the site and check the committed output is current
