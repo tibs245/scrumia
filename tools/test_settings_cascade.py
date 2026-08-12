@@ -71,7 +71,7 @@ def write(name: str, body: str) -> Path:
 
 
 def run(tool: Path, args: list[str], config: Path, local: Path | None = None,
-        resolver: bool = True):
+        resolver: bool = True, extra_env: dict[str, str] | None = None):
     # scrumia-extends lives only in a plugin's bin/, so omitting it here is what makes
     # the resolver genuinely unreachable while awk, tr and the rest stay available.
     system = f"{BIN}:/usr/bin:/bin"
@@ -83,6 +83,7 @@ def run(tool: Path, args: list[str], config: Path, local: Path | None = None,
         "SCRUMIA_CONFIG": str(config),
         "SCRUMIA_CONFIG_LOCAL": str(local) if local else str(TMP / "absent.local.yaml"),
     }
+    env.update(extra_env or {})
     proc = subprocess.run([str(tool), *args], cwd=ROOT, env=env,
                           capture_output=True, text=True, timeout=60)
     return proc.returncode, proc.stdout, proc.stderr
@@ -365,6 +366,48 @@ def test_doctor_diagnoses_rather_than_dies() -> None:
           "scrumia-extends" in (answer.get("detail") or ""), answer.get("detail"))
 
 
+def test_a_bare_key_mid_migration_is_absence_not_a_value() -> None:
+    """jq's recursive merge propagates an explicit null; a config error must not silently win."""
+    cfg = write("nullkey.yaml", BASE_PROJECT + f"""modules:
+  "{TEAMS_KEY}":
+    params:
+      execution:
+        unrated_risk:
+        matrix:
+          L: {{ critical: opus, medium: sonnet }}
+settings:
+  team:
+    execution:
+      unrated_risk: critical
+""")
+    code, out, err = run(PICK, ["--scope", "L"], cfg)
+    answer = as_json(out) or {}
+    check("AC-22: a key written bare in the migrated shape does not overwrite the base layer",
+          code == 0 and answer.get("risk") == "critical" and answer.get("model") == "opus",
+          f"{code} {out} {err}")
+
+
+def test_doctor_does_not_certify_an_empty_board() -> None:
+    """The resolver ran, and no layer carried the board — AC-19's third case."""
+    cfg = write("emptyboard.yaml", BASE_PROJECT + "extends:\n  - scrumia-github-project\nsettings: {}\n")
+    code, out, err = run(BOARD, ["doctor"], cfg)
+    answer = as_json(out) or {}
+    check("AC-19: doctor reports settings_resolved false when no layer carries the board",
+          answer.get("checks", {}).get("settings_resolved") is False, f"{code} {out} {err}")
+    check("AC-19: and says so, rather than reporting a symptom with no cause",
+          "no layer of the cascade" in (answer.get("detail") or ""), answer.get("detail"))
+
+
+def test_the_soft_gate_is_not_environment_settable() -> None:
+    """Only the doctor dispatch may lift the gate; the environment may not."""
+    cfg = write("softgate.yaml", RETIRED_SHAPE)
+    env_extra = {"SOFT_SETTINGS": "yes"}
+    code, out, err = run(BOARD, ["find", "1"], cfg, resolver=False, extra_env=env_extra)
+    answer = as_json(out) or {}
+    check("AC-19: SOFT_SETTINGS from the environment does not let a command past the gate",
+          code != 0 and "scrumia-extends" in (answer.get("error") or ""), f"{code} {out} {err}")
+
+
 def test_a_hole_in_the_grid_still_answers() -> None:
     """AC-10 is untouched: a missing *cell* is data, and stays answerable."""
     cfg = write("hole.yaml", RETIRED_SHAPE)
@@ -414,6 +457,9 @@ def main() -> int:
                  test_an_empty_policy_block_is_not_a_policy,
                  test_a_policy_without_its_defaults_says_so,
                  test_doctor_diagnoses_rather_than_dies,
+                 test_doctor_does_not_certify_an_empty_board,
+                 test_the_soft_gate_is_not_environment_settable,
+                 test_a_bare_key_mid_migration_is_absence_not_a_value,
                  test_a_hole_in_the_grid_still_answers,
                  test_board_settings_gate_before_the_api):
         print(f"\n{test.__name__}")

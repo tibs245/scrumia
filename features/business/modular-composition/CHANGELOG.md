@@ -6,8 +6,7 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 ## 2026-08-12 — The `settings.<slot>` nests are deprecated in favour of each module's `params:`
 - Issue: #315
 - Category: Deprecated
-- Breaking: no — a consumer reads both shapes and merges them key by key (`tech.md`);
-  removal comes two releases after this one
+- Breaking: no
 
 ## 2026-08-12 — A module reads its configuration through the cascade, and stops when it cannot (BR-15, BR-16, AC-19)
 - Issue: #315
