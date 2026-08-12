@@ -20,12 +20,21 @@ Given a need stated as belonging to this project alone
 When the authoring pass decides where the module goes
 Then it is created inside the project, and the pass states the reach it inferred so the
   human can contradict it
+Given instead a need stated as belonging to this person across their projects
+When the same pass runs
+Then the module is created in the shared checkout, which the pass reaches through the
+  resolution `features/business/local-extension/` owns rather than through a path it
+  names itself
 Given instead a need stated as belonging to anyone running ScrumIA
 When the same pass runs
 Then a marketplace is the location, and before creating anything the pass states the two
   obligations publishing carries — a version whose bumps `release-versioning` governs, and
   a deprecation window before a renamed thing disappears
 ```
+
+All three reaches `business.md`'s table names are exercised. Two of them would let an
+implementation covering two branches pass, and the third is the one the epic's open
+question turned on.
 
 ### AC-3 — Promotion rewrites no file
 
@@ -84,7 +93,15 @@ When the authoring pass is asked to create a module for it
 Then no module is created, and the pass names the destination that fits, taken from the
   shapes `features/business/local-extension/` lists and chosen through
   `features/business/knowledge-placement/`'s tree — enumerating neither itself
+Given instead a need below the threshold `business.md` states and above one rule — two
+  concerns, or a single procedure no register asks for
+When the same pass runs
+Then no module is created either, and the same tree names the destination
 ```
+
+The second scenario is the commonest input, not an edge: the band between AC-1's three
+concerns and one standing rule has one outcome, and it is this refusal rather than a
+creation the threshold did not admit.
 
 ### AC-8 — A new slot is refused unless a project would fill it differently
 
@@ -100,11 +117,17 @@ Then the slot is refused, and the pass offers the two accepted alternatives — 
 ### AC-9 — The pass writes no placeholder
 
 ```gherkin
-Given a module whose need touches no register, reads no setting and exposes no script
+Given a module whose need opens and extends no register, reads no setting and publishes
+  no name on `PATH`
 When the authoring pass produces it
-Then no file exists for any of the three, and no file it did write contains a heading
-  with nothing under it or a marker to be filled in later
+Then the module carries no declaration of any of the three — no extension data file, no
+  settings section in its README, nothing under `bin/` — and no file it did write
+  contains a heading with nothing under it or a marker to be filled in later
 ```
+
+Each third names a surface the anatomy checker can see, which is what lets the scenario
+fail. A setting a module reads has no file of its own; what it has is the optional README
+section whose absence states that it reads none, and that section is the surface here.
 
 ### AC-10 — A pass may end having created nothing
 
