@@ -151,8 +151,9 @@ looks like a decision.
 ```gherkin
 Given a directory with no `.claude-plugin/plugin.json`
 When the procedural check is asked for a verdict on it
-Then it exits `2`, states that this is not a module, and returns no findings — rather than
-  returning one finding per rule the directory happens not to meet
+Then it exits with the code `tech.md` gives the `not a module` state — `4`, distinct from
+  the one a bad invocation carries — states that this is not a module, and returns no
+  findings, rather than returning one finding per rule the directory happens not to meet
 ```
 
 An unbounded finding list on an arbitrary directory is how a check teaches people to
