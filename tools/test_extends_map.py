@@ -40,11 +40,12 @@ def extends_section(lang: str) -> str:
     return match.group(0)
 
 
-def ext_css_block() -> str:
+def ext_css_block(strip_comments: bool = False) -> str:
     match = re.search(r"/\* ---------- Extends.*?(?=/\* ---------- Modules)", CSS.read_text(encoding="utf-8"), re.DOTALL)
     if not match:
         raise SystemExit(f"{CSS}: no Extends CSS block")
-    return match.group(0)
+    block = match.group(0)
+    return re.sub(r"/\*.*?\*/", "", block, flags=re.DOTALL) if strip_comments else block
 
 
 # --- AC-1 ----------------------------------------------------------------------
@@ -56,13 +57,16 @@ def test_ac1_mechanism_not_a_bare_claim() -> None:
     check("a declaring skill is shown", "ext-declares" in section)
 
     # Scoped to the populated row's own <ul>, not a whole-section <li> count.
-    populated = re.search(r'<div class="ext-row">(.*?)</div>\s*</div>\s*<div class="ext-row ext-row-empty">',
-                           section, re.DOTALL)
+    populated = re.search(r'<div class="ext-row">(.*?)</div>\s*</div>\s*(?:<!--.*?-->\s*)?'
+                           r'<div class="ext-row ext-row-empty">', section, re.DOTALL)
     check("the populated row is found", bool(populated))
     contributors = re.findall(r"<li>", populated.group(1)) if populated else []
     check("more than one module contributes in the populated row", len(contributors) >= 2, str(len(contributors)))
 
-    check("the invocation is shown", "<pre><code>scrumia-extends " in section)
+    invocation = re.search(r"<pre><code>(.*?)</code></pre>", section, re.DOTALL)
+    check("the invocation is shown", bool(invocation) and "scrumia-extends" in invocation.group(1))
+    check("the accent lands on the invocation, the point the claim turns on (identity.md decision 4)",
+          bool(invocation) and invocation.group(1).startswith('<span class="k">scrumia-extends</span>'))
     check("the real table follows it", "<tbody><tr>" in section)
 
 
@@ -82,7 +86,7 @@ def test_ac2_every_name_is_real() -> None:
     check("the populated register's declaring module is one this project runs",
           live.get("@ext_full_module") in [m for m in bs.load_project_modules()])
     check("the populated register's contributors are real modules",
-          all(f"<li>{m}</li>" in live["@ext_full_contributors"]
+          all(f"<li><code>{m}</code></li>" in live["@ext_full_contributors"]
               for m in {d["module"] for d in real["directives"].get(bs.EXTENDS_FIGURE["populated"], [])}))
 
     # The build-time guard: a register this composition does not open must fail
@@ -154,7 +158,7 @@ def test_ac5_legible_with_no_script() -> None:
 
 def test_ac6_tokens_only() -> None:
     print("AC-6 the figure carries no literal colour, spacing or duration of its own")
-    block = ext_css_block()
+    block = ext_css_block(strip_comments=True)
     literal_color = re.findall(r"#[0-9a-fA-F]{3,8}\b", block)
     literal_fn = re.findall(r"\b(?:rgb|hsl|oklch|oklab)\(", block)
     check("no literal colour", not literal_color, str(literal_color))
@@ -179,8 +183,10 @@ def test_ac7_turns_rather_than_scrolls() -> None:
     check("a min-width query switches the figure to columns", bool(media))
     if media:
         body = media.group(2)
-        check("…and it sets the three-column grid on both the header and the rows",
-              body.count("grid-template-columns: 1fr 1fr 2fr") == 2, body)
+        check("…and it sets the three-column grid on the rows",
+              body.count("grid-template-columns: 1fr 1fr 2fr") == 1, body)
+        check("…complementing .slot-row's own max-width: 800px turn",
+              media.group(1) == "801", media.group(1))
     for lang in ("en", "fr"):
         section = extends_section(lang)
         check(f"[{lang}] the table is the only element allowed to scroll on its own",
@@ -199,12 +205,17 @@ def test_ac8_figure_is_not_the_only_carrier() -> None:
         if not facts:
             continue
         items = re.findall(r"<li>(.*?)</li>", facts.group(1), re.DOTALL)
-        check(f"[{lang}] all four facts are stated", len(items) == 4, str(len(items)))
+        # Fact 4 (temporal, carried by position) is checked below, in the outro.
+        check(f"[{lang}] the first three facts are stated", len(items) == 3, str(len(items)))
         joined = " ".join(items)
         check(f"[{lang}] the populated register is named in prose",
               f"<code>{bs.EXTENDS_FIGURE['populated']}</code>" in joined)
         check(f"[{lang}] the empty register is named in prose",
               f"<code>{bs.EXTENDS_FIGURE['empty']}</code>" in joined)
+
+        outro = re.search(r"<p>(.*?)</p>\s*</section>", section, re.DOTALL)
+        check(f"[{lang}] the outro states the fourth fact after the table it is about",
+              bool(outro) and re.search(r"comput|calcul", outro.group(1), re.IGNORECASE))
 
 
 # --- AC-10 -----------------------------------------------------------------
@@ -214,7 +225,7 @@ def test_ac10_no_count_that_rots() -> None:
     print("AC-10 no count of registers, modules or directives is hard-written into the copy")
     keys = ("ext_title", "ext_claim", "ext_col_declares", "ext_col_register", "ext_col_contributes",
             "ext_no_contribution", "ext_fact1", "ext_fact2_a", "ext_fact2_b", "ext_fact3_a", "ext_fact3_b",
-            "ext_fact4", "ext_ask", "th_ext_directive", "th_ext_says", "th_ext_module", "ext_outro")
+            "ext_ask", "th_ext_directive", "th_ext_says", "th_ext_module", "ext_outro")
     for lang in ("en", "fr"):
         strings = json.loads((REPO / "site" / "i18n" / lang / "index.json").read_text(encoding="utf-8"))
         digits = {k: strings[k] for k in keys if k in strings and re.search(r"\d", strings[k])}

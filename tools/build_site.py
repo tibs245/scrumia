@@ -334,7 +334,7 @@ def extends_map_specials() -> dict[str, str]:
         "@ext_full_register": EXTENDS_FIGURE["populated"],
         "@ext_full_module": populated["module"],
         "@ext_full_skill": populated["skill"],
-        "@ext_full_contributors": "".join(f"<li>{html.escape(m)}</li>" for m in populated["mods"]),
+        "@ext_full_contributors": "".join(f"<li><code>{html.escape(m)}</code></li>" for m in populated["mods"]),
         "@ext_full_contributors_inline": inline_mods,
         "@ext_empty_register": EXTENDS_FIGURE["empty"],
         "@ext_empty_module": empty["module"],

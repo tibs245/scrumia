@@ -552,23 +552,24 @@ apps:
 
   <!-- Two real registers of this repository's own composition, computed by
        tools/build_site.py (extends_map_specials) — never hand-typed here, so the
-       figure cannot name a module or a register this project does not run. -->
+       figure cannot name a module or a register this project does not run.
+       Each row carries its own labels (like .slot-name) rather than a shared
+       header band: a header row here reads as a second <table>, three beats
+       before the real one, and undercuts the point that one of them is drawn
+       and the other computed. -->
   <div class="ext-figure summon">
-    <div class="ext-cols" aria-hidden="true">
-      <span>{{ext_col_declares}}</span>
-      <span>{{ext_col_register}}</span>
-      <span>{{ext_col_contributes}}</span>
-    </div>
-
     <div class="ext-row">
       <p class="ext-declares"><span class="ext-label">{{ext_col_declares}}</span><code>{{@ext_full_module}}</code> <span class="ext-skill">{{@ext_full_skill}}</span></p>
       <p class="ext-register"><span class="ext-label">{{ext_col_register}}</span><code>{{@ext_full_register}}</code><span class="ext-lead" aria-hidden="true"></span></p>
       <div class="ext-contributes"><span class="ext-label">{{ext_col_contributes}}</span><ul>{{@ext_full_contributors}}</ul></div>
     </div>
 
+    <!-- The register name stays full-strength here, unlike .slot-empty's dimmed
+         .slot-name: dimming it would read as "this register is lesser", which is
+         the opposite of the "legitimate outcome" AC-3 asks the empty case to be. -->
     <div class="ext-row ext-row-empty">
       <p class="ext-declares"><span class="ext-label">{{ext_col_declares}}</span><code>{{@ext_empty_module}}</code> <span class="ext-skill">{{@ext_empty_skill}}</span></p>
-      <p class="ext-register"><span class="ext-label">{{ext_col_register}}</span><code>{{@ext_empty_register}}</code><span class="ext-lead ext-lead-empty" aria-hidden="true"></span></p>
+      <p class="ext-register"><span class="ext-label">{{ext_col_register}}</span><code>{{@ext_empty_register}}</code><span class="ext-lead" aria-hidden="true"></span></p>
       <p class="ext-contributes ext-contributes-none"><span class="ext-label">{{ext_col_contributes}}</span>{{ext_no_contribution}}</p>
     </div>
   </div>
@@ -579,14 +580,14 @@ apps:
     <li>{{ext_fact1}}</li>
     <li>{{ext_fact2_a}} <code>{{@ext_full_register}}</code> {{ext_fact2_b}} {{@ext_full_contributors_inline}}.</li>
     <li>{{ext_fact3_a}} <code>{{@ext_empty_register}}</code> {{ext_fact3_b}}</li>
-    <li>{{ext_fact4}}</li>
   </ul>
 
-  <!-- The table is downstream of the ask, not stored beside the modules above —
-       its own summon block, arriving after the figure's, says so in motion too. -->
+  <!-- The table is downstream of the ask, not stored beside the modules above.
+       --accent is spent here and nowhere else in the section body: this is the
+       point the mechanism's own claim turns on (identity.md decision 4). -->
   <div class="ext-invoke summon">
     <p class="ext-ask">{{ext_ask}}</p>
-<pre><code>scrumia-extends {{@ext_full_register}}</code></pre>
+<pre><code><span class="k">scrumia-extends</span> {{@ext_full_register}}</code></pre>
 
     <div class="table-wrap">
       <table>
