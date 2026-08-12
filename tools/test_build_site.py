@@ -38,11 +38,15 @@ STUB_TEMPLATE = """<!doctype html>
 <ul>{{@mod_skills}}</ul>
 <ul>{{@mod_tags}}</ul>
 <code>{{@mod_install}}</code><a href="{{@mod_source}}">src</a>
-<div>{{responsibilities}}</div></body></html>
+<div>{{responsibilities}}</div>
+{{@mod_connects}}
+{{@mod_pairs}}
+</body></html>
 """
 
 
-def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None, tags=("t",)) -> None:
+def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None, tags=("t",),
+                  prose_extra=None) -> None:
     """A miniature site: two plugins, one stub template, one prose file per language."""
     (root / ".claude-plugin").mkdir(parents=True)
     (root / ".claude-plugin" / "marketplace.json").write_text(json.dumps({
@@ -74,6 +78,8 @@ def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None, 
         (d / "common.json").write_text(json.dumps({"mod_no_slot": "none"}), encoding="utf-8")
         for p in plugins:
             body = prose if prose is not None else {"title": f"{p} [{lang}]", "responsibilities": "<p>r</p>"}
+            if prose_extra and p in prose_extra:
+                body = {**body, **prose_extra[p]}
             (d / "modules" / f"{p}.json").write_text(json.dumps(body), encoding="utf-8")
 
 
@@ -312,6 +318,138 @@ def test_ac11_reference_link_is_generated_not_hand_written() -> None:
               json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))["plugins"]))
 
 
+# --- AC-12 -------------------------------------------------------------------
+
+
+def test_ac12_module_page_shows_what_it_plugs_into() -> None:
+    print("AC-12 a module page shows what it plugs into, derived and never declared")
+
+    link_specials = {"@modlink_a": "modules/a.html", "@modlink_b": "modules/b.html", "@modlink_c": "modules/c.html"}
+    labels = {"mod_h_plugs_into": "Plugs into", "th_conn_register": "Register",
+              "th_conn_direction": "Direction", "th_conn_module": "Module",
+              "conn_dir_opens": "opens", "conn_dir_contributes": "contributes",
+              "conn_no_contribution": "no contribution"}
+
+    check("a module opening and extending nothing shows no section at all",
+          bs.module_connections_html("ghost", {}, {}, link_specials, labels) == "")
+
+    regs = {"reg1": {"module": "a", "skill": "s"}}
+    out = bs.module_connections_html("a", regs, {}, link_specials, labels)
+    check("a register with no contributor is shown, not omitted (BR-1)",
+          '<span class="conn-none">no contribution</span>' in out and out.count("<tbody>") == 1
+          and out.split("<tbody>")[1].count("<tr>") == 1, out)
+
+    dirs = {"reg1": [{"module": "b", "name": "x", "summary": "y"}]}
+    out = bs.module_connections_html("a", regs, dirs, link_specials, labels)
+    check("a contributor is named and linked to its own page",
+          '<a href="../modules/b.html"><code>b</code></a>' in out and ">opens<" in out, out)
+
+    out = bs.module_connections_html("b", regs, dirs, link_specials, labels)
+    check("the contributing module names the register and the module that opened it",
+          '<a href="../modules/a.html"><code>a</code></a>' in out and ">contributes<" in out, out)
+
+    bs.ERRORS.clear()
+    bs.module_connections_html("c", {}, {"orphan": [{"module": "c", "name": "x", "summary": "y"}]},
+                                link_specials, labels)
+    check("a contributed register nobody opens fails the build rather than a dead link",
+          any("opened by no module of the marketplace" in e for e in bs.ERRORS), str(bs.ERRORS))
+    bs.ERRORS.clear()
+
+    tmp = Path(tempfile.mkdtemp())
+    (tmp / "x").mkdir(parents=True)
+    (tmp / "x" / "registers.json").write_text(json.dumps({"reg": {"skill": "s"}}), encoding="utf-8")
+    (tmp / "y").mkdir(parents=True)
+    (tmp / "y" / "extends.json").write_text(json.dumps({"reg": [{"name": "n", "summary": "s"}]}), encoding="utf-8")
+    market_map = bs.load_extends_map(["x", "y"], plugins_root=tmp)
+    check("a marketplace-wide walk sees both sides, whatever this project's own composition runs",
+          market_map["registers"] == {"reg": {"module": "x", "skill": "s"}}
+          and market_map["directives"]["reg"][0]["module"] == "y", str(market_map))
+    shutil.rmtree(tmp)
+
+    tmp = Path(tempfile.mkdtemp())
+    make_fixture(tmp, extra={"alpha": {"emoji": "🅰"}, "beta": {"emoji": "🅱"}})
+    (tmp / "plugins" / "alpha" / "registers.json").write_text(json.dumps({"reg": {"skill": "s"}}), encoding="utf-8")
+    (tmp / "plugins" / "beta" / "extends.json").write_text(
+        json.dumps({"reg": [{"name": "n", "summary": "s"}]}), encoding="utf-8")
+    code, errors = run_fixture(tmp)
+    check("the full pipeline wires the walk into the module page", code == 0, str(errors))
+    page = (tmp / "site" / "modules" / "alpha.html").read_text(encoding="utf-8")
+    check("alpha's page names beta, linked to its own page",
+          '<a href="../modules/beta.html">' in page and "<code>reg</code>" in page, page)
+    shutil.rmtree(tmp)
+
+    core = (REPO / "site" / "modules" / "scrumia-core.html").read_text(encoding="utf-8")
+    check("a module declaring neither file carries no plugs-into section",
+          '<section id="plugs-into">' not in core, )
+    ghp = (REPO / "site" / "modules" / "scrumia-github-project.html").read_text(encoding="utf-8")
+    check("the module with the most contributors names all seven, each linked",
+          all(f'<a href="../modules/{n}.html">' in ghp for n in
+              ("scrumia-design", "scrumia-specs", "scrumia-impl-rust", "scrumia-impl-solidjs",
+               "scrumia-practice-solid", "scrumia-practice-tanstack-query", "scrumia-practice-tdd")))
+    discovery = (REPO / "site" / "modules" / "scrumia-discovery.html").read_text(encoding="utf-8")
+    check("an opened register with no contributor still shows, spelled out",
+          discovery.count('<span class="conn-none">no contribution</span>') == 2, discovery)
+
+
+# --- AC-13 -------------------------------------------------------------------
+
+
+def test_ac13_module_page_shows_what_it_goes_well_with() -> None:
+    print("AC-13 a module page says what it goes well with, and cannot invent one")
+
+    link_specials = {"@modlink_x": "modules/x.html", "@modlink_y": "modules/y.html"}
+    labels = {"mod_h_pairs": "Goes well with"}
+
+    out, preused = bs.module_pairs_html("en", {"name": "a", "pairs_with": []}, {}, labels, link_specials)
+    check("a module with nothing to say carries no such section", out == "" and preused == set())
+
+    module = {"name": "a", "pairs_with": ["x", "y"]}
+    bs.ERRORS.clear()
+    out, preused = bs.module_pairs_html("en", module, {}, labels, link_specials)
+    check("a declared complement with no prose fails the build rather than a blank line",
+          out == "" and any("missing 'pairs_with'" in e for e in bs.ERRORS), str(bs.ERRORS))
+    bs.ERRORS.clear()
+
+    out, preused = bs.module_pairs_html("en", module, {"pairs_with": "because:"}, labels, link_specials)
+    check("the prose names each complement, linked to its own page",
+          '<a href="../modules/x.html"><code>x</code></a>' in out
+          and '<a href="../modules/y.html"><code>y</code></a>' in out, out)
+    check("the prose is read outside the token engine, marked used so it isn't flagged an orphan",
+          preused == {"pairs_with"})
+
+    code, errors, tmp = with_fixture(
+        extra={"alpha": {"emoji": "🅰", "pairs_with": ["ghost"]}, "beta": {"emoji": "🅱"}})
+    check("a complement naming a module that doesn't exist fails the build",
+          code == 1 and any("pairs_with 'ghost'" in e and "not a plugin" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(
+        extra={"alpha": {"emoji": "🅰", "pairs_with": ["alpha"]}, "beta": {"emoji": "🅱"}})
+    check("a module naming itself fails the build",
+          code == 1 and any("names itself in pairs_with" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+    code, errors, tmp = with_fixture(
+        extra={"alpha": {"emoji": "🅰", "pairs_with": ["beta"]}, "beta": {"emoji": "🅱"}},
+        prose_extra={"alpha": {"pairs_with": "why:"}})
+    check("a complement with its own prose builds clean", code == 0, str(errors))
+    page = (tmp / "site" / "modules" / "alpha.html").read_text(encoding="utf-8")
+    check("the page names the complement, linked to its own page",
+          '<a href="../modules/beta.html">' in page, page)
+    beta_page = (tmp / "site" / "modules" / "beta.html").read_text(encoding="utf-8")
+    check("beta has nothing to say, so it carries no such section",
+          '<section id="pairs-with">' not in beta_page, beta_page)
+    shutil.rmtree(tmp)
+
+    core = (REPO / "site" / "modules" / "scrumia-core.html").read_text(encoding="utf-8")
+    check("scrumia-core, which declares neither register file, still says what it goes well with",
+          '<section id="pairs-with">' in core
+          and '<a href="../modules/scrumia-github-project.html">' in core, core)
+    ghp = (REPO / "site" / "modules" / "scrumia-github-project.html").read_text(encoding="utf-8")
+    check("a module already covered by AC-12's derivation carries no editorial line",
+          '<section id="pairs-with">' not in ghp, ghp)
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
                  test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
@@ -319,7 +457,9 @@ def main() -> int:
                  test_ac7_manifest_facts_are_escaped,
                  test_ac8_index_links_to_every_module, test_ac9_link_is_generated_not_hand_written,
                  test_ac10_reference_links_to_every_module,
-                 test_ac11_reference_link_is_generated_not_hand_written):
+                 test_ac11_reference_link_is_generated_not_hand_written,
+                 test_ac12_module_page_shows_what_it_plugs_into,
+                 test_ac13_module_page_shows_what_it_goes_well_with):
         test()
     print()
     if FAILURES:

@@ -182,6 +182,16 @@ def load_modules() -> list[dict]:
         skills = skill_names(name)
         if not skills:
             ERRORS.append(f"plugins/{name}: no skills/*/SKILL.md to list")
+        # AC-13's editorial names, checked against `named` like the emoji already is.
+        pairs_with = data.get("pairs_with") or []
+        if not isinstance(pairs_with, list):
+            ERRORS.append(f"{rel}: '{name}' pairs_with is not a list")
+            pairs_with = []
+        for other in pairs_with:
+            if other == name:
+                ERRORS.append(f"{rel}: '{name}' names itself in pairs_with")
+            elif other not in named:
+                ERRORS.append(f"{rel}: '{name}' pairs_with '{other}', which is not a plugin of the marketplace")
         modules.append({
             "name": name,
             "emoji": emoji or "",
@@ -189,6 +199,7 @@ def load_modules() -> list[dict]:
             "version": entry.get("version", ""),
             "tags": entry.get("tags", []),
             "skills": skills,
+            "pairs_with": [o for o in pairs_with if isinstance(o, str) and o in named and o != name],
         })
     return modules
 
@@ -227,6 +238,87 @@ def module_link_specials(modules: list[dict]) -> dict[str, str]:
     """One `@modlink_<name>` per module — the URL a card links to, computed once
     per module name rather than hand-typed per card in the template (#70)."""
     return {f"@modlink_{m['name']}": f"modules/{m['name']}.html" for m in modules}
+
+
+# A module page is always one level below its language root — the same `@lroot`.
+MODULE_PAGE_UP = "../"
+
+
+def _conn_link(name: str, link_specials: dict[str, str]) -> str:
+    return f'{MODULE_PAGE_UP}{link_specials[f"@modlink_{name}"]}'
+
+
+def module_connections_html(name: str, regs: dict, dirs: dict, link_specials: dict, labels: dict) -> str:
+    """AC-12: what `name` mechanically connects to — every row derived from the
+    marketplace-wide `registers.json`/`extends.json` walk, never hand-typed. A
+    register opened with no contributor still gets a row (BR-1: an empty register
+    is an answer, not a gap); a module opening and extending nothing gets no
+    section at all, rather than a heading standing over an empty table."""
+    opens = sorted(reg for reg, info in regs.items() if info["module"] == name)
+    contributes = sorted({reg for reg, ds in dirs.items() if any(d["module"] == name for d in ds)})
+    if not opens and not contributes:
+        return ""
+
+    rows = []
+    dir_opens = labels.get("conn_dir_opens", "")
+    dir_contributes = labels.get("conn_dir_contributes", "")
+    no_contrib = labels.get("conn_no_contribution", "")
+    for reg in opens:
+        contributors = sorted({d["module"] for d in dirs.get(reg, [])})
+        if not contributors:
+            rows.append((reg, dir_opens, f'<span class="conn-none">{html.escape(no_contrib)}</span>'))
+            continue
+        for c in contributors:
+            rows.append((reg, dir_opens, f'<a href="{_conn_link(c, link_specials)}"><code>{html.escape(c)}</code></a>'))
+    for reg in contributes:
+        opener = regs.get(reg, {}).get("module")
+        if opener is None:
+            ERRORS.append(f"plugins/{name}/extends.json: '{reg}' is opened by no module of the marketplace")
+            continue
+        rows.append((reg, dir_contributes,
+                     f'<a href="{_conn_link(opener, link_specials)}"><code>{html.escape(opener)}</code></a>'))
+
+    body = "".join(f"<tr><td><code>{html.escape(reg)}</code></td><td>{html.escape(direction)}</td>"
+                    f"<td>{cell}</td></tr>" for reg, direction, cell in rows)
+    return (
+        '<section id="plugs-into">\n'
+        f'  <h2>{html.escape(labels.get("mod_h_plugs_into", ""))}</h2>\n'
+        '  <div class="table-wrap">\n'
+        '    <table>\n'
+        f'      <thead><tr><th>{html.escape(labels.get("th_conn_register", ""))}</th>'
+        f'<th>{html.escape(labels.get("th_conn_direction", ""))}</th>'
+        f'<th>{html.escape(labels.get("th_conn_module", ""))}</th></tr></thead>\n'
+        f'      <tbody>{body}</tbody>\n'
+        '    </table>\n'
+        '  </div>\n'
+        '</section>'
+    )
+
+
+def module_pairs_html(lang: str, module: dict, page_strings: dict, labels: dict,
+                       link_specials: dict) -> tuple[str, set[str]]:
+    """AC-13: the editorial "goes well with" — `pairs_with` in `site/modules.json`
+    says who (validated in `load_modules`), this module's own `pairs_with` prose
+    says why. Read directly rather than through a bare `{{token}}`: the section
+    has to vanish entirely for a module with nothing to say, which a template with
+    no conditionals can't do — so the anti-divergence check that guards every
+    other page string is replicated here by hand, for this one key."""
+    pairs_with = module["pairs_with"]
+    if not pairs_with:
+        return "", set()
+    situation = page_strings.get("pairs_with")
+    if situation is None:
+        ERRORS.append(f"site/i18n/{lang}/modules/{module['name']}.json: missing 'pairs_with' — "
+                       f"site/modules.json names a complement for this module")
+        return "", set()
+    links = ", ".join(f'<a href="{_conn_link(o, link_specials)}"><code>{html.escape(o)}</code></a>'
+                       for o in pairs_with)
+    return (
+        '<section id="pairs-with">\n'
+        f'  <h2>{html.escape(labels.get("mod_h_pairs", ""))}</h2>\n'
+        f'  <p>{situation} {links}</p>\n'
+        '</section>'
+    ), {"pairs_with"}
 
 
 def declared_modules(cfg: dict) -> list[str]:
@@ -286,15 +378,20 @@ def read_json_object(path: Path) -> dict:
     return data
 
 
-def load_extends_map() -> dict:
-    """The registers this project's own modules open and extend, walked directly
-    from `plugins/*/registers.json` and `extends.json` rather than shelled out to
+def load_extends_map(module_names, plugins_root: Path = PLUGINS_DIR) -> dict:
+    """The registers `module_names` open and extend, walked directly from
+    `plugins/*/registers.json` and `extends.json` rather than shelled out to
     `scrumia-extends`: a build has no guarantee of a PATH carrying every module's
-    `bin/`, which is a harness feature (ADR-0018), not a build-time one."""
+    `bin/`, which is a harness feature (ADR-0018), not a build-time one.
+
+    `module_names` decides the scope: the project's own composition for the home
+    page's #extends figure, every marketplace plugin for a module page's AC-12 —
+    reading the former for the latter would leave the seven modules this project
+    doesn't run showing no connection while their own files declare one (#297)."""
     registers: dict[str, dict] = {}
     directives: dict[str, list[dict]] = {}
-    for name in load_project_modules():
-        root = PLUGINS_DIR / name
+    for name in module_names:
+        root = plugins_root / name
         for reg, info in read_json_object(root / "registers.json").items():
             registers[reg] = {"module": name, "skill": info.get("skill", "")}
         for reg, rows in read_json_object(root / "extends.json").items():
@@ -319,7 +416,7 @@ def extends_map_specials() -> dict[str, str]:
     AC-2 (nothing invented) and AC-3 (the empty case is genuine) are guarded by the
     same check that produces the copy, so a composition drift fails the build
     instead of shipping a figure that is quietly no longer true."""
-    data = load_extends_map()
+    data = load_extends_map(load_project_modules())
     regs, dirs = data["registers"], data["directives"]
 
     def pick(reg: str, want_empty: bool):
@@ -373,6 +470,15 @@ def load_common(lang: str) -> dict[str, str]:
         return {}
 
 
+def load_module_json(lang: str, name: str) -> dict:
+    """A module's own prose, peeked at outside the render path so `module_pairs_html`
+    can read `pairs_with` before `render_page` loads the same file again."""
+    try:
+        return json.loads((I18N / lang / "modules" / f"{name}.json").read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
 def check_orphan_prose(names: set[str]) -> None:
     """An i18n module file naming no plugin is a page nobody can reach."""
     for lang in LANGS:
@@ -381,12 +487,14 @@ def check_orphan_prose(names: set[str]) -> None:
                 ERRORS.append(f"{path.relative_to(ROOT)}: names no plugin of the marketplace")
 
 
-def render_page(lang: str, cfg: dict, page: str, tpl_path: Path, extra: dict[str, str] | None = None) -> None:
+def render_page(lang: str, cfg: dict, page: str, tpl_path: Path, extra: dict[str, str] | None = None,
+                 preused: set[str] | None = None) -> None:
     if not tpl_path.exists():
         ERRORS.append(f"{tpl_path.relative_to(ROOT)}: missing template")
         return
     strings = load_strings(lang, page)
-    used: set[str] = set()
+    # Seeds a key a caller already read outside the token path (module_pairs_html).
+    used: set[str] = set(preused or ())
     origin = f"{page}.html [{lang}]"
     sp = specials(lang, page)
     sp.update(extra or {})
@@ -430,6 +538,9 @@ def build() -> int:
     emoji_specials = {f"@emoji_{m['name']}": m["emoji"] for m in modules}
     link_specials = module_link_specials(modules)
     extends_specials = extends_map_specials()
+    # AC-12's own source: every marketplace plugin, not this project's five (#297).
+    market_map = load_extends_map([m["name"] for m in modules], plugins_root=ROOT / "plugins")
+    regs, dirs = market_map["registers"], market_map["directives"]
     module_pages = [f"modules/{m['name']}" for m in modules]
 
     for lang, cfg in LANGS.items():
@@ -441,8 +552,14 @@ def build() -> int:
             extra = {**emoji_specials, **link_specials, **(extends_specials if page == "index" else {})}
             render_page(lang, cfg, page, TPL / f"{page}.html", extra)
         for module in modules:
-            render_page(lang, cfg, f"modules/{module['name']}", TPL / "module.html",
-                        module_specials(module, labels))
+            page_strings = load_module_json(lang, module["name"])
+            pairs_html, preused = module_pairs_html(lang, module, page_strings, labels, link_specials)
+            extra = {
+                **module_specials(module, labels),
+                "@mod_connects": module_connections_html(module["name"], regs, dirs, link_specials, labels),
+                "@mod_pairs": pairs_html,
+            }
+            render_page(lang, cfg, f"modules/{module['name']}", TPL / "module.html", extra, preused=preused)
 
     urls = [url_for(lang, page) for page in PAGES + module_pages for lang in LANGS]
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',

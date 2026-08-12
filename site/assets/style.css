@@ -860,6 +860,15 @@ th {
 }
 td { color: var(--text-soft); }
 tbody tr:last-child td { border-bottom: 0; }
+/* AC-12's own empty case: a real row, not an absence, so it stays plain text. */
+.conn-none { color: var(--text-faint); font-family: var(--font-mono); font-size: var(--text-sm); }
+
+/* A module name is text at rest here, not accent — one page can name up to seven
+   others (AC-12) plus a pairs_with line, and accent on every one of them is the
+   pointing-inflation identity.md refuses. */
+#plugs-into a, #pairs-with a { color: var(--text); }
+#plugs-into a:hover, #plugs-into a:focus-visible,
+#pairs-with a:hover, #pairs-with a:focus-visible { color: var(--accent); }
 
 /* ---------- Cards ---------- */
 
