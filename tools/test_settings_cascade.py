@@ -354,6 +354,26 @@ settings:
           and "unlabeled" in err and "unrated_risk" in err, f"{code} {out} {err}")
 
 
+def test_one_configured_prefix_does_not_cover_the_other() -> None:
+    """AC-11's project keeps its own labels — and forgets one of the two prefixes."""
+    cfg = write("halflabels.yaml", BASE_PROJECT + """extends:
+  - scrumia-teams
+settings:
+  team:
+    execution:
+      unlabeled: sonnet
+      unrated_risk: medium
+      labels:
+        scope_prefix: "size/"
+      matrix:
+        L: { medium: opus }
+""")
+    code, out, err = run(PICK, ["--scope", "L"], cfg)
+    check("AC-22: the prefix no layer carries is named, though its sibling was configured",
+          code == 0 and "labels.risk_prefix=risk/" in err
+          and "labels.scope_prefix" not in err, f"{code} {out} {err}")
+
+
 def test_doctor_diagnoses_rather_than_dies() -> None:
     """The one command whose contract is "tell me what is broken" must survive it."""
     cfg = write("doctor.yaml", RETIRED_SHAPE)
@@ -456,6 +476,7 @@ def main() -> int:
                  test_no_policy_at_all_stops_the_tool,
                  test_an_empty_policy_block_is_not_a_policy,
                  test_a_policy_without_its_defaults_says_so,
+                 test_one_configured_prefix_does_not_cover_the_other,
                  test_doctor_diagnoses_rather_than_dies,
                  test_doctor_does_not_certify_an_empty_board,
                  test_the_soft_gate_is_not_environment_settable,

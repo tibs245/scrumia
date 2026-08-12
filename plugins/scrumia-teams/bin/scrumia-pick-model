@@ -110,14 +110,18 @@ load_policy() {
 
   # Beyond the grid the tool carries literals, and a literal standing in for a value
   # nobody configured is the same failure one size smaller. Not fatal — the grid still
-  # decides every labelled ticket — but never silent.
+  # decides every labelled ticket — but never silent. Each prefix is tested on its own:
+  # a project that configures one and forgets the other matches no ticket on that axis,
+  # and a check on the `labels` block would report that as configured.
   local fell_back
   fell_back=$(jq -r --arg u "$FALLBACK_UNLABELED" --arg r "$FALLBACK_UNRATED_RISK" \
                     --arg sp "$FALLBACK_SCOPE_PREFIX" --arg rp "$FALLBACK_RISK_PREFIX" '
     [ (if has("unlabeled") then empty else "unlabeled=" + $u end)
     , (if has("unrated_risk") then empty else "unrated_risk=" + $r end)
-    , (if (.labels | type) == "object" then empty
-       else "labels.scope_prefix=" + $sp + ", labels.risk_prefix=" + $rp end) ]
+    , (if (.labels | type) == "object" and (.labels | has("scope_prefix")) then empty
+       else "labels.scope_prefix=" + $sp end)
+    , (if (.labels | type) == "object" and (.labels | has("risk_prefix")) then empty
+       else "labels.risk_prefix=" + $rp end) ]
     | join(", ")' <<<"$EXEC")
   [ -z "$fell_back" ] ||
     warn "no layer carries $fell_back — this tool's own literals stand in for them; configure them under execution"
