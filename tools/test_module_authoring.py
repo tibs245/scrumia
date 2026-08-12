@@ -21,6 +21,7 @@ Exit code 0 when everything passes, 1 otherwise.
 """
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -154,6 +155,11 @@ check("no declaration for a register it opens none of, nor for a name it publish
 check("no settings section in the README for settings it reads none of",
       "settings" not in (module / "README.md").read_text().lower())
 check("and the module is clean with all three absent", verdict(module)[1]["state"] == "clean")
+# The three above judge the fixture, which is this file's own construction.
+check("the pass states all three absences, and forbids the marker",
+      all(s in SKILL.read_text().lower() for s in
+          ("gets no declaration", "gets no section", "gets no `bin/`",
+           "no marker to be filled in later")))
 
 # An empty heading is the placeholder the criterion forbids, and it must be visible.
 placeholder = produce(TMP / "ac9-red")
@@ -162,6 +168,16 @@ readme.write_text(readme.read_text() + "\n## Settings it reads\n\n## Decisions\n
 code, envelope = verdict(placeholder)
 check("a heading with nothing under it is a finding, so the criterion can fail",
       code == 3 and any("nothing under it" in f["message"] for f in envelope["findings"]),
+      envelope)
+
+# The outcome a pass inverted into a scaffolder produces, and what makes the absence rule
+# enforceable rather than advisory.
+scaffolded = produce(TMP / "ac9-scaffold")
+(scaffolded / "registers.json").write_text(
+    '{"handover": {"skill": "acme-handover", "purpose": "Run one handover"}}')
+code, envelope = verdict(scaffolded)
+check("a register declared and never consulted is a finding, so a scaffold cannot pass",
+      code == 3 and any(f["rule"] == "modular-composition/BR-11" for f in envelope["findings"]),
       envelope)
 
 # ------------------------------------------------------------------------- the pass itself
@@ -179,15 +195,26 @@ check("AC-2 names the version obligation, and sends the bump to release-versioni
       "features/business/release-versioning/" in pass_text and "bumps" in lower)
 check("AC-2 names the deprecation window before a renamed thing disappears",
       "deprecation window" in lower)
+# A literal path here is what the third reach's criterion forbids.
+check("AC-2 reaches the shared checkout through local-extension, naming no path itself",
+      "features/business/local-extension/" in pass_text
+      and "never something to write into a file" in lower
+      and not re.search(r"[~$][\w/.]*shared|/shared[\w/.]*", pass_text, re.I))
 
 # AC-7 — refuses, routes, and enumerates nothing. The negative is the load-bearing half:
 # a copy of local-extension's three shapes here is the drift the criterion forbids.
 check("AC-7 refuses below the threshold and creates nothing",
       "create nothing" in lower and "three distinct concerns" in lower)
+check("AC-7 refuses the whole band, not only the single rule",
+      "two concerns" in lower and "commonest input" in lower)
 check("AC-7 routes through the tree rather than choosing",
       "scrumia-place" in pass_text)
+# The leak takes the shape of a gloss on the link, so each list is guarded by one of its
+# distinctive items rather than by a list-shaped pattern.
 check("AC-7 enumerates none of local-extension's shapes itself",
       "rules section" not in lower and "ships to itself" not in lower)
+check("AC-7 enumerates none of knowledge-placement's destinations itself",
+      "agent memory" not in lower and "the change itself" not in lower)
 
 # AC-8 — the slot test, and the two accepted alternatives rather than a slot with a caveat.
 check("AC-8 states the slot test as a project that would fill it differently",

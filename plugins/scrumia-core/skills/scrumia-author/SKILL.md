@@ -20,13 +20,15 @@ The rules are
 [`module-authoring`](https://github.com/tibs245/scrumia/blob/main/features/business/module-authoring/business.md)'s.
 This skill applies them and defines none of them.
 
-## One pass, not three
+## A change is not a lighter path
 
-Creating a module, changing one, and moving one between locations are the same pass. The
-refusals apply to what is being added as much as to what is being created, and the check
-below decides when any of the three is finished. There is no lighter path for a change: an
-edit that skips the check is how a module that passed once stops passing without anyone
-noticing.
+Creating a module and changing one run the same refusals and the same check. An edit that
+skips the check is how a module that passed once stops passing without anyone noticing —
+which is the failure the check exists to catch, arriving through the one door left open.
+
+What a change owes on top of that — the module's own findings read before anything is
+touched, and the type and scope its commit will carry — is `module-authoring`'s BR-4 and
+BR-5, and is not what the steps below instruct.
 
 ## This file carries the pass, not the standard
 
@@ -80,13 +82,11 @@ asks for. That band is the commonest input this pass gets, and it has the same o
 Which destination is not this skill's to choose. Hand the need to the tree that already
 chooses, stated as the rule it would be:
 
-- [`scrumia-place`](../scrumia-place/SKILL.md) — the tree, which routes to a module, this
-  project, a feature, a ticket, the change itself, or agent memory.
+- [`scrumia-place`](../scrumia-place/SKILL.md) — the tree that chooses. It states the
+  destinations it chooses between; this file does not.
 - The shapes a project's own answer can take are
-  [`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)'s,
-  and they are stated there and nowhere else, this file included. None of them is a
-  degraded module: a project whose entire local extension is four directives has extended
-  ScrumIA correctly.
+  [`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)'s.
+  They are stated there and nowhere else, this file included.
 
 Then stop. Report the need, the count that decided it, and the destination the tree named
 — and write nothing. That is a completed pass.
@@ -123,10 +123,11 @@ from a sentence someone else wrote, and the human is the one who can contradict 
 default is the narrowest reach that covers the need.
 
 Where each place actually sits, and how a declaration there resolves, is
-`local-extension`'s — read it rather than assuming a path, and `scrumia-extends --modules`
-reports where each declared module resolved from on this machine. A shared checkout in
-particular is resolved per machine and named by nothing versioned, so a path to it is
-something to ask for or read, never something to write into a file.
+[`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)'s
+— read it rather than assuming a path. A shared checkout in particular is resolved per
+machine, so its location is **never something to write into a file**: `scrumia-extends
+--help` names the variable it resolves through, and `--modules` reports where each module
+the project already declares resolved from on this machine.
 
 Starting at the marketplace is the expensive mistake: a module published before its second
 use has adopters before it has evidence. Before creating anything there, state the two
@@ -146,9 +147,9 @@ rewrites no file it contains.
 
 Where the pass has nothing to write, it writes nothing, and the absence is the statement.
 A register the module opens nothing on gets no declaration; a setting it reads none of
-gets no section; a name it publishes none of gets no `bin/`. The standard reads an absence
-that way, so a heading with "none" under it is noise the next reader has to prune and an
-empty heading is a finding outright.
+gets no section; a name it publishes none of gets no `bin/`. Writing "none" under a
+heading says the same thing more expensively, and leaves the next reader something to
+prune.
 
 **No marker to be filled in later.** No `TODO`, no "describe here", no section left for
 whoever comes after. A pass that emits placeholders produced findings and called them a
@@ -156,15 +157,16 @@ starting point.
 
 In order:
 
-1. **The manifest**, at `.claude-plugin/plugin.json`. That file, and only that file, is
-   what makes the directory a module — without it the check refuses the target rather than
-   judging it, and everything below is unverifiable.
+1. **The manifest**, at `.claude-plugin/plugin.json`. Write it first: the check refuses a
+   target carrying no manifest rather than judging it, so until it exists nothing below is
+   verifiable.
 2. **The README**, addressed to whoever has not adopted the module and is deciding whether
    to. Its sections and their order are the standard's; the check names each one that is
    missing or empty, so write what the module is for and let it name the rest.
-3. **What the module actually does** — its skills, its commands, the names it publishes.
-   One file answers one question, and a name under `bin/` is executable or it fails in
-   whoever calls it.
+3. **What the module actually does** — its skills, its commands, its agents, the names it
+   publishes. Run the check as you go rather than at the end: a name under `bin/` that was
+   never made executable, and a path built from a variable nothing substitutes, are both
+   findings a first draft routinely carries and neither is visible to a reader.
 4. **The extension data, for what the module actually opens, contributes and runs** — and
    for nothing else. Opening a register is itself the promise to consult it, so a
    `registers.json` naming a register no skill it ships asks for is a finding: write the
