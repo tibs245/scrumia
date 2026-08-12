@@ -12,11 +12,15 @@
 #   scrumia-extends <register> [--app <name>|--path <file>] [--json]
 #   scrumia-extends --list
 #   scrumia-extends --check
+#   scrumia-extends --settings [<source>:<module>]
 
 set -uo pipefail
 
 SELF=$(basename "$0")
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+# Layer 3 of the settings cascade. Never committed, so it is absent far more often than
+# present, and its absence is the ordinary case rather than a missing prerequisite.
+CONFIG_LOCAL="${SCRUMIA_CONFIG_LOCAL:-.scrumia/config.local.yaml}"
 LOCAL_EXTENDS="${SCRUMIA_LOCAL_EXTENDS:-.scrumia/extends.json}"
 
 die() { echo "$SELF: $1" >&2; exit 1; }
@@ -30,14 +34,21 @@ scrumia-extends <register> --path <f>   # …resolving the app from a file's pat
 scrumia-extends <register> --json       # the same rows, unrendered
 scrumia-extends --list                  # every register opened here, and what reaches it
 scrumia-extends --check                 # declared dependencies that are not met
+scrumia-extends --settings [<key>]      # a module's configuration, the cascade applied
+
+A project declares the modules it runs under `modules:`, a mapping keyed
+<source>:<module> — <owner>/<repo> for a marketplace, `shared`, or `local`. A bare name
+is not a declaration and resolves to nothing. The retired `extends:` list and the older
+`composition:`/`practices:` keys are still read, with a warning.
 
 A module is found through $PATH: the harness puts <pluginRoot>/bin on it for every
 enabled plugin, so the parent of such an entry is a module root. $SCRUMIA_MODULE_DIR
 overrides that with a directory holding <module>/ checkouts — for this repository and
 for CI, where no harness is running.
 
-Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and each module's own extends.json,
-registers.json and dependencies.jsonl. Writes nothing, anywhere.
+Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
+.scrumia/config.local.yaml) and each module's own extends.json, registers.json and
+dependencies.jsonl. Writes nothing, anywhere.
 EOF
   exit 2
 }
@@ -48,27 +59,81 @@ command -v jq >/dev/null 2>&1 || die "jq not found"
 
 # Same loader as scrumia-board, scrumia-pick-model and compose-status.sh: one of the two
 # YAML readers the machine already has, never a third dependency.
+yaml_to_json() {
+  if command -v yq >/dev/null 2>&1; then
+    yq -o=json '.' "$1" 2>/dev/null
+  else
+    python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])) or {}, sys.stdout)' "$1" 2>/dev/null
+  fi
+}
+
 load_config() {
   [ -f "$CONFIG" ] || die "no $CONFIG — run /scrumia-core:scrumia-init first"
-  if command -v yq >/dev/null 2>&1; then
-    CFG=$(yq -o=json '.' "$CONFIG" 2>/dev/null)
-  elif python3 -c 'import yaml' >/dev/null 2>&1; then
-    CFG=$(python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])) or {}, sys.stdout)' "$CONFIG" 2>/dev/null)
-  else
+  # Checked here rather than inside the reader: a `die` in a command substitution kills
+  # the subshell only, and the caller then reports the wrong thing.
+  command -v yq >/dev/null 2>&1 || python3 -c 'import yaml' >/dev/null 2>&1 ||
     die "need yq or python3+PyYAML to read $CONFIG"
-  fi
+  CFG=$(yaml_to_json "$CONFIG")
   [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
 
-  # `extends` is the current key; the retired composition:/implementation:/practices:
-  # shape is still read for one minor, with a warning (ADR-0019).
-  if ! jq -e 'has("extends")' >/dev/null <<<"$CFG"; then
-    note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to extends:"
+  CFG_LOCAL='{}'
+  if [ -f "$CONFIG_LOCAL" ]; then
+    CFG_LOCAL=$(yaml_to_json "$CONFIG_LOCAL")
+    jq -e 'type == "object"' >/dev/null 2>&1 <<<"${CFG_LOCAL:-}" || {
+      note "$CONFIG_LOCAL is empty or not a mapping — ignored"; CFG_LOCAL='{}'; }
   fi
 
-  SCOPES=$(jq -c '
-    def app_extends: (.extends // ([.implementation] + (.practices // []) | map(select(. != null))));
-    { project: (.extends // ((.composition // {}) | to_entries | map(select(.value != null) | .value)))
-    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), extends: app_extends })) }' <<<"$CFG")
+  # Three shapes have existed, and the precedence between them is fixed so that a
+  # half-migrated file cannot resolve to nothing: a config carrying `modules:` read by a
+  # tool testing only for `extends:` yields zero modules, every table renders empty, and
+  # an empty table is an answer under BR-1 — so nothing would fail.
+  SHAPE=modules
+  if ! jq -e 'has("modules")' >/dev/null <<<"$CFG"; then
+    if jq -e 'has("extends")' >/dev/null <<<"$CFG"; then
+      SHAPE=extends
+      note "warning: $CONFIG declares its modules under the retired 'extends:' — read for one more minor, migrate to 'modules:', keyed <source>:<module> (ADR-0021)"
+    elif jq -e 'has("composition") or has("practices")' >/dev/null <<<"$CFG"; then
+      SHAPE=legacy
+      note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to modules:"
+    else
+      SHAPE=none
+      note "warning: $CONFIG declares no 'modules:' — this composition is empty, so every register renders empty"
+    fi
+  fi
+
+  # A declaration is its key, split at the last colon: everything before it is the source
+  # (the location the module comes from), everything after it the module's own name. A key
+  # with no colon carries no source, and an entry from one of the retired list shapes is
+  # marked `legacy` — it predates the grammar, so it is matched by name and not reported.
+  SCOPES=$(jq -c --arg shape "$SHAPE" '
+    def parse_key:
+      if test(":") then { key: ., source: sub(":[^:]*$"; ""), module: sub("^.*:"; "") }
+      else { key: ., source: "", module: . } end;
+    def from_mapping:
+      to_entries | map((.key | parse_key) + { params: ((.value // {}).params // {}), legacy: false });
+    def from_list: map(parse_key + { params: {}, legacy: true });
+    def app_modules:
+      if has("modules") then (.modules // {} | from_mapping)
+      elif has("extends") then (.extends // [] | from_list)
+      else ([.implementation] + (.practices // []) | map(select(. != null)) | from_list) end;
+    { shape: $shape
+    , settings: (.settings // {})
+    , project: ( if $shape == "modules" then (.modules // {} | from_mapping)
+                 elif $shape == "extends" then (.extends // [] | from_list)
+                 elif $shape == "legacy" then
+                   ((.composition // {}) | to_entries | map(select(.value != null) | .value) | from_list)
+                 else [] end )
+    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG")
+
+  # A bare name would make the file mean whatever happens to be installed, which is the
+  # failure the qualified key removes — so it is named and resolves to nothing, rather
+  # than matched against whichever module of that name a machine happens to carry.
+  if [ "$SHAPE" = modules ]; then
+    while IFS= read -r k; do
+      [ -n "$k" ] || continue
+      note "'$k' is not a declaration: a module is keyed <source>:<module> — <owner>/<repo>, 'shared' or 'local' (ADR-0021). Nothing resolves for it."
+    done < <(jq -r '[.project[], .apps[].modules[]] | map(select(.source == "" or .module == "")) | .[].key' <<<"$SCOPES")
+  fi
 }
 
 # Which app a file belongs to — the longest declared path that prefixes it, so a nested
@@ -166,20 +231,36 @@ read_json() {
 # from a module ranking itself: local > the app's own modules > the project-wide ones.
 # That is ADR-0010's "specific beats generic, the project override beats both", expressed
 # where the project can see it.
+#
+# A declaration matches a discovered module by name, and by source where both carry one:
+# a marketplace key names the repository the module must claim, while `local:` and
+# `shared:` name a location the module's own manifest cannot know about, so those match on
+# the name alone. A module whose manifest declares no repository therefore answers only to
+# a `local:` or `shared:` key — an empty source matches no marketplace.
 rows_for() {
   jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" '
-    ([$scopes.apps[] | select(.name == $app) | (.extends // [])] | first // []) as $appmods
+    def matches($m):
+      .module == $m.module
+      and ( .legacy
+            or .source == "local" or .source == "shared"
+            or (.source != "" and .source == ($m.source // "")) );
+    ([$scopes.apps[] | select(.name == $app) | .modules] | first // []) as $appmods
     | ($scopes.project // []) as $projmods
     | [ .[]
         | . as $m
-        | ( if $m.module == "(this project)" then 0
-            elif ($appmods | index($m.module)) then 1
-            elif ($projmods | index($m.module)) then 2
-            else empty end ) as $scope
+        | ( if $m.module == "(this project)" then { scope: 0, decl: {} }
+            elif ($appmods | map(select(matches($m))) | first) then
+              { scope: 1, decl: ($appmods | map(select(matches($m))) | first) }
+            elif ($projmods | map(select(matches($m))) | first) then
+              { scope: 2, decl: ($projmods | map(select(matches($m))) | first) }
+            else empty end ) as $d
+        | $d.scope as $scope
         | ($m.extends[$reg] // [])[]
         | { scope: $scope
           , scope_name: (["project-local", "app", "project-wide"][$scope])
           , module: $m.module
+          , declared_as: ($d.decl.key // $m.module)
+          , source: ($d.decl.source // "")
           , root: $m.root
           , name: (.name // "(unnamed)")
           , type: (.type // "norm")
@@ -246,6 +327,33 @@ cmd_list() {
         | "| `" + $r + "` | " + $o.opened_by + " | " + $o.skill + " | " + $o.purpose + " | "
           + ([ $mods[] | select((.extends // {}) | has($r)) | .module ] | length | tostring) + " |" )
   ' <<<"$MODULES"
+}
+
+# A module's configuration is three layers, each overriding the one before: `settings:`,
+# which holds what is no module's; the module's own `params:`; and the per-machine local
+# layer, which is never committed and overrides both in either shape it may use. The order
+# is written here because an order only applied can invert without anything failing.
+cmd_settings() {
+  local key=$1 app=$2 layers=""
+  if [ -n "$key" ] &&
+     ! jq -e --arg k "$key" 'any([.project[], .apps[].modules[]][]; .key == $k)' >/dev/null <<<"$SCOPES"; then
+    note "no module is declared under '$key' in $CONFIG — resolving the layers that do not depend on it"
+  fi
+
+  jq -e '(.settings // {}) != {}' >/dev/null <<<"$CFG" && layers="settings:"
+  [ -n "$key" ] && jq -e --arg k "$key" \
+      'any([.project[], .apps[].modules[]][]; .key == $k and (.params != {}))' >/dev/null <<<"$SCOPES" &&
+    layers="${layers:+$layers, }params: of $key"
+  [ -f "$CONFIG_LOCAL" ] && layers="${layers:+$layers, }$CONFIG_LOCAL"
+  note "resolved from ${layers:-nothing: no layer carries a value}"
+
+  jq -n --argjson s "$SCOPES" --argjson l "$CFG_LOCAL" --arg k "$key" --arg app "$app" '
+    def params_of($set): ($set | map(select(.key == $k and $k != "")) | first | .params) // {};
+    ($s.settings // {})
+    * params_of($s.project)
+    * params_of([$s.apps[] | select(.name == $app) | .modules[]])
+    * ($l.settings // {})
+    * (if $k == "" then {} else ((($l.modules // {})[$k] // {}).params // {}) end)'
 }
 
 # Prints "<module>\t<source>" for the discovered module that ships an executable of this
@@ -325,11 +433,18 @@ cmd_check() {
 # ---------------------------------------------------------------- argument handling
 
 [ $# -ge 1 ] || usage
-REGISTER=""; APP=""; AS_JSON=no; MODE=register
+REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  MODE=list; shift ;;
     --check) MODE=check; shift ;;
+    # The key is optional: without one, the answer is the base layer a module inherits
+    # before any `params:` of its own.
+    --settings) MODE=settings; shift
+                if [ $# -ge 1 ]; then
+                  # `-*` is the next option, not this one's argument.
+                  [ "${1#-}" = "$1" ] && { MODULE_KEY=$1; shift; }
+                fi ;;
     --json)  AS_JSON=yes; shift ;;
     --app)   [ $# -ge 2 ] || usage; APP=$2; shift 2 ;;
     --path)  [ $# -ge 2 ] || usage; APP_PATH=$2; shift 2 ;;
@@ -348,7 +463,8 @@ if [ -n "${APP_PATH:-}" ]; then
 fi
 
 case "$MODE" in
-  list)  [ -z "$REGISTER" ] || usage; cmd_list ;;
-  check) [ -z "$REGISTER" ] || usage; cmd_check ;;
-  *)     [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;
+  list)     [ -z "$REGISTER" ] || usage; cmd_list ;;
+  check)    [ -z "$REGISTER" ] || usage; cmd_check ;;
+  settings) [ -z "$REGISTER" ] || usage; cmd_settings "$MODULE_KEY" "$APP" ;;
+  *)        [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;
 esac

@@ -17,6 +17,20 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   whose; `--check` resolves the name and compares the publisher's own declared source
   against the claim. What a skill invokes stays the bare name.
 ### Changed
+- Both readers of the composition — `scrumia-extends` and `compose-status.sh` — take the
+  modules a project runs from `modules:`, a mapping keyed `<source>:<module>`
+  (`tibs245/scrumia:scrumia-specs`, `shared:…`, `local:…`). A bare name is reported as not
+  a declaration and resolves to nothing, rather than matching whichever module of that
+  name happens to be installed. `extends:` and the older `composition:`/`practices:` keys
+  are still read for one more minor, with a warning naming the migration.
+- `scrumia-extends --settings [<key>]` answers what a module's configuration resolves to:
+  `settings:`, then that module's `params:`, then `.scrumia/config.local.yaml`, which is
+  per-machine and never committed. The layers that answered are named on stderr, so two
+  machines resolving different values can be told apart from a misread file.
+- `compose-status.sh` shows each module under its declared key with its `params:`, and
+  names a local layer when one is in effect. Its migration notices moved to stderr: the
+  report on stdout is published verbatim on the site, and a migration is the reader's
+  business rather than part of the composition.
 - `compose-status.sh` reports `extends` and the apps' own lists, and points at
   `scrumia-extends --list` for what each module contributes. The retired
   `composition:`/`practices:` shape is still read, and now says so.
