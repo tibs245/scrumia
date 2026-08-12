@@ -130,11 +130,11 @@ is forbidden is the same *question* asked twice, in two wordings that will drift
 
 Whatever a consumer of either surface checks on top must be something neither surface
 covers. This repository's marketplace gate keeps the manifest that lists the plugins,
-their versions and their sources, the rules governing the specs tree, and the rules
-governing its own repository — none of which is a property of any single module — and it
-delegates everything that is. A check performed in two places is two renderings of one
-rule, and two renderings of one rule diverge; the duplication is itself a defect this
-feature counts.
+their versions and their sources, the rules governing the specs tree, the rules governing
+its own repository, and the rules about the relationship between two modules — none of
+which one module's tree can answer — and it delegates the rest. A check performed in two
+places is two renderings of one rule, and two renderings of one rule diverge; the
+duplication is itself a defect this feature counts.
 
 The boundary is what a surface can see. The procedural check reads one module's tree, so
 it can never adopt a rule about the specs tree or about the relationship between modules;

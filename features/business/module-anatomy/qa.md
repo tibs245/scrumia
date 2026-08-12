@@ -64,8 +64,9 @@ Then every rule it applies that a surface also applies comes from that surface r
   than from its own code
 And what it keeps is what no surface applies: the manifest listing the plugins, their
   versions and their sources; the rules governing the specs tree and the repository's own
-  prose; and any module rule a surface could take and has not taken yet, each named where
-  it is kept
+  prose; the rules about the relationship between two modules, which no single tree can
+  answer; and any module rule a surface could take and has not taken yet, each named
+  where it is kept
 And no rule is verified in both places
 ```
 
