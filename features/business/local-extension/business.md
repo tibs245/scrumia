@@ -19,7 +19,7 @@ A module lives in exactly one of three places, and is the same thing in all thre
 |---|---|---|
 | a marketplace | anyone who declares it | wherever the harness installed it, which it makes reachable |
 | a directory of checkouts shared between a person's projects | that person's projects | one `<module>/` per entry in the directory the machine names |
-| inside the project | that project | `.scrumia/modules/<module>/`, beside the configuration that declares it |
+| inside the project | that project | `modules/<module>/`, beside the configuration that declares it — `.scrumia/modules/` where the configuration is where it usually is |
 
 Resolution finds all three **in one pass, not one instead of another**, and a module found
 in any of them is held to the anatomy standard unchanged. There is no local tier and no
@@ -89,14 +89,30 @@ file is never committed.** One variable, `KEY=value`, naming the directory the `
 source resolves to; a module keyed `shared:acme-conventions` is looked for at
 `$SCRUMIA_SHARED_DIR/acme-conventions`. Every reader that turns a declaration into a
 location loads it — a resolver that skipped it would report a module absent that the
-machine can reach, which is the same lie in the other direction. A reader that only
-repeats what the configuration declares resolves nothing and needs nothing.
+machine can reach, which is the same lie in the other direction.
 
-`SCRUMIA_SHARED_DIR` is an environment variable and not a setting. It carries no value a
-module reads, it never appears under `settings:` or a module's `params:`, and it is
-outside the cascade those layers form — the cascade configures modules, and this names
-where one of them is. An environment already carrying the variable wins over the file, so
-a caller can point one run at another checkout without editing a machine's state.
+A reader that only repeats what the configuration declares resolves nothing and needs
+nothing, **and must not phrase its output as presence**. A list of declarations headed
+*the modules this project runs* claims exactly what that reader did not check, and it is
+how one tool comes to say a module runs while the other says it cannot be reached — which
+is the asymmetry this rule exists to forbid, arriving through wording instead of through a
+missing file. It says what it did: these are the modules this project **declares**.
+
+`SCRUMIA_SHARED_DIR` is an environment variable and not a setting: it carries no value a
+module reads, so it is outside the settings cascade entirely — what that cascade's layers
+are is `modular-composition`'s BR-14 and is not counted here. The distinction worth
+drawing is with its neighbour, because the two are easy to confuse and are gitignored for
+the same reason:
+
+| | Holds | Answers |
+|---|---|---|
+| `.scrumia/config.local.yaml` | this machine's values | what a module is configured with |
+| `.scrumia/.env.local` | this machine's paths | where a module is |
+
+An environment already carrying the variable wins over the file, so a caller can point one
+run at another checkout without editing a machine's state. A file that sets nothing, or
+names a directory that is not there, is reported — read as an empty location it would take
+every `shared:` module with it, and every register would simply render shorter.
 
 A repository that versions the file has reintroduced exactly the machine path this rule
 removes, so its absence from version control is part of the rule and not an operational
@@ -108,7 +124,9 @@ machine.
 
 Resolution reports the location a module came from. Where one declaration could be
 answered by two different modules, that is a conflict, and a conflict is reported naming
-both — never resolved silently by whichever the search order reached first.
+both directories — never resolved silently by whichever the search order reached first.
+Both may sit in one location, and often do: a fork checked out beside the module it
+forked answers the same name from the same place.
 
 The failure this prevents is specific and expensive: a project that has a local copy of a
 published module, diverging from it, with no indication anywhere that the local one is
@@ -124,18 +142,25 @@ three different answers:
 
 | Situation | What it is | What happens |
 |---|---|---|
-| One module reached by two routes — a checkout symlinked into the project, the same directory named twice | one module | resolved, used, its location reported once |
+| One module reached by two routes — a checkout linked into the project, the same directory reached twice | one module | resolved, used, its location reported once |
 | A copy in one location while another location holds the same name, and the composition declares which | a choice already made | the declared one resolves; the other is not run, because nothing declares it |
-| One declaration answered by two distinct modules | a conflict | reported naming both, neither used |
+| A declaration that names no location, answered in more than one | a shadow | the narrowest location wins, is used, and is reported with the others |
+| One declaration answered by two distinct modules in the location it names | a conflict | reported naming both directories, neither used |
 
 The first is settled by identity, not by name: two routes reaching the same files are one
 module. The second is settled by the declaration — a key states the location it comes
 from, so a project running a checkout of a published module says `shared:` and the
-published copy is simply a module it does not run. Only the third is undecidable from the
-configuration, and it is the only one reported as a conflict.
+published copy is simply a module it does not run. Only the last is undecidable, and it is
+the only one reported as a conflict.
 
-That is what keeps the conflict rule from firing on promotion: the composition, not the
-search, says which location a name comes from.
+The third exists because a declaration is not always able to choose: the retired list shape
+names modules without their source, and refusing to run one would punish a project for a
+grammar it is being migrated off. **The narrowest location wins** — inside the project over
+a shared checkout, a shared checkout over a marketplace — on the same "specific beats
+generic" the composition uses everywhere else. It is stated rather than inherited from a
+search, it is reported every time it applies, and the report names the fix: key the
+declaration by source. A search order settles a name only where the composition declined
+to, and never quietly.
 
 ### A conflict blocks the module, not the composition
 
@@ -176,15 +201,20 @@ on one machine is a module the project cannot be handed to someone else with.
   — is legitimate as an end state, not as a stage before becoming one.
 - **BR-4** — A project with local material and no local module is correctly extended, and
   nothing reports it as carrying a malformed module.
-- **BR-5** — Resolution states the location each module came from.
+- **BR-5** — Resolution states the location each module came from. Where more than one
+  answers a declaration that named none, the narrowest is the one used and the one
+  reported, and the others are named alongside it.
 - **BR-6** — A module's location is its declaration's source, carried in the key rather
   than in a field beside it. Only the filesystem path a `shared` checkout resolves to is
   per-machine, read from `.scrumia/.env.local`, which is never committed and holds no
-  setting. No versioned file names a path outside the project.
+  setting. No versioned file names a path outside the project. A reader that resolves
+  nothing does not phrase its output as presence.
 - **BR-7** — One declaration answered by two distinct modules is a conflict, reported
-  naming both locations. Nothing picks between them silently. Two routes to the same
-  files are one module, not a conflict, and a name present in a location the composition
-  does not declare is not one either — the declaration already chose.
+  naming both directories. Nothing picks between them silently. Three cases are not
+  conflicts: two routes to the same files are one module; a name present in a location
+  the composition does not declare is a module it does not run; and a declaration naming
+  no location, answered in several, is a shadow — the narrowest wins, is used, and is
+  reported with the others and with the fix.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
   present and never causes a failure.
