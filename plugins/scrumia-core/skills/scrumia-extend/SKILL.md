@@ -124,11 +124,24 @@ that opens an extension point and never asks reads as covered and applies nothin
 
 `scrumia-extends --check` fails on a name nothing publishes, on a name whose actual
 publisher ships from a different source than the one declared, on two modules opening the
-same register, and on a contribution to a register nobody opens — that last one being the silent case:
+same register, on a declaration two distinct modules both answer, and on a contribution to
+a register nobody opens — that last one being the silent case:
 directives that will never be printed, and nothing else would ever say so. An unqualified
 entry is reported without failing: this repository's own validator refuses one, but a
 consuming project is not blocked by another author's laxness. A publisher that declares no
 repository makes the source *unchecked*, reported as such and never as a match.
+
+## Where the module contributing this may live
+
+Nowhere in this protocol does it matter. A module contributes the same three files and
+gets the same rows whether it sits in a marketplace, in a directory of checkouts shared
+between a person's projects, or at `.scrumia/modules/<module>/` inside one project — and
+the anatomy standard is the same in all three, which is what makes moving between them
+free. The project declares which one it comes from, keyed `<source>:<module>`, and
+`scrumia-extends --modules` reports where each declaration actually resolved from.
+
+Writing the extension locally first is therefore the cheap path, not a draft of the real
+thing. The rules are `features/business/local-extension/`'s.
 
 ## One fragment, several registers
 

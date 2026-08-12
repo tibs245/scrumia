@@ -34,9 +34,11 @@ modules with it, which is the only reading under which the two cannot disagree.
 
 ## `.scrumia/.env.local`
 
-`KEY=value` per line, `#` comments and blank lines ignored, no quoting rules and no
-expansion — anything more is a shell, and reading a machine's file as a shell is how a
-configuration executes. One variable is read today, `SCRUMIA_SHARED_DIR`.
+`KEY=value` per line; blank lines and anything without a `=` are skipped, which is what
+makes a `#` comment a comment. Surrounding quotes are dropped because people write them
+out of habit; nothing else about the value is interpreted, and nothing is expanded —
+anything more is a shell, and reading a machine's file as a shell is how a configuration
+executes. One variable is read today, `SCRUMIA_SHARED_DIR`.
 
 A variable already set in the environment wins over the file. That ordering is what lets a
 single run be pointed at another checkout without editing machine state, and it is why
@@ -65,10 +67,14 @@ exists to prevent.
 
 **Identity is the physical path.** Every root is resolved through its links before being
 compared, so a checkout reached twice — linked into the project as well as sitting in the
-shared directory — is one root and one module. That test is what keeps the conflict rule
-off the ordinary promotion case, alongside the declaration itself: a project running a
-checkout of a published module says `shared:`, and the published copy is then a module it
-does not run rather than a rival for the same key.
+shared directory — is one root and one module, reported at one location. Where two tiers
+reach one directory, the tier reported is the first of `marketplace`, `shared`, `local` to
+reach it; the choice decides a label and never which module runs, which is the only thing
+BR-7 refuses to let a search order decide.
+
+That test is what keeps the conflict rule off the ordinary promotion case, alongside the
+declaration itself: a project running a checkout of a published module says `shared:`, and
+the published copy is then a module it does not run rather than a rival for the same key.
 
 Three outcomes, one per declaration:
 
