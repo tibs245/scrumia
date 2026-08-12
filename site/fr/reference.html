@@ -256,8 +256,8 @@
   <p><code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.</p>
 
 <pre><code>project:
-  name: <span class="k">"my-project"</span>
-  repo: <span class="k">"tibs245/my-project"</span>
+  name: "my-project"
+  repo: "tibs245/my-project"
 
 modules:
   "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
@@ -286,7 +286,7 @@ settings:
     level: guided
     auto_merge: none
   specs:
-    root: <span class="k">"features"</span>
+    root: "features"
   tracker:
     columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
   team:
@@ -294,7 +294,7 @@ settings:
     sprint:
       max_tickets: 5</code></pre>
 
-  <p>Deux conventions qui comptent : un module manquant est déclaré <code>null</code> plutôt qu'omis — « pas encore choisi » et « délibérément sans » sont des choses différentes. Et chaque module documente les clés qu'il lit sous <code>settings</code> : un paramètre implicite est celui que vous ne pouvez pas changer.</p>
+  <p>Deux conventions qui comptent : la table nomme ce qui est présent, donc une capacité dont vous vous passez ne porte aucune clé — et là où la différence entre « pas encore choisi » et « délibérément sans » compte, elle se dit en commentaire, à la place de la clé. Et chaque module documente les clés qu'il lit sous <code>settings</code> : un paramètre implicite est celui que vous ne pouvez pas changer.</p>
 </section>
 
 <section id="impl">

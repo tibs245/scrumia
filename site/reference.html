@@ -256,8 +256,8 @@
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>
 
 <pre><code>project:
-  name: <span class="k">"my-project"</span>
-  repo: <span class="k">"tibs245/my-project"</span>
+  name: "my-project"
+  repo: "tibs245/my-project"
 
 modules:
   "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
@@ -286,7 +286,7 @@ settings:
     level: guided
     auto_merge: none
   specs:
-    root: <span class="k">"features"</span>
+    root: "features"
   tracker:
     columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
   team:
@@ -294,7 +294,7 @@ settings:
     sprint:
       max_tickets: 5</code></pre>
 
-  <p>Two conventions that matter: a missing module is declared <code>null</code> rather than omitted — "not chosen yet" and "deliberately without" are different things. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.</p>
+  <p>Two conventions that matter: the mapping names what is present, so a capability you go without carries no key at all — and where the difference between "not chosen yet" and "deliberately without" matters, it is said as a comment standing in the key's place. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.</p>
 </section>
 
 <section id="impl">

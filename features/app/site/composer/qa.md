@@ -26,8 +26,20 @@ Then a `leave it empty` option is among its choices, and its description states
   break
 And when it is chosen, the row falls to the empty state — muted name, dashed
   leader, `nothing installed` in words — and the emitted YAML carries the same
-  consequence as a comment standing where that module would have been keyed
+  consequence as a comment: standing where the module would have been keyed for
+  the five slots the project declares, and on the empty mapping of an app left
+  with no module of its own
 ```
+
+Every comment starts with `#`. It is the whole of its line now, so one that lost
+its marker would not read as a weaker statement of the cost — it would be parsed
+as configuration, which is why the marker is asserted rather than assumed.
+
+An app that keeps an implementation module but no practice carries no separate
+comment: the mapping it does carry already names what runs, and a note saying a
+second thing is absent beside a key saying what is present is the reading
+`slot-index` refuses. The two per-app slots reach the file through that mapping
+or not at all.
 
 ### AC-3 — The output is copyable and matches what `scrumia-init` would verify
 
@@ -36,9 +48,10 @@ Given a composition chosen in the composer
 When the two artifacts are read
 Then the install block lists `/plugin install` for exactly the modules the
   seven rows name, and the config block carries `project:`, a `modules:` mapping
-  holding one `<source>:<module>` key per module those rows chose and nothing
-  else, and one `apps[]` entry per chosen stack with `name`, `path`, `type` and
-  its own `modules:` mapping
+  carrying one `<source>:<module>` key per module those rows chose, and one
+  `apps[]` entry per chosen stack with `name`, `path`, `type` and its own
+  `modules:` mapping
+And no key is emitted for a slot left empty, and no key is a bare name
 And a practice appears only under the apps whose type it applies to
 And each artifact has its own copy button, which copies that artifact's text
 And with JavaScript disabled both artifacts still show the default
@@ -80,6 +93,16 @@ Then a row of the composer offered that absence and the visitor or a preset
 And the absence is stated as a comment in the mapping rather than left to the
   mapping's silence, which reads the same whether a slot was refused or forgotten
 ```
+
+The comment is verified on the option that causes it, not on a generated file:
+the composition the page loads with answers every slot, so no absence is ever
+pre-rendered to read. What is checked is that every option offering an absence
+carries the note the file will carry — the failure being guarded against is an
+option that emits silence, and that is decidable at the option.
+
+`a tracker of your own` is an absence for today and not a refusal: what was
+chosen is a future presence, so its comment names the gap and the next step
+rather than a decision to go without.
 
 ### AC-7 — Choosing works with JavaScript disabled
 

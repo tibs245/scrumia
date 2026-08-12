@@ -18,9 +18,11 @@ applied, not a decoration.
 
 **The consequence survives the copy.** An empty slot's cost is stated three
 times, each in the idiom of where it sits: in the option's description at
-decision time, in the open row's gap line after the fact, and as a comment
-standing where the module would have been keyed in the emitted YAML — the
-only one of the three that survives being pasted into a repo.
+decision time, in the open row's gap line after the fact, and as a comment in
+the emitted YAML — the only one of the three that survives being pasted into a
+repo. The comment stands where the module would have been keyed for the five
+slots the project declares, and on the empty mapping of an app left with no
+module of its own.
 
 ## Interface constraints
 
