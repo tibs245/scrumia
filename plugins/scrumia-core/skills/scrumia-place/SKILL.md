@@ -88,7 +88,7 @@ Ask these in order. The first *yes* is the destination, and nothing after it is 
 |---|---|---|
 | 1 | Does it hold for every project running one of the modules this composition runs? | that module |
 | 2 | Does it change what the product does or must do? | a feature |
-| 3 | Does it govern how work is done here? | the project |
+| 3 | Does it govern how work is done here, for anyone working on this repository? | the project |
 | 4 | Is it unresolved — a disagreement, a thought, an event, something that is not a rule yet? | a ticket |
 | 5 | Once it is corrected, would nobody need to be told? | the change itself |
 | 6 | none of the above | Step 4 decides |
@@ -145,23 +145,24 @@ receives what is the specs module's
 and this skill stops at the feature.
 
 **3 — the project.** This branch is how work is done here, not what the product does — a
-convention, a house rule, a prerequisite. Say which of the three shapes
+convention, a house rule, a prerequisite. Name which of the shapes
 [`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)
-lists it takes — a directive contributed to a register, a rules section, or a skill the
-project ships to itself — and why that one, in a line. Naming the shape is the answer;
+lists it should take, and why that one, in a line. That list is stated there and nowhere
+else, this one included — read it rather than a copy of it. Naming the shape is the answer;
 which register a directive joins is settled where it is written, not here. Where none of
-the three fits — a module in the composition may own project-level material of its own
-shape — say which is closest **and that none fits**. That is a finding for
-`local-extension`, whose list it is; it is not a shape to force the fact into. **A prerequisite
+them fits — a module in the composition may own project-level material of its own shape —
+say which is closest **and that none fits**. That is a finding for `local-extension`, whose
+list it is; it is not a shape to force the fact into. **A prerequisite
 lands in this branch, not in memory**: "you need X to work on this" is framed as a note
 about a machine and is needed by whoever clones the repository. What is on *your* machine
 and absent from the project's prerequisites is question 6's.
 
 **4 — a ticket.** A ticket is the one place this composition already keeps *why*, which is
 what an unresolved thing needs. Look for the issue that already covers it before creating
-one — something settled is more often a closed issue than a new one — and leave what the
-search covers and what a new issue carries to the tracker module and to
-[`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md).
+one — something settled is more often a closed issue than a new one. What a new issue
+carries, and how it is labelled, is
+[`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s
+and the tracker module's.
 
 **5 — the change itself.** The question is whether anything survives the fix. A broken
 link, a stale sentence, a wrong default: correct it, with the reason in the change, and
@@ -222,7 +223,9 @@ Naming a destination that does not exist yet, and creating nothing, is a complet
 Route each entry on its own — Step 1 first, since an entry is where two facts are most
 likely to be wearing one filename. A file that only lists the others is an index: it is
 navigation, not an entry, and it is routed nowhere — what it is owed is a check that its
-lines still point at something. Report a list: entry, destination, deciding question.
+lines still point at something. Report a list: entry, destination, deciding question, and
+**whether the entry was a placement failure** — an entry that should never have been in
+memory is a defect, and a sweep that only lists new addresses reads as a reshuffle.
 Expect most of an untouched directory to leave. The default destination costs nothing to
 write and everything to retrieve, which is the whole reason this tree exists.
 
