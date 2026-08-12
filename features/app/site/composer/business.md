@@ -24,7 +24,7 @@ is specific to that application sits here.
 `leave it empty` choice whose description states what the absence costs, in
 the voice of `features/business/modular-composition/business.md`'s AC-4:
 named degradation, work continuing. No sentence may imply the agents break. A
-slot the visitor was never asked must not be emitted as a decided `null` —
+slot the visitor was never asked must not be emitted as a decided absence —
 which is why `design` is a question here and not a silent default.
 
 **The install claim is the real one.** No one-liner consumes a generated
