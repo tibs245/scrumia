@@ -60,13 +60,14 @@ The test is one tree checked from two locations returning the identical verdict.
 ### AC-5 — Two modules answering one declaration is a conflict, never a silent choice
 
 ```gherkin
-Given one declaration that two distinct modules, in two locations, both answer to
+Given one declaration that two distinct modules both answer to — a module and a fork of
+  it, checked out side by side in the location its key names
 When the composition resolves that declaration
-Then the conflict is reported naming both locations, neither is used, no directive of
+Then the conflict is reported naming both directories, neither is used, no directive of
   that module reaches any register, and every other declaration still resolves — search
   order decides nothing
 And the dependency check exits non-zero on it, so the shortened table is not the only
-  signal
+  signal, and it does so once rather than once per register that module opens
 Given instead a module reachable at two paths that are the same directory — a checkout
   reached through a link as well as directly
 When the composition resolves it
@@ -81,6 +82,22 @@ The last two scenarios are the ones that make the first safe to enforce. Promoti
 produces both copies by construction — `module-authoring`'s BR-3 is only affordable if
 holding them at once is not a fault — and each is settled by identity or by the
 declaration rather than by the search, which is what BR-7's test buys.
+
+### AC-11 — A declaration naming no location is shadowed, not disabled
+
+```gherkin
+Given a declaration in the retired list shape, which names no location, and two locations
+  answering it — a published module and a checkout of it
+When the composition resolves that declaration
+Then the narrowest location is used, the module contributes its directives normally, the
+  report names every location that answered and which one won, and it names the fix:
+  keying the declaration by source
+And the dependency check does not fail on it — a shadow is used, so it is only ever said
+```
+
+This is the case a rule fired on the name alone would have broken: it is what promotion
+looks like from a project still on the retired shape, and disabling the module there would
+punish a project for a grammar it is being migrated off.
 
 ### AC-6 — A clone that cannot reach the module is told, and still works
 
@@ -126,6 +143,12 @@ Then the module is keyed `shared:<module>`, so its location is stated by its dec
   and by nothing beside it, no filesystem path outside the project appears in any
   versioned file, and the path `shared` resolves to comes from `.scrumia/.env.local`
 And `.scrumia/.env.local` is excluded from version control
+Given that file written the way people write such files — an `export` prefix, spaces
+  around the `=`, a quoted value, a trailing space, a comment above it
+When resolution reads it
+Then the shared location resolves in every one of those cases; and where the file names
+  nothing, or names a directory that is not on this machine, that is reported rather than
+  read as a location holding no modules
 ```
 
 The exclusion is part of the rule, not an operational detail: a repository that commits

@@ -67,34 +67,52 @@ exists to prevent.
 
 **Identity is the physical path.** Every root is resolved through its links before being
 compared, so a checkout reached twice — linked into the project as well as sitting in the
-shared directory — is one root and one module, reported at one location. Where two tiers
-reach one directory, the tier reported is the first of `marketplace`, `shared`, `local` to
-reach it; the choice decides a label and never which module runs, which is the only thing
-BR-7 refuses to let a search order decide.
+shared directory — is one root and one module, reported at one location. That test is what
+keeps the conflict rule off the ordinary promotion case, alongside the declaration itself:
+a project running a checkout of a published module says `shared:`, and the published copy
+is then a module it does not run rather than a rival for the same key.
 
-That test is what keeps the conflict rule off the ordinary promotion case, alongside the
-declaration itself: a project running a checkout of a published module says `shared:`, and
-the published copy is then a module it does not run rather than a rival for the same key.
+**Where more than one tier still answers, the narrowest wins**, `local` before `shared`
+before `marketplace`. Only a bare name from the retired list can reach that, since every
+other key binds inside one tier. It is BR-5's shadow, written as a rank in the code rather
+than inherited from the order the tiers happen to be discovered in: a label that nobody
+stated moves the day someone reorders the discovery, and this one is reported to a human as
+the reason a particular copy is running.
 
-Three outcomes, one per declaration:
+Four outcomes, one per declaration:
 
 | Roots bound | State | Effect |
 |---|---|---|
 | exactly one | `resolved` | its directives render, its location is reported |
 | none | `absent` | a declared absence — named, its location stated, nothing fails |
-| two or more distinct | `conflict` | named on stderr with every root, binds nothing |
+| several, each in a different tier, from a key naming none | `shadow` | the narrowest renders and is reported; the others are named beside it |
+| several, otherwise | `conflict` | named on stderr with every root, binds nothing |
 
 ## What each surface reports, and what it exits
 
-| Surface | Resolved | Absent | Conflict |
-|---|---|---|---|
-| a register's table | its rows, in scope order | absent from the table | absent from the table, named on stderr |
-| `--modules` | key, module, location, root | the row, state `absent`, the location it would come from | the row, state `conflict`, every root |
-| `--check` | — | — | an unmet dependency; exit non-zero |
+| Surface | Resolved | Absent | Shadow | Conflict |
+|---|---|---|---|---|
+| a register's table | its rows, in scope order | absent from the table | the narrowest module's rows, named on stderr | absent from the table, named on stderr |
+| `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, every root |
+| `--check` | — | — | — | an unmet dependency; exit non-zero |
 
 Exit status still carries meaning only for `--check`. A register table is an answer whether
 it is long or short, and a conflict must not stop a skill that never needed that module —
 which is why the conflict is loud everywhere and fatal in exactly one place.
+
+## Two sets, and why they are not one
+
+Discovery yields every root; binding yields the roots the declarations chose. Most of the
+tool reads the second. Three checks read a third — one root per module **name** — because
+they ask about identity rather than about directives: which module opens a register, which
+publishes a name, whether two modules opened the same one.
+
+Read off the raw discovery, those three break the moment a checkout sits beside its
+published copy — the promotion case — by reporting a register as opened twice, by the same
+module, and failing `--check` on it. Read off the bound set alone, they would stop covering
+every installed module, which is what makes `--check` a repository-wide gate here rather
+than a per-project one. So the third set is discovery collapsed by name, preferring the
+root a declaration bound.
 
 `--modules` exists because "the composition is reported" had two candidate readers and only
 one of them resolves anything. `compose-status.sh` prints the declarations as written; its
@@ -114,6 +132,13 @@ to expose.
 conflict has more than one and a consumer that read a single path would silently take the
 first.
 
+Neither shape is an `api-contract.md`, and that is a judgement rather than an oversight:
+that file in this catalog is a contract **between apps**, and `plugins/` is not an app.
+Today nothing outside `scrumia-core` parses either — `tools/validate.py` reads `--check`'s
+exit status and its stderr, and every skill reads the rendered table. *Exit condition*: the
+first consumer outside this module that parses `--json`, at which point the shape has a
+holder and belongs in a file that says so.
+
 ## Constraints and debt
 
 - **`bash` + `jq`, and the two YAML readers the machine may already have.** Inherited from
@@ -124,6 +149,17 @@ first.
   other two tiers *are* exercisable in CI, since both are plain directories.
 - **A conflict is detected between roots, never between two keys naming one root.** A
   project declaring both `shared:x` and `local:x` where the two are the same directory
-  gets that module's directives twice in one table. Nothing reports it. *Exit condition*:
-  a declaration-level duplicate check, worth writing when a composition is seen doing it —
-  it takes a deliberate link plus two deliberate keys to reach.
+  gets that module's directives twice in one table, and nothing reports it. The setup is a
+  link plus two keys — which is close to the promotion arrangement this feature encourages,
+  so it is reachable by accident and not only by construction. *Exit condition*: a
+  duplicate check across declarations, before a composition is seen doing it.
+- **A module resolved `local` or `shared` cannot publish a command.** The harness puts
+  only an enabled marketplace plugin's `bin/` on PATH, so a name published by a checkout is
+  not runnable — while `--check` reports the dependency met, because it accepts a name
+  published by any discovered module. That leniency was written for `$SCRUMIA_MODULE_DIR`,
+  where no harness runs and PATH proves nothing; it now covers two tiers where a harness
+  does run and PATH does prove something. Nothing in this repository publishes from either
+  tier, so nothing regresses today — but it bounds a claim stated flatly above and in
+  `module-authoring`'s BR-3: moving between locations is free for a module that ships data,
+  and not yet for one that ships a command. *Exit condition*: `--check` distinguishing the
+  tiers, and the promotion pass saying so.
