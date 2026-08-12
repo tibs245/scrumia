@@ -8,6 +8,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `design` register and contributes to `implement`, `review`, `audit` and `convene`;
   the designer role reaches the team through `convene` rather than through prose.
 
+### Changed
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
+
 ## [0.4.0] - 2026-08-10
 ### Added
 - The `design` slot: identity, tokens and components under `design/`, one directory per component.

@@ -24,6 +24,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   instead of prose alone, and states `business.md`'s sourcing boundary against ADRs and
   acceptance criteria explicitly — an executor following only `scrumia-ticket` had no
   reason to open this file's rule before writing.
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
 
 ## [0.4.0] - 2026-08-10
 ### Added
