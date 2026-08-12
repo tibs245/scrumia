@@ -22,11 +22,11 @@ is specific to that application sits here.
 
 **Empty is an offered option, never an unasked one.** Every slot carries a
 `leave it empty` choice whose description states what the absence costs, in
-the voice of `features/business/modular-composition/business.md`'s BR-3:
-the gap named, the next step proposed, work continuing. No sentence may imply
-the agents break. A
-slot the visitor was never asked must not be emitted as a decided absence —
-which is why `design` is a question here and not a silent default.
+the voice of `features/business/modular-composition/business.md`'s BR-3: the
+gap named, the next step proposed, work continuing. No sentence may imply the
+agents break. A slot the visitor was never asked must not be emitted as a
+decided absence — which is why `design` is a question here and not a silent
+default.
 
 **The install claim is the real one.** No one-liner consumes a generated
 config; claiming one would be the promise `modular-composition`'s BR-3
