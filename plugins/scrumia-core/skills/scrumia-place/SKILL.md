@@ -42,8 +42,8 @@ repository, and a live disagreement, and those have three different destinations
 
 ## Step 2 — Ask whether it is already placed
 
-Look for the fact where it could already be, before choosing anywhere to put it. Four
-places, and the composition says where each one sits — never assume a layout:
+Look for the fact where it could already be, before choosing anywhere to put it. Five
+places, and for the first four the composition says where they sit — never assume a layout:
 
 - the modules this project runs, skills and references included;
 - the project's own rules — its `CLAUDE.md` and its configuration;
@@ -51,6 +51,10 @@ places, and the composition says where each one sits — never assume a layout:
 - the tracker, for anything that reads like a debate;
 - the agent memory directories themselves. A fact already sitting in one is placed, rightly
   or wrongly, and re-placing it is Step 3's job — writing a second copy of it is not.
+  **The composition declares none of these.** A project has at least two scopes — the one it
+  commits, and the harness's own outside the repository — so this is the one place you cover
+  what you were given rather than what a layout says, and the answer names which directories
+  those were. A sweep that quietly covered half of them reports success either way.
 
 Grep the tokens that survive someone else's phrasing — a command name, a flag, a number —
 rather than your own sentence, which is the one wording certain not to be there:
@@ -89,7 +93,7 @@ Ask these in order. The first *yes* is the destination, and nothing after it is 
 | 1 | Does it hold for every project running one of the modules this composition runs? | that module |
 | 2 | Does it change what the product does or must do? | a feature |
 | 3 | Does it govern how work is done here, for anyone working on this repository? | the project |
-| 4 | Is it unresolved — a disagreement, a thought, an event, something that is not a rule yet? | a ticket |
+| 4 | Is it unresolved — a disagreement, a thought, an event — something still open that someone will have to settle? | a ticket |
 | 5 | Once it is corrected, would nobody need to be told? | the change itself |
 | 6 | none of the above | Step 4 decides |
 
@@ -164,6 +168,11 @@ carries, and how it is labelled, is
 [`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s
 and the tracker module's.
 
+A fact that is simply **not a rule** is not unresolved. Nothing about it is open, and nobody
+has to settle it — it takes questions 5 and 6 like anything else. Reading "not a rule yet"
+as this branch's admission test would send every machine-local fact to the tracker, which is
+the one destination that turns a private note into project state.
+
 **5 — the change itself.** The question is whether anything survives the fix. A broken
 link, a stale sentence, a wrong default: correct it, with the reason in the change, and
 nothing is left to state anywhere. Where someone would still need to be told once the fix
@@ -180,11 +189,22 @@ before them.
 
 If whoever clones this repository would need it, agent memory is the wrong place — memory
 does not travel with the clone, and a fact in it is invisible to every other agent, every
-other machine, and the person who will hit the same wall. Reject that placement, name the
-destination Step 3 gives it, and state this test as the reason.
+other machine, and the person who will hit the same wall. Reject that placement and state
+this test as the reason. Then name the destination, and where it comes from depends on how
+you got here:
 
-What survives the test is genuinely nobody else's: how this machine is set up, what this
-person prefers, which reflex to reach for first. **That is a real answer.** When the test
+- **The fact was offered to memory** and you ran the tree over it anyway — the usual case
+  for an entry being re-placed. Step 3 has already answered; name what it gave.
+- **The fact reached here through question 6**, so Step 3 gave nothing. A fact that falls
+  through every question and still survives the handover means questions 1 to 3 were read
+  too narrowly, not that it has no home: ask them again with its reach in hand. Where none
+  of them fires even then, it is the project's, and the answer says plainly that its reach
+  is wider than the place now holding it — the same move an unowned module rule gets.
+
+Neither path ends without a destination. "Nowhere" is not one of this skill's answers.
+
+What the test sends to memory is genuinely nobody else's: how this machine is set up, what
+this person prefers, which reflex to reach for first. **That is a real answer.** When the test
 says memory, say memory and stop — offering a module or the project *as well*, for a fact
 nobody else can use, is the same failure pointing the other way, and a tree that never
 chooses memory has replaced one wrong default with another.
