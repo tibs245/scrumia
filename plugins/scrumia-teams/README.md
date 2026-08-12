@@ -37,6 +37,12 @@ Under `settings.team` in `.scrumia/config.yaml`: `roles`, `execution` (the model
 matrix by scope × risk, plus label prefixes and aliases), `escalation.to_human`,
 `sprint.max_tickets`.
 
+`scrumia-pick-model` resolves `execution` through the composition's settings cascade —
+that base layer, then this module's own `params:`, then `.scrumia/config.local.yaml` — so
+a per-machine override reaches it. When none of the three carries a policy it answers no
+model at all and says so, rather than falling back to its own defaults: a model name taken
+from a default is indistinguishable from one taken from the grid.
+
 ## What it expects to find
 
 A tracker module publishing a `scrumia-board`-style name on `PATH` — this module never

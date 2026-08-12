@@ -16,6 +16,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   point, greps for stale cross-skill behavior claims on a `plugins/` change, and checks
   that a reservation's issue carries a board card before calling it handled.
 ### Changed
+- `scrumia-board` resolves its settings through `scrumia-extends --settings`, the
+  composition's three-layer cascade, instead of reading `settings.tracker` out of
+  `.scrumia/config.yaml`. A value set in `.scrumia/config.local.yaml` now actually reaches
+  it, and a project that has moved those keys into this module's `params:` keeps working —
+  both shapes are read while the migration is in flight, the module's own `params:` first.
+- `scrumia-board` stops with a named error when its settings cannot be resolved at all —
+  `scrumia-core` absent from the session, or no layer carrying the board's ids — rather
+  than continuing on defaults. `scrumia-board move` also re-emits the error its card
+  lookup produced instead of exiting 1 with nothing on stdout.
 - The board tool is published as the name `scrumia-board`, which the harness puts on the
   session's PATH, and every skill and command runs that name instead of a path. Reaching it
   by path only ever worked in this module's own repository: installed, the module sits one
