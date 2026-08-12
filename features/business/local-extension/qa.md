@@ -10,15 +10,18 @@ One scenario per rule in `business.md`. Each scenario must be able to fail.
 Given a well-formed module sitting in a directory of checkouts rather than in a
   marketplace, contributing a directive to a register this project's composition opens
 When the directives for that register are asked for
-Then its directive appears in the table, and the steps taken were exactly two: the module
-  enabled in the harness, and one key added to `modules` — no path written into any
-  versioned file, no per-module configuration beyond that key
+Then its directive appears in the table, and the steps taken were exactly two: the
+  checkout placed in the directory this machine names, and one `shared:` key added to
+  `modules` — no path written into any versioned file, no per-module configuration
+  beyond that key
+And a published module of the same name that the composition does not declare changes
+  nothing about that answer
 ```
 
 ### AC-2 — A module inside the project reaches the same table
 
 ```gherkin
-Given the same module placed inside the project instead
+Given the same module placed at `.scrumia/modules/<module>/` instead, declared `local:`
 When the directives for that register are asked for
 Then its directive appears identically, and nothing in the table distinguishes it from a
   published module beyond the location that is reported alongside it
@@ -29,10 +32,15 @@ Then its directive appears identically, and nothing in the table distinguishes i
 ```gherkin
 Given a composition mixing published modules, a module from a shared checkout directory,
   and a module inside the project
-When the composition is reported
-Then each module is shown with the location it resolved from, and no module is shown
-  without one
+When the modules the composition resolves are reported
+Then each is shown with the location it resolved from and the directory it resolved to,
+  and no module is shown without one — a module the machine cannot reach appearing as a
+  declared absence naming the location it would come from, never as a blank
 ```
+
+The surface is `scrumia-extends --modules`, named here because "the composition is
+reported" had two candidate readers and only one of them resolves anything. The other
+prints the declarations as written, which is a different claim and needs no location.
 
 ### AC-4 — A local module is held to the same standard
 
@@ -43,17 +51,36 @@ Then it produces the same findings, in the same form, with no allowance made for
   module being local
 ```
 
+The checker takes a path and reads that tree alone, so what satisfies this criterion is
+that it has no notion of location at all, rather than that it treats three of them alike.
+The test is one tree checked from two locations returning the identical verdict.
+
 ## Conflict and absence
 
-### AC-5 — Two modules with one name is a conflict, never a silent choice
+### AC-5 — Two modules answering one declaration is a conflict, never a silent choice
 
 ```gherkin
-Given a module name present both in a marketplace the project declares and in the project
-  itself
-When the composition resolves that name
-Then the conflict is reported naming both locations, and neither is used until it is
-  resolved — search order decides nothing
+Given one declaration that two distinct modules, in two locations, both answer to
+When the composition resolves that declaration
+Then the conflict is reported naming both locations, neither is used, no directive of
+  that module reaches any register, and every other declaration still resolves — search
+  order decides nothing
+And the dependency check exits non-zero on it, so the shortened table is not the only
+  signal
+Given instead a module reachable at two paths that are the same directory — a checkout
+  reached through a link as well as directly
+When the composition resolves it
+Then it is one module: it resolves, it is used, and its location is reported once
+Given instead a published module installed and a checkout of it declared `shared:`
+When the composition resolves that declaration
+Then the checkout resolves and is used, the published copy is a module this project does
+  not run, and nothing is reported as a conflict
 ```
+
+The last two scenarios are the ones that make the first safe to enforce. Promotion
+produces both copies by construction — `module-authoring`'s BR-3 is only affordable if
+holding them at once is not a fault — and each is settled by identity or by the
+declaration rather than by the search, which is what BR-7's test buys.
 
 ### AC-6 — A clone that cannot reach the module is told, and still works
 

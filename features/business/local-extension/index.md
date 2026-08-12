@@ -29,6 +29,7 @@ deliberately not a module: a directive, a rules section, a skill. What a project
 | File | Read it when |
 |---|---|
 | `business.md` | Deciding where a module may live, what local material is legitimate without being one, and what a clone without it must still see |
+| `tech.md` | Resolving a declaration to a directory — the path each source is looked for at, what binds, and what each surface reports |
 | `qa.md` | Checking this feature's acceptance criteria |
 | `CHANGELOG.md` | History of changes to this spec |
 

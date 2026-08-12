@@ -16,13 +16,13 @@ how the pieces fit, and how the mechanism fails.
 Four inputs, one output, nothing stored in between.
 
 ```
-  $PATH                      ┌───────────────────────────┐
-  (harness-provided)  ──────▶│ 1. discover module roots  │
-                             │    every "…/bin" entry →  │
-                             │    its parent, if it has  │
-                             │    .claude-plugin/        │
+  $PATH  (harness-provided)  ┌───────────────────────────┐
+  $SCRUMIA_SHARED_DIR ──────▶│ 1. discover module roots  │
+  .scrumia/modules/          │    three tiers, one pass, │
+                             │    each root tagged with  │
+                             │    the tier it came from  │
                              └─────────────┬─────────────┘
-                                           │  module · root · source
+                                           │  module · root · location · source
                                            ▼
   .scrumia/config.yaml       ┌───────────────────────────┐
   modules: {…}        ──────▶│ 2. keep what this project │
@@ -45,28 +45,36 @@ Four inputs, one output, nothing stored in between.
                                   nothing written
 ```
 
-**Step 1 is the load-bearing one.** The harness prepends `<pluginRoot>/bin` to the session
-PATH for every *enabled* plugin, with the install path — version segment included —
-already resolved. That is the same fact ADR-0018 relies on to run a published name; here it
-is read the other way round, to learn which modules are present. It is what removes the
-need for any module to publish an executable, or to know where any other module lives.
+**Step 1 is the load-bearing one**, and its marketplace tier is the load-bearing part of
+it. The harness prepends `<pluginRoot>/bin` to the session PATH for every *enabled* plugin,
+with the install path — version segment included — already resolved. That is the same fact
+ADR-0018 relies on to run a published name; here it is read the other way round, to learn
+which modules are present. It is what removes the need for any module to publish an
+executable, or to know where any other module lives.
 
-`$SCRUMIA_MODULE_DIR` replaces step 1 with a directory of `<module>/` checkouts. This
-repository and CI use it, because no harness is running there. The consequence is stated in
-ADR-0020 and repeated here because it is the mechanism's blind spot: **CI can only ever
-exercise the override, never the product's own path.**
+The other two tiers are plain directories, and which directory each is —
+`$SCRUMIA_SHARED_DIR` and `.scrumia/modules/` — is
+`features/business/local-extension/`'s `tech.md`, along with what binds a key to a root.
+All three are read in one pass; no tier is a fallback for another.
+
+`$SCRUMIA_MODULE_DIR` replaces the **marketplace** tier with a directory of `<module>/`
+checkouts, and stands in for it. This repository and CI use it, because no harness is
+running there. The consequence is stated in ADR-0020 and repeated here because it is the
+mechanism's blind spot: **CI can only ever exercise the override, never the product's own
+path.** It is a blind spot on that tier alone — the two below it are directories in CI
+exactly as they are anywhere else.
 
 **Step 2 is what makes a module inert.** A module discovered in step 1 and named in no
 `modules` mapping is dropped here — it is installed, and this project does not run it.
 
-**Step 2 is also where a discovered root becomes a key.** Step 1 yields a root and a source
-derived from `plugin.json`'s `repository`/`homepage`, normalised to `<owner>/<repo>`. A
-module with no such field derives an empty source, and an empty source is not a match for
-anything: it is resolved against the declared `local:` and `shared:` keys by its plugin
-name, and the location it is credited with is the one its key states. A declared
-`local:<name>` with no discovered root of that name is a declared absence
-(`features/business/local-extension/` BR-8); a discovered root matching two declared keys
-is the conflict BR-7 reports.
+**Step 2 is also where a declaration becomes a root.** Step 1 yields a root, the tier it
+came from, and a source derived from `plugin.json`'s `repository`/`homepage`, normalised to
+`<owner>/<repo>`. A marketplace key binds only a root whose manifest claims that
+repository; a `local:` or `shared:` key binds by name **within its own tier**, where a
+manifest can say nothing useful about a location it does not know it is in. A declaration
+no root answers is a declared absence (`features/business/local-extension/` BR-8); one that
+two distinct roots answer is the conflict BR-7 reports. The full binding table, and why
+identity is the physical path, are that feature's `tech.md`.
 
 Declaring a module in `.scrumia/config.yaml` does not put it on `PATH`. Both are required,
 and they answer different questions — the harness decides what is *reachable*, the
@@ -112,9 +120,10 @@ under `Deprecated` — because a feature carries no version to count releases fr
 
 | Question | Answered by | When |
 |---|---|---|
-| Which modules exist here? | the harness, through PATH | every call |
+| Which modules exist here? | the harness through PATH, plus the shared and local directories | every call |
 | Which of them does this project run? | `.scrumia/config.yaml`'s `modules` | every call |
 | Where does a `shared` module sit on this machine? | `$SCRUMIA_SHARED_DIR`, from `.scrumia/.env.local` | when a `shared:` key is declared |
+| Where does a `local` module sit? | `.scrumia/modules/`, beside the configuration | when a `local:` key is declared |
 | Which app does this file belong to? | the longest `apps[].path` prefixing it | on `--path` |
 | What does a module contribute? | its own `extends.json` | every call |
 | Where is a fragment? | the module root, joined with `read` | at print time |
@@ -227,14 +236,9 @@ neighbouring line, and diffing as exactly what changed.
 - **The grep that proves a skill runs the tool matches a string.** Renaming the tool, or
   invoking it through a variable, defeats it. *Exit condition*: none worth paying for — the
   check is a backstop, and a stricter one would fail on legitimate phrasing.
-- **A `local:` or `shared:` key matches a discovered module by name alone**, which is
-  looser than the paragraph above it: a key declaring `local:x` binds a marketplace module
-  named `x` and the composition credits it to `local` — a location it does not come from,
-  which is the reading `local-extension` BR-5 exists to prevent. What holds today is the
-  marketplace half: an `<owner>/<repo>` key binds only a module whose manifest claims that
-  repository. *Exit condition*: resolving `shared` and `local` against the location each
-  names, after which a name matching outside that location is a conflict to report rather
-  than a module to bind.
+- **The debt each source's own location carries** — what is bound by name, and what a
+  second route to one directory costs — is `features/business/local-extension/`'s
+  `tech.md`, which is where that resolution is stated.
 
 ## Practices for writing an extension
 
