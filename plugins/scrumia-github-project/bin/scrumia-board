@@ -33,8 +33,11 @@ scrumia-board <command> [args]
   read [--query Q] [--limit N]  Read the board, grouped by status
   ready [--milestone M]         Tickets ready for dev, optionally one sprint
   epic <issue>                  An epic and its native sub-issues
+  issues --search <terms>       Search issues in every state — not the board
 
 `read` defaults to "-status:Done"; pass --all to lift it.
+`issues` searches issues, never the board: something already settled has left the board,
+which is why it takes no --state flag and always covers open and closed alike.
 `read` lifts items labelled "discussion" out of `columns` into `discussions`: they are
 not work waiting to be started. They are still returned and still counted.
 EOF
@@ -440,6 +443,35 @@ cmd_epic() {
      sub_issues: $kids}' <<<"$out"
 }
 
+# Issues, not the board — the one command here that deliberately leaves Projects v2 alone.
+# They are different surfaces and only this one reaches something already settled: a card
+# leaves the board when its work does, so a board search answers "nothing like this was
+# ever raised" for precisely the issues it was asked about (BR-6,
+# features/business/knowledge-placement/). Hence no `--state` flag: a search that reaches
+# only what is open cannot satisfy the criterion this command exists for, and making that
+# overridable would make the failure a caller's to avoid rather than impossible.
+cmd_issues() {
+  local terms="" limit=30
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --search) terms="${2:-}"; shift 2 ;;
+      --limit)  limit="${2:-}"; shift 2 ;;
+      *) usage ;;
+    esac
+  done
+  [ -n "$terms" ] || die "issues: --search <terms> is required — an unfiltered issue list is not a search"
+
+  local out
+  out=$(gh issue list --repo "$REPO" --state all --search "$terms" --limit "$limit" \
+          --json number,title,state,url,labels 2>&1)
+  [ $? -eq 0 ] || die "issue list failed: $out"
+
+  jq --arg t "$terms" --argjson lim "$limit" '
+    {ok: true, surface: "issues", states: "all", search: $t,
+     count: length, limit: $lim, truncated: (length >= $lim),
+     issues: map({number, title, state, url, labels: [.labels[].name]})}' <<<"$out"
+}
+
 command -v gh >/dev/null 2>&1 || die "gh not found — install the GitHub CLI"
 command -v jq >/dev/null 2>&1 || die "jq not found"
 
@@ -452,5 +484,9 @@ case "$cmd" in
   read)    load_config; cmd_read "$@" ;;
   ready)   load_config; cmd_ready "$@" ;;
   epic)    load_config; cmd_epic "$@" ;;
+  # Searches issues, so it needs `project.repo` and nothing the board contributes. Gating
+  # it on resolved board settings would take the search down with a misconfigured board,
+  # and an issue exists whether or not anyone made a card for it.
+  issues)  SOFT_SETTINGS=yes; load_config; cmd_issues "$@" ;;
   *)       usage ;;
 esac

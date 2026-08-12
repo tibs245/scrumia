@@ -206,10 +206,13 @@ empty on exactly the cases this step exists for, and an empty result reads ident
 wrongly. Search closed and open together, in one read:
 
 ```bash
-# with scrumia-github-project in the tracker slot
-gh issue list --state all --search "<token> in:title,body" --limit 30 \
-  --json number,title,state,labels
+# with scrumia-github-project in the tracker slot — the name it publishes, never a path
+scrumia-board issues --search "<token>"
 ```
+
+That command searches issues and takes no state flag, so neither property is a caller's to
+remember. Its answer says which surface it read (`surface`, `states`), and a `truncated`
+answer is a narrower search to run, not a longer list to skim.
 
 Search the tokens that survive someone else's phrasing, the way Step 2 does. This is the
 search Step 2 sent here for: if it already ran, it ran with these two properties and does

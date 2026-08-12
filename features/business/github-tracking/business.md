@@ -246,6 +246,17 @@ will outgrow again.
 The corollary trap — an invalid or stale filter reading as legitimately empty — is
 specified in `qa.md`.
 
+**The board and the issues are two surfaces, and looking for something already settled
+reaches only the second.** A card leaves the board when its work does, so a board search
+for a closed ticket comes back empty and reads as "nothing like this was ever raised" —
+wrong, silently, and in the one direction that matters to anyone checking whether a
+question has been asked before. The module therefore publishes an issue search alongside
+the board read, covering open and closed together, and it is not a board read with a wider
+filter: the surfaces differ, and the answer names which one it read so the two can never
+be mistaken for each other. What sends a reader there is
+`features/business/knowledge-placement/`'s BR-6; that the two surfaces are distinct, and
+that the issue one exists, is this feature's.
+
 ## Scope of this slot
 
 Two planes, easily conflated and separated on purpose: what the **module** implements,

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tests scrumia-board's cmd_read state handling — AC-1/AC-2/AC-4/AC-8, qa.md. `gh`
+# Tests scrumia-board's cmd_read and cmd_issues — the criteria are named per check. `gh`
 # is stubbed with a fixture: no network call, no dependency on the live board.
 
 set -uo pipefail
@@ -198,6 +198,59 @@ check "AC-13: it is returned in a group of its own, named and counted" \
 totals=$(jq -r '"\(.count)/\(.total_matching)"' <<<"$OUT3")
 check "AC-13: the read's own totals still account for it — a subtraction is not a drop" \
   "$([ "$totals" = "2/2" ] && echo true || echo false)" "got: $totals"
+
+# --- AC-10/AC-12 (knowledge-placement): the search is issues, in every state ---
+WORKDIR4=$(mktemp -d)
+trap 'rm -rf "$WORKDIR" "$WORKDIR2" "$WORKDIR3" "$WORKDIR4"' EXIT
+
+cat > "$WORKDIR4/gh" <<'STUB'
+#!/usr/bin/env bash
+echo "$*" >> "$ARGS_LOG"
+case "$1 $2" in
+  "issue list") cat "$FIXTURE_DIR/issue-list.json" ;;
+  *) echo "unstubbed gh call: $*" >&2; exit 1 ;;
+esac
+STUB
+chmod +x "$WORKDIR4/gh"
+
+mkdir -p "$WORKDIR4/.scrumia"
+cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR4/.scrumia/config.yaml"
+
+# 501 is closed — the case the board could never have answered, since a card leaves the
+# board when its work does.
+cat > "$WORKDIR4/issue-list.json" <<'JSON'
+[
+  {"number": 501, "title": "Settled long ago", "state": "CLOSED", "url": "u/501", "labels": [{"name": "discussion"}]},
+  {"number": 502, "title": "Still open", "state": "OPEN", "url": "u/502", "labels": []}
+]
+JSON
+
+ARGS_LOG="$WORKDIR4/gh-args"
+OUT4=$(PATH="$WORKDIR4:$PATH" FIXTURE_DIR="$WORKDIR4" ARGS_LOG="$ARGS_LOG" \
+       SCRUMIA_CONFIG="$WORKDIR4/.scrumia/config.yaml" \
+       "$BOARD_SH" issues --search "settled" 2>/dev/null)
+
+touched_board=$(grep -c "^project " "$ARGS_LOG" 2>/dev/null || true)
+check "AC-12: the search never goes near the board" \
+  "$([ "$touched_board" = "0" ] && echo true || echo false)" "got: $touched_board project calls"
+
+state_flag=$(grep -c -- "--state all" "$ARGS_LOG" 2>/dev/null || true)
+check "AC-12: it covers every state, and the flag is not the caller's to pass" \
+  "$([ "$state_flag" = "1" ] && echo true || echo false)" "got: $state_flag"
+
+closed_found=$(jq '[.issues[] | select(.state == "CLOSED") | .number] | contains([501])' <<<"$OUT4")
+check "AC-10: a closed issue is reachable, so an existing one can be found before creating" \
+  "$([ "$closed_found" = "true" ] && echo true || echo false)"
+
+surface=$(jq -r '"\(.surface)/\(.states)"' <<<"$OUT4")
+check "AC-12: the answer says which surface it read, so a board read cannot pass for this" \
+  "$([ "$surface" = "issues/all" ] && echo true || echo false)" "got: $surface"
+
+no_terms=$(PATH="$WORKDIR4:$PATH" FIXTURE_DIR="$WORKDIR4" ARGS_LOG="$ARGS_LOG" \
+           SCRUMIA_CONFIG="$WORKDIR4/.scrumia/config.yaml" \
+           "$BOARD_SH" issues 2>/dev/null | jq -r '.ok')
+check "an unfiltered issue list is refused rather than answered as a search" \
+  "$([ "$no_terms" = "false" ] && echo true || echo false)" "got: ok=$no_terms"
 
 echo
 if [ "$FAILURES" -eq 0 ]; then

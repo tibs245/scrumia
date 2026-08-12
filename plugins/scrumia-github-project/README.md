@@ -30,7 +30,7 @@ truncating it at 30 items.
 | `scrumia-ticket` | Executes one ticket end to end — isolated worktree, spec first, implementation, tests, review, PR. Never merges. |
 | `scrumia-review` | Reviews an open PR by routing to the reviewers its diff actually calls for. |
 | `scrumia-status` | A read-only snapshot of the board, the features and the gaps between them — computed live, nothing stored. |
-| `scrumia-board` | Published on `PATH`. The only way any skill or human talks to the board: `move`, `find`, `read`, `ready`, `epic`, `doctor`. |
+| `scrumia-board` | Published on `PATH`. The only way any skill or human talks to the tracker: `move`, `find`, `read`, `ready`, `epic`, `doctor` — and `issues`, which searches issues in every state and deliberately never touches the board, because something already settled has left it. |
 | `/refine`, `/ticket`, `/review`, `/status` | Slash commands — each loads the matching skill above and passes its arguments through. |
 
 ## Settings it reads
