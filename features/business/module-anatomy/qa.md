@@ -121,12 +121,16 @@ The second half is not decoration. Both forms are what `modular-composition`'s B
 permits and what this repository's own conventions require; a check enforcing only the
 first half flags every citation in every module and is unusable here.
 
-### AC-9 — A link or a script that does not exist is a finding
+### AC-9 — A link, a script or a published name that cannot be followed is a finding
 
 ```gherkin
 Given a module whose skill links to a relative path, and whose skill invokes a script
 When either target is absent from what the module ships
 Then each is a separate finding naming the referring file and the missing target
+Given instead a module shipping a name under `bin/` that is present and not executable
+When the same check runs
+Then a finding names it, because the name is how every other module reaches this one and
+  it fails in the caller, which cannot see why
 ```
 
 ### AC-10 — Extension data a module ships is checked; extension data it omits is not
@@ -137,8 +141,8 @@ Given a module that opens no register and contributes no directive, shipping non
 When the procedural check runs over it
 Then no finding claims a missing declaration — the absence is a statement
 Given instead a module shipping an `extends.json` that does not parse, or a
-  `registers.json` naming a register it never opens, or a `dependencies.jsonl` naming a
-  source that does not exist
+  `registers.json` naming a register it never opens, or a `dependencies.jsonl` line that
+  is not a record, or one naming a published name with no source
 When the same check runs
 Then each is a finding
 ```
@@ -146,13 +150,18 @@ Then each is a finding
 This is the case where a module composes cleanly and contributes nothing, and its silence
 looks like a decision.
 
+Whether the source a declaration names exists is not on this list. A source names a
+marketplace, not a file, so a module's own tree holds no answer — that check belongs to
+whatever resolves the composition, and `tech.md`'s boundary is what puts it there.
+
 ### AC-11 — A directory that is not a module is refused, not judged
 
 ```gherkin
 Given a directory with no `.claude-plugin/plugin.json`
 When the procedural check is asked for a verdict on it
-Then it exits `2`, states that this is not a module, and returns no findings — rather than
-  returning one finding per rule the directory happens not to meet
+Then it exits with the code `tech.md` gives the `not a module` state — `4`, distinct from
+  the one a bad invocation carries — states that this is not a module, and returns no
+  findings, rather than returning one finding per rule the directory happens not to meet
 ```
 
 An unbounded finding list on an arbitrary directory is how a check teaches people to

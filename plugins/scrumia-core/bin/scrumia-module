@@ -1,0 +1,483 @@
+#!/usr/bin/env python3
+"""ScrumIA — states whether one module meets the anatomy standard.
+
+    scrumia-module check [<path>]     # judge one module; defaults to the working directory
+    scrumia-module check --json       # the same verdict, unrendered
+
+It reads one module's own tree and nothing else: no project config, no sibling module, no
+question about whether the module is installed. Conformity is a property of the module,
+not of the composition it happens to sit in — which is what lets it run on a module being
+authored, before it has been declared anywhere.
+
+It writes nothing: no fix, no scaffold, no reformat.
+
+Python rather than the bash+jq its neighbours in this bin/ are written in: every rule here
+is a shape in markdown or JSON, and the standard fixes no language — a consumer reaches
+this by subprocess, exit status and --json, and may depend on nothing else.
+"""
+
+from __future__ import annotations  # so the annotations below do not raise on python 3.9
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+SELF = "scrumia-module"
+
+# The five states a single boolean would collapse. `1` and `2` are not free to reassign:
+# every name already published from a plugins/*/bin/ exits 1 from die() and 2 from usage().
+EXIT = {"clean": 0, "error": 1, "usage": 2, "findings": 3, "not_a_module": 4}
+
+# A finding cites a document by absolute URL, never by a relative path: this runs in
+# projects that never had this repository's features/ tree, where a relative path is dead.
+CANONICAL = "https://github.com/tibs245/scrumia/blob/main/"
+BR7_URL = CANONICAL + "features/business/modular-composition/business.md"
+CONTAINMENT_HINT = (
+    "reach another module by the name it publishes on PATH, and cite a document by "
+    f"absolute URL — {BR7_URL}"
+)
+
+REQUIRED_SECTIONS = ["what it answers", "what it refuses", "what it ships"]
+OPTIONAL_SECTIONS = [
+    "settings it reads",
+    "what it expects to find",
+    "decisions",
+    "not shipped yet",
+]
+
+LINK_RE = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
+SCRIPT_RE = re.compile(r"\$\{CLAUDE_SKILL_DIR\}/([\w./-]+\.(?:sh|py))")
+PLUGIN_ROOT_RE = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}")
+HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
+
+
+def usage() -> int:
+    print(
+        "scrumia-module check [<path>]     # judge one module; defaults to the "
+        "working directory\n"
+        "scrumia-module check --json       # the same verdict, unrendered\n"
+        "\n"
+        "Exits 0 clean, 1 the tool failed, 2 bad usage, 3 findings, 4 not a module.\n"
+        "A non-zero exit is not a finding: read `state`, never the length of `findings`.",
+        file=sys.stderr,
+    )
+    return EXIT["usage"]
+
+
+class Checker:
+    """One module's tree, and the findings it produced."""
+
+    def __init__(self, root: Path):
+        self.root = root
+        self.findings: list[dict[str, str]] = []
+        self.module = root.name
+
+    def report(self, path: Path | str, rule: str, message: str) -> None:
+        rel = path if isinstance(path, str) else str(path.relative_to(self.root))
+        self.findings.append(
+            {"module": self.module, "file": rel, "rule": rule, "message": message}
+        )
+
+    def markdown(self) -> list[Path]:
+        return sorted(p for p in self.root.rglob("*.md") if p.is_file())
+
+    def read(self, path: Path) -> str:
+        return path.read_text(encoding="utf-8", errors="replace")
+
+    # ---------------------------------------------------------------- the manifest
+
+    def name_from_manifest(self) -> str:
+        """The published name. A manifest that does not parse is a run that could not
+        conclude, not a finding: nothing downstream of it can be judged."""
+        manifest = self.root / ".claude-plugin" / "plugin.json"
+        try:
+            data = json.loads(manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise CouldNotCheck(f"{manifest}: could not be read — {exc}") from exc
+        if not isinstance(data, dict):
+            raise CouldNotCheck(f"{manifest}: is not a JSON object")
+        self.module = data.get("name") or self.root.name
+        return self.module
+
+    # ---------------------------------------------------------------- the README
+
+    def check_readme(self) -> None:
+        readme = self.root / "README.md"
+        if not readme.is_file():
+            self.report(
+                "README.md",
+                "module-anatomy/BR-4",
+                "no README addressed to whoever has not adopted the module — the "
+                "SKILL.md contract addresses the agent and never stands in for it",
+            )
+            return
+
+        lines = self.read(readme).splitlines()
+        headings = self.headings_of(lines)
+
+        first_h1 = next((h for h in headings if h[1] == 1), None)
+        if first_h1 is None:
+            self.report(readme, "module-anatomy/BR-4", "carries no `# <module name>` heading")
+        else:
+            # The name is the published one; a tagline after it is still that heading.
+            # Requiring the line to be nothing but the name would report `# scrumia-teams
+            # — the standing roles`, and a check people argue with is one they stop running.
+            if re.split(r"\s+[—:–-]\s+", first_h1[3].strip("`"), maxsplit=1)[0] != self.module:
+                self.report(
+                    readme,
+                    "module-anatomy/BR-4",
+                    f"opens on `# {first_h1[3]}`, not on the published name `{self.module}`",
+                )
+            if not self.body_of(lines, headings, first_h1):
+                self.report(
+                    readme,
+                    "module-anatomy/BR-4",
+                    "the name carries no paragraph saying what the module is for",
+                )
+
+        # A section is matched on what it opens with, so `## What it ships (skills and
+        # names on PATH)` is that section. No known name is a prefix of another, so
+        # nothing is matched twice.
+        present = [self.section_of(h[2]) for h in headings if h[1] >= 2]
+        for section in REQUIRED_SECTIONS:
+            if section not in present:
+                self.report(
+                    readme,
+                    "module-anatomy/BR-4",
+                    f'carries no "{section.capitalize()}" section, which every module states',
+                )
+
+        # Position, not presence: a reader scanning four modules compares them by it.
+        found = [s for s in present if s in REQUIRED_SECTIONS]
+        if sorted(found, key=REQUIRED_SECTIONS.index) != found:
+            self.report(
+                readme,
+                "module-anatomy/BR-4",
+                "the required sections read "
+                + ", ".join(f'"{s}"' for s in found)
+                + " — the order is "
+                + ", ".join(f'"{s}"' for s in REQUIRED_SECTIONS)
+                + ", after the name and its paragraph",
+            )
+
+        for heading in headings:
+            if heading[1] >= 2 and self.section_of(heading[2]) and not self.body_of(lines, headings, heading):
+                self.report(
+                    readme,
+                    "module-anatomy/BR-4",
+                    f'"{heading[3]}" is a heading with nothing under it — an absent '
+                    "section states something, an empty one states nothing",
+                )
+
+    @staticmethod
+    def section_of(normalised: str) -> str:
+        """The template section a heading opens with, or "" for one of the module's own."""
+        return next(
+            (s for s in REQUIRED_SECTIONS + OPTIONAL_SECTIONS if normalised.startswith(s)), ""
+        )
+
+    @staticmethod
+    def headings_of(lines: list[str]) -> list[tuple[int, int, str, str]]:
+        """Line, level, normalised name, name as written. A `#` inside a fenced block is
+        a shell comment or a tree drawing, and reading it as a section is how a README
+        full of examples acquires sections nobody wrote."""
+        headings, fenced = [], False
+        for i, line in enumerate(lines):
+            if line.lstrip().startswith(("```", "~~~")):
+                fenced = not fenced
+            elif not fenced and (m := HEADING_RE.match(line)):
+                headings.append((i, len(m.group(1)), Checker.normalise(m.group(2)), m.group(2)))
+        return headings
+
+    @staticmethod
+    def normalise(text: str) -> str:
+        return re.sub(r"[^a-z ]", "", text.replace("*", "").lower()).strip()
+
+    @staticmethod
+    def body_of(lines, headings, heading) -> bool:
+        """Whether anything at all follows a heading before the next one of its level or
+        above. A subheading counts: it carries the content itself."""
+        start, level = heading[0], heading[1]
+        end = next((h[0] for h in headings if h[0] > start and h[1] <= level), len(lines))
+        return any(line.strip() for line in lines[start + 1 : end])
+
+    # ---------------------------------------------------------------- the references
+
+    def check_references(self) -> None:
+        for md in self.markdown():
+            text = self.read(md)
+            skill_dir = self.skill_dir_of(md)
+
+            # The discriminator is whether an agent executes the file, not what it is
+            # named: a guide a skill routes to is executed as surely as the SKILL.md that
+            # routed there. Anywhere else the variable is legitimate prose — a README
+            # quoting the hooks.json that does substitute it — and only a path built from
+            # it is a finding, which check_target raises.
+            executed = md.relative_to(self.root).parts[0] in ("skills", "agents", "commands")
+            whole_file = executed and bool(PLUGIN_ROOT_RE.search(text))
+            if whole_file:
+                self.report(
+                    md,
+                    "module-anatomy/BR-7",
+                    "${CLAUDE_PLUGIN_ROOT} is never substituted in markdown an agent "
+                    "reads — use ${CLAUDE_SKILL_DIR}",
+                )
+
+            for match in LINK_RE.finditer(text):
+                self.check_target(md, match.group(1), skill_dir, "link", whole_file)
+            for match in SCRIPT_RE.finditer(text):
+                self.check_target(md, match.group(0), skill_dir, "script", whole_file)
+
+    def skill_dir_of(self, path: Path) -> Path | None:
+        rel = path.relative_to(self.root).parts
+        return self.root / "skills" / rel[1] if len(rel) >= 3 and rel[0] == "skills" else None
+
+    def check_target(self, md: Path, target: str, skill_dir: Path | None, kind: str,
+                     plugin_root_reported: bool) -> None:
+        """A reference resolves inside the module, and to something that is there.
+
+        A bare name published on PATH is not a reference — nothing here writes a path to
+        it — and an absolute URL is the permitted way to cite a document that belongs to
+        no module. Neither reaches this function with anything to refuse.
+        """
+        if target.startswith(("http://", "https://", "mailto:")):
+            return
+        if target.startswith("${CLAUDE_PLUGIN_ROOT}"):
+            if not plugin_root_reported:
+                self.report(
+                    md,
+                    "module-anatomy/BR-7",
+                    f"{kind} is built from ${{CLAUDE_PLUGIN_ROOT}}, which nothing "
+                    f"substitutes here, so it resolves to nothing → {target}",
+                )
+            return
+        if target.startswith("${CLAUDE_SKILL_DIR}"):
+            if skill_dir is None:
+                self.report(
+                    md,
+                    "module-anatomy/BR-7",
+                    f"uses ${{CLAUDE_SKILL_DIR}} outside a skill directory → {target}",
+                )
+                return
+            resolved = (skill_dir / target[len("${CLAUDE_SKILL_DIR}/") :]).resolve()
+        else:
+            resolved = (md.parent / target).resolve()
+
+        if not resolved.is_relative_to(self.root.resolve()):
+            self.report(
+                md,
+                "modular-composition/BR-7",
+                f"{kind} resolves outside the module → {target} — {CONTAINMENT_HINT}",
+            )
+        elif not resolved.exists():
+            self.report(md, "module-anatomy/BR-7", f"{kind} names a missing file → {target}")
+        elif kind == "script" and not os.access(resolved, os.X_OK):
+            self.report(
+                md,
+                "module-anatomy/BR-7",
+                f"invokes a script that is not executable (chmod +x) → {target}",
+            )
+
+    def check_published_names(self) -> None:
+        """A name under bin/ is how another module reaches this one; one that cannot run
+        is a reference that fails at the moment it is followed."""
+        # Files only: a bin/lib/ a module's own scripts source is a legitimate arrangement,
+        # and refusing it would be a rule no feature states.
+        for entry in sorted((self.root / "bin").glob("*")) if (self.root / "bin").is_dir() else []:
+            if entry.is_file() and not os.access(entry, os.X_OK):
+                self.report(
+                    entry,
+                    "module-anatomy/BR-7",
+                    "not executable (chmod +x) — a name on PATH that cannot run",
+                )
+
+    # ---------------------------------------------------------------- extension data
+
+    def data_file(self, name: str):
+        """A file the module ships, parsed. Absent is a statement, not a finding."""
+        path = self.root / name
+        if not path.is_file():
+            return None, path
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            self.report(path, "module-anatomy/BR-8", f"does not parse as JSON — {exc}")
+            return None, path
+        if not isinstance(data, dict):
+            self.report(path, "module-anatomy/BR-8", "must be a JSON object")
+            return None, path
+        return data, path
+
+    def check_extension_data(self) -> None:
+        registers, path = self.data_file("registers.json")
+        for name, entry in (registers or {}).items():
+            if not isinstance(entry, dict):
+                self.report(path, "module-anatomy/BR-8", f"register `{name}` is not an object with a skill and a purpose")
+                continue
+            skill = entry.get("skill")
+            if not skill:
+                self.report(path, "module-anatomy/BR-8", f"register `{name}` names no main skill")
+            elif not (self.root / "skills" / str(skill) / "SKILL.md").is_file():
+                self.report(path, "module-anatomy/BR-8", f"register `{name}` names skill `{skill}`, which this module does not ship")
+            if not entry.get("purpose"):
+                self.report(path, "module-anatomy/BR-8", f"register `{name}` states no purpose")
+            # Declaring a register is the promise to consult it. Searched over every
+            # markdown the module ships, not only its SKILL.md files: a skill that routes
+            # the call into a reference file is the arrangement the rules hierarchy asks
+            # for, and looking only at the entry point reports it as a broken promise.
+            if not any(f"scrumia-extends {name}" in self.read(md) for md in self.markdown()):
+                self.report(
+                    path,
+                    "modular-composition/BR-11",
+                    f"declares the register `{name}`, and no skill it ships runs "
+                    f"`scrumia-extends {name}` — the directives are promised and never applied",
+                )
+
+        extends, path = self.data_file("extends.json")
+        for register, rows in (extends or {}).items():
+            if not isinstance(rows, list):
+                self.report(path, "module-anatomy/BR-8", f"`{register}` is not an array of directives")
+                continue
+            for row in rows:
+                if not isinstance(row, dict):
+                    self.report(path, "module-anatomy/BR-8", f"`{register}` holds a directive that is not an object")
+                    continue
+                label = row.get("name") or "(unnamed)"
+                for field in ("name", "summary", "read"):
+                    if not row.get(field):
+                        self.report(path, "module-anatomy/BR-8", f"`{register}` → {label} has no {field}")
+                frag = row.get("read")
+                if not isinstance(frag, str) or not frag:
+                    continue
+                target = (self.root / frag).resolve()
+                if not target.is_relative_to(self.root.resolve()):
+                    self.report(path, "modular-composition/BR-7", f"`{register}` → {label} reads outside the module → {frag} — {CONTAINMENT_HINT}")
+                elif not target.exists():
+                    self.report(path, "module-anatomy/BR-8", f"`{register}` → {label} reads a file this module does not ship → {frag}")
+
+        self.check_dependencies()
+
+    def check_dependencies(self) -> None:
+        path = self.root / "dependencies.jsonl"
+        if not path.is_file():
+            return
+        for n, line in enumerate(self.read(path).splitlines(), 1):
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                self.report(path, "module-anatomy/BR-8", f"line {n} is not a JSON record — one dependency per line")
+                continue
+            if isinstance(record, str):
+                entry = record
+            elif isinstance(record, dict) and isinstance(record.get("run"), str):
+                entry = record["run"]
+            else:
+                self.report(path, "module-anatomy/BR-8", f"line {n} is neither a published name nor an object carrying one under `run`")
+                continue
+            # A source names a marketplace, and every module in one declares the same:
+            # which sibling publishes a name is invisible from a single tree and stays
+            # `scrumia-extends --check`'s question. What is decidable here is that the
+            # entry names a source at all.
+            source, _, name = entry.rpartition(":")
+            if not source:
+                self.report(
+                    path,
+                    "modular-composition/BR-11",
+                    f"runs `{name}` unqualified — name it <source>:<name>, since PATH is "
+                    "shared with every enabled plugin and a bare name says which command, never whose",
+                )
+
+    def run(self) -> list[dict[str, str]]:
+        self.name_from_manifest()
+        self.check_readme()
+        self.check_references()
+        self.check_published_names()
+        self.check_extension_data()
+        self.findings.sort(key=lambda f: (f["file"], f["rule"], f["message"]))
+        return self.findings
+
+
+class CouldNotCheck(Exception):
+    """The tool could not conclude — reported as state `error`, never as a finding."""
+
+
+def render(state: str, module: str, findings: list[dict[str, str]]) -> None:
+    if state == "clean":
+        print(f"{module} — no findings")
+        return
+    print(f"{module} — {len(findings)} finding(s)\n")
+    current = None
+    for finding in findings:
+        if finding["file"] != current:
+            current = finding["file"]
+            print(f"  {current}")
+        print(f"    {finding['rule']}  {finding['message']}")
+
+
+def main(argv: list[str]) -> int:
+    if not argv or argv[0] in ("-h", "--help"):
+        return usage()
+    if argv[0] != "check":
+        print(f"{SELF}: unknown command: {argv[0]}", file=sys.stderr)
+        return usage()
+
+    as_json, target = False, None
+    for arg in argv[1:]:
+        if arg == "--json":
+            as_json = True
+        elif arg in ("-h", "--help"):
+            return usage()
+        elif arg.startswith("-"):
+            print(f"{SELF}: unknown option: {arg}", file=sys.stderr)
+            return usage()
+        elif target is None:
+            target = arg
+        else:
+            print(f"{SELF}: one module at a time — checking many is the caller's loop", file=sys.stderr)
+            return usage()
+
+    root = Path(target or ".")
+    # The four fields tech.md fixes, and no fifth: the audit must emit this same envelope,
+    # and a field only one surface knows about is where the two shapes start to diverge.
+    # Why a run could not conclude goes to stderr, where a human reads it.
+    envelope = {"ok": False, "state": "error", "module": None, "findings": []}
+    reason = ""
+
+    if not (root / ".claude-plugin" / "plugin.json").is_file():
+        envelope["state"] = "not_a_module"
+        reason = f"{root}: not a module — it carries no .claude-plugin/plugin.json"
+    else:
+        checker = Checker(root)
+        try:
+            findings = checker.run()
+        except CouldNotCheck as exc:
+            envelope["module"] = checker.module
+            reason = str(exc)
+        except OSError as exc:
+            envelope["module"] = checker.module
+            reason = f"could not read the module — {exc}"
+        else:
+            envelope.update(
+                ok=True,
+                state="findings" if findings else "clean",
+                module=checker.module,
+                findings=findings,
+            )
+
+    if reason:
+        print(f"{SELF}: {reason}", file=sys.stderr)
+    if as_json:
+        json.dump(envelope, sys.stdout, indent=2)
+        sys.stdout.write("\n")
+    elif envelope["ok"]:
+        render(envelope["state"], envelope["module"], envelope["findings"])
+
+    return EXIT[envelope["state"]]
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

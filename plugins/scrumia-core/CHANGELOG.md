@@ -9,6 +9,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   It computes on demand and stores nothing, so there is no artefact to rebuild or to
   find stale. `--list` names every register the installed modules open; `--check`
   reports a declared edge nothing satisfies.
+- `scrumia-module` — states whether one module meets the anatomy standard, from that
+  module's tree alone: `scrumia-module check [<path>]`, `--json` for the same verdict
+  unrendered. It reads no project config and needs the module installed nowhere, so it
+  answers on a module still being written. It writes nothing — no fix, no scaffold. Its
+  exit status separates five states a boolean collapses, which `--help` enumerates: read
+  `state`, never the length of `findings`, because a non-zero exit is not a finding.
 - `scrumia-extend` — the extension protocol itself: what a register is, what the three
   data files a module may ship declare, and how to open an extension point in a skill.
 - `dependencies.jsonl` — this module declares the published names it runs, each qualified

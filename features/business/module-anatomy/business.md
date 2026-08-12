@@ -157,8 +157,13 @@ checkable, which is the part that was missing.
 
 The same holds for what a module must not carry internally: a file that duplicates
 another module's rule rather than pointing at it, a link to a path that does not exist,
-a script a skill invokes and that was never shipped. Each is an absence rule, each fails
-only at the moment an agent follows it, and none of them is visible to review.
+a script a skill invokes and that was never shipped, a name published under `bin/` that
+cannot run. Each is an absence rule, each fails only at the moment an agent follows it,
+and none of them is visible to review.
+
+The last is the one a module pays for on someone else's behalf. A published name is how
+every other module reaches this one, so a name that is present and not executable fails
+in the caller, which has no way to see why.
 
 ## Extension data is optional, and optional is not unchecked
 
