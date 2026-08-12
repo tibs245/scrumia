@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — A module page names its complements, derived from registers (AC-8)
+## 2026-08-12 — A module page shows what it plugs into, and what it goes well with (AC-8, AC-9)
 - Issue: #297
 - Category: Added
 - Breaking: no

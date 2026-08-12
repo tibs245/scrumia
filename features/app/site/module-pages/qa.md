@@ -139,21 +139,55 @@ Then each one is HTML-escaped before interpolation, the same way a template
   fixed set of entries is
 ```
 
-### AC-8 — A module page names its complements, and nothing declares them
+### AC-8 — A module page shows what it plugs into, derived and never declared
 
 ```gherkin
-Given a module that opens a register and other modules that contribute to it
+Given a module that opens registers, and modules that declare contributions to
+  them
 When that module's page is built, in every language
-Then the contributing modules are listed as its complements, each linking to its
-  own page, derived from what the modules declare about registers rather than
-  from any field naming a complement
-And a module with no complement in either direction shows none, without an
-  empty heading standing where the list would be
+Then it names the registers it opens and the modules contributing to each, and
+  the registers it contributes to and the module opening each — every row linked
+  to its own page
+And all of it is derived from what each module declares in its own
+  `registers.json` and `extends.json`, with no field anywhere naming a relation
+And a module declaring neither shows this section not at all, with no empty
+  heading standing where the list would be
 ```
 
-The derivation is the point. A hand-written "goes well with" list is a second
-statement of a relationship the modules already carry, and it is the half that
-stops being updated first.
+**Derived from the modules' own declarations, not from this repository's
+composition.** `scrumia-extends` answers for the modules a project runs; this
+repository runs five of the twelve, so reading it would leave the implementation
+and practice modules showing nothing while they in fact declare contributions to
+`implement`, `review` and `audit`.
+
+This section says what is mechanically true and stops there. On today's twelve
+modules it is empty for `scrumia-core`, `scrumia-rules` and `scrumia-discovery`,
+which is a correct answer and not a gap — AC-9 is what a reader of those pages
+needs.
+
+### AC-9 — A module page says what it goes well with, and cannot invent one
+
+```gherkin
+Given a module whose usefulness alongside another is not expressed by any
+  register — the kernel every composition needs, or a format written for
+  implementation modules that declares no contribution
+When its page is built
+Then it carries a short editorial line naming those modules and the situation
+  that calls for them, each linked to its own page
+And a module naming one that does not exist fails the build rather than
+  rendering a dead link
+And a module with nothing to say carries no such section, with no empty heading
+  standing where it would be
+```
+
+The two sections answer different questions and neither is a rendering of the
+other: AC-8 says who this module mechanically connects to, AC-9 says what to
+install beside it. Only the second is what a reader arriving at
+`scrumia-rules` — which declares nothing and exists precisely for implementation
+modules — came to find out.
+
+The editorial line lives with the other language-neutral module facts, keyed by
+plugin name, where the builder already fails on an unknown name.
 
 ## Out of scope
 
