@@ -25,7 +25,7 @@ other should point at it. That is a pointer, not a second placement.
 | What was learned | Where it goes |
 |---|---|
 | a rule that holds for every project running a given module | that module |
-| a rule that holds for this project | the project — its configuration, a directive, a rules section |
+| a rule that holds for this project | the project — one of the shapes `local-extension` names |
 | something that changes what the product does or must do | a feature |
 | a debate, a thought, an event, an unresolved disagreement | a ticket |
 | something to correct now, small enough to carry its own justification | the change itself |
@@ -54,6 +54,12 @@ This is the rule the feature is most likely to be argued with on, so it is state
 form that can be checked rather than in the form that sounds right. A project prerequisite
 is exactly the case where the two diverge — it feels like memory and it fails the test,
 because whoever clones the project needs it too.
+
+**The test turns on whether the thing travels, not on which directory it sits in.** A
+memory directory a project versions travels with the clone, so nothing in it is exempt: it
+is project material sitting under a memory-shaped path, and the tree routes it like any
+other. Reading the rule as "files under this path are memory" would let the whole question
+be settled by a directory name, which is how the failure got here.
 
 ## A debate looks for an issue before it creates one
 
@@ -98,7 +104,9 @@ refuses everywhere else.
   it.
 - **BR-4** — Agent memory holds only what would not usefully survive being handed to
   someone else: behaviour, procedure, and this machine's prerequisites. It holds no
-  documentation, no business rule and no module rule.
+  documentation, no business rule and no module rule. The test turns on whether the thing
+  travels, never on the directory it sits in — material a project versions is project
+  material whatever its path.
 - **BR-5** — An entry in agent memory that would have survived the handover is a
   placement failure and is reported as one, with the destination it should have had.
 - **BR-6** — A debate searches issues in every state before creating one, and never

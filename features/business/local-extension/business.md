@@ -44,11 +44,41 @@ terms rather than as a stepping stone:
   register asks for it.
 
 None of these is a degraded module. A project whose entire local extension is four
-directives has extended ScrumIA correctly, and a checker must not report that project as
-having a malformed module — there is no module there to be malformed.
+directives has extended ScrumIA correctly, and nothing may report that project as having a
+malformed module — there is no module there to be malformed.
+
+This is the list `knowledge-placement` routes toward when its answer is "the project". It
+is stated here and nowhere else.
 
 Where a project-local directive sits relative to a module's, and which wins, is
 `modular-composition`'s and is stated there.
+
+## Declared by name, resolved by the environment
+
+A module and its origin are declared in the project's own configuration, by name. Where
+that origin sits on a given machine is not.
+
+| Declared, versioned, travels with the clone | Resolved per machine, never versioned |
+|---|---|
+| the module's name | the filesystem path a shared checkout lives at |
+| which of the three locations it comes from | |
+
+The split exists because both halves of the problem are real and they pull opposite ways.
+A configuration that names an absolute path outside the project puts one machine's layout
+into a versioned file, and is the runtime resolution [ADR-0009](../../../docs/adr/0009-documented-composition.md)
+rejected. A configuration that names nothing leaves the composition unreadable: two
+machines produce two different answers and neither file says so.
+
+Naming the module and its origin gives a reader the composition's full intent — *this
+module comes from a shared checkout* is a fact about the project, and it is the fact AC-6
+and AC-7 turn on. Where that checkout is, is a fact about the machine.
+
+**The per-machine half lives in `.scrumia/.env.local`, and that file is never
+committed.** A repository that versions it has reintroduced exactly the machine path this
+rule removes, so the file's absence from version control is part of the rule and not an
+operational detail. A clone arrives without it, which is the correct starting state: the
+composition then reports declared absences rather than resolving paths that do not exist
+on this machine.
 
 ## Where a module is found is stated, never guessed
 
@@ -87,9 +117,13 @@ on one machine is a module the project cannot be handed to someone else with.
 - **BR-4** — A project with local material and no local module is correctly extended, and
   nothing reports it as carrying a malformed module.
 - **BR-5** — Resolution states the location each module came from.
-- **BR-6** — Two modules answering to one name is a conflict, reported naming both
+- **BR-6** — A module and the location it comes from are declared by name in the
+  project's configuration; the filesystem path a shared checkout sits at is resolved from
+  `.scrumia/.env.local`, which is never committed. No versioned file names a path outside
+  the project.
+- **BR-7** — Two modules answering to one name is a conflict, reported naming both
   locations. Nothing picks between them silently.
-- **BR-7** — A capability reachable only from a location a clone cannot reach is reported
+- **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
   present and never causes a failure.
 

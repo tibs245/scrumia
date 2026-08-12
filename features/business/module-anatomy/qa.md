@@ -2,85 +2,95 @@
 
 One scenario per rule in `business.md`. Each scenario must be able to fail.
 
-## Nominal
+Each criterion names the surface it applies to. A criterion naming neither applies to both.
 
-### AC-1 — The checker produces a verdict on a module it has never seen
+## The procedural check
+
+### AC-1 — A verdict on a module it has never seen
 
 ```gherkin
-Given any directory that claims to be a ScrumIA module
-When the checker is asked for a verdict on it
+Given any directory carrying a plugin manifest
+When the procedural check is asked for a verdict on it
 Then it returns a list of findings — possibly empty — each naming the module, the file
-  and the rule that was not met, and it exits distinguishing "checked, nothing found"
-  from "could not check", so an unreadable module is never reported as a clean one
+  and the rule that was not met, and it exits `0`, `1` or `2` so that "checked, nothing
+  found" is never confused with "could not check"
 ```
 
-### AC-2 — Run on this repository's own modules, the checker returns findings
+### AC-2 — Run on this repository's own modules, it returns findings
 
 ```gherkin
 Given the modules this repository ships, none of which was written against this standard
-When the checker runs over all of them
+When the procedural check runs over all of them
 Then the finding list is not empty, and every finding names a module and a file that
   exist
 ```
 
-The point of this criterion is that it can fail in the direction nobody wants: a checker
-returning nothing on modules that predate its own standard is a checker that checks
-nothing. It stops being useful once the findings are fixed, at which point it is replaced
-by AC-1 on a deliberately malformed fixture rather than deleted with the debt.
+The point of this criterion is that it can fail in the direction nobody wants: a check
+returning nothing on modules that predate its own standard is a check that checks nothing.
+It stops being useful once the findings are fixed, at which point it is replaced by AC-1 on
+a deliberately malformed fixture rather than deleted with the debt.
 
 ### AC-3 — The owner is checked like every other module
 
 ```gherkin
-Given the module that publishes the checker
-When the checker runs over every module the marketplace ships
+Given the module that publishes the procedural check
+When it runs over every module the marketplace ships
 Then that module appears in the run like any other, and a finding against it is reported
-  in the same form as a finding against any other — no skip, no exemption, no separate
-  tier
+  in the same form — no skip, no exemption, no separate tier
 ```
 
-### AC-4 — The checker writes nothing
+### AC-4 — Neither surface writes
 
 ```gherkin
 Given a module with findings against it, in a clean working tree
-When the checker runs over it twice
-Then the working tree is unchanged after both runs, no file was created, repaired or
-  reformatted, and the second run reports exactly what the first did
+When the procedural check runs over it twice, and the audit runs over it twice
+Then the working tree is unchanged after all four runs, no file was created, repaired or
+  reformatted, and each second run reports what its first did
 ```
 
-### AC-5 — The marketplace gate delegates and re-verifies nothing
+### AC-5 — The marketplace gate delegates what a module's tree can answer
 
 ```gherkin
-Given this repository's marketplace gate and the checker
+Given this repository's marketplace gate and the two surfaces
 When the gate runs
-Then every module-level rule it applies comes from the checker, the gate's own checks are
-  only those about the manifest that lists the plugins, their versions and their sources,
-  and no rule is verified in both places
+Then every rule it applies that is decidable from one module's tree comes from the
+  procedural check rather than from its own code
+And the checks it keeps are exactly those neither surface can see: the manifest listing
+  the plugins, their versions and their sources, and the rules governing the specs tree
+And no rule is verified in both places
 ```
 
-A rule verified twice is two renderings of it, and the second one is free to drift. This
-criterion fails the moment a check is copied rather than delegated.
-
-## Absence and boundary
+The second clause is what stops AC-5 from being read as "keep the manifest checks and
+delete the rest". The specs-tree rules are not a module's property and the procedural check
+cannot see them; handing them over would not be delegation, it would leave them unenforced.
 
 ### AC-6 — A module with no README is a finding
 
 ```gherkin
 Given a module that ships skills, a contract and a changelog, and no README
-When the checker runs over it
+When the procedural check runs over it
 Then a finding names the missing README, and the module's `SKILL.md` contract does not
   satisfy it — the two have different readers and one never stands in for the other
 ```
 
-### AC-7 — A reference that resolves outside the module is a finding
+### AC-7 — A reference that resolves outside the module is a finding, and a permitted one is not
 
 ```gherkin
 Given a module containing a relative path that leaves the module's own root
-When the checker runs over it
+When the procedural check runs over it
 Then a finding names the file and the reference, citing the rule as
   `features/business/modular-composition/`'s rather than restating it
+Given instead a module reaching another by a bare name published on `PATH`, or citing a
+  document by absolute URL
+When the same check runs
+Then neither raises a finding
 ```
 
-### AC-8 — A link to a file that does not exist is a finding
+The second half is not decoration. Both forms are what `modular-composition`'s BR-7
+permits and what this repository's own conventions require; a check enforcing only the
+first half flags every citation in every module and is unusable here.
+
+### AC-8 — A link or a script that does not exist is a finding
 
 ```gherkin
 Given a module whose skill links to a relative path, and whose skill invokes a script
@@ -88,37 +98,80 @@ When either target is absent from what the module ships
 Then each is a separate finding naming the referring file and the missing target
 ```
 
-### AC-9 — A file answering two questions is reported
+### AC-9 — Extension data a module ships is checked; extension data it omits is not
+
+```gherkin
+Given a module that opens no register and contributes no directive, shipping none of the
+  extension data files
+When the procedural check runs over it
+Then no finding claims a missing declaration — the absence is a statement
+Given instead a module shipping an `extends.json` that does not parse, or a
+  `registers.json` naming a register it never opens, or a `dependencies.jsonl` naming a
+  source that does not exist
+When the same check runs
+Then each is a finding
+```
+
+This is the case where a module composes cleanly and contributes nothing, and its silence
+looks like a decision.
+
+### AC-10 — A directory that is not a module is refused, not judged
+
+```gherkin
+Given a directory with no `.claude-plugin/plugin.json`
+When the procedural check is asked for a verdict on it
+Then it exits `2`, states that this is not a module, and returns no findings — rather than
+  returning one finding per rule the directory happens not to meet
+```
+
+An unbounded finding list on an arbitrary directory is how a check teaches people to
+ignore it.
+
+## The audit
+
+### AC-11 — A file answering two questions is reported, and a long one is not
 
 ```gherkin
 Given a module file that answers two distinct questions a reader could arrive with
-When the checker runs over it
-Then a finding names it, and the same finding is not raised against a file that answers
-  one question at length — length alone is never the trigger
+When the audit runs over the module
+Then a finding names it
+Given instead a file that answers one question at length
+When the same audit runs
+Then no finding is raised against it — length is never the trigger, in either direction
 ```
 
-The trigger is stated so it can be argued with. A checker that reports on line count
-reports on the wrong thing, and this criterion fails if a long single-concern file is
-flagged.
+Both halves are required. A surface that flags long single-concern files has replaced the
+rule with a proxy, which is what moving this criterion to the audit was meant to avoid.
 
-### AC-10 — An index that carries content is reported
+### AC-12 — An index that carries content is reported
 
 ```gherkin
 Given a module whose entry point lists what the module ships and also states a rule found
   nowhere else
-When the checker runs over it
+When the audit runs over it
 Then a finding names the entry point, because content reachable only through the index is
   content the index carries rather than routes
 ```
 
-### AC-11 — A directory that is not a module is refused, not judged
+### AC-13 — Every audit question is closed, single-concern and answerable from one file
 
 ```gherkin
-Given a directory with no module manifest at all
-When the checker is asked for a verdict on it
-Then it states that this is not a module and returns no findings, rather than returning
-  one finding per rule the directory happens not to meet
+Given the audit's checklist
+When each question is read
+Then it admits a yes or no answer, names exactly one of this feature's rules, and can be
+  answered from a single file without the rest of the module in context
+And no question states a rule that appears nowhere in `business.md`
 ```
 
-An unbounded finding list on an arbitrary directory is how a checker teaches people to
-ignore it.
+This is the criterion that keeps the audit affordable. A question needing the whole module
+in context is one that cannot run on a cheap model, and an audit that cannot run cheaply is
+one that runs once.
+
+### AC-14 — Both surfaces report in one shape
+
+```gherkin
+Given findings produced by the procedural check and findings produced by the audit
+When a consumer merges the two lists
+Then every row carries module, file, rule and one line of what was not met, and nothing in
+  a row's shape reveals which surface produced it
+```

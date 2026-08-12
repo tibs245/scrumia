@@ -24,8 +24,8 @@ of agent memory every time.
 Given a convention that applies to this repository and would not apply to another project
   running the same modules
 When the tree is asked where it belongs
-Then the destination is the project — its configuration, a directive, or a rules section
-  — and the tree names which of the three and why
+Then the destination is the project, the tree names which of the shapes
+  `features/business/local-extension/` lists it should take, and says why that one
 ```
 
 ### AC-3 — Something that changes what the product does lands in a feature
@@ -79,7 +79,19 @@ Then the destination is the project, because a clone needs it too, and the tree 
   rather than accepting the framing it was given
 ```
 
-### AC-8 — An existing memory entry is re-placed on demand
+### AC-8 — A versioned memory directory is not exempt
+
+```gherkin
+Given a project that commits an agent-memory directory, so its contents reach every clone
+When an entry in it is submitted to the tree
+Then the handover test is applied to the entry's content and not to its path, and an entry
+  a colleague would need is routed out of it like any other
+```
+
+A rule that could be satisfied by moving a file into a directory with the right name is
+not the rule this feature states.
+
+### AC-9 — An existing memory entry is re-placed on demand
 
 ```gherkin
 Given an entry already sitting in agent memory
@@ -91,7 +103,7 @@ Then the tree returns either the destination it should have had, with the handov
 
 ## Debates
 
-### AC-9 — An existing issue is found before a new one is created
+### AC-10 — An existing issue is found before a new one is created
 
 ```gherkin
 Given a debate about something an issue already covers, and that issue is closed
@@ -100,7 +112,7 @@ Then the closed issue is found and proposed, because the search covers every sta
   no new issue is created
 ```
 
-### AC-10 — A new debate issue is excluded from what is counted as work
+### AC-11 — A new debate issue is excluded from what is counted as work
 
 ```gherkin
 Given no existing issue matching a debate
@@ -112,7 +124,7 @@ Then it carries the label `features/business/github-tracking/` declares for that
 This criterion fails in the way that matters if the label is created and nothing subtracts
 it: a label nothing queries is documentation, not a filter.
 
-### AC-11 — The board is never the search surface
+### AC-12 — The board is never the search surface
 
 ```gherkin
 Given a debate whose subject was settled and whose issue has left the board
@@ -123,7 +135,7 @@ Then the search runs over issues in every state and not over the board, and the 
 
 ## Refusals and degradation
 
-### AC-12 — One fact, one destination
+### AC-13 — One fact, one destination
 
 ```gherkin
 Given a fact already placed in a module
@@ -132,7 +144,7 @@ Then the tree reports it as already placed, names where, and proposes a pointer 
   than a second copy
 ```
 
-### AC-13 — The reminder does not block
+### AC-14 — The reminder does not block
 
 ```gherkin
 Given an agent writing something to its own memory mid-run
@@ -141,7 +153,7 @@ Then it completes, the run is not interrupted, and the question about placement 
   afterwards
 ```
 
-### AC-14 — An absent destination is named, not improvised
+### AC-15 — An absent destination is named, not improvised
 
 ```gherkin
 Given a composition with no module in the tracker slot

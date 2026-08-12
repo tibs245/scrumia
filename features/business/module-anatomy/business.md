@@ -3,15 +3,14 @@
 ## Value
 
 For whoever writes a ScrumIA module, audits one before adopting it, or has to change a
-single line inside one. It brings a stated internal shape and a checker that produces a
-verdict on any module, so that conformity is something a machine reports rather than
-something a careful reader notices. It matters because a module made of prose has no
-compiler: nothing today fails when a skill grows to answer four questions at once, when
-a link points at a file that was renamed, or when a module ships with no way for a human
-to tell what it is for without opening its skills. Measurable, and the first measure is
-uncomfortable: the count of findings the checker returns on this repository's own
-modules, and the count of checks `tools/validate.py` performs that the checker already
-performs.
+single line inside one. It brings a stated internal shape and a verdict on any module, so
+that conformity is something reported rather than something a careful reader notices. It
+matters because a module made of prose has no compiler: nothing today fails when a skill
+grows to answer four questions at once, when a link points at a file that was renamed, or
+when a module ships with no way for a human to tell what it is for without opening its
+skills. Measurable, and the first measure is uncomfortable: the count of findings returned
+on this repository's own modules, and the count of checks `tools/validate.py` performs
+that are already covered elsewhere.
 
 ## The test this standard is judged on
 
@@ -27,7 +26,7 @@ The failure this standard answers is a different one, and it is not silent — i
 - a human choosing between two modules has to read both to find out what they do
 
 A module can fail every rule below and still compose perfectly. That is precisely why
-the rules need a checker: nothing else will ever notice.
+the rules need something checking them: nothing else will ever notice.
 
 ## One concern per file
 
@@ -62,22 +61,52 @@ which addresses the agent. The two have different readers and say different thin
 README that restates the contract has the wrong audience, and a contract that explains
 what the module is for has the wrong one too.
 
-## One checker, and it owns nothing
+## One authority, two surfaces, split on what a machine can decide
 
-Conformity is verified by exactly one checker, published on `PATH` by the module that
-owns this standard. It states what a module must contain and what it must not, and it is
-the single authority on both.
+This standard is one authority on what a module must contain and what it must not. It is
+applied through two surfaces, and which surface takes a rule is decided by one question:
+**can a program decide it without reading for meaning?**
 
-A consumer of the checker adds only what is its own. This repository's marketplace gate
-has something of its own — the manifest that lists the plugins, their versions and their
-sources, which exists nowhere but here — and it delegates everything else. A check
-performed in two places is two renderings of one rule, and two renderings of one rule
-diverge; the duplication is itself a defect this feature counts.
+| Surface | Takes | Examples |
+|---|---|---|
+| the **procedural check** | what is decidable from the tree alone | a README exists; the extension data files are present and parse; a link resolves; a script a skill invokes ships; nothing resolves outside the module |
+| the **audit** | what has to be read to be judged | this file answers two questions; this index carries what it should route to; this paragraph restates another module's rule instead of pointing at it |
 
-**The checker writes nothing, anywhere.** It reports; it never repairs, never reformats,
-never creates the file it found missing. A tool that fixes what it finds cannot be
-trusted to report what it did not fix, and a verdict that changed the thing it judged
-cannot be reproduced.
+The audit is a checklist an agent answers, question by question, and the questions are
+written so that the cheapest model available can answer them — closed, one concern each,
+answerable from one file at a time. It is not a second standard and it holds no rule of
+its own: every question it asks is one of this feature's rules, phrased as a question.
+
+Splitting this way is what keeps the judged half from being either abandoned or faked. A
+regular expression standing in for "one concern per file" would flag long files and miss
+short muddled ones, and its findings would be argued with until nobody ran it. A rule
+nobody can check is a rule nobody follows.
+
+A rule may be taken by both surfaces where each reaches part of it — the procedural check
+confirming a README exists, the audit judging whether it addresses the right reader. What
+is forbidden is the same *question* asked twice, in two wordings that will drift.
+
+## A consumer adds only what is its own
+
+Whatever a consumer of either surface checks on top must be something neither surface
+covers. This repository's marketplace gate has two such things — the manifest that lists
+the plugins, their versions and their sources, and the rules governing the specs tree,
+neither of which is a property of any single module — and it delegates everything that is.
+A check performed in two places is two renderings of one rule, and two renderings of one
+rule diverge; the duplication is itself a defect this feature counts.
+
+The boundary is what a surface can see. The procedural check reads one module's tree, so
+it can never adopt a rule about the specs tree or about the relationship between modules;
+handing it one would not be delegation, it would be a rule left unenforced.
+
+## Neither surface writes anything
+
+Both report; neither repairs, reformats, or creates the file it found missing. A tool that
+fixes what it finds cannot be trusted to report what it did not fix, and a verdict that
+changed the thing it judged cannot be reproduced.
+
+The audit is held to this the more strictly, because it is the one that could plausibly
+offer to rewrite the file it just criticised.
 
 ## What must be absent is a rule like any other
 
@@ -90,6 +119,22 @@ The same holds for what a module must not carry internally: a file that duplicat
 another module's rule rather than pointing at it, a link to a path that does not exist,
 a script a skill invokes and that was never shipped. Each is an absence rule, each fails
 only at the moment an agent follows it, and none of them is visible to review.
+
+## Extension data is optional, and optional is not unchecked
+
+A module that opens no register and contributes no directive ships none of the extension
+data files, and that is a complete module — `modular-composition` states it and refuses to
+make their presence a condition of being pluggable. This standard does not reverse that.
+
+What it adds is the half that was missing: **a file a module does ship is checked**. An
+`extends.json` that does not parse, a `registers.json` naming a register the module never
+opens, a `dependencies.jsonl` naming a source that does not exist — each is a finding.
+The failure they produce is the one that costs most to trace, because the module composes
+and contributes nothing, and its silence looks like a decision.
+
+That the file may be absent and the absence means something specific is exactly why it
+needs checking when present: nothing else distinguishes "contributes nothing on purpose"
+from "contributes nothing because its declaration is malformed".
 
 ## The standard has no exemption for its owner
 
@@ -110,22 +155,32 @@ is what this feature exists to replace.
 - **BR-4** — Every module carries a README addressed to whoever has not adopted it yet —
   what it is for, what it refuses, what it ships, what it expects. It is not the
   `SKILL.md` contract and does not restate it.
-- **BR-5** — Conformity is verified by exactly one checker, owned and published by the
-  module that owns this standard. A consumer of the checker verifies only what is its
-  own and re-verifies nothing the checker already covers.
-- **BR-6** — The checker writes nothing. It reports a finding; it never repairs,
+- **BR-5** — This standard is one authority, applied through two surfaces. A rule goes to
+  the procedural check when a program can decide it from the module's tree alone, and to
+  the audit when it has to be read to be judged. A consumer of either verifies only what
+  neither covers, and re-verifies nothing they already cover.
+- **BR-6** — Neither surface writes anything. Each reports a finding; neither repairs,
   reformats or creates what it found missing.
 - **BR-7** — The standard states what must be absent as well as what must be present, and
   an absence rule is checked like any other. Where the rule belongs to another feature,
-  the checker enforces it and this one does not restate it.
-- **BR-8** — Every module ships against this standard, the module owning the checker
+  the procedural check enforces it and this one does not restate it.
+- **BR-8** — An extension data file is optional and its absence is a statement. A file a
+  module does ship parses, and declares only things that exist.
+- **BR-9** — Every module ships against this standard, the module owning the two surfaces
   included. There is no exemption, and a finding on the owner is reported like any other.
+- **BR-10** — Every question the audit asks is one of this feature's rules, phrased as a
+  question, closed, and answerable from one file at a time. The audit holds no rule of its
+  own, and a question it cannot answer that way belongs to the procedural check or to
+  neither.
 
 ## Vocabulary
 
-- **Checker** — the single tool that produces a conformity verdict on a module. Not a
-  linter for a language, not the marketplace gate: those are consumers.
-- **Finding** — one stated non-conformity, naming the module, the file and the rule. A
-  finding is not a failure of the run: a checker that found things ran correctly.
-- **Consumer** — anything that invokes the checker and adds its own checks on top. This
+- **The procedural check** — the tool that decides, from a module's tree alone, the rules
+  a program can decide. Not a linter for a language, not the marketplace gate: those are
+  consumers.
+- **The audit** — the checklist an agent answers for the rules that must be read to be
+  judged. Cheap by design: closed questions, one concern each, one file at a time.
+- **Finding** — one stated non-conformity, naming the module, the file and the rule.
+  A finding is not a failure of the run: a surface that found things ran correctly.
+- **Consumer** — anything that invokes either surface and adds its own checks on top. This
   repository's marketplace gate is one; a module's own CI would be another.
