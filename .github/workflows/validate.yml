@@ -25,6 +25,8 @@ jobs:
         run: python3 tools/validate.py
       - name: Check the link gate covers docs/, plugins/ and features/
         run: python3 tools/test_validate.py
+      - name: Check the module checker against the anatomy standard's criteria
+        run: python3 tools/test_module_check.py
       - name: Test the site builder's guards
         run: python3 tools/test_build_site.py
       - name: Check the composer's rows against the files it pre-renders
