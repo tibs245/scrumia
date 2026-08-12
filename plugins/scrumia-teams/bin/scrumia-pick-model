@@ -97,8 +97,10 @@ load_policy() {
   # prefixes would match no ticket and route every one of them to `unlabeled`. The new
   # shape wins key by key.
   # `with_entries` is load-bearing — jq's `*` propagates an explicit null, so a key
-  # written bare mid-migration would overwrite the value the base layer still carries,
-  # and `has()` below cannot see the difference.
+  # written bare mid-migration would overwrite the value the base layer still carries.
+  # It filters the top level only: a null nested deeper, inside `labels`, still wins the
+  # merge and erases the base layer's value. #342 owns that; the warning below at least
+  # names every literal that ends up standing in.
   EXEC=$(jq -c '(.team.execution // {})
                 * ((.execution // {}) | with_entries(select(.value != null)))' <<<"$out")
 
@@ -110,17 +112,17 @@ load_policy() {
 
   # Beyond the grid the tool carries literals, and a literal standing in for a value
   # nobody configured is the same failure one size smaller. Not fatal — the grid still
-  # decides every labelled ticket — but never silent. Each prefix is tested on its own:
-  # a project that configures one and forgets the other matches no ticket on that axis,
-  # and a check on the `labels` block would report that as configured.
+  # decides every labelled ticket — but never silent. Each key is tested for a *value*,
+  # not for its presence: a project migrating one key at a time writes them bare, and a
+  # key that exists holding null is a key this tool is about to stand in for.
   local fell_back
   fell_back=$(jq -r --arg u "$FALLBACK_UNLABELED" --arg r "$FALLBACK_UNRATED_RISK" \
                     --arg sp "$FALLBACK_SCOPE_PREFIX" --arg rp "$FALLBACK_RISK_PREFIX" '
-    [ (if has("unlabeled") then empty else "unlabeled=" + $u end)
-    , (if has("unrated_risk") then empty else "unrated_risk=" + $r end)
-    , (if (.labels | type) == "object" and (.labels | has("scope_prefix")) then empty
+    [ (if .unlabeled != null then empty else "unlabeled=" + $u end)
+    , (if .unrated_risk != null then empty else "unrated_risk=" + $r end)
+    , (if (.labels | type) == "object" and .labels.scope_prefix != null then empty
        else "labels.scope_prefix=" + $sp end)
-    , (if (.labels | type) == "object" and (.labels | has("risk_prefix")) then empty
+    , (if (.labels | type) == "object" and .labels.risk_prefix != null then empty
        else "labels.risk_prefix=" + $rp end) ]
     | join(", ")' <<<"$EXEC")
   [ -z "$fell_back" ] ||
