@@ -5,5 +5,6 @@
   "tagline": "Le noyau. Il décrit la composition et ne fait rien d'autre.",
   "responsibilities": "<p>Porte la composition active du projet : quel module remplit quel slot, où vit la configuration, et les conventions que tous les autres modules supposent. <code>scrumia-init</code> l'installe ou la vérifie ; <code>scrumia-compose</code> l'inspecte, la modifie et la diagnostique.</p>",
   "refusals": "<p>Il ne décide rien qu'un module devrait décider, ne livre aucun déroulé propre, et ne répond jamais à une question qu'un module branché est là pour traiter.</p>",
-  "philosophy": "<p>Présume qu'un projet n'est lisible pour un agent que si sa composition est écrite plutôt que devinée. Coûte un fichier de plus à tenir à jour — une composition périmée est pire qu'aucune.</p>"
+  "philosophy": "<p>Présume qu'un projet n'est lisible pour un agent que si sa composition est écrite plutôt que devinée. Coûte un fichier de plus à tenir à jour — une composition périmée est pire qu'aucune.</p>",
+  "pairs_with": "Chaque module s'appuie dessus, donc il ne nomme aucun complément propre — mais sa compétence <code>/next</code> n'a rien à recommander tant qu'un tracker et une équipe ne l'accompagnent pas :"
 }

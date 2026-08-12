@@ -9,6 +9,9 @@
 | skills | `plugins/<name>/skills/*/SKILL.md` | the directory is the list; a count would go stale, a hand-written list would lie |
 | install command, source link | derived from the name | one rule, twelve pages |
 | emoji, slot | `site/modules.json` | the manifest has no field for either — see below |
+| what it plugs into | every `plugins/*/registers.json` and `extends.json` | derived, walked over the whole marketplace so an unrun module still shows (AC-12) |
+| what it goes well with, the names | `site/modules.json`'s `pairs_with` | a name is language-neutral, validated the same way the emoji is |
+| what it goes well with, the prose | `site/i18n/<lang>/modules/<name>.json`'s `pairs_with` | the *why*, and prose is the only thing that has to exist twice |
 | everything else | `site/i18n/<lang>/modules/<name>.json` | prose, and prose is the only thing that has to exist twice |
 
 The manifest is English-only, so it is the **fact** source and never the **prose**
@@ -67,6 +70,34 @@ Three more guards are added around it, specific to modules:
 
 Each one turns a silent gap into a red build. None of them knows how many modules there
 are.
+
+AC-12 and AC-13 add two more, over the same shape: a `pairs_with` naming a module absent
+from the marketplace, or naming the declaring module itself, fails the same way an unknown
+emoji entry does; a module `pairs_with` names but whose own i18n file carries no
+`pairs_with` prose, in either language, fails too — read directly rather than through a
+bare `{{token}}`, since the section has to vanish entirely for a module with nothing to
+say, and `render_page` gets told the key was legitimately consumed (`preused`) so its own
+unused-string guard doesn't flag it as a leftover.
+
+## What it plugs into (AC-12)
+
+`load_extends_map`, already walking `plugins/*/registers.json` and `extends.json` for the
+home page's `#extends` figure, takes the module list it walks as a parameter now: the
+figure still passes its own composition (`load_project_modules()`), a module page passes
+every marketplace plugin. Reading the project-scoped map here would leave the seven
+modules this repository doesn't run showing no connection while their own files declare
+one — the very substitution AC-12's own issue names as the one thing not to do. A register
+opened with no contributor still gets a row, spelled out (`BR-1`); a module opening and
+extending nothing gets no section, not a heading over an empty table.
+
+## What it goes well with (AC-13)
+
+`site/modules.json`'s `pairs_with` says *who* — a list of module names, validated against
+the marketplace the same pass that already rejects an unknown emoji entry. Each module's
+own `pairs_with` string says *why*, in prose, per language. The two meet in
+`module_pairs_html`: the names become links computed from `@modlink_<name>`, never typed
+into the prose by hand, so a name that doesn't resolve fails the build before it can
+render a dead link.
 
 ## The `@lroot` special
 

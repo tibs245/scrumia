@@ -82,7 +82,7 @@ def test_ac2_every_name_is_real() -> None:
     check("a populated register is named", bool(live.get("@ext_full_register")))
     check("an empty register is named", bool(live.get("@ext_empty_register")))
 
-    real = bs.load_extends_map()
+    real = bs.load_extends_map(bs.load_project_modules())
     check("the populated register's declaring module is one this project runs",
           live.get("@ext_full_module") in [m for m in bs.load_project_modules()])
     check("the populated register's contributors are real modules",
