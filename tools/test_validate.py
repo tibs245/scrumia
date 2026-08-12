@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Tests for tools/validate.py's link gate (#22).
+"""Tests for tools/validate.py — the gate's own rules, and what it delegates.
 
 Run from anywhere: python3 tools/test_validate.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies.
 
-check_doc_links used to only walk docs/, plugins/ and README.md: a broken
-relative link inside features/**/*.md passed with 0 errors. These checks run
-the real function against a throwaway fixture tree, so the gate is proven by
-a link that actually fails, not by reading the glob list.
+Every check runs against a throwaway fixture tree, so it is proven by an input that
+actually fails rather than by reading the glob list. The delegation is held to the same
+bar from both sides: a rule this gate stopped applying is shown coming back through
+`scrumia-module`, and one it kept is shown not being asked twice.
 """
 
 import shutil
@@ -87,7 +87,8 @@ def test_repo_features_pass_the_real_gate() -> None:
     check("no broken link under the real features/ tree", errors == [], str(errors))
 
 
-# --- containment: a plugin reaches nothing outside itself (ADR-0018) ---
+# --- containment: a plugin reaches nothing outside itself (ADR-0018), through the
+# procedural check now rather than through this gate's own code ---
 
 def write_plugin_skill(root: Path, body: str, plugin: str = "scrumia-widget") -> Path:
     skill = root / "plugins" / plugin / "skills" / "scrumia-do"
@@ -96,62 +97,148 @@ def write_plugin_skill(root: Path, body: str, plugin: str = "scrumia-widget") ->
     return skill
 
 
-def test_link_leaving_its_plugin_is_caught() -> None:
-    print("a markdown link resolving outside its own plugin is an error")
+def install_checker(root: Path) -> None:
+    """The real scrumia-module, where check_module_anatomy looks for it in a fixture root.
+
+    Copied rather than stubbed: a fixture checker would test this gate against a verdict
+    nothing else produces, which is the failure delegating was meant to end.
+    """
+    bin_dir = root / "plugins" / "scrumia-core" / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(REPO / "plugins" / "scrumia-core" / "bin" / "scrumia-module", bin_dir)
+
+
+CONFORMANT_README = (
+    "# scrumia-widget\n\nDoes the one thing its name says.\n\n"
+    "## What it answers\n\nWhether the widget is on.\n\n"
+    "## What it refuses\n\nTurning it off.\n\n"
+    "## What it ships\n\n| Skill | Does |\n|---|---|\n| `scrumia-do` | it |\n"
+)
+
+
+def write_module(root: Path, name: str = "scrumia-widget") -> Path:
+    """A directory the procedural check will accept as a module and find nothing wrong with."""
+    plugin = root / "plugins" / name
+    write_manifest(plugin, "0.4.0")
+    (plugin / "README.md").write_text(CONFORMANT_README, encoding="utf-8")
+    return plugin
+
+
+def test_doc_links_leaves_plugins_to_the_procedural_check() -> None:
+    print("check_doc_links no longer resolves inside plugins/ — one rule, one place (AC-5)")
     tmp = Path(tempfile.mkdtemp())
     try:
         (tmp / "docs").mkdir(parents=True)
         (tmp / "docs" / "agents.md").write_text("# Agents\n", encoding="utf-8")
-        write_plugin_skill(tmp, "See [the roles](../../../../docs/agents.md).\n")
+        write_plugin_skill(tmp, "See [the roles](../../../../docs/agents.md) and "
+                                "[nothing](references/gone.md).\n")
         errors = run_doc_links(tmp)
-        check("the escaping link is reported even though the target exists here",
-              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+        check("neither the escaping link nor the dangling one is reported twice",
+              errors == [], str(errors))
     finally:
         shutil.rmtree(tmp)
 
 
-def test_link_into_a_sibling_plugin_is_caught() -> None:
-    print("reaching a sibling plugin by path is an error — installed, it is one segment deeper")
+def test_delegation_still_catches_what_the_gate_stopped_checking() -> None:
+    print("the rules this gate deleted come back through scrumia-module, not from nowhere")
     tmp = Path(tempfile.mkdtemp())
     try:
-        other = tmp / "plugins" / "scrumia-other"
-        other.mkdir(parents=True)
-        (other / "README.md").write_text("# Other\n", encoding="utf-8")
+        install_checker(tmp)
+        plugin = write_module(tmp)
         write_plugin_skill(tmp, "See [the other](../../../scrumia-other/README.md).\n")
-        errors = run_doc_links(tmp)
-        check("the sibling reach is reported",
-              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+        (plugin / "bin").mkdir()
+        (plugin / "bin" / "scrumia-widget-tool").write_text("#!/bin/sh\n", encoding="utf-8")
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the sibling reach is reported, qualified by the feature owning the rule",
+              any("modular-composition/BR-7" in e and "outside the module" in e for e in errors),
+              str(errors))
+        check("the name on PATH that cannot run is reported",
+              any("scrumia-widget-tool" in e and "not executable" in e for e in errors),
+              str(errors))
+        check("each finding names the module and the file, repo-relative",
+              all(e.startswith("plugins/scrumia-widget/") for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
 
 
-def test_intra_plugin_link_still_passes() -> None:
-    print("a link staying inside the plugin is untouched — the rule does not over-reach")
+def test_a_conformant_module_produces_no_finding() -> None:
+    print("a module meeting the standard passes the delegation — the rule does not over-reach")
     tmp = Path(tempfile.mkdtemp())
     try:
-        skill = write_plugin_skill(tmp, "See [the reference](references/traps.md).\n")
-        (skill / "references").mkdir()
-        (skill / "references" / "traps.md").write_text("# Traps\n", encoding="utf-8")
-        errors = run_doc_links(tmp)
+        install_checker(tmp)
+        write_module(tmp)
+        errors = run_check(tmp, "check_module_anatomy")
         check("no findings", errors == [], str(errors))
     finally:
         shutil.rmtree(tmp)
 
 
-def test_script_call_leaving_its_plugin_is_caught() -> None:
-    print("a ${CLAUDE_SKILL_DIR} script call into another plugin is an error")
+def test_a_missing_readme_fails_the_gate() -> None:
+    print("a module with no README is a finding, and a finding fails the gate (AC-6)")
     tmp = Path(tempfile.mkdtemp())
     try:
-        other = tmp / "plugins" / "scrumia-other" / "scripts"
-        other.mkdir(parents=True)
-        (other / "tool.sh").write_text("#!/bin/sh\n", encoding="utf-8")
-        write_plugin_skill(
-            tmp, "```bash\n${CLAUDE_SKILL_DIR}/../../../scrumia-other/scripts/tool.sh\n```\n")
-        errors = run_check(tmp, "check_skill_scripts")
-        check("the cross-plugin script call is reported",
-              any("leaves plugins/scrumia-widget" in e for e in errors), str(errors))
+        install_checker(tmp)
+        (write_module(tmp) / "README.md").unlink()
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the missing README is reported through the delegation",
+              any("README.md" in e and "module-anatomy/BR-4" in e for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
+
+
+def test_a_run_that_could_not_conclude_is_not_read_as_clean() -> None:
+    print("state, never the finding count: exit 1 is the tool failing, not a clean module")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        install_checker(tmp)
+        plugin = write_module(tmp)
+        (plugin / ".claude-plugin" / "plugin.json").write_text("{ not json", encoding="utf-8")
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the run is reported as one that could not conclude",
+              any("could not conclude" in e for e in errors), str(errors))
+        check("and it is not silently folded into an empty finding list",
+              errors != [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_a_directory_that_is_not_a_module_is_not_judged() -> None:
+    print("plugins/ also holds caches — a directory with no manifest is skipped, not judged")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        install_checker(tmp)
+        write_module(tmp)
+        (tmp / "plugins" / ".cache" / "stuff").mkdir(parents=True)
+        errors = run_check(tmp, "check_module_anatomy")
+        check("no verdict is demanded of it", errors == [], str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_every_module_is_checked_including_the_one_shipping_the_checker() -> None:
+    print("the loop covers every module, the checker's own included — no exemption (AC-3)")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        install_checker(tmp)
+        write_module(tmp)
+        write_module(tmp, "scrumia-other")
+        (tmp / "plugins" / "scrumia-other" / "README.md").unlink()
+        write_manifest(tmp / "plugins" / "scrumia-core", "0.4.0")
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the module owning the checker is judged like any other",
+              any(e.startswith("plugins/scrumia-core/") for e in errors), str(errors))
+        check("a later module is reached, so the loop does not stop at the first verdict",
+              any(e.startswith("plugins/scrumia-other/") for e in errors), str(errors))
+        check("and the conformant one draws nothing",
+              not any(e.startswith("plugins/scrumia-widget/") for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_the_real_marketplace_passes_the_delegation() -> None:
+    print("every module this repository ships meets the standard as the gate now applies it")
+    errors = run_check(REPO, "check_module_anatomy")
+    check("no finding on any shipped module", errors == [], str(errors))
 
 
 def test_canonical_url_naming_no_file_is_caught() -> None:
@@ -175,20 +262,6 @@ def test_canonical_url_naming_a_real_file_passes() -> None:
         write_plugin_skill(tmp, f"See [the ADR]({v.CANONICAL_BLOB}docs/adr/0018-real.md).\n")
         errors = run_doc_links(tmp)
         check("no findings", errors == [], str(errors))
-    finally:
-        shutil.rmtree(tmp)
-
-
-def test_non_executable_published_name_is_caught() -> None:
-    print("a bin/ entry that cannot run is an error — PATH would find it and fail")
-    tmp = Path(tempfile.mkdtemp())
-    try:
-        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
-        bin_dir.mkdir(parents=True)
-        (bin_dir / "scrumia-widget-tool").write_text("#!/bin/sh\n", encoding="utf-8")
-        errors = run_check(tmp, "check_published_names")
-        check("the non-executable name is reported",
-              any("not executable" in e for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -919,13 +992,16 @@ def main() -> int:
     for test in (test_broken_link_under_features_is_caught,
                  test_valid_link_under_features_passes,
                  test_repo_features_pass_the_real_gate,
-                 test_link_leaving_its_plugin_is_caught,
-                 test_link_into_a_sibling_plugin_is_caught,
-                 test_intra_plugin_link_still_passes,
-                 test_script_call_leaving_its_plugin_is_caught,
+                 test_doc_links_leaves_plugins_to_the_procedural_check,
+                 test_delegation_still_catches_what_the_gate_stopped_checking,
+                 test_a_conformant_module_produces_no_finding,
+                 test_a_missing_readme_fails_the_gate,
+                 test_a_run_that_could_not_conclude_is_not_read_as_clean,
+                 test_a_directory_that_is_not_a_module_is_not_judged,
+                 test_every_module_is_checked_including_the_one_shipping_the_checker,
+                 test_the_real_marketplace_passes_the_delegation,
                  test_canonical_url_naming_no_file_is_caught,
                  test_canonical_url_naming_a_real_file_passes,
-                 test_non_executable_published_name_is_caught,
                  test_feature_missing_mandatory_file_is_caught,
                  test_feature_with_all_mandatory_files_passes,
                  test_feature_index_invented_section_is_caught,

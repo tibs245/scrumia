@@ -21,9 +21,9 @@ jobs:
       # Installed here rather than further down: the first step that needs it wins.
       - name: Install the YAML reader the shell tools fall back on
         run: python3 -m pip install --quiet pyyaml
-      - name: Validate manifests, skills, hooks, links and the extension data
+      - name: Validate the manifest, the specs tree, and every module through scrumia-module
         run: python3 tools/validate.py
-      - name: Check the link gate covers docs/, plugins/ and features/
+      - name: Check the gate's own rules, and that it delegates the module ones
         run: python3 tools/test_validate.py
       - name: Check the module checker against the anatomy standard's criteria
         run: python3 tools/test_module_check.py
