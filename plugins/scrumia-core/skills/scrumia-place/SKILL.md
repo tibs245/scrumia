@@ -35,9 +35,10 @@ Write what was learned as a rule someone who was not there could act on. "Reads 
 board without a filter truncate at thirty" is a fact; "I ran the board and got thirty rows"
 is a run.
 
-If the sentence needs an *and*, or carries two claims of different reach, it is two facts.
-Split them and route each separately — one memory entry routinely holds a general lesson
-plus a detail true only of this repository, and those have different destinations.
+If the sentence needs an *and*, or carries two claims of different reach, or states a rule
+*and* objects to something still in flight, it is two facts. Split them and route each
+separately — one memory entry routinely holds a general lesson, a detail true only of this
+repository, and a live disagreement, and those have three different destinations.
 
 ## Step 2 — Ask whether it is already placed
 
@@ -47,7 +48,9 @@ places, and the composition says where each one sits — never assume a layout:
 - the modules this project runs, skills and references included;
 - the project's own rules — its `CLAUDE.md` and its configuration;
 - the specs root, as the specs contract in `CLAUDE.md` names it;
-- the tracker, for anything that reads like a debate.
+- the tracker, for anything that reads like a debate;
+- the agent memory directories themselves. A fact already sitting in one is placed, rightly
+  or wrongly, and re-placing it is Step 3's job — writing a second copy of it is not.
 
 Grep the tokens that survive someone else's phrasing — a command name, a flag, a number —
 rather than your own sentence, which is the one wording certain not to be there:
@@ -61,6 +64,16 @@ pointer from wherever you were about to write it — one line naming the authori
 second statement of the rule. "I will restate it somewhere closer to hand" is exactly the
 duplication this step exists to catch.
 
+Where what you are routing is itself the second copy — an entry that already exists
+somewhere with more authority — stopping is not the whole answer. The authority stands, the
+entry is the duplicate, and the answer says so: reduce it to a pointer, or drop it. Leaving
+both is the two-copies state this step exists to end, and a sweep meets it constantly.
+
+The search has a third outcome besides *placed* and *not placed*, and it is the one worth
+saying out loud: **the fact is not true here.** A file that was never renamed, a flag that
+does not exist, a rule contradicted by what you just read. Say so and stop — a wrong fact
+has no destination, and every branch below will happily give it one.
+
 ## Step 3 — The tree
 
 Ask these in order. The first *yes* is the destination, and nothing after it is asked.
@@ -68,34 +81,60 @@ Ask these in order. The first *yes* is the destination, and nothing after it is 
 | # | Ask | Yes → |
 |---|---|---|
 | 1 | Does it hold for every project running one of the modules this composition runs? | that module |
-| 2 | Does it hold for this repository, and not for another project running the same modules? | the project |
-| 3 | Does it change what the product does or must do? | a feature |
+| 2 | Does it change what the product does or must do? | a feature |
+| 3 | Does it govern how work is done here? | the project |
 | 4 | Is it unresolved — a disagreement, a thought, an event, something that is not a rule yet? | a ticket |
 | 5 | Once it is corrected, would nobody need to be told? | the change itself |
 | 6 | none of the above | Step 4 decides |
 
-The order is reach, widest first. That is what stops a rule every project needs from being
-parked where only this one can read it — the failure this tree was built after.
+Questions 1 to 3 ask **what the fact is a rule about** — a module's behaviour, the
+product's, or the way work is done here — and only in that order. Questions 4 and 5 catch
+what is not a rule at all.
+
+**The product is asked about before the repository, and that ordering is load-bearing.**
+Almost everything true of the product is also true of the repository holding it, so a
+project question asked first swallows every product behaviour there is. It bites hardest on
+a repository that ships its own tooling — where a rule about the tool and a convention of
+the house are the same sentence — and that is the case the order is built for, not an edge
+of it.
+
+Questions 1 and 2 both fit more often than they look, because a rule the product is built
+to satisfy is frequently also a rule about a module you run. Question 1 is how a module
+*behaves when you run it*; question 2 is what the product *must do*, the kind of rule that
+has to be written before it can be built. When both genuinely fit, the module answer is the
+one that reaches every project running it, which is why it is asked first.
 
 **1 — that module.** Name it: the module that publishes the thing the fact is about. A rule
 about how a published name behaves belongs to whoever publishes it, not to the project that
-tripped over it. Where no module owns it, do not create one for it —
+tripped over it.
+
+Where the cause sits in one module and the rule has to be acted on in another, the
+destination is **the module whose skill would carry the sentence** — where it is read at
+the moment it applies. A rule filed against its cause and never read where it bites is
+placed wrong, however accurately it names the cause.
+
+Where no module owns it at all, do not create one for it —
 [`module-authoring`](https://github.com/tibs245/scrumia/blob/main/features/business/module-authoring/business.md)
-refuses a module for a single rule — and carry on to question 2.
+refuses a module for a single rule. It still has to live where a reader will find it, so it
+takes question 3's branch, and the answer says plainly that its reach is wider than the
+place now holding it. That is the honest form of the refusal, and it is not a reason to
+widen a module until one is warranted.
 
-**2 — the project.** Say which of the three shapes
-[`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)
-lists it takes — a directive contributed to a register, a rules section, or a skill the
-project ships to itself — and why that one, in a line. **A prerequisite lands here, not in
-memory**: "you need X to work on this" is framed as a note about a machine and is needed by
-whoever clones the repository. What is on *your* machine and not in the project's
-prerequisites is question 6's.
-
-**3 — a feature.** Name the feature that owns the behaviour, or state that none exists yet.
+**2 — a feature.** Name the feature that owns the behaviour, or state that none exists yet.
 That statement is an answer, not a failure. Do not pick the file inside it: which file
 receives what is the specs module's
 ([`feature-format`](https://github.com/tibs245/scrumia/blob/main/features/business/feature-format/business.md)),
 and this skill stops at the feature.
+
+**3 — the project.** This branch is how work is done here, not what the product does — a
+convention, a house rule, a prerequisite. Say which of the three shapes
+[`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)
+lists it takes — a directive contributed to a register, a rules section, or a skill the
+project ships to itself — and why that one, in a line. Naming the shape is the answer;
+which register a directive joins is settled where it is written, not here. **A prerequisite
+lands in this branch, not in memory**: "you need X to work on this" is framed as a note
+about a machine and is needed by whoever clones the repository. What is on *your* machine
+and absent from the project's prerequisites is question 6's.
 
 **4 — a ticket.** A ticket is the one place this composition already keeps *why*, which is
 what an unresolved thing needs. Look for the issue that already covers it before creating
