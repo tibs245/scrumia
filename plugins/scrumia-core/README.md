@@ -28,6 +28,7 @@ marketplace's own manifests on demand, rather than by memorizing a table that go
 | `scrumia-compose` | Inspects, changes or diagnoses which module fills which slot. |
 | `scrumia-extend` | The extension protocol itself — what a register is, what the three data files a module may ship declare, and how a skill opens an extension point. |
 | `scrumia-extends` | Published on `PATH`. Prints, for one register, every directive the installed modules contribute — name, type, required or not, one line, the file to open. `--list` names every open register; `--modules` says where each declared module resolved from, of the three places one may live; `--check` reports a declared dependency nothing satisfies. |
+| `scrumia-module-audit` | Audits one module against the anatomy rules a program cannot decide from its tree — one concern per file, an index that carries content, and the README's optional sections against what the module actually reads and needs. Reports in the same finding shape as `scrumia-module check --json`. |
 | `/next` | Reads the composition and the tracker, and recommends the next workflow step. Recommends; launches nothing. |
 
 ## Settings it reads
