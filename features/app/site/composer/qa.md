@@ -104,14 +104,40 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
 Given a visitor who has answered the seven slots
 When they look for a module that adds a capability without replacing any of them
 Then the composer offers the modules that fill no slot, stated as additions
-  rather than as an eighth slot, and picking one changes the two artifacts it
-  takes away — the install commands and the `extends` list in the config
-And leaving all of them unpicked is a complete composition, not an unanswered
+  rather than as an eighth slot, and picking one changes both artifacts it takes
+  away — the install commands and the `extends` list in the config
+And leaving every addition unpicked is a complete composition, not an unanswered
   question
 ```
 
 The seven rows are choices between alternatives; these are not. Drawing them as
-an eighth row would claim a slot that `modular-composition` does not define.
+an eighth row would claim a slot that `modular-composition` does not define — and
+since `extends` is a flat list, an addition is one more line in it, indistinguishable
+from a module that answers a slot.
+
+### AC-10 — A visitor's own module reaches the config, and only the config
+
+```gherkin
+Given a visitor who runs a module this site has never heard of
+When they name it in the additions block and state which of the three locations
+  it comes from
+Then it appears in the emitted `extends` list like any other entry
+And no install command is emitted for it — the site cannot know how to install
+  what it does not ship, and stating that is what keeps the rest of the commands
+  trustworthy
+And a module named with no location stated is refused rather than assumed to be
+  published
+```
+
+This is what stops the composer reading as a closed catalogue. The mechanism costs
+one line because `extends` is flat: what a visitor adds and what this marketplace
+ships occupy the same list, which is the argument the section exists to make.
+
+A custom **slot** is deliberately absent, and not as an omission: since
+[ADR-0019](../../../../docs/adr/0019-extends-replaces-composition-and-practices.md)
+the configuration carries no slot key for one to be written into. A visitor wanting
+their own step contributes a directive to a register — `features/business/local-extension/`
+BR-3 — which needs no module and no slot at all.
 
 ## Out of scope
 
