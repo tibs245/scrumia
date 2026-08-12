@@ -44,6 +44,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   individually.
 - `scrumia-project-setup`'s label table now names `scrumia-manager` as a reader of
   `scope/*`, alongside `pick-model.sh`, so the row no longer implies a single reader.
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
 
 ### Deprecated
 - `scripts/board.sh` — kept as a shim that warns and delegates. It is removed at the second

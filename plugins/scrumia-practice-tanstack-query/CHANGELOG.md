@@ -7,6 +7,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `extends.json` — the query-key contract, `queryOptions` and the no-duplication refusal
   are contributed to the `implement` and `review` registers.
 
+### Changed
+- `README.md` brought into the module-anatomy template: "What it refuses" was missing
+  entirely and is now stated; "Skills" is renamed "What it ships"; "Settings" is renamed
+  "Settings it reads" and no longer reproduces the YAML schema `scrumia-tanstack-query`'s
+  own contract already carries; "Project override" folds into "What it expects to find".
+  No content dropped, sections reordered to the required reading order.
+
 ## [0.4.0] - 2026-08-10
 ### Added
 - The `practices` slot for TanStack Query, applied app by app and adapter-agnostic: query keys, the `queryOptions()` factory, `useQuery` through testing.

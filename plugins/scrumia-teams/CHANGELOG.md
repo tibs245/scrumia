@@ -16,6 +16,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   path into it, and says what to do when the name is not found — never read the board by hand.
 - Every link into this repository's ADRs and specs is an absolute URL: a relative one assumed
   a consuming project had files it has never had.
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
 
 ### Deprecated
 - `scripts/pick-model.sh` — kept as a shim that warns and delegates. It is removed at the
