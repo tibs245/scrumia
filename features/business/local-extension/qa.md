@@ -10,8 +10,9 @@ One scenario per rule in `business.md`. Each scenario must be able to fail.
 Given a well-formed module sitting in a directory of checkouts rather than in a
   marketplace, contributing a directive to a register this project's composition opens
 When the directives for that register are asked for
-Then its directive appears in the table, and the only thing that had to happen is the
-  project declaring the module
+Then its directive appears in the table, and the steps taken were exactly two: the module
+  enabled in the harness, and one key added to `modules` — no path written into any
+  versioned file, no per-module configuration beyond that key
 ```
 
 ### AC-2 — A module inside the project reaches the same table

@@ -88,10 +88,18 @@ heading is worse than an absent one. And **no restatement of the `SKILL.md` cont
 the settings section names what the module reads and points at the contract for the
 schema, rather than reproducing it.
 
-A guardrail rather than a rule: past roughly eighty lines a README has become
-documentation, and documentation belongs in the module's skills or in `docs/`. The two
-READMEs this repository already ships sit at forty-five and forty-eight lines. Exceeding
-it calls for checking, not for cutting.
+A guardrail rather than a rule, and the audit's to raise: past roughly eighty lines a
+README has become documentation, and documentation belongs in the module's skills or in
+`docs/`. The procedural check does not own it — a length that triggers a finding is the
+proxy BR-2 refuses — so it is one of the audit's questions, answered by reading what the
+extra lines are doing. The two READMEs this repository already ships sit at forty-five and
+forty-eight lines. Exceeding it calls for checking, not for cutting.
+
+**Whether an optional section is missing is also the audit's.** Whether a module reads a
+setting is not decidable from its tree, so "the module reads five settings and ships no
+*Settings it reads*" is a question read rather than computed. Without that, the section
+whose absence is supposed to assert something can be omitted by a module the assertion is
+false for — the failure this whole split exists to catch, on its most likely instance.
 
 ## One authority, two surfaces, split on what a machine can decide
 
