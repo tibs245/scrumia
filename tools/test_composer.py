@@ -2,7 +2,9 @@
 """Tests for the home page's composer (#56).
 
 Run from anywhere: python3 tools/test_composer.py
-Exit code 0 when everything passes, 1 otherwise. No dependencies.
+Exit code 0 when everything passes, 1 otherwise. Needs PyYAML, which the site
+build already requires: the config block is parsed rather than pattern-matched,
+so a key this repo quotes wrongly fails here instead of at whoever pastes it.
 
 The composer states its result twice: once in the rows a reader chooses from,
 and once in the two files pre-rendered in the template so the takeaway is
@@ -20,6 +22,8 @@ import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
+
+import yaml
 
 REPO = Path(__file__).resolve().parent.parent
 PAGES = {"en": REPO / "site" / "index.html", "fr": REPO / "site" / "fr" / "index.html"}
@@ -53,8 +57,21 @@ def js_object(name: str) -> dict:
     return json.loads(body)
 
 
+def js_string(name: str) -> str:
+    """Lift one `var NAME = '...';` literal out of composer.js."""
+    match = re.search(rf"var {name} = '([^']*)';", COMPOSER_JS.read_text(encoding="utf-8"))
+    if not match:
+        raise SystemExit(f"composer.js: no `var {name} = '...';` to read")
+    return match.group(1)
+
+
 APPS = js_object("APPS")
 PRACTICES = js_object("PRACTICES")
+SOURCE = js_string("SOURCE")
+
+
+def source_key(module: str) -> str:
+    return f"{SOURCE}:{module}"
 
 
 # --- reading the page --------------------------------------------------------
@@ -82,7 +99,7 @@ class Composer(HTMLParser):
             self._depth += 1
         elif tag == "input":
             self.inputs.append({"name": a.get("name", ""), "value": a.get("value", ""),
-                                "checked": "checked" in a})
+                                "checked": "checked" in a, "note": a.get("data-note", "")})
         elif tag == "details":
             self.details_names.append(a.get("name", ""))
         elif tag == "pre" and a.get("id"):
@@ -147,18 +164,23 @@ def test_ac3_config_block_matches_the_rows() -> None:
     print("AC-3 the pre-rendered config declares exactly what the rows chose")
     for lang, page in PAGES.items():
         c = read(page)
-        config = c.pre["composer-config"]
+        try:
+            config = yaml.safe_load(c.pre["composer-config"])
+        except yaml.YAMLError as e:
+            check(f"{lang}: the config block is YAML", False, str(e))
+            continue
+        check(f"{lang}: the config block is YAML", isinstance(config, dict))
 
-        for slot in SINGLE:
-            value = (c.checked("c-" + slot) or [""])[0]
-            want = value if value and value != "other" else "null"
-            line = re.search(rf"^  {slot}: (\S+)", config, re.MULTILINE)
-            check(f"{lang}: composition.{slot} is {want}",
-                  line is not None and line.group(1) == want,
-                  f"got {line.group(1) if line else 'no line'}")
+        want = [source_key(v) for v in
+                ((c.checked("c-" + s) or [""])[0] for s in SINGLE)
+                if v and v != "other"]
+        got = list((config.get("modules") or {}).keys())
+        check(f"{lang}: modules: holds one key per slot answered with a module",
+              got == want, f"{got} != {want}")
 
         stacks = c.checked("c-impl")
-        names = re.findall(r"^  - name: (\S+)$", config, re.MULTILINE)
+        apps = config.get("apps") or []
+        names = [a.get("name") for a in apps]
         check(f"{lang}: one apps[] entry per checked stack",
               names == [APPS[s]["name"] for s in stacks],
               f"{names} != {[APPS[s]['name'] for s in stacks]}")
@@ -166,16 +188,34 @@ def test_ac3_config_block_matches_the_rows() -> None:
         # A practice belongs only under the app types it speaks for: a backend
         # declaring a frontend data-fetching practice is the bug this catches.
         chosen = [PRACTICES[p] for p in c.checked("c-practice")]
-        blocks = re.findall(r"^  - name: \S+\n    path: \S+\n    type: (\S+)\n"
-                            r"    implementation: (\S+)\n    practices: \[(.*)\]$",
-                            config, re.MULTILINE)
-        check(f"{lang}: every apps[] entry parses", len(blocks) == len(names),
-              f"{len(blocks)} of {len(names)}")
-        for app_type, _impl, listed in blocks:
-            want = [p["module"] for p in chosen if app_type in p["types"]]
-            got = [m for m in listed.split(", ") if m]
-            check(f"{lang}: {app_type} app carries only its own practices",
+        for stack, app in zip(stacks, apps):
+            impl = APPS[stack]["impl"]
+            app_type = app.get("type")
+            want = [source_key(m) for m in
+                    ([impl] if impl else []) +
+                    [p["module"] for p in chosen if app_type in p["types"]]]
+            got = list((app.get("modules") or {}).keys())
+            check(f"{lang}: the {app_type} app declares its stack and only its own practices",
                   got == want, f"{got} != {want}")
+
+
+def test_ac3_every_key_is_source_qualified() -> None:
+    print("AC-3 every emitted key is <source>:<module>, and the source is a real one")
+    for lang, page in PAGES.items():
+        c = read(page)
+        config = yaml.safe_load(c.pre["composer-config"])
+        keys = list((config.get("modules") or {}).keys())
+        for app in config.get("apps") or []:
+            keys += list((app.get("modules") or {}).keys())
+        check(f"{lang}: the config declares at least one module", bool(keys))
+        for key in keys:
+            source, _, module = key.rpartition(":")
+            # BR-13's three sources; a bare name is a key nothing resolves.
+            valid = module and (source in ("local", "shared")
+                                or re.fullmatch(r"[^/]+/[^/]+", source))
+            check(f"{lang}: '{key}' is keyed by its source", bool(valid))
+        check(f"{lang}: every value is an empty mapping — the composer writes no params",
+              all(v == {} for v in (config.get("modules") or {}).values()))
 
 
 def test_ac5_the_two_indexes_stay_two_accordions() -> None:
@@ -198,10 +238,18 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
               c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-practice"},
               str(sorted(c.groups())))
 
+        # An absence gets no key, so the note is all that reaches the file.
+        for slot in SINGLE:
+            for i in c.inputs:
+                if i["name"] == "c-" + slot and i["value"] in ("", "other"):
+                    check(f"{lang}: {slot}'s '{i['value'] or 'empty'}' option states its consequence",
+                          bool(i["note"]), "no data-note")
+
 
 def main() -> int:
     for test in (test_ac3_install_block_matches_the_rows,
                  test_ac3_config_block_matches_the_rows,
+                 test_ac3_every_key_is_source_qualified,
                  test_ac5_the_two_indexes_stay_two_accordions,
                  test_ac6_no_slot_is_answered_without_being_asked):
         test()

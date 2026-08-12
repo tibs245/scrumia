@@ -234,12 +234,30 @@ def test_ac10_no_count_that_rots() -> None:
           not re.search(r"\bext-(?:row|contributes|register)[^>]*>\s*\d", extends_section("en")))
 
 
+def test_composition_shape_precedence() -> None:
+    print("the composition is read in the shape order modular-composition's tech.md fixes")
+    modules = {"tibs245/scrumia:scrumia-specs": {}, "local:acme-rules": {}}
+    check("a modules: mapping resolves to the module half of each key",
+          bs.declared_modules({"modules": modules}) == ["scrumia-specs", "acme-rules"],
+          str(bs.declared_modules({"modules": modules})))
+    check("modules: wins over a retired extends: left beside it",
+          bs.declared_modules({"modules": modules, "extends": ["stale"]})
+          == ["scrumia-specs", "acme-rules"])
+    check("extends: is still read when it is the only shape present",
+          bs.declared_modules({"extends": ["scrumia-specs"]}) == ["scrumia-specs"])
+    # An empty answer is what would render a figure that is quietly no longer true.
+    check("a composition declaring neither resolves to nothing",
+          bs.declared_modules({"project": {}}) == [])
+    check("modules: written with nothing under it resolves to nothing",
+          bs.declared_modules({"modules": None}) == [])
+
+
 def main() -> int:
     for test in (test_ac1_mechanism_not_a_bare_claim, test_ac2_every_name_is_real,
                  test_ac3_empty_register_is_named_not_omitted, test_ac4_reaches_reference_and_slots,
                  test_ac5_legible_with_no_script, test_ac6_tokens_only,
                  test_ac7_turns_rather_than_scrolls, test_ac8_figure_is_not_the_only_carrier,
-                 test_ac10_no_count_that_rots):
+                 test_ac10_no_count_that_rots, test_composition_shape_precedence):
         test()
     print()
     if FAILURES:
