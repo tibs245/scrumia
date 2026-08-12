@@ -31,17 +31,19 @@ And when it is chosen, the row falls to the empty state — muted name, dashed
   with no module of its own
 ```
 
-Every comment starts with `#`. It is the whole of its line now, so one that lost
-its marker would not read as a weaker statement of the cost — it would be parsed
-as configuration, which is why the marker is asserted rather than assumed.
+Every comment starts with `#`, and the marker is asserted rather than assumed:
+one that lost it would not read as a weaker statement of the cost, it would be
+parsed as configuration. A project-level comment is the whole of its line; the
+one an emptied app carries trails its `modules: {}` on the same line, and loses
+that line to a parse error rather than to a misreading.
 
 An app that keeps an implementation module but no practice carries no separate
-comment: the mapping it does carry already names what runs, and a note saying a
-second thing is absent beside a key saying what is present is the reading
-`slot-index` refuses. The two per-app slots reach the file through that mapping
-or not at all.
+comment. The mapping it does carry already names what runs, and this feature
+takes a note asserting a second thing is absent, beside a key stating what is
+present, to be worth less than the noise it adds to every app block. The two
+per-app slots reach the file through that mapping or not at all.
 
-### AC-3 — The output is copyable and matches what `scrumia-init` would verify
+### AC-3 — The output is copyable and carries the shape ADR-0021 defines
 
 ```gherkin
 Given a composition chosen in the composer
