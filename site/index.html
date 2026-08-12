@@ -374,7 +374,7 @@
           <!-- A tracker of your own is a variant of empty, not a third fill: the
                slot has no module until you write one. -->
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-tracker" value="other" data-note="# yours to write — the slot contract is one page">
+            <input type="radio" name="c-tracker" value="other" data-note="# no tracker of ours — yours to write, the slot contract is one page">
             <b>A tracker of your own</b><span>Jira, Linear, anything else. The slot has a defined contract, so the module is bounded work — until it exists the slot is empty and behaves as such.</span>
           </label>
           <label class="opt opt-3 opt-empty">
@@ -428,7 +428,7 @@
             <b>scrumia-discovery</b><span>A scoping pass between an idea and a ticket: challenge it, split it into features, write the specs on a branch.</span>
           </label>
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-discovery" value="" data-note="# an idea goes straight to a ticket, unscoped">
+            <input type="radio" name="c-discovery" value="" data-note="# no discovery — an idea goes straight to a ticket, unscoped">
             <b>Leave it empty</b><span>An idea goes straight to a ticket without a scoping pass, and the agents are told to say so instead of improvising one.</span>
           </label>
         </div>
@@ -569,24 +569,26 @@ project:
   name: your-project
   repo: you/your-repo   <span class="c"># replace these two with yours</span>
 
-composition:
-  specs: <span class="m">scrumia-specs</span>
-  tracker: <span class="m">scrumia-github-project</span>
-  team: <span class="m">scrumia-teams</span>
-  discovery: <span class="m">scrumia-discovery</span>
-  design: <span class="m">scrumia-design</span>
+modules:
+  "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-github-project</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-teams</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-discovery</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-design</span>": {}
 
 apps:
   - name: api
     path: apps/api
     type: backend
-    implementation: <span class="m">scrumia-impl-rust</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: web
     path: apps/web
     type: frontend
-    implementation: <span class="m">scrumia-impl-solidjs</span>
-    practices: [<span class="m">scrumia-practice-tdd</span>]</pre>
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}</pre>
     </div>
   </div>
 

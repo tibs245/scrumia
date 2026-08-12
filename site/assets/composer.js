@@ -19,8 +19,12 @@
   var live = document.getElementById('composer-live');
 
   /* The five slots that take one module. Order is the order of the rows, of the
-     install lines and of the composition: block — one sequence, said three times. */
+     install lines and of the modules: mapping — one sequence, said three times. */
   var SINGLE = ['specs', 'tracker', 'team', 'discovery', 'design'];
+
+  /* The source half of every key emitted, per ADR-0021 — the marketplace the
+     install block adds. A bare name is not a shorter spelling: nothing resolves it. */
+  var SOURCE = 'tibs245/scrumia';
 
   var APPS = {
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
@@ -111,22 +115,29 @@
     return parts;
   }
 
+  // Only the module name is coloured: the source repeats on every line, so
+  // painting it too spends the emphasis on the half nobody chose.
+  function entry(parts, depth, module) {
+    var pad = new Array(depth + 1).join(' ');
+    parts.push(pad + '"' + SOURCE + ':', { t: module, c: 'm' }, '": {}');
+  }
+
   function configParts(result) {
     var parts = [{ t: S.config, c: 'c' },
                  '\nproject:\n  name: your-project\n  repo: you/your-repo   ',
-                 { t: S.project, c: 'c' }, '\n\ncomposition:\n'];
+                 { t: S.project, c: 'c' }, '\n\nmodules:\n'];
 
     SINGLE.forEach(function (slot) {
       var input = result.slots[slot];
       var value = input ? input.value : '';
-      parts.push('  ' + slot + ': ');
       if (value && value !== 'other') {
-        parts.push({ t: value, c: 'm' });
+        entry(parts, 2, value);
+      } else if (note(input)) {
+        // No key exists for an absence, so the consequence is the only thing
+        // left standing where the module would have been.
+        parts.push('  ', { t: note(input), c: 'c' });
       } else {
-        // A null is a decision, so it carries the reason it was made — the one
-        // place the consequence survives being pasted into a repo.
-        parts.push('null');
-        if (note(input)) parts.push('   ', { t: note(input), c: 'c' });
+        return;
       }
       parts.push('\n');
     });
@@ -136,15 +147,14 @@
       result.apps.forEach(function (app, index) {
         if (index) parts.push('\n');
         parts.push('  - name: ' + app.name + '\n    path: ' + app.path +
-                   '\n    type: ' + app.type + '\n    implementation: ');
-        if (app.impl) parts.push({ t: app.impl, c: 'm' });
-        else parts.push('null');
-        parts.push('\n    practices: [');
-        app.practices.forEach(function (p, i) {
-          if (i) parts.push(', ');
-          parts.push({ t: p, c: 'm' });
+                   '\n    type: ' + app.type + '\n    modules:');
+        var own = (app.impl ? [app.impl] : []).concat(app.practices);
+        // `modules:` alone parses as null — a value, not the absence of one.
+        if (!own.length) parts.push(' {}');
+        own.forEach(function (module) {
+          parts.push('\n');
+          entry(parts, 6, module);
         });
-        parts.push(']');
       });
     }
     return parts;
