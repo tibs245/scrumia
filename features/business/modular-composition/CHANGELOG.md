@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — `extends:`, `composition:` and `practices:` are deprecated
+- Issue: #302
+- Category: Deprecated
+- Breaking: no — all three are still read; removal comes two releases after this one
+
 ## 2026-08-12 — `modules` keyed by source replaces `extends`, with a settings cascade (BR-13, BR-14, AC-17, AC-18)
 - Issue: #302
 - Category: Changed

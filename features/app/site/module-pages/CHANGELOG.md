@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — A module page shows what it plugs into, and what it goes well with (AC-8, AC-9)
+## 2026-08-12 — A module page shows what it plugs into, and what it goes well with (AC-12, AC-13)
 - Issue: #297
 - Category: Added
 - Breaking: no

@@ -55,11 +55,11 @@ change calls for. What that bump promises, and what the project owes on receivin
 
 ## Two refusals
 
-**A module is never created for a single rule.** One rule is not a module; it is a
-directive, a rules section, or a line in a project's own configuration —
-`knowledge-placement` names which. A module built around one rule is a wrapper whose only
-content is the ceremony of being a module, and it will be installed, versioned and
-maintained for that.
+**A module is never created for a single rule.** One rule is not a module; it is one of
+the shapes `features/business/local-extension/` lists, and `knowledge-placement`'s tree
+chooses between them. This feature enumerates neither — a list restated here is the one
+that drifts. A module built around one rule is a wrapper whose only content is the ceremony
+of being a module, and it will be installed, versioned and maintained for that.
 
 The threshold is the one the anatomy standard already implies: below roughly three
 distinct concerns, the structure costs more than it carries. Reaching for a module before
