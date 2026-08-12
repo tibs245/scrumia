@@ -81,7 +81,7 @@
   "comp_design_d": "Identité, tokens et composants comme fichiers du repo, plus un rôle designer qui juge ce qu'un utilisateur voit vraiment.",
   "comp_design_empty": "Pas de contrat de design : chaque page est stylée au goût, les valeurs partent en dur sans token pour en répondre, et aucun rôle ne juge l'interface avant la fusion.",
   "comp_design_yaml": "# pas de contrat de design — aucun rôle ne juge l'interface",
-  "comp_app_empty_yaml": "# aucun module propre — les agents suivent le code voisin",
+  "comp_app_empty_yaml": "# aucun module pour cette app — les agents suivent le code voisin",
   "comp_out_install_role": "à lancer dans Claude Code",
   "comp_out_config_role": "commitez-le, puis scrumia-init le vérifie au lieu de redemander",
   "comp_c_marketplace": "# ajouter la place de marché une seule fois",

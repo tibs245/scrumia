@@ -83,6 +83,7 @@ class Composer(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.inputs: list[dict] = []
+        self.strings: dict[str, str] = {}
         self.pre: dict[str, str] = {}
         self.details_names: list[str] = []
         self._depth = 0          # >0 while inside <section id="composer">
@@ -93,6 +94,8 @@ class Composer(HTMLParser):
         if tag == "section" and a.get("id") == "composer":
             self._depth = 1
             return
+        if a.get("id") == "composer-strings":
+            self.strings = {k[5:]: v for k, v in a.items() if k.startswith("data-")}
         if not self._depth:
             return
         if tag == "section":
@@ -252,6 +255,13 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
                           bool(i["note"]), "no data-note")
                     check(f"{lang}: {slot}'s '{label}' consequence is a YAML comment",
                           i["note"].startswith("#"), repr(i["note"][:40]))
+
+        # Every #composer-strings entry the script writes into a YAML line; the
+        # rest of that element is prose for the notes paragraph, which is not one.
+        for key in ("marketplace", "install", "then-init", "config", "project", "app-empty"):
+            value = c.strings.get(key, "")
+            check(f"{lang}: composer-strings' {key} is a YAML comment",
+                  value.startswith("#"), repr(value[:40]))
 
 
 def main() -> int:
