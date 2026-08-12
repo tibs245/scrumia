@@ -278,7 +278,13 @@ def load_extends_map() -> dict:
         for reg, info in read_json_object(root / "registers.json").items():
             registers[reg] = {"module": name, "skill": info.get("skill", "")}
         for reg, rows in read_json_object(root / "extends.json").items():
-            for row in rows if isinstance(rows, list) else []:
+            if not isinstance(rows, list):
+                ERRORS.append(f"plugins/{name}/extends.json: '{reg}' is not a list of directives")
+                continue
+            for row in rows:
+                if not isinstance(row, dict):
+                    ERRORS.append(f"plugins/{name}/extends.json: a '{reg}' entry is not an object")
+                    continue
                 directives.setdefault(reg, []).append({
                     "module": name,
                     "name": row.get("name", "(unnamed)"),

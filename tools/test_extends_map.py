@@ -54,9 +54,14 @@ def test_ac1_mechanism_not_a_bare_claim() -> None:
     print("AC-1 the claim ships with a skill, several modules, and the real table — not asserted alone")
     section = extends_section("en")
     check("a declaring skill is shown", "ext-declares" in section)
-    check("more than one module contributes in the populated row",
-          section.count("<li>scrumia-") >= 2 or len(re.findall(r"ext-contributes\"><span[^<]*</span><ul>(.*?)</ul>", section)) == 1
-          and len(re.findall(r"<li>", section.split('ext-contributes"><span')[1].split("</ul>")[0])) >= 2)
+
+    # Scoped to the populated row's own <ul>, not a whole-section <li> count.
+    populated = re.search(r'<div class="ext-row">(.*?)</div>\s*</div>\s*<div class="ext-row ext-row-empty">',
+                           section, re.DOTALL)
+    check("the populated row is found", bool(populated))
+    contributors = re.findall(r"<li>", populated.group(1)) if populated else []
+    check("more than one module contributes in the populated row", len(contributors) >= 2, str(len(contributors)))
+
     check("the invocation is shown", "<pre><code>scrumia-extends " in section)
     check("the real table follows it", "<tbody><tr>" in section)
 
