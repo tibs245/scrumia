@@ -136,6 +136,25 @@ settings:
 
 Two further keys an earlier version of this template carried are gone on purpose. `settings.specs.root` is superseded by the `## Specs contract` block (Step 5): the hard path lives in `CLAUDE.md` now, where every consumer already has to look; `scrumia-specs-setup` still proposes its own `root`/`strates` defaults if it needs them at install time, but this template no longer pre-seeds a value nothing here reads. `paths.adr` had no reader anywhere in the codebase — `docs/adr/` is a hard path stated directly in prose (`scrumia-tech`, `scrumia-rules`), which the house's anti-indirection stance prefers over a config key nobody consults. The cost: a project that genuinely wants a different ADR location has no config knob for it, only a doc to edit. If a module starts reading either key, put it back and name the reader.
 
+### Two neighbours of that file are never committed
+
+`.scrumia/` holds one more pair, and both are per-machine by construction:
+
+| File | Holds | Read by |
+|---|---|---|
+| `.scrumia/config.local.yaml` | this machine's overrides of `settings:` and a module's `params:` | the settings cascade |
+| `.scrumia/.env.local` | `SCRUMIA_SHARED_DIR=<path>` — where a `shared:` module's checkout sits here | resolution |
+
+**Make sure the project's `.gitignore` excludes both, and create neither.** They are
+written by whoever installs on a machine, and a repository that commits either has put one
+machine's layout into a versioned file — which is the thing the `<source>:<module>` key
+exists to keep out of it (`features/business/local-extension/` BR-6). Their absence is the
+correct state of a fresh clone: a module declared `shared:` then reports as a declared
+absence, every register renders without it, and nothing fails.
+
+A module the project ships to itself needs neither. It sits at
+`.scrumia/modules/<module>/`, travels with the clone, and is declared `local:<module>`.
+
 ## Step 4 — Let each module install itself
 
 The kernel does not know the modules' needs. For each plugged module, invoke its setup skill if it has one:

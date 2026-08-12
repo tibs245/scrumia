@@ -20,9 +20,42 @@ Read `.scrumia/config.yaml` and present:
 
 A gap between the two is the most common defect: the config changed, `CLAUDE.md` didn't, and agents follow a stale composition. Offer to regenerate via `scrumia-init`.
 
+## Where a module may be, and where it actually was
+
+A module lives in one of three places, and the composition names which by the source half
+of its key: `<owner>/<repo>` for a marketplace, `shared` for a directory of checkouts a
+person shares between their projects, `local` for `.scrumia/modules/<module>/` inside the
+project. The same artefact, the same anatomy standard, in all three — the rules are
+`features/business/local-extension/`'s.
+
+What the config says is a declaration. What resolution found is a fact, and they are not
+the same question:
+
+```bash
+scrumia-extends --modules            # every declaration, and the location it resolved from
+```
+
+Three states come back, and each means something different to whoever is composing:
+
+- **resolved** — bound to exactly one directory, which is printed. Nothing to do.
+- **absent** — nothing answered it here. For a marketplace module, it is installed
+  nowhere or the session has not been restarted; for `shared`, the machine has no
+  `SCRUMIA_SHARED_DIR` in `.scrumia/.env.local`, or the checkout is not in it. This is the
+  ordinary state of a fresh clone and it is not a failure: every register renders without
+  that module, and the report says which capability is gone.
+- **conflict** — two distinct modules answer one declaration. It binds neither, so that
+  module contributes nothing anywhere. Say which two directories, and let the human
+  choose; nothing here picks.
+
+A capability that comes from `shared` is a capability the project cannot be handed to
+someone else with. Say so when you plug one in — it is the cost of that location, and it
+is only visible at the moment of choosing.
+
 ## Plug in or replace a module
 
-1. Check that the module is installed. If not, give the install command and stop.
+1. Check that the module is installed, **and reachable from the location its key names** —
+   `scrumia-extends --modules` answers both at once. If not, give the install command, or
+   name the directory the checkout is missing from, and stop.
 2. Read its documentation to learn the settings it expects under `settings`.
 3. Update `.scrumia/config.yaml`.
 4. Invoke its install skill if it exists.
@@ -35,7 +68,7 @@ A gap between the two is the most common defect: the config changed, `CLAUDE.md`
 
 When something doesn't work, check in this order:
 
-1. **Is the module installed and enabled?** A module present in the config but absent from `enabledPlugins` is invisible to the agent.
+1. **Did the declaration resolve, and to what?** `scrumia-extends --modules` is the first call, not a later one: a module present in the config but absent from `enabledPlugins` — or missing from the shared directory, or answered by two directories at once — is invisible to the agent, and every register renders shorter with nothing else said. Read the state before reading anything else, and read a conflict as a stop: that module contributes nothing until someone picks.
 2. **Does `CLAUDE.md` reflect the config?** If not, agents read a stale composition.
 3. **Is the slot empty?** A missing capability is not a failure. Just say which module would provide it.
 4. **Does the app have an implementation module, and practices?** Without an implementation module, the agent follows the conventions of neighboring code; without practices, the implementation module's conventions suffice — acceptable behavior, not an error.
@@ -70,4 +103,4 @@ ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 
 On a view, that output is most of the answer already: the slots, their modules, the ones empty on purpose, and the per-app implementation and practices columns.
 
-What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — so it cannot tell you whether a named module is actually enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. Those gaps are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.
+What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — it prints the declarations as written, resolving nothing — so it cannot tell you where a module actually came from, whether a named module is enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. The first of those is `scrumia-extends --modules`; the rest are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.

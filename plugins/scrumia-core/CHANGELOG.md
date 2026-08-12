@@ -4,6 +4,19 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
+- `scrumia-extends --modules` — every module the project declares, with the location it
+  actually resolved from and the directory it resolved to. A declaration nothing answers
+  is reported as an absence naming where it would have come from, which is the ordinary
+  state of a clone without a machine's shared checkouts, and is not a failure.
+- Resolution now finds a module in all three locations in one pass, each in its own
+  place: `<owner>/<repo>` through the harness's PATH, `shared` under the directory
+  `SCRUMIA_SHARED_DIR` names in `.scrumia/.env.local`, `local` at
+  `.scrumia/modules/<module>/`. Before this, a `local:` or `shared:` key bound whichever
+  marketplace module carried the name and the composition reported it as local.
+- One declaration answered by two distinct modules is now a conflict: it binds neither,
+  it is named with both directories wherever it is reached, and `--check` exits non-zero
+  on it. Two routes to the same directory are one module, not a conflict.
+
 - `scrumia-place` — one tree from something just learned to exactly one destination: a
   module, this project, a feature, a ticket, the change itself, or agent memory. Memory is
   bounded by the handover test — *would this survive being handed to someone else,
