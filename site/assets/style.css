@@ -772,6 +772,8 @@ section > h2::before {
 
 .ext-facts { margin: 0 0 var(--space-6); padding-left: var(--space-5); color: var(--text-soft); max-width: var(--measure); }
 .ext-facts li { margin: 0 0 var(--space-2); line-height: var(--leading-snug); }
+/* li::marker inherits --accent site-wide; --accent belongs to the invocation alone (ux.md). */
+.ext-facts li::marker { color: var(--text-faint); }
 .ext-facts code { color: var(--text); }
 
 .ext-ask { margin: 0 0 var(--space-2); color: var(--text-soft); }
