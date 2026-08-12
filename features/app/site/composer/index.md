@@ -23,12 +23,12 @@ form being filled.
 - Authority:
   - `features/business/modular-composition/index.md` — what a slot is, and
     which seven exist
-  - `features/business/modular-composition/business.md` (BR-2, AC-4) — what
-    an empty slot costs
+  - `features/business/modular-composition/business.md` (BR-3) — what an empty
+    slot costs, and in whose voice it is said
   - `design/components/slot-index/spec.md` — how a slot row is drawn, and its
     choosable state
-  - `plugins/scrumia-core/skills/scrumia-init/SKILL.md` — the schema the
-    emitted config must match
+  - `docs/adr/0021-modules-keyed-by-source.md` — the shape the emitted config
+    must carry, and the grammar of every key in it
   - `design/tokens.css` — which values may be used
 
 ## Files present

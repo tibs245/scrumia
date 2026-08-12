@@ -188,7 +188,7 @@ def test_ac3_config_block_matches_the_rows() -> None:
         # A practice belongs only under the app types it speaks for: a backend
         # declaring a frontend data-fetching practice is the bug this catches.
         chosen = [PRACTICES[p] for p in c.checked("c-practice")]
-        for stack, app in zip(stacks, apps):
+        for stack, app in zip(stacks, apps, strict=True):
             impl = APPS[stack]["impl"]
             app_type = app.get("type")
             want = [source_key(m) for m in
@@ -203,7 +203,11 @@ def test_ac3_every_key_is_source_qualified() -> None:
     print("AC-3 every emitted key is <source>:<module>, and the source is a real one")
     for lang, page in PAGES.items():
         c = read(page)
-        config = yaml.safe_load(c.pre["composer-config"])
+        try:
+            config = yaml.safe_load(c.pre["composer-config"])
+        except yaml.YAMLError as e:
+            check(f"{lang}: the config block is YAML", False, str(e))
+            continue
         keys = list((config.get("modules") or {}).keys())
         for app in config.get("apps") or []:
             keys += list((app.get("modules") or {}).keys())
@@ -238,12 +242,16 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
               c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-practice"},
               str(sorted(c.groups())))
 
-        # An absence gets no key, so the note is all that reaches the file.
+        # The note is the whole of its line now: one that lost its `#` is parsed
+        # as configuration rather than read as a weaker statement of the cost.
         for slot in SINGLE:
             for i in c.inputs:
                 if i["name"] == "c-" + slot and i["value"] in ("", "other"):
-                    check(f"{lang}: {slot}'s '{i['value'] or 'empty'}' option states its consequence",
+                    label = i["value"] or "empty"
+                    check(f"{lang}: {slot}'s '{label}' option states its consequence",
                           bool(i["note"]), "no data-note")
+                    check(f"{lang}: {slot}'s '{label}' consequence is a YAML comment",
+                          i["note"].startswith("#"), repr(i["note"][:40]))
 
 
 def main() -> int:

@@ -235,8 +235,13 @@ def declared_modules(cfg: dict) -> list[str]:
     present, the retired `extends:` otherwise.
 
     Testing only for `extends:` is the failure that precedence exists to prevent —
-    a config on `modules:` would resolve to zero modules here, and every register
-    the figure draws would go empty rather than wrong.
+    a config on `modules:` would resolve to zero modules here, the build would
+    still exit 0, and every register the figure draws would go empty. An empty
+    register is an answer under BR-1, so nothing would look wrong.
+
+    The table's older `composition:`/`practices:` row is deliberately not read:
+    this repository's own config has never carried it, and `scrumia-extends` is
+    where a file that does gets read and warned about.
     """
     if "modules" in cfg:
         # A key is `<source>:<module>`, split at the last colon (ADR-0021).

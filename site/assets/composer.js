@@ -149,8 +149,9 @@
         parts.push('  - name: ' + app.name + '\n    path: ' + app.path +
                    '\n    type: ' + app.type + '\n    modules:');
         var own = (app.impl ? [app.impl] : []).concat(app.practices);
-        // `modules:` alone parses as null — a value, not the absence of one.
-        if (!own.length) parts.push(' {}');
+        // `modules:` alone parses as null — a value, not the absence of one. The
+        // comment rides the same line so the cost survives the paste here too.
+        if (!own.length) parts.push(' {}   ', { t: S.appEmpty, c: 'c' });
         own.forEach(function (module) {
           parts.push('\n');
           entry(parts, 6, module);
