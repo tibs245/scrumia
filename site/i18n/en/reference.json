@@ -76,7 +76,7 @@
 
   "config_title": "Configuration",
   "config_intro": "<code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.",
-  "config_note": "Two conventions that matter: a missing module is declared <code>null</code> rather than omitted — \"not chosen yet\" and \"deliberately without\" are different things. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.",
+  "config_note": "Two conventions that matter: the mapping names what is present, so a capability you go without carries no key at all — and where the difference between \"not chosen yet\" and \"deliberately without\" matters, it is said as a comment standing in the key's place. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.",
 
   "impl_title": "Implementation modules and practices",
   "impl_intro": "The most personal slots. <code>implementation</code> and <code>practices</code> both take several modules at once, mapped app by app. Two competent developers can hold opposite views here and neither is wrong, which is exactly why these are replaceable modules rather than kernel rules.",

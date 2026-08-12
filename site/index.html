@@ -374,7 +374,7 @@
           <!-- A tracker of your own is a variant of empty, not a third fill: the
                slot has no module until you write one. -->
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-tracker" value="other" data-note="# no tracker of ours — yours to write, the slot contract is one page">
+            <input type="radio" name="c-tracker" value="other" data-note="# no tracker module yet — yours to write; until it exists, ticket and board skills degrade to text">
             <b>A tracker of your own</b><span>Jira, Linear, anything else. The slot has a defined contract, so the module is bounded work — until it exists the slot is empty and behaves as such.</span>
           </label>
           <label class="opt opt-3 opt-empty">
@@ -428,7 +428,7 @@
             <b>scrumia-discovery</b><span>A scoping pass between an idea and a ticket: challenge it, split it into features, write the specs on a branch.</span>
           </label>
           <label class="opt opt-2 opt-empty">
-            <input type="radio" name="c-discovery" value="" data-note="# no discovery — an idea goes straight to a ticket, unscoped">
+            <input type="radio" name="c-discovery" value="" data-note="# no discovery — an idea goes straight to a ticket">
             <b>Leave it empty</b><span>An idea goes straight to a ticket without a scoping pass, and the agents are told to say so instead of improvising one.</span>
           </label>
         </div>
@@ -611,7 +611,8 @@ apps:
        data-note-own-tracker="The tracker slot has a defined contract, so writing a Jira or Linear module is bounded work. Until it exists, the ticket and board skills degrade to text output and say so."
        data-note-own-impl="No implementation module for that stack: the app follows the conventions of the code next to it. Normal behaviour, not a gap — and the contract for writing your own fits on one page."
        data-note-practices="Practices apply app by app, and only to the app types they speak for. Where one disagrees with the implementation module, the implementation module wins."
-       data-note-practices-noapp="Practices attach to apps. With no app declared they install and activate nothing until apps appear in the file."></div>
+       data-note-practices-noapp="Practices attach to apps. With no app declared they install and activate nothing until apps appear in the file."
+       data-app-empty="# no module of its own — agents follow the code next to it"></div>
 </section>
 
 <section id="extends">
