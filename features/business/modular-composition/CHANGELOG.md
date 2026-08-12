@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — The `settings.<slot>` nests are deprecated in favour of each module's `params:`
+## 2026-08-12 — `settings.tracker` and `settings.team.execution` are deprecated in favour of their modules' `params:`
 - Issue: #315
 - Category: Deprecated
 - Breaking: no
