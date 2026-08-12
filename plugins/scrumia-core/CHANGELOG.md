@@ -32,6 +32,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `scrumia-module check --json`. Writes nothing.
 - `scrumia-extend` — the extension protocol itself: what a register is, what the three
   data files a module may ship declare, and how to open an extension point in a skill.
+- `scrumia-author` — the pass from a need to a module `scrumia-module check` accepts on
+  its first run. It refuses before it creates: nothing below roughly three distinct
+  concerns becomes a module, and no slot is invented that no real project would fill
+  differently. It writes nothing for what the module does not have, and a pass concluding
+  that no module is warranted is a completed pass.
 - `dependencies.jsonl` — this module declares the published names it runs, each qualified
   by the source that publishes it (`tibs245/scrumia:scrumia-board`). PATH is one flat
   namespace shared with every enabled plugin, so a bare name says which command and never

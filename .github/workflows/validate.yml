@@ -27,6 +27,8 @@ jobs:
         run: python3 tools/test_validate.py
       - name: Check the module checker against the anatomy standard's criteria
         run: python3 tools/test_module_check.py
+      - name: Check the authoring pass against the module-authoring criteria
+        run: python3 tools/test_module_authoring.py
       - name: Test the site builder's guards
         run: python3 tools/test_build_site.py
       - name: Check the extends section against its acceptance criteria
