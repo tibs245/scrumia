@@ -7,6 +7,14 @@ set -uo pipefail
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
 MODULE_ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 
+# What this tool stands in with where no layer carries a value. Named once so the lookups
+# below and the warning that reports a substitution cannot drift apart. The grid itself is
+# absent from this list on purpose: it has no stand-in (`execution-policy` AC-22).
+FALLBACK_UNLABELED=sonnet
+FALLBACK_UNRATED_RISK=medium
+FALLBACK_SCOPE_PREFIX="scope/"
+FALLBACK_RISK_PREFIX="risk/"
+
 die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
 warn() { echo "scrumia-pick-model: $1" >&2; }
 
@@ -77,9 +85,9 @@ load_policy() {
   command -v scrumia-extends >/dev/null 2>&1 ||
     die "scrumia-extends not found — enable scrumia-core and restart the session. No model is chosen: reading $CONFIG directly would resolve one layer of three and answer with a model nobody configured"
   out=$(scrumia-extends --settings "$key") ||
-    die "scrumia-extends --settings $key failed — the execution policy is unresolved, and no model is chosen"
+    die "scrumia-extends --settings $key failed — the execution policy is unresolved, and no model is chosen. Run scrumia-extends --settings $key by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
   jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out" ||
-    die "scrumia-extends --settings $key returned no object — the execution policy is unresolved, and no model is chosen"
+    die "scrumia-extends --settings $key returned no object — the execution policy is unresolved, and no model is chosen. Check that $CONFIG parses, then run scrumia-extends --settings $key by hand"
 
   # ADR-0021 moves what `settings.team.execution` held into this module's own `params:`,
   # so the resolved block carries `execution` at its top level. The retired nest is still
@@ -88,7 +96,11 @@ load_policy() {
   # script's own literals — a project that has migrated its matrix but not its label
   # prefixes would match no ticket and route every one of them to `unlabeled`. The new
   # shape wins key by key.
-  EXEC=$(jq -c '(.team.execution // {}) * (.execution // {})' <<<"$out")
+  # `with_entries` is load-bearing — jq's `*` propagates an explicit null, so a key
+  # written bare mid-migration would overwrite the value the base layer still carries,
+  # and `has()` below cannot see the difference.
+  EXEC=$(jq -c '(.team.execution // {})
+                * ((.execution // {}) | with_entries(select(.value != null)))' <<<"$out")
 
   # The grid is the policy. Its absence is a broken installation, not a hole in a table
   # (`execution-policy` AC-22 vs AC-10), and answering it from this script's literals
@@ -100,12 +112,15 @@ load_policy() {
   # nobody configured is the same failure one size smaller. Not fatal — the grid still
   # decides every labelled ticket — but never silent.
   local fell_back
-  fell_back=$(jq -r '[ (if has("unlabeled") then empty else "unlabeled" end)
-                     , (if has("unrated_risk") then empty else "unrated_risk" end)
-                     , (if (.labels | type) == "object" then empty else "labels" end) ]
-                     | join(", ")' <<<"$EXEC")
+  fell_back=$(jq -r --arg u "$FALLBACK_UNLABELED" --arg r "$FALLBACK_UNRATED_RISK" \
+                    --arg sp "$FALLBACK_SCOPE_PREFIX" --arg rp "$FALLBACK_RISK_PREFIX" '
+    [ (if has("unlabeled") then empty else "unlabeled=" + $u end)
+    , (if has("unrated_risk") then empty else "unrated_risk=" + $r end)
+    , (if (.labels | type) == "object" then empty
+       else "labels.scope_prefix=" + $sp + ", labels.risk_prefix=" + $rp end) ]
+    | join(", ")' <<<"$EXEC")
   [ -z "$fell_back" ] ||
-    warn "the resolved policy carries no $fell_back — this tool's own defaults stand in; configure them under execution"
+    warn "no layer carries $fell_back — this tool's own literals stand in for them; configure them under execution"
 }
 
 labels_of_issue() {
@@ -132,8 +147,8 @@ command -v jq >/dev/null 2>&1 || die "jq not found"
 load_config
 load_policy
 
-SCOPE_PREFIX=$(jq -r '.labels.scope_prefix // "scope/"' <<<"$EXEC")
-RISK_PREFIX=$(jq -r '.labels.risk_prefix // "risk/"' <<<"$EXEC")
+SCOPE_PREFIX=$(jq -r --arg d "$FALLBACK_SCOPE_PREFIX" '.labels.scope_prefix // $d' <<<"$EXEC")
+RISK_PREFIX=$(jq -r --arg d "$FALLBACK_RISK_PREFIX" '.labels.risk_prefix // $d' <<<"$EXEC")
 
 # A project that already labels its tickets keeps its own words; the matrix
 # speaks S/M/L/XL and low/high, so the vocabularies are mapped, not imposed.
@@ -153,8 +168,8 @@ fi
 [ -n "$SCOPE" ] && SCOPE=$(alias_of scope "$SCOPE")
 [ -n "$RISK" ] && RISK=$(alias_of risk "$RISK")
 
-DEFAULT_RISK=$(jq -r '.unrated_risk // "medium"' <<<"$EXEC")
-UNLABELED=$(jq -r '.unlabeled // "sonnet"' <<<"$EXEC")
+DEFAULT_RISK=$(jq -r --arg d "$FALLBACK_UNRATED_RISK" '.unrated_risk // $d' <<<"$EXEC")
+UNLABELED=$(jq -r --arg d "$FALLBACK_UNLABELED" '.unlabeled // $d' <<<"$EXEC")
 
 SCOPE_RATED=true; RISK_RATED=true
 [ -n "$SCOPE" ] || { SCOPE_RATED=false; }

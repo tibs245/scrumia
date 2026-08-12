@@ -39,8 +39,10 @@ The project's owner and number, the board's field and column ids, and the flow-s
 column mapping `scrumia-board move` resolves through — historically under
 `settings.tracker`, and this module's own `params:` once a project has migrated.
 `scrumia-board` resolves them through the composition's settings cascade rather than
-reading the configuration file, so a per-machine override reaches it; when no layer carries
-the board's ids it says so and stops instead of guessing. `scrumia-refine`,
+reading the configuration file, so an override typed into `.scrumia/config.local.yaml`
+reaches it; when no layer carries the board's ids it says so and stops instead of guessing.
+The one value it does stand in for is `owner`, which falls back to the repository's owner —
+a board owned by someone other than the repository needs it named. `scrumia-refine`,
 `scrumia-review` and `scrumia-ticket` also read `settings.autonomy.level` and
 `settings.autonomy.auto_merge`.
 

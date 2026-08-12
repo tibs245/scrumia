@@ -104,8 +104,9 @@ migrates one key at a time; a consumer that picked whichever block looked newer 
 every key the other still carried onto its own built-in defaults — a well-formed answer
 nobody configured, which is BR-16's failure arriving through the migration meant to avoid
 it. The retired nest's reading window is a deprecation like any other, and
-`features/business/release-versioning/` decides when it closes: the entry naming its removal
-release is in this feature's `CHANGELOG.md`.
+`features/business/release-versioning/` decides when it closes. The release that removes it
+is named where a project updating a module actually reads — that module's own changelog,
+under `Deprecated` — because a feature carries no version to count releases from.
 
 ## Where each thing is resolved, and by what
 

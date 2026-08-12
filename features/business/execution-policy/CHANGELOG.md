@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — An unresolvable policy is reported rather than answered with the unlabeled default (AC-22)
+## 2026-08-12 — A grid that does not resolve is reported; the values around it may stand in, and are named (AC-22)
 - Issue: #315
 - Category: Added
 - Breaking: no

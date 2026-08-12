@@ -38,8 +38,9 @@ matrix by scope × risk, plus label prefixes and aliases), `escalation.to_human`
 `sprint.max_tickets`.
 
 `scrumia-pick-model` resolves `execution` through the composition's settings cascade rather
-than reading the configuration file, so a per-machine override reaches it, and it finds the
-key in this module's own `params:` once a project has migrated there.
+than reading the configuration file, so an override typed into `.scrumia/config.local.yaml`
+reaches it, and it finds the key in this module's own `params:` once a project has migrated
+there.
 
 **The grid is the one setting it will not stand in for.** When no layer carries a matrix it
 answers no model at all and says so — a model name taken from a built-in default is
