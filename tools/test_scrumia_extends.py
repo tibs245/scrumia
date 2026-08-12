@@ -364,6 +364,12 @@ modules:
 
 CONFLICTING = """
 project: { name: "Conflict" }
+modules:
+  "shared:acme-conventions": {}
+"""
+
+SHADOWING = """
+project: { name: "Shadow" }
 extends:
   - acme-conventions
 """
@@ -477,17 +483,19 @@ def test_ac4_a_local_module_is_held_to_the_same_standard() -> None:
 def test_ac5_one_declaration_two_modules_is_a_conflict() -> None:
     print("AC-5 — two distinct modules answering one declaration bind neither")
 
+    # Two directories in one tier both publishing the name — a fork checked out beside the
+    # module it forked. A `shared:` key names that tier and cannot say which of the two.
     project = project_with(CONFLICTING)
     shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
     make_module(shared / "acme-conventions", "acme-conventions")
-    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
+    make_module(shared / "acme-conventions-fork", "acme-conventions")
     config = project / ".scrumia" / "config.yaml"
 
     code, out, err = run(["implement", "--json"], config, shared=shared)
     check("neither is used — no directive of that module reaches the register",
           json.loads(out) == [], out[:200])
-    check("the conflict is named, with both locations",
-          "acme-conventions" in err and "shared" in err and "local" in err, err.strip())
+    check("the conflict is named, with both directories",
+          "acme-conventions-fork" in err and "shared:acme-conventions" in err, err.strip())
     check("the shortened table is not the only signal",
           "binds neither" in err, err.strip())
     check("and it does not stop the composition being read", code == 0, code)
@@ -500,6 +508,35 @@ def test_ac5_one_declaration_two_modules_is_a_conflict() -> None:
     code, _, err = run(["--check"], config, shared=shared)
     check("the dependency check exits non-zero on it", code != 0, code)
     check("and says what is unmet", "unmet dependency" in err, err.strip())
+    # BR-9: it blocks its own declaration and nothing else. One conflict is one finding —
+    # not a second one about a module colliding with itself in a register.
+    check("and reports the conflict once, not once per register the module opens",
+          err.count("binds neither") == 1 and "nothing decides which main skill" not in err,
+          err.strip())
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+
+def test_ac5_a_bare_name_answered_twice_is_a_shadow_not_a_conflict() -> None:
+    print("AC-5 — a declaration naming no location is shadowed, reported and used")
+
+    project = project_with(SHADOWING)
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
+    config = project / ".scrumia" / "config.yaml"
+
+    code, out, err = run(["implement", "--json"], config, shared=shared)
+    check("the module is used, not disabled — promotion must stay cheap",
+          [r["module"] for r in json.loads(out)] == ["acme-conventions"], out[:200])
+    check("and the one used is the narrowest location",
+          json.loads(out)[0]["location"] == "local", out[:200])
+    check("the shadow is reported, naming every location that answered",
+          "shared" in err and "local" in err and "narrowest" in err, err.strip())
+    check("with the fix named: key it by source", "<source>:<module>" in err, err.strip())
+
+    code, _, err = run(["--check"], config, shared=shared)
+    check("a shadow is not an unmet dependency", code == 0, code)
     shutil.rmtree(project)
     shutil.rmtree(shared)
 
@@ -507,7 +544,7 @@ def test_ac5_one_declaration_two_modules_is_a_conflict() -> None:
 def test_ac5_identity_and_declaration_settle_the_other_two_cases() -> None:
     print("AC-5 — one module reached twice, and an undeclared copy, are not conflicts")
 
-    project = project_with(CONFLICTING)
+    project = project_with(SHADOWING)
     shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
     make_module(shared / "acme-conventions", "acme-conventions")
     (project / ".scrumia" / "modules").mkdir(parents=True)
@@ -519,7 +556,8 @@ def test_ac5_identity_and_declaration_settle_the_other_two_cases() -> None:
     row = json.loads(out)[0]
     check("two routes to one directory are one module, resolved and used",
           row["state"] == "resolved" and len(row["roots"]) == 1, row)
-    check("and nothing is called a conflict", "binds neither" not in err, err.strip())
+    check("and nothing is called a conflict or a shadow",
+          "binds neither" not in err and "narrowest" not in err, err.strip())
     shutil.rmtree(project)
     shutil.rmtree(shared)
 
@@ -537,6 +575,45 @@ def test_ac5_identity_and_declaration_settle_the_other_two_cases() -> None:
     check("and no conflict is reported", "binds neither" not in err, err.strip())
     shutil.rmtree(promoting)
     shutil.rmtree(checkout)
+
+
+def test_env_local_is_read_or_reported_never_silently_empty() -> None:
+    print("BR-6 — the machine's file is read through its habits, or its silence is named")
+
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+
+    for label, body in [
+        ("an export prefix", f"export SCRUMIA_SHARED_DIR={shared}\n"),
+        ("spaces around the =", f"SCRUMIA_SHARED_DIR = {shared}\n"),
+        ("a quoted value", f'SCRUMIA_SHARED_DIR="{shared}"\n'),
+        ("a trailing space", f"SCRUMIA_SHARED_DIR={shared} \n"),
+        ("a comment above it", f"# where my checkouts live\nSCRUMIA_SHARED_DIR={shared}\n"),
+    ]:
+        project = project_with(ABSENT_SHARED)
+        (project / ".scrumia" / ".env.local").write_text(body, encoding="utf-8")
+        _, out, _ = run(["--modules", "--json"], project / ".scrumia" / "config.yaml")
+        check(f"{label} still resolves the shared tier",
+              json.loads(out)[0]["state"] == "resolved", json.loads(out))
+        shutil.rmtree(project)
+
+    # The failure this exists for: a file that yields nothing takes the whole tier with it,
+    # and every table just renders shorter.
+    project = project_with(ABSENT_SHARED)
+    (project / ".scrumia" / ".env.local").write_text("SCRUMIA_SHRED_DIR=/x\n", encoding="utf-8")
+    _, out, err = run(["--modules", "--json"], project / ".scrumia" / "config.yaml")
+    check("a file that sets nothing is named, not read as an empty tier",
+          "sets no SCRUMIA_SHARED_DIR" in err, err.strip())
+    shutil.rmtree(project)
+
+    project = project_with(ABSENT_SHARED)
+    (project / ".scrumia" / ".env.local").write_text(
+        "SCRUMIA_SHARED_DIR=/nowhere/at/all\n", encoding="utf-8")
+    _, _, err = run(["--modules", "--json"], project / ".scrumia" / "config.yaml")
+    check("and a path that is not a directory here is named too",
+          "not a directory on this machine" in err, err.strip())
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
 
 
 def test_ac9_ac10_no_versioned_path_and_no_installation() -> None:
@@ -573,7 +650,9 @@ def main() -> int:
     test_ac3_resolution_states_where_each_module_came_from()
     test_ac4_a_local_module_is_held_to_the_same_standard()
     test_ac5_one_declaration_two_modules_is_a_conflict()
+    test_ac5_a_bare_name_answered_twice_is_a_shadow_not_a_conflict()
     test_ac5_identity_and_declaration_settle_the_other_two_cases()
+    test_env_local_is_read_or_reported_never_silently_empty()
     test_ac9_ac10_no_versioned_path_and_no_installation()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0

@@ -3,10 +3,16 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — Each source resolves from its own location, and a conflict names both (BR-1, BR-7, BR-9, AC-1..AC-5, tech.md)
+## 2026-08-12 — A shadow, a conflict and an honest reader are three rules of their own (BR-5, BR-6, BR-7, BR-9, AC-11)
+- Issue: #291
+- Category: Added
+- Breaking: no
+
+## 2026-08-12 — Each source resolves from its own location, not from whatever carries the name (BR-1, AC-1..AC-5, tech.md)
 - Issue: #291
 - Category: Changed
-- Breaking: no
+- Breaking: yes — a `local:` or `shared:` key stops binding a marketplace module of that
+  name; a project relying on that binding declares the marketplace source instead
 
 ## 2026-08-12 — A module's location is its declaration's source, not a field beside it (BR-6, AC-9)
 - Issue: #302

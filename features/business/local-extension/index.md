@@ -19,7 +19,10 @@ deliberately not a module: a directive, a rules section, a skill. What a project
   directive is, and the order in which contributions are rendered — a project-local
   contribution's precedence is stated there and not restated here.
 - Defers to: `features/business/module-anatomy/` for what any module must look like. A
-  module resolved outside a marketplace is held to it unchanged.
+  module resolved outside a marketplace is held to it unchanged — and the deferral is only
+  sound while the checker stays location-blind, judging the tree it is handed and never
+  asking where it sits. A checker that gained a location would need BR-2 restated as a
+  criterion of its own over there.
 - Consumed beyond this feature: `features/business/module-authoring/` decides *when* a
   module moves between the locations this feature defines;
   `features/business/knowledge-placement/` routes toward them.

@@ -53,9 +53,8 @@ which modules are present. It is what removes the need for any module to publish
 executable, or to know where any other module lives.
 
 The other two tiers are plain directories, and which directory each is —
-`$SCRUMIA_SHARED_DIR` and `.scrumia/modules/` — is
-`features/business/local-extension/`'s `tech.md`, along with what binds a key to a root.
-All three are read in one pass; no tier is a fallback for another.
+along with what binds a key to a root — is `features/business/local-extension/`'s
+`tech.md`. All three are read in one pass; no tier is a fallback for another.
 
 `$SCRUMIA_MODULE_DIR` replaces the **marketplace** tier with a directory of `<module>/`
 checkouts, and stands in for it. This repository and CI use it, because no harness is
@@ -73,8 +72,8 @@ came from, and a source derived from `plugin.json`'s `repository`/`homepage`, no
 repository; a `local:` or `shared:` key binds by name **within its own tier**, where a
 manifest can say nothing useful about a location it does not know it is in. A declaration
 no root answers is a declared absence (`features/business/local-extension/` BR-8); one that
-two distinct roots answer is the conflict BR-7 reports. The full binding table, and why
-identity is the physical path, are that feature's `tech.md`.
+two distinct roots answer is either the shadow BR-5 resolves or the conflict BR-7 refuses
+to. Which, and why identity is the physical path, are that feature's `tech.md`.
 
 Declaring a module in `.scrumia/config.yaml` does not put it on `PATH`. Both are required,
 and they answer different questions — the harness decides what is *reachable*, the
@@ -122,8 +121,7 @@ under `Deprecated` — because a feature carries no version to count releases fr
 |---|---|---|
 | Which modules exist here? | the harness through PATH, plus the shared and local directories | every call |
 | Which of them does this project run? | `.scrumia/config.yaml`'s `modules` | every call |
-| Where does a `shared` module sit on this machine? | `$SCRUMIA_SHARED_DIR`, from `.scrumia/.env.local` | when a `shared:` key is declared |
-| Where does a `local` module sit? | `.scrumia/modules/`, beside the configuration | when a `local:` key is declared |
+| Where does a `shared` or `local` module sit? | the directory each names, in `features/business/local-extension/`'s `tech.md` | when such a key is declared |
 | Which app does this file belong to? | the longest `apps[].path` prefixing it | on `--path` |
 | What does a module contribute? | its own `extends.json` | every call |
 | Where is a fragment? | the module root, joined with `read` | at print time |

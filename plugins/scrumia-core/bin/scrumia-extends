@@ -60,8 +60,10 @@ Each source is looked for in its own place, all three in one pass:
                   (KEY=value, never committed) unless the environment already carries it.
   local           .scrumia/modules/<module>/, beside the configuration that declares it.
 
-A declaration no root answers is a declared absence; one that two distinct roots answer
-is a conflict, named with both and bound to neither. --check exits non-zero on it.
+A declaration no root answers is a declared absence. One that two distinct roots answer
+is a conflict, named with both and bound to neither; --check exits non-zero on it. Only a
+bare name from the retired list can be answered in more than one place at once: there the
+narrowest wins and says so, so promoting a module never disables it.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -202,15 +204,28 @@ load_env_local() {
   local line key value
   [ -f "$ENV_LOCAL" ] || return 0
   while IFS= read -r line || [ -n "$line" ]; do
-    line=${line%$'\r'}; line=${line#"${line%%[! ]*}"}
+    line=${line%$'\r'}
     key=${line%%=*}; value=${line#*=}
     [ "$key" != "$line" ] || continue
-    # Surrounding quotes are habit, not syntax: they are dropped, and nothing else about
-    # the value is interpreted. A path with a space needs neither, since nothing splits it.
+    # The four habits that would otherwise turn a correct file into an empty tier:
+    # `export`, whitespace around either half, and quotes. Everything else about the
+    # value is left alone — a path with a space needs no quoting, since nothing splits it.
+    key=${key#"${key%%[![:space:]]*}"}; key=${key%"${key##*[![:space:]]}"}
+    key=${key#export }; key=${key#"${key%%[![:space:]]*}"}
+    value=${value#"${value%%[![:space:]]*}"}; value=${value%"${value##*[![:space:]]}"}
     value=${value#\"}; value=${value%\"}; value=${value#\'}; value=${value%\'}
     [ "$key" = SCRUMIA_SHARED_DIR ] || continue
     [ -n "${SCRUMIA_SHARED_DIR:-}" ] || SCRUMIA_SHARED_DIR=$value
   done < "$ENV_LOCAL"
+
+  # The file exists, so someone wrote it meaning something. Read as nothing, it takes the
+  # whole `shared` tier with it and every table just renders shorter — the silent failure
+  # this tool refuses everywhere else it reads a file (see read_json below).
+  if [ -z "${SCRUMIA_SHARED_DIR:-}" ]; then
+    note "$ENV_LOCAL sets no SCRUMIA_SHARED_DIR — one line, KEY=value, and nothing keyed 'shared:' resolves until it does"
+  elif [ ! -d "$SCRUMIA_SHARED_DIR" ]; then
+    note "SCRUMIA_SHARED_DIR is '$SCRUMIA_SHARED_DIR', which is not a directory on this machine — every module keyed 'shared:' is a declared absence"
+  fi
 }
 
 # Three tiers, one pass, each root tagged with the tier it came from — never one tier
@@ -309,20 +324,31 @@ read_json() {
 # the repository the manifest claims, `shared:` and `local:` want the name inside their own
 # directory — a manifest cannot know which of those it was checked out into. A bare name
 # from the retired `extends:` list predates the grammar, so it carries no tier and binds in
-# any. `local-extension` BR-7's identity test is `unique` over the physical root: two routes
-# to one directory are one module, two directories are the conflict.
+# any, which is the only case where more than one tier can answer one declaration.
+#
+# `local-extension` BR-7's identity test is the physical root: two routes to one directory
+# are one module. Where several tiers answer a bare name, the narrowest wins and says so —
+# a shadow, used and reported (BR-7). The order is written out rather than inherited from
+# discovery, because a label nobody stated is a label that moves when the code is reordered.
 BIND_DEFS='
+  def tier_rank: if . == "local" then 0 elif . == "shared" then 1 else 2 end;
   def binds($d): .module == $d.module
     and ( if $d.legacy then true
           elif $d.source == "local" or $d.source == "shared" then .location == $d.source
           elif $d.source == "" then false
           else .location == "marketplace" and .source != "" and .source == $d.source end );
   def bound($decls; $mods): [ $decls[] | . as $d
-    | (.roots = ([ $mods[] | select(binds($d)) ] | unique_by(.root)))
+    | (.roots = ([ $mods[] | select(binds($d)) ]
+                 | group_by(.root) | map(min_by(.location | tier_rank))
+                 | sort_by(.location | tier_rank)))
     | .state = ( if (.roots | length) == 0 then "absent"
-                 elif ([.roots[].root] | unique | length) > 1 then "conflict"
-                 else "resolved" end ) ];
-  def resolved($decls; $mods): [ bound($decls; $mods)[] | select(.state == "resolved") ];
+                 elif (.roots | length) == 1 then "resolved"
+                 elif $d.legacy and ([.roots[].location] | unique | length) == (.roots | length)
+                   then "shadow"
+                 else "conflict" end ) ];
+  # A shadow binds, a conflict does not. Everything downstream reads this and never .state.
+  def usable($decls; $mods):
+    [ bound($decls; $mods)[] | select(.state == "resolved" or .state == "shadow") ];
 '
 
 # ---------------------------------------------------------------- the rows
@@ -335,10 +361,10 @@ rows_for() {
   jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" "$BIND_DEFS"'
     . as $mods
     | ([$scopes.apps[] | select(.name == $app) | .modules] | first // []) as $appmods
-    | resolved($appmods; $mods) as $app_bound
+    | usable($appmods; $mods) as $app_bound
     | ([$app_bound[].roots[0].root] | map({(.): true}) | add // {}) as $taken
     | [ $app_bound[] | {scope: 1, decl: ., mod: .roots[0]} ]
-      + [ resolved(($scopes.project // []); $mods)[]
+      + [ usable(($scopes.project // []); $mods)[]
           | select($taken[.roots[0].root] | not) | {scope: 2, decl: ., mod: .roots[0]} ]
       + [ $mods[] | select(.module == "(this project)") | {scope: 0, decl: {}, mod: .} ]
     | [ .[]
@@ -371,21 +397,46 @@ bindings() {
     | [ bound(($scopes.project // []); $mods)[] | . + {scope: "project-wide"} ]
       + [ $scopes.apps[] | .name as $a | bound(.modules; $mods)[] | . + {scope: $a} ]
     | map({ key, module, source, scope, state
-          , location: ( if .state == "resolved" then .roots[0].location
-                        elif .legacy then "any"
-                        elif .source == "" then "(none)"
-                        else (.source | tier) end )
+          , location: ( if .state == "absent" then
+                          (if .legacy then "any" elif .source == "" then "(none)"
+                           else (.source | tier) end)
+                        else .roots[0].location end )
           , roots: [.roots[] | {location, root}] })' <<<"$MODULES"
+}
+
+# One root per module name, for every check that reasons about identity rather than about
+# directives: which module opens a register, which publishes a name. Two roots wearing one
+# name are one module to those questions, and the union is what made that reachable — left
+# alone, a checkout beside its published copy reports the register as opened twice, by
+# itself. Where a declaration picked a root, that one; otherwise the first discovered, since
+# nothing the project said distinguishes them.
+resolve_identity() {
+  local bound
+  bound=$(jq -c --argjson scopes "$SCOPES" "$BIND_DEFS"'. as $m
+    | [ usable(($scopes.project // []); $m)[], ($scopes.apps[] | usable(.modules; $m)[]) ]
+    | [.[].roots[0].root] | unique' <<<"$MODULES")
+  CHECKED=$(jq -c --argjson bound "$bound" '
+    ([$bound[] | {(.): true}] | add // {}) as $b
+    | group_by(.module) | map((map(select($b[.root])) | first) // .[0])' <<<"$MODULES")
 }
 
 # A conflict is loud wherever it is reached, and fatal only at --check: a shortened table
 # with no word said is the silent failure BR-9 exists to end, and a whole session stopped
-# by a module the task never needed is the other way to get it wrong.
+# by a module the task never needed is the other way to get it wrong. A shadow is used, so
+# it is only ever said — never counted as a failure.
 conflict_lines() {
   jq -r '.[] | select(.state == "conflict")
     | "`\(.key)` is answered by \(.roots | length) different modules — "
       + ([.roots[] | .location + " " + .root] | join(", "))
       + " — so it binds neither and contributes no directive. Nothing picks between them."' \
+    <<<"$1" | awk 'NF && !seen[$0]++'
+}
+
+shadow_lines() {
+  jq -r '.[] | select(.state == "shadow")
+    | "`\(.key)` names no location, and \(.roots | length) answer it: "
+      + ([.roots[] | .location + " " + .root] | join(", "))
+      + ". The narrowest is used — \(.roots[0].location). Key it <source>:<module> to say so."' \
     <<<"$1" | awk 'NF && !seen[$0]++'
 }
 
@@ -428,19 +479,20 @@ EOF
 # ---------------------------------------------------------------- commands
 
 cmd_register() {
-  local reg=$1 app=$2 as_json=$3 rows line
+  local reg=$1 app=$2 as_json=$3 rows all line
   rows=$(rows_for "$reg" "$app")
 
-  if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
+  if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$CHECKED"; then
     note "no installed module opens the register '$reg' — run 'scrumia-extends --list' for the ones that exist"
   fi
 
   # Said on every table, not only on --modules: a table shortened by a conflict is
   # indistinguishable from a correct one, and this is the only place it can be said.
+  all=$(bindings)
   while IFS= read -r line; do
     [ -n "$line" ] || continue
     note "$line"
-  done < <(conflict_lines "$(bindings)")
+  done < <(conflict_lines "$all"; shadow_lines "$all")
 
   if [ "$as_json" = yes ]; then jq '.' <<<"$rows"; else render_table "$reg" "$rows" "$app"; fi
 }
@@ -474,7 +526,7 @@ cmd_modules() {
   while IFS= read -r line; do
     [ -n "$line" ] || continue
     note "$line"
-  done < <(conflict_lines "$all")
+  done < <(conflict_lines "$all"; shadow_lines "$all")
 }
 
 cmd_list() {
@@ -491,7 +543,7 @@ cmd_list() {
         | . as $o
         | "| `" + $r + "` | " + $o.opened_by + " | " + $o.skill + " | " + $o.purpose + " | "
           + ([ $mods[] | select((.extends // {}) | has($r)) | .module ] | length | tostring) + " |" )
-  ' <<<"$MODULES"
+  ' <<<"$CHECKED"
 }
 
 # A module's configuration is three layers, each overriding the one before: `settings:`,
@@ -533,7 +585,7 @@ publisher_of() {
   local root
   while IFS=$'\t' read -r root mod src; do
     [ -n "$root" ] && [ -x "$root/bin/$1" ] && { printf '%s\t%s\n' "$mod" "$src"; return 0; }
-  done < <(jq -r '.[] | select(.root != ".") | [.root, .module, .source] | @tsv' <<<"$MODULES")
+  done < <(jq -r '.[] | select(.root != ".") | [.root, .module, .source] | @tsv' <<<"$CHECKED")
   return 1
 }
 
@@ -580,17 +632,17 @@ cmd_check() {
       echo "$mod declares running '$want:$name', but the '$name' it would reach is published by $pub_mod, from '$pub_src' — a name on PATH is first-come, so this is a different command wearing the same name" >&2
       failed=$((failed + 1))
     fi
-  done < <(jq -r '.[] | .module as $m | (.runs // [])[] | $m + "\t" + .' <<<"$MODULES")
+  done < <(jq -r '.[] | .module as $m | (.runs // [])[] | $m + "\t" + .' <<<"$CHECKED")
 
   # A contribution to a register nobody opens is inert — it will never be printed, and
   # nothing else would ever say so.
   while IFS=$'\t' read -r mod reg; do
     [ -n "$reg" ] || continue
-    if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
+    if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$CHECKED"; then
       echo "$mod extends the register '$reg', which no installed module opens — those directives reach nothing" >&2
       failed=$((failed + 1))
     fi
-  done < <(jq -r '.[] | .module as $m | (.extends // {}) | keys[] as $k | $m + "\t" + $k' <<<"$MODULES")
+  done < <(jq -r '.[] | .module as $m | (.extends // {}) | keys[] as $k | $m + "\t" + $k' <<<"$CHECKED")
 
   # Two modules opening one register leaves no way to say which main skill consumes it.
   # The tool does not pick; it reports and stops.
@@ -602,7 +654,7 @@ cmd_check() {
     [ .[] | .module as $m | (.registers // {}) | keys[] | {register: ., module: $m} ]
     | group_by(.register) | map(select(length > 1))[]
     | "the register `" + .[0].register + "` is opened by " + ([.[].module] | join(" and "))
-      + " — nothing decides which main skill consumes it"' <<<"$MODULES")
+      + " — nothing decides which main skill consumes it"' <<<"$CHECKED")
 
   if [ "$failed" -gt 0 ]; then
     die "$failed unmet dependency/dependencies"
@@ -637,6 +689,7 @@ done
 
 load_config
 discover_roots
+resolve_identity
 
 if [ -n "${APP_PATH:-}" ]; then
   APP=$(app_of_path "$APP_PATH")

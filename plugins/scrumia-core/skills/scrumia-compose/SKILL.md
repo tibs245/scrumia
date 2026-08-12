@@ -35,7 +35,7 @@ the same question:
 scrumia-extends --modules            # every declaration, and the location it resolved from
 ```
 
-Three states come back, and each means something different to whoever is composing:
+Four states come back, and each means something different to whoever is composing:
 
 - **resolved** — bound to exactly one directory, which is printed. Nothing to do.
 - **absent** — nothing answered it here. For a marketplace module, it is installed
@@ -43,6 +43,10 @@ Three states come back, and each means something different to whoever is composi
   `SCRUMIA_SHARED_DIR` in `.scrumia/.env.local`, or the checkout is not in it. This is the
   ordinary state of a fresh clone and it is not a failure: every register renders without
   that module, and the report says which capability is gone.
+- **shadow** — the declaration names no location (the retired list shape does not), and
+  more than one answered it. The narrowest is running. Nothing is broken; the fix is to
+  key the declaration `<source>:<module>` so the file says which copy, rather than the
+  resolver deciding. Propose it.
 - **conflict** — two distinct modules answer one declaration. It binds neither, so that
   module contributes nothing anywhere. Say which two directories, and let the human
   choose; nothing here picks.
