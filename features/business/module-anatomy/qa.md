@@ -73,7 +73,29 @@ Then a finding names the missing README, and the module's `SKILL.md` contract do
   satisfy it — the two have different readers and one never stands in for the other
 ```
 
-### AC-7 — A reference that resolves outside the module is a finding, and a permitted one is not
+### AC-7 — A README missing a required section is a finding; a missing optional one is not
+
+```gherkin
+Given a README carrying its name and paragraph, what it answers and what it ships, and
+  no "What it refuses"
+When the procedural check runs over it
+Then a finding names the missing section
+Given instead a README carrying the four required sections in order and none of the
+  optional ones
+When the same check runs
+Then no finding is raised — a module that reads no setting, needs nothing else present
+  and ships no decision record states all three by omission
+Given instead a README whose required sections appear in a different order
+When the same check runs
+Then a finding names the order, because a reader comparing four modules compares them
+  by position
+```
+
+The negative half is what keeps the template from producing the defect it exists to
+prevent. A check requiring every section would fill four modules with "none", which is
+the noise the specs catalog already refuses one level up.
+
+### AC-8 — A reference that resolves outside the module is a finding, and a permitted one is not
 
 ```gherkin
 Given a module containing a relative path that leaves the module's own root
@@ -90,7 +112,7 @@ The second half is not decoration. Both forms are what `modular-composition`'s B
 permits and what this repository's own conventions require; a check enforcing only the
 first half flags every citation in every module and is unusable here.
 
-### AC-8 — A link or a script that does not exist is a finding
+### AC-9 — A link or a script that does not exist is a finding
 
 ```gherkin
 Given a module whose skill links to a relative path, and whose skill invokes a script
@@ -98,7 +120,7 @@ When either target is absent from what the module ships
 Then each is a separate finding naming the referring file and the missing target
 ```
 
-### AC-9 — Extension data a module ships is checked; extension data it omits is not
+### AC-10 — Extension data a module ships is checked; extension data it omits is not
 
 ```gherkin
 Given a module that opens no register and contributes no directive, shipping none of the
@@ -115,7 +137,7 @@ Then each is a finding
 This is the case where a module composes cleanly and contributes nothing, and its silence
 looks like a decision.
 
-### AC-10 — A directory that is not a module is refused, not judged
+### AC-11 — A directory that is not a module is refused, not judged
 
 ```gherkin
 Given a directory with no `.claude-plugin/plugin.json`
@@ -129,7 +151,7 @@ ignore it.
 
 ## The audit
 
-### AC-11 — A file answering two questions is reported, and a long one is not
+### AC-12 — A file answering two questions is reported, and a long one is not
 
 ```gherkin
 Given a module file that answers two distinct questions a reader could arrive with
@@ -143,7 +165,7 @@ Then no finding is raised against it — length is never the trigger, in either 
 Both halves are required. A surface that flags long single-concern files has replaced the
 rule with a proxy, which is what moving this criterion to the audit was meant to avoid.
 
-### AC-12 — An index that carries content is reported
+### AC-13 — An index that carries content is reported
 
 ```gherkin
 Given a module whose entry point lists what the module ships and also states a rule found
@@ -153,7 +175,7 @@ Then a finding names the entry point, because content reachable only through the
   content the index carries rather than routes
 ```
 
-### AC-13 — Every audit question is closed, single-concern and answerable from one file
+### AC-14 — Every audit question is closed, single-concern and answerable from one file
 
 ```gherkin
 Given the audit's checklist
@@ -167,7 +189,7 @@ This is the criterion that keeps the audit affordable. A question needing the wh
 in context is one that cannot run on a cheap model, and an audit that cannot run cheaply is
 one that runs once.
 
-### AC-14 — Both surfaces report in one shape
+### AC-15 — Both surfaces report in one shape
 
 ```gherkin
 Given findings produced by the procedural check and findings produced by the audit

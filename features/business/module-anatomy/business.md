@@ -61,6 +61,38 @@ which addresses the agent. The two have different readers and say different thin
 README that restates the contract has the wrong audience, and a contract that explains
 what the module is for has the wrong one too.
 
+### The sections it carries
+
+Four are required of every module, and the rest are content-tested — the same two
+categories the specs catalog uses, and for the same reason: an absent section that means
+something specific is information, while a section filled with "none" is noise nobody
+prunes.
+
+| Section | Present when |
+|---|---|
+| `# <module name>`, then one paragraph | always — the name is the published one, the paragraph says what the module is for in a reader's terms, not the composition's |
+| **What it answers** | always — the question a project has that makes this module the answer. Not a feature list |
+| **What it refuses** | always — the boundary. This is the section that lets a reader conclude the module is *not* for them, which is the most valuable thing a README does |
+| **What it ships** | always — skills, commands and names published on `PATH`, as a table |
+| **Settings it reads** | the module reads any. Absent means it reads none |
+| **What it expects to find** | the module needs something else present to be useful. Absent means it stands alone |
+| **Decisions** | the module ships decision records. Absent means it ships none |
+| **Not shipped yet** | something described is not built. Absent asserts the module is complete as described |
+
+The order above is the reading order, and it is not negotiable section by section: a
+reader scanning four modules compares them by position. What varies between modules is
+which optional sections appear, never where the required ones sit.
+
+Two refusals travel with the template. **No section with nothing under it** — an empty
+heading is worse than an absent one. And **no restatement of the `SKILL.md` contract**:
+the settings section names what the module reads and points at the contract for the
+schema, rather than reproducing it.
+
+A guardrail rather than a rule: past roughly eighty lines a README has become
+documentation, and documentation belongs in the module's skills or in `docs/`. The two
+READMEs this repository already ships sit at forty-five and forty-eight lines. Exceeding
+it calls for checking, not for cutting.
+
 ## One authority, two surfaces, split on what a machine can decide
 
 This standard is one authority on what a module must contain and what it must not. It is
@@ -152,9 +184,11 @@ is what this feature exists to replace.
   answer they came for is two files and an index.
 - **BR-3** — An index routes and carries no content of its own beyond what it takes to
   route: what exists, and when to open each.
-- **BR-4** — Every module carries a README addressed to whoever has not adopted it yet —
-  what it is for, what it refuses, what it ships, what it expects. It is not the
-  `SKILL.md` contract and does not restate it.
+- **BR-4** — Every module carries a README addressed to whoever has not adopted it yet.
+  Four sections are required — the name and its paragraph, what it answers, what it
+  refuses, what it ships — in that order; the others are present when they have something
+  to say and their absence states it. It is not the `SKILL.md` contract and does not
+  restate it.
 - **BR-5** — This standard is one authority, applied through two surfaces. A rule goes to
   the procedural check when a program can decide it from the module's tree alone, and to
   the audit when it has to be read to be judged. A consumer of either verifies only what
