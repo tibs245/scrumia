@@ -3,9 +3,16 @@
 
 One test per criterion this ticket owns — AC-1, AC-3, AC-4, AC-6, AC-7, AC-8, AC-9,
 AC-10, AC-11, AC-16. Every module is a fixture built in a temp directory, so nothing
-here depends on what this repository happens to ship today.
+here depends on what this repository happens to ship today — except AC-3, which is
+about a run over every module the marketplace ships.
 
-    python3 plugins/scrumia-core/scripts/test_module_check.py
+Here rather than inside the module it tests, for the reason the tool itself reports: a
+test under `plugins/scrumia-core/` that reaches the repository root climbs out of its own
+module, which is what `modular-composition`'s BR-7 forbids and what AC-3 refuses to exempt
+the checker's own module from. `tools/` is the repository's, so reaching `plugins/` from
+here is not a climb. Same arrangement as `tools/test_compose_status.py`.
+
+    python3 tools/test_module_check.py
 """
 
 import json
@@ -16,7 +23,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-TOOL = Path(__file__).resolve().parent.parent / "bin" / "scrumia-module"
+ROOT = Path(__file__).resolve().parent.parent
+TOOL = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
 FAILURES: list[str] = []
 
 CLEAN, TOOL_FAILED, BAD_USAGE, FINDINGS, NOT_A_MODULE = 0, 1, 2, 3, 4
@@ -125,8 +133,7 @@ def test_ac1_verdict_and_five_states(tmp: Path) -> None:
 
 def test_ac3_the_owner_is_checked_like_any_other() -> None:
     print("AC-3 — the owner is checked like every other module")
-    repo = Path(__file__).resolve().parents[3]
-    plugins = sorted(p for p in (repo / "plugins").iterdir()
+    plugins = sorted(p for p in (ROOT / "plugins").iterdir()
                      if (p / ".claude-plugin" / "plugin.json").is_file())
     seen = {}
     for plugin in plugins:
@@ -215,6 +222,14 @@ def test_ac7_required_sections(tmp: Path) -> None:
     check("the name heading is the published one",
           any("published name" in f["message"] for f in envelope["findings"]), messages(envelope))
 
+    # Two shapes a README may legitimately take. Reporting either is how a check earns
+    # the argument that ends with nobody running it.
+    tagline = README.replace("# fixture", "# fixture — the thing it does")
+    tagline = tagline.replace("## What it ships", "## What it ships (skills and names on PATH)")
+    _, envelope = verdict(module(tmp / "ac7g", **{"README.md": tagline}))
+    check("a tagline after the name, and a qualified section title, raise nothing",
+          envelope["findings"] == [], messages(envelope))
+
 
 # --------------------------------------------------------------------------- AC-8
 
@@ -236,6 +251,23 @@ def test_ac8_containment(tmp: Path) -> None:
           leaving and leaving[0]["rule"] == "modular-composition/BR-7")
     check("the document it points at is an absolute URL",
           leaving and "https://github.com/" in leaving[0]["message"], messages(envelope))
+
+    # ${CLAUDE_PLUGIN_ROOT} reaches an agent unsubstituted, so a path built from it
+    # resolves nowhere — but the variable is legitimate in a hooks.json a README quotes.
+    quoting = module(tmp / "ac8c", **{
+        "README.md": README + '\n```json\n{"command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh"}\n```\n',
+    })
+    _, envelope = verdict(quoting)
+    check("a README quoting a hooks.json raises nothing", envelope["findings"] == [],
+          messages(envelope))
+    unsubstituted = module(tmp / "ac8d", **{
+        "README.md": README,
+        "skills__s__SKILL.md": "# s\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/run.sh\n```\n",
+    })
+    _, envelope = verdict(unsubstituted)
+    check("the same variable inside a skill is a finding",
+          any("CLAUDE_PLUGIN_ROOT" in f["message"] for f in envelope["findings"]),
+          messages(envelope))
 
     permitted = module(tmp / "ac8b", **{
         "README.md": README,
@@ -274,10 +306,19 @@ def test_ac9_links_and_scripts(tmp: Path) -> None:
         "README.md": README,
         "skills__s__SKILL.md": "# s\n\n```bash\n${CLAUDE_SKILL_DIR}/run.sh\n```\n",
         "skills__s__run.sh": "#!/usr/bin/env bash\n",
+        "bin__fixture-tool": "#!/usr/bin/env bash\n",
     })
     os.chmod(shipped / "skills" / "s" / "run.sh", 0o755)
+    os.chmod(shipped / "bin" / "fixture-tool", 0o755)
     _, envelope = verdict(shipped)
-    check("a script the module ships raises nothing", envelope["findings"] == [], messages(envelope))
+    check("a script and a published name the module ships raise nothing",
+          envelope["findings"] == [], messages(envelope))
+
+    os.chmod(shipped / "bin" / "fixture-tool", 0o644)
+    _, envelope = verdict(shipped)
+    check("a published name that cannot run is a finding",
+          any(f["file"] == "bin/fixture-tool" and "executable" in f["message"]
+              for f in envelope["findings"]), messages(envelope))
 
 
 # --------------------------------------------------------------------------- AC-10
@@ -317,6 +358,25 @@ def test_ac10_extension_data(tmp: Path) -> None:
     check("a directive reading a file the module does not ship is a finding",
           any("gone.md" in f["message"] for f in envelope["findings"]), messages(envelope))
 
+    # Whose bin/ publishes a name is invisible from one tree, so a source that resolves
+    # nowhere is not this surface's to refuse — only an entry that names none.
+    _, envelope = verdict(module(tmp / "ac10f", **{
+        "README.md": README,
+        "dependencies.jsonl": '"ghost-marketplace:scrumia-nothing"\n',
+    }))
+    check("a qualified name whose source this tree cannot see raises nothing",
+          envelope["findings"] == [], messages(envelope))
+
+    # The rules-hierarchy arrangement: the entry point routes, a reference file runs it.
+    _, envelope = verdict(module(tmp / "ac10g", **{
+        "README.md": README,
+        "registers.json": json.dumps({"review": {"skill": "s", "purpose": "p"}}),
+        "skills__s__SKILL.md": "# s\n\nRead [the register](references/register.md).\n",
+        "skills__s__references__register.md": "Run `scrumia-extends review`.\n",
+    }))
+    check("a register opened from a file the skill routes to is not a broken promise",
+          envelope["findings"] == [], messages(envelope))
+
 
 # --------------------------------------------------------------------------- AC-11
 
@@ -325,12 +385,15 @@ def test_ac11_not_a_module(tmp: Path) -> None:
     plain = tmp / "ac11" / "just-a-folder"
     plain.mkdir(parents=True, exist_ok=True)
     (plain / "notes.md").write_text("[gone](missing.md)\n", encoding="utf-8")
-    code, envelope = verdict(plain)
+    code, out, err = run("check", str(plain), "--json")
+    envelope = json.loads(out)
     check("it exits on the not-a-module code, distinct from bad usage",
           code == NOT_A_MODULE and code != BAD_USAGE, str(code))
-    check("it states that this is not a module",
-          envelope["state"] == "not_a_module" and "not a module" in envelope.get("error", ""))
+    check("it names the state and says so on stderr",
+          envelope["state"] == "not_a_module" and "not a module" in err, err)
     check("it returns no findings", envelope["findings"] == [])
+    check("the envelope carries the four fields tech.md fixes, and no fifth",
+          set(envelope) == {"ok", "state", "module", "findings"}, str(sorted(envelope)))
 
 
 # --------------------------------------------------------------------------- AC-16

@@ -121,7 +121,10 @@ class Checker:
         if first_h1 is None:
             self.report(readme, "module-anatomy/BR-4", "carries no `# <module name>` heading")
         else:
-            if first_h1[3].strip("`") != self.module:
+            # The name is the published one; a tagline after it is still that heading.
+            # Requiring the line to be nothing but the name would report `# scrumia-teams
+            # — the standing roles`, and a check people argue with is one they stop running.
+            if re.split(r"\s+[—:–-]\s+", first_h1[3].strip("`"), maxsplit=1)[0] != self.module:
                 self.report(
                     readme,
                     "module-anatomy/BR-4",
@@ -134,7 +137,10 @@ class Checker:
                     "the name carries no paragraph saying what the module is for",
                 )
 
-        present = [h[2] for h in headings if h[1] >= 2]
+        # A section is matched on what it opens with, so `## What it ships (skills and
+        # names on PATH)` is that section. No known name is a prefix of another, so
+        # nothing is matched twice.
+        present = [self.section_of(h[2]) for h in headings if h[1] >= 2]
         for section in REQUIRED_SECTIONS:
             if section not in present:
                 self.report(
@@ -156,15 +162,21 @@ class Checker:
                 + ", after the name and its paragraph",
             )
 
-        known = set(REQUIRED_SECTIONS) | set(OPTIONAL_SECTIONS)
         for heading in headings:
-            if heading[1] >= 2 and heading[2] in known and not self.body_of(lines, headings, heading):
+            if heading[1] >= 2 and self.section_of(heading[2]) and not self.body_of(lines, headings, heading):
                 self.report(
                     readme,
                     "module-anatomy/BR-4",
                     f'"{heading[3]}" is a heading with nothing under it — an absent '
                     "section states something, an empty one states nothing",
                 )
+
+    @staticmethod
+    def section_of(normalised: str) -> str:
+        """The template section a heading opens with, or "" for one of the module's own."""
+        return next(
+            (s for s in REQUIRED_SECTIONS + OPTIONAL_SECTIONS if normalised.startswith(s)), ""
+        )
 
     @staticmethod
     def headings_of(lines: list[str]) -> list[tuple[int, int, str, str]]:
@@ -198,24 +210,30 @@ class Checker:
             text = self.read(md)
             skill_dir = self.skill_dir_of(md)
 
-            if PLUGIN_ROOT_RE.search(text):
+            # Anywhere in a skill, where every line is something an agent is told to do.
+            # Elsewhere the variable is legitimate prose — a README quoting the hooks.json
+            # that does substitute it — so outside a skill only a path built from it is a
+            # finding, and check_target raises that one.
+            whole_file = md.name == "SKILL.md" and bool(PLUGIN_ROOT_RE.search(text))
+            if whole_file:
                 self.report(
                     md,
                     "module-anatomy/BR-7",
-                    "${CLAUDE_PLUGIN_ROOT} is never substituted in markdown an agent "
-                    "reads — use ${CLAUDE_SKILL_DIR}",
+                    "${CLAUDE_PLUGIN_ROOT} is never substituted in a skill — "
+                    "use ${CLAUDE_SKILL_DIR}",
                 )
 
             for match in LINK_RE.finditer(text):
-                self.check_target(md, match.group(1), skill_dir, "link")
+                self.check_target(md, match.group(1), skill_dir, "link", whole_file)
             for match in SCRIPT_RE.finditer(text):
-                self.check_target(md, match.group(0), skill_dir, "script")
+                self.check_target(md, match.group(0), skill_dir, "script", whole_file)
 
     def skill_dir_of(self, path: Path) -> Path | None:
         rel = path.relative_to(self.root).parts
         return self.root / "skills" / rel[1] if len(rel) >= 3 and rel[0] == "skills" else None
 
-    def check_target(self, md: Path, target: str, skill_dir: Path | None, kind: str) -> None:
+    def check_target(self, md: Path, target: str, skill_dir: Path | None, kind: str,
+                     plugin_root_reported: bool) -> None:
         """A reference resolves inside the module, and to something that is there.
 
         A bare name published on PATH is not a reference — nothing here writes a path to
@@ -225,7 +243,14 @@ class Checker:
         if target.startswith(("http://", "https://", "mailto:")):
             return
         if target.startswith("${CLAUDE_PLUGIN_ROOT}"):
-            return  # already reported once, for the whole file
+            if not plugin_root_reported:
+                self.report(
+                    md,
+                    "module-anatomy/BR-7",
+                    f"{kind} is built from ${{CLAUDE_PLUGIN_ROOT}}, which nothing "
+                    f"substitutes here, so it resolves to nothing → {target}",
+                )
+            return
         if target.startswith("${CLAUDE_SKILL_DIR}"):
             if skill_dir is None:
                 self.report(
@@ -296,15 +321,14 @@ class Checker:
                 self.report(path, "module-anatomy/BR-8", f"register `{name}` names skill `{skill}`, which this module does not ship")
             if not entry.get("purpose"):
                 self.report(path, "module-anatomy/BR-8", f"register `{name}` states no purpose")
-            # Declaring a register is the promise to consult it. A register no skill of
-            # this module ever runs is declared and never opened.
-            if not any(
-                f"scrumia-extends {name}" in self.read(skill_md)
-                for skill_md in sorted(self.root.glob("skills/*/SKILL.md"))
-            ):
+            # Declaring a register is the promise to consult it. Searched over every
+            # markdown the module ships, not only its SKILL.md files: a skill that routes
+            # the call into a reference file is the arrangement the rules hierarchy asks
+            # for, and looking only at the entry point reports it as a broken promise.
+            if not any(f"scrumia-extends {name}" in self.read(md) for md in self.markdown()):
                 self.report(
                     path,
-                    "module-anatomy/BR-8",
+                    "modular-composition/BR-11",
                     f"declares the register `{name}`, and no skill it ships runs "
                     f"`scrumia-extends {name}` — the directives are promised and never applied",
                 )
@@ -360,7 +384,7 @@ class Checker:
             if not source:
                 self.report(
                     path,
-                    "module-anatomy/BR-8",
+                    "modular-composition/BR-11",
                     f"runs `{name}` unqualified — name it <source>:<name>, since PATH is "
                     "shared with every enabled plugin and a bare name says which command, never whose",
                 )
@@ -415,21 +439,25 @@ def main(argv: list[str]) -> int:
             return usage()
 
     root = Path(target or ".")
+    # The four fields tech.md fixes, and no fifth: the audit must emit this same envelope,
+    # and a field only one surface knows about is where the two shapes start to diverge.
+    # Why a run could not conclude goes to stderr, where a human reads it.
     envelope = {"ok": False, "state": "error", "module": None, "findings": []}
+    reason = ""
 
     if not (root / ".claude-plugin" / "plugin.json").is_file():
         envelope["state"] = "not_a_module"
-        envelope["error"] = f"{root}: not a module — it carries no .claude-plugin/plugin.json"
+        reason = f"{root}: not a module — it carries no .claude-plugin/plugin.json"
     else:
         checker = Checker(root)
         try:
             findings = checker.run()
         except CouldNotCheck as exc:
             envelope["module"] = checker.module
-            envelope["error"] = str(exc)
+            reason = str(exc)
         except OSError as exc:
             envelope["module"] = checker.module
-            envelope["error"] = f"could not read the module — {exc}"
+            reason = f"could not read the module — {exc}"
         else:
             envelope.update(
                 ok=True,
@@ -438,13 +466,13 @@ def main(argv: list[str]) -> int:
                 findings=findings,
             )
 
+    if reason:
+        print(f"{SELF}: {reason}", file=sys.stderr)
     if as_json:
         json.dump(envelope, sys.stdout, indent=2)
         sys.stdout.write("\n")
     elif envelope["ok"]:
         render(envelope["state"], envelope["module"], envelope["findings"])
-    else:
-        print(f"{SELF}: {envelope['error']}", file=sys.stderr)
 
     return EXIT[envelope["state"]]
 
