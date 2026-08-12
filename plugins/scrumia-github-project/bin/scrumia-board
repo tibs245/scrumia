@@ -14,6 +14,10 @@ SOFT_SETTINGS=no
 # Bounds for cmd_read's confirm-retry (AC-4); overridable so tests don't sleep for real.
 DEFAULT_RETRY_MAX=2
 DEFAULT_RETRY_DELAY=1
+# The one label read as a subtraction — features/business/github-tracking/, "Labels and
+# their consumers". Spelled once here so the two readings that owe it cannot each spell
+# it differently.
+DISCUSSION_LABEL="discussion"
 
 die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
 warn() { echo "scrumia-board: $1" >&2; }
@@ -31,6 +35,8 @@ scrumia-board <command> [args]
   epic <issue>                  An epic and its native sub-issues
 
 `read` defaults to "-status:Done"; pass --all to lift it.
+`read` lifts items labelled "discussion" out of `columns` into `discussions`: they are
+not work waiting to be started. They are still returned and still counted.
 EOF
   exit 2
 }
@@ -361,23 +367,32 @@ cmd_read() {
 
   jq --arg q "$query" --argjson trunc "$truncated" --argjson suspect "$suspect" \
      --argjson explicit "$explicit_query" --argjson matching "$matching" \
-     --argjson states "$states" --arg done_col "$done_column" '
+     --argjson states "$states" --arg done_col "$done_column" --arg disc "$DISCUSSION_LABEL" '
     (reduce $states[] as $s ({}; .[$s.number|tostring] = $s.state)) as $by_number
     | (.items | map(. + {state: ($by_number[(.content.number|tostring)] // null)})) as $items
     # Closed-in-Done is a normal merge, not the AC-8 gap.
     | ($items | map(select(.state != "CLOSED" or .status == $done_col))) as $live
     | ($items | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
+    # The subtraction happens here so neither reading that owes it can forget it, and it
+    # separates rather than drops: a read returning fewer items than the board holds is
+    # the filtered read that lies (business.md, "Labels and their consumers").
+    | ($live | map(select([.labels[]?] | index($disc) | not))) as $work
+    | ($live | map(select([.labels[]?] | index($disc)))) as $discussions
     | {ok: true, query: (if $q == "" then null else $q end),
        query_was_explicit: $explicit, count: (.items|length),
        total_matching: $matching,
        truncated: $trunc, filter_suspect: $suspect,
        closed_without_pr_count: ($stale|length),
-       columns: ($live | group_by(.status) | map({
+       discussion_count: ($discussions|length),
+       columns: ($work | group_by(.status) | map({
          status: (.[0].status // "(no status)"),
          count: length,
          items: map({number: .content.number, title: .title,
                      type: .content.type, labels: [.labels[]?], state})
        })),
+       discussions: ($discussions | map({number: .content.number, title: .title,
+         status: (.status // "(no status)"), type: .content.type,
+         labels: [.labels[]?], state})),
        closed_without_pr: ($stale | map({number: .content.number, title: .title,
          status: (.status // "(no status)"), type: .content.type,
          labels: [.labels[]?], state}))}' <<<"$out"

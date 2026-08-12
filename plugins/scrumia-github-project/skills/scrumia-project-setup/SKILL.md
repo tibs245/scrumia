@@ -45,8 +45,19 @@ If absent, propose these values and write them. The columns reflect the real flo
 | `risk/low` `risk/medium` `risk/high` `risk/critical` | What it costs to get this wrong | `scrumia-pick-model` |
 | `needs-<role>` | Escalation requested to a role — one per active role in `settings.team.roles`, including those a non-team module provides (`needs-design`) | `scrumia-manager` |
 | `epic` | Marks a unit of value; its children are **native sub-issues** | `scrumia-status`, `scrumia-board epic` |
+| `discussion` | Marks an issue holding something unresolved rather than work to start | `scrumia-board read`, which **subtracts** it on behalf of `scrumia-status` and the next-step reading |
 
 `gh label create <name> --color <hex> --description <text>`, ignoring duplicate errors.
+
+### `discussion` is the one label spelled verbatim because a query selects on it
+
+```bash
+gh label create "discussion" --color c5def5 --description "Something unresolved, not work waiting to be started — the board read subtracts it"
+```
+
+Bare, like `epic` and `scrumia`: a prefix family for a single member is ceremony. What sends an issue there is [`features/business/knowledge-placement/`](https://github.com/tibs245/scrumia/blob/main/features/business/knowledge-placement/business.md)'s; that it is queryable, and by whom, is [`features/business/github-tracking/`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s.
+
+Seed it even on a project that has never filed one. The subtraction is written into the board read, and a label the board has never seen costs nothing there — but a label invented at filing time, by whichever agent files first, is spelled `discussion` once and `discussions` the next time, and the second one is subtracted by nothing. Skipping this line is how the filter silently stops matching half of what it was built for.
 
 ### The scope and risk descriptions are seeded verbatim, not improvised
 

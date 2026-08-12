@@ -97,7 +97,7 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
-| `discussion` | `scrumia-status` and the next-step reading, which **subtract** it | an issue holding something unresolved that is not work waiting to be started |
+| `discussion` | the board read, which **subtracts** it on behalf of `scrumia-status` and the next-step reading | an issue holding something unresolved that is not work waiting to be started |
 
 `discussion` is the only label read as a subtraction, and that is what earns it a place
 here rather than in a module's prose. An issue carrying it is not a ticket awaiting
@@ -105,6 +105,25 @@ refinement: counting it as one is how a backlog becomes unreadable, and a label 
 queries would be documentation rather than a filter. What sends an issue there is
 `features/business/knowledge-placement/`'s; that it is queryable, and by whom, is this
 feature's.
+
+**The subtraction is performed once, in the board read, not in each reading.** Both
+readings that owe it reach the board through the same tool, so a subtraction written into
+their prose is a subtraction each of them can forget independently — and the one that
+forgets is indistinguishable, in its output, from the one that did not. Doing it in the
+read makes it unforgettable for both, and for any third reading added later.
+
+**Subtracting is not dropping.** A discussion-labelled item leaves the columns and arrives
+in a group of its own, named and counted — the same treatment this file already gives an
+issue closed without a PR. A read that silently returned fewer items than the board holds
+would be the filtered read that lies, which is the one failure the reading discipline
+below exists to prevent; a reader looking for their own discussion issue still finds it.
+
+**A discussion issue is filed off the board** — created without `--project`, so it takes
+no card. The board carries what is in flight, and something nobody intends to start is
+not; a card with no Status is a card someone has to place, which is work the issue was
+filed to avoid creating. The subtraction above is therefore a backstop rather than the
+mechanism: it catches the issues a human carded by hand, which is the only way one arrives
+on the board.
 
 `scope/*` has exactly one programmatic reader, `scrumia-pick-model`, and what its cell means
 is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —

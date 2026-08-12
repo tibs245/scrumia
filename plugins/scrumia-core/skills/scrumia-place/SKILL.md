@@ -59,7 +59,9 @@ places, and for the first four the composition says where they sit — never ass
 - the modules this project runs, skills and references included;
 - the project's own rules — its `CLAUDE.md` and its configuration;
 - the specs root, as the specs contract in `CLAUDE.md` names it;
-- the tracker, for anything that reads like a debate;
+- the tracker, for anything that reads like a debate — and it is searched the way Step 3's
+  question 4 says, over issues in every state and never over the board, because that is the
+  only search that reaches something already settled;
 - the agent memory directories themselves. A fact already sitting in one is placed, rightly
   or wrongly, and re-placing it is Step 3's job — writing a second copy of it is not.
   **The composition declares none of these.** A project has at least two scopes — the one it
@@ -181,11 +183,55 @@ about a machine and is needed by whoever clones the repository. What is on *your
 and absent from the project's prerequisites is question 6's.
 
 **4 — a ticket.** A ticket is the one place this composition already keeps *why*, which is
-what an unresolved thing needs. Look for the issue that already covers it before creating
-one — something settled is more often a closed issue than a new one. What a new issue
-carries, and how it is labelled, is
+what an unresolved thing needs. Three things happen here, in this order, and the order is
+the rule: ask whether the composition has a tracker at all, search it, and only then
+create.
+
+**First, is there a tracker?** Read which module fills the `tracker` slot the same way you
+read any other slot in Step 2. Where the slot is empty, this branch stops: say that the
+destination is a ticket, that this composition has no module that holds one, and name the
+capability that would fill it. **Create nothing, and write nothing into the repository** —
+not a file, not a list, not a line in a document that happens to be nearby. A discussion
+written into the repository because no tracker exists is project state in the repository,
+which is the thing the composition refuses everywhere else, and it is worse than no
+placement because it looks like one. Naming the gap is a complete answer, the same way
+naming a feature that does not exist yet is.
+
+**Then search — over issues in every state, and never over the board.** These are two
+different surfaces and only one of them can answer the question. The board carries what is
+in flight; a discussion is almost always about something that was already settled, and
+settled things have left the board. A search that went through the board would come back
+empty on exactly the cases this step exists for, and an empty result reads identically to
+"nothing like this was ever raised" — so the wrong surface does not fail, it answers
+wrongly. Search closed and open together, in one read:
+
+```bash
+# with scrumia-github-project in the tracker slot
+gh issue list --state all --search "<token> in:title,body" --limit 30 \
+  --json number,title,state,labels
+```
+
+Search the tokens that survive someone else's phrasing, the way Step 2 does. This is the
+search Step 2 sent here for: if it already ran, it ran with these two properties and does
+not run again. Another module in the slot searches its own work items its own way; ask it
+in its own terms, and hold it to the same two properties — every state, not the board. A
+tracker that can only search what is open cannot satisfy this step, and saying so is better
+than searching it anyway and reporting the result as a search.
+
+**If an issue already covers it, that issue is the answer.** Propose it — by number,
+whatever its state — and create nothing. A closed issue is not a worse match than an open
+one; it is the more likely one. What may be added is a comment on it, which is the same
+pointer-not-a-second-copy move Step 2 makes.
+
+**Only where nothing matches is a new issue created**, and it carries the label the tracker
+declares for an issue holding a discussion, so that the readings which count what is
+waiting to be started can subtract it. The label's spelling, where it is declared, and who
+reads it are
 [`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s
-and the tracker module's.
+— read it there, and do not invent a spelling: a label nothing queries is documentation
+rather than a filter, and one spelled freshly at filing time is queried by nothing. That
+feature also says whether the new issue takes a board card; it does not, and the reason is
+its to give.
 
 A fact that is simply **not a rule** is not unresolved. Nothing about it is open, and nobody
 has to settle it — it takes questions 5 and 6 like anything else. Reading "not a rule yet"

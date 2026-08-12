@@ -155,6 +155,50 @@ ac4_has_last=$(jq '[.columns[].items[].number] | contains([305])' <<<"$OUT2")
 check "AC-4: the item missing from the first read is present in the final one" \
   "$([ "$ac4_has_last" = "true" ] && echo true || echo false)"
 
+# --- AC-13: the `discussion` label is subtracted from the work, not dropped ---
+WORKDIR3=$(mktemp -d)
+trap 'rm -rf "$WORKDIR" "$WORKDIR2" "$WORKDIR3"' EXIT
+
+cp "$WORKDIR/gh" "$WORKDIR3/gh"
+mkdir -p "$WORKDIR3/.scrumia"
+cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR3/.scrumia/config.yaml"
+
+# 401 is ordinary work; 402 holds a discussion and sits in the same column, which is how
+# one reaches the board at all — the tree files its issues without a card.
+cat > "$WORKDIR3/item-list.json" <<'JSON'
+{"totalCount": 2, "items": [
+  {"content": {"number": 401, "type": "Issue"}, "title": "Real ticket", "status": "Backlog", "labels": ["scrumia"]},
+  {"content": {"number": 402, "type": "Issue"}, "title": "A debate", "status": "Backlog", "labels": ["discussion"]}
+]}
+JSON
+cat > "$WORKDIR3/states.json" <<'JSON'
+{"data": {"repository": {
+  "n401": {"number": 401, "state": "OPEN"},
+  "n402": {"number": 402, "state": "OPEN"}
+}}}
+JSON
+
+OUT3=$(PATH="$WORKDIR3:$PATH" FIXTURE_DIR="$WORKDIR3" \
+       SCRUMIA_CONFIG="$WORKDIR3/.scrumia/config.yaml" "$BOARD_SH" read --all 2>/dev/null)
+
+in_columns=$(jq '[.columns[].items[].number] | contains([402])' <<<"$OUT3")
+check "AC-13: a discussion issue is not among what is waiting to be started" \
+  "$([ "$in_columns" = "false" ] && echo true || echo false)"
+
+work_kept=$(jq '[.columns[].items[].number] | contains([401])' <<<"$OUT3")
+check "AC-13: the ticket beside it is untouched — the filter subtracts only its label" \
+  "$([ "$work_kept" = "true" ] && echo true || echo false)"
+
+disc_number=$(jq -r '.discussions[0].number' <<<"$OUT3")
+disc_count=$(jq -r '.discussion_count' <<<"$OUT3")
+check "AC-13: it is returned in a group of its own, named and counted" \
+  "$([ "$disc_number" = "402" ] && [ "$disc_count" = "1" ] && echo true || echo false)" \
+  "got: number=$disc_number count=$disc_count"
+
+totals=$(jq -r '"\(.count)/\(.total_matching)"' <<<"$OUT3")
+check "AC-13: the read's own totals still account for it — a subtraction is not a drop" \
+  "$([ "$totals" = "2/2" ] && echo true || echo false)" "got: $totals"
+
 echo
 if [ "$FAILURES" -eq 0 ]; then
   echo "All checks passed."

@@ -70,6 +70,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
 - `README.md` — addressed to whoever is deciding whether to run this module, not to the
   agent that already does: what it answers, what it refuses, what it ships.
+- `scrumia-place` routes a discussion to an existing issue before creating one: it searches
+  issues in every state, never the board — something settled has left the board — and
+  a new issue carries the label the tracker declares so the readings that count work
+  subtract it. With no tracker in the composition it names the gap and writes nothing.
+  `/next` recommends on what is waiting to be started, discussions excluded.
 
 ## [0.4.0] - 2026-08-10
 ### Added

@@ -174,6 +174,11 @@ Given instead the label declared and no reading subtracting it
 When the same readings run
 Then this criterion fails — a label nothing queries is documentation, not a filter, and
   this feature admits a label only on that test
+Given the same board and a reader looking for the discussion issue itself
+When the board is read
+Then the item is still returned, in a group of its own and counted there, and the read's
+  own totals still account for it — a subtraction that removes the item from the answer
+  is the filtered read that lies, and fails this criterion as surely as no subtraction
 ```
 
 The label's declaration is cheap; the exclusion is the work. Without it a backlog fills

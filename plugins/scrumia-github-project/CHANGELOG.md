@@ -8,6 +8,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `implement`, `review` and `audit` registers, and declares the published names it runs,
   qualified by their source. Its four main skills now ask `scrumia-extends` what governs
   the work instead of restating another module's rules.
+- The `discussion` label, seeded by `scrumia-project-setup` and subtracted by
+  `scrumia-board read`, which lifts labelled items out of `columns` into a `discussions`
+  group of their own — counted and returned, never dropped. An issue holding something
+  unresolved stops being counted as work waiting to be started, in the status reading and
+  the next-step reading alike, because the subtraction happens once in the read rather
+  than in each reading's prose. Seed the label on upgrade even if you have never filed
+  one: it is what stops the spelling being invented at filing time.
 - `scrumia-review` checks the worktree's `HEAD` against `origin/<branch>` and any SHA a
   review brief names before judging, runs a negative control against any `gh search`
   command a diff writes into a spec, skill or script, flags a restated rule beside a
