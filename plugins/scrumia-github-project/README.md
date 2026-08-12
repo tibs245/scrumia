@@ -35,9 +35,12 @@ truncating it at 30 items.
 
 ## Settings it reads
 
-Under `settings.tracker` in `.scrumia/config.yaml`: the project's owner and number, the
-board's field and column ids, and the flow-step → column mapping `scrumia-board move`
-resolves through. `scrumia-refine`, `scrumia-review` and `scrumia-ticket` also read
+The project's owner and number, the board's field and column ids, and the flow-step →
+column mapping `scrumia-board move` resolves through. `scrumia-board` resolves them through
+the composition's settings cascade — `settings.tracker` in `.scrumia/config.yaml`, then this
+module's own `params:`, then `.scrumia/config.local.yaml` — so a per-machine override
+reaches it, and it stops rather than running on its own defaults when none of the three
+carries what it needs. `scrumia-refine`, `scrumia-review` and `scrumia-ticket` also read
 `settings.autonomy.level` and `settings.autonomy.auto_merge`.
 
 ## What it expects to find

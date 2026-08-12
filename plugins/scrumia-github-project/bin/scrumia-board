@@ -5,6 +5,7 @@
 set -uo pipefail
 
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+MODULE_ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 DEFAULT_LIMIT=200
 # Bounds for cmd_read's confirm-retry (AC-4); overridable so tests don't sleep for real.
 DEFAULT_RETRY_MAX=2
@@ -41,38 +42,82 @@ load_config() {
   fi
   [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
 
+  # `project.repo` is not a setting: it names the repository, not this module's
+  # configuration, so it is read here and everything under `settings:` is not.
   REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
   [ -n "$REPO" ] || die "project.repo missing from $CONFIG"
   REPO_OWNER=${REPO%%/*}
   REPO_NAME=${REPO##*/}
+
+  load_settings
   # A user-owned board can track an org-owned repo, so the two owners differ.
-  OWNER=$(jq -r --arg d "$REPO_OWNER" '.settings.tracker.owner // $d' <<<"$CFG")
-  PROJECT_NUMBER=$(jq -r '.settings.tracker.project_number // empty' <<<"$CFG")
-  FIELD_ID=$(jq -r '.settings.tracker.board.field_id // empty' <<<"$CFG")
+  OWNER=$(jq -r --arg d "$REPO_OWNER" '.owner // $d' <<<"$TRACKER")
+  PROJECT_NUMBER=$(jq -r '.project_number // empty' <<<"$TRACKER")
+  FIELD_ID=$(jq -r '.board.field_id // empty' <<<"$TRACKER")
+}
+
+# The key this module is declared under: its own name, qualified by the repository it
+# claims (ADR-0021). Read from its own manifest rather than written as a literal, so a
+# fork resolves under the key a fork's configuration actually carries. Echoes nothing and
+# returns non-zero on failure — a `die` here would print its JSON into the caller's
+# variable and exit the subshell only.
+module_key() {
+  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src
+  [ -f "$manifest" ] || return 1
+  name=$(jq -r '.name // ""' "$manifest" 2>/dev/null)
+  src=$(jq -r '(.repository // .homepage // "")
+    | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' "$manifest" 2>/dev/null)
+  [ -n "$name" ] && [ -n "$src" ] || return 1
+  printf '%s:%s\n' "$src" "$name"
+}
+
+# This module's configuration, resolved through the three layers rather than read out of
+# `settings:` — which would see layer 1 only and silently discard the per-machine layer
+# (`modular-composition` BR-15). The resolver is reached by the name scrumia-core publishes
+# on PATH, never by a path into it (ADR-0018).
+load_settings() {
+  local key out
+  key=$(module_key) || die "cannot read $MODULE_ROOT/.claude-plugin/plugin.json — this module cannot name itself, so its settings cannot be resolved"
+
+  command -v scrumia-extends >/dev/null 2>&1 ||
+    die "scrumia-extends not found — enable scrumia-core and restart the session. Reading $CONFIG directly instead would resolve one layer of three and run this board on values nobody chose"
+  out=$(scrumia-extends --settings "$key") ||
+    die "scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults"
+  jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out" ||
+    die "scrumia-extends --settings $key returned no object — settings for $key are unresolved"
+
+  # ADR-0021 moves what `settings.tracker` held into this module's own `params:`, so the
+  # resolved block carries those keys at its top level. The retired nest is still read
+  # while projects migrate — the deprecation window release-versioning grants, not a
+  # permanent alternative — and it is read *second*: on a half-migrated project both
+  # shapes are present, and the layer the cascade ranks higher is the one that must win.
+  TRACKER=$(jq -c '{ owner: (.owner // .tracker.owner // null)
+                   , project_number: (.project_number // .tracker.project_number // null)
+                   , board: (.board // .tracker.board // {}) }' <<<"$out")
 }
 
 need_project() {
-  [ -n "$PROJECT_NUMBER" ] || die "settings.tracker.project_number missing — run scrumia-project-setup"
+  [ -n "$PROJECT_NUMBER" ] || die "no project_number in the resolved settings for this module — no layer of the cascade carries it; run scrumia-project-setup"
 }
 
 # Skills name a flow step ("in_progress"), boards name a column ("IN PROGRESS").
 # Without this, adopting an existing board means renaming its columns to suit us.
 resolve_column() {
   local key="$1" mapped
-  mapped=$(jq -r --arg k "$key" '.settings.tracker.board.flow[$k] // empty' <<<"$CFG")
+  mapped=$(jq -r --arg k "$key" '.board.flow[$k] // empty' <<<"$TRACKER")
   echo "${mapped:-$key}"
 }
 
 option_id() {
   local column="$1" id
-  id=$(jq -r --arg c "$column" '.settings.tracker.board.options[$c] // empty' <<<"$CFG")
+  id=$(jq -r --arg c "$column" '.board.options[$c] // empty' <<<"$TRACKER")
   if [ -z "$id" ]; then
     # GitHub ships "In Progress"; a hand-made board may read "IN PROGRESS".
     id=$(jq -r --arg c "$column" '
-      .settings.tracker.board.options // {}
+      .board.options // {}
       | to_entries
       | map(select((.key|ascii_downcase) == ($c|ascii_downcase)))
-      | (.[0].value // empty)' <<<"$CFG")
+      | (.[0].value // empty)' <<<"$TRACKER")
     [ -n "$id" ] && warn "column '$column' matched case-insensitively — config and board disagree on casing"
   fi
   echo "$id"
@@ -153,13 +198,15 @@ cmd_move() {
   local issue="${1:-}" requested="${2:-}"
   [ -n "$issue" ] && [ -n "$requested" ] || usage
   need_project
-  [ -n "$FIELD_ID" ] || die "settings.tracker.board.field_id missing — run scrumia-project-setup"
+  [ -n "$FIELD_ID" ] || die "no board.field_id in the resolved settings for this module — run scrumia-project-setup"
 
   local column; column=$(resolve_column "$requested")
   local opt; opt=$(option_id "$column")
-  [ -n "$opt" ] || die "column '$column' has no option id in $CONFIG — known: $(jq -r '.settings.tracker.board.options // {} | keys | join(", ")' <<<"$CFG")"
+  [ -n "$opt" ] || die "column '$column' has no option id in the resolved settings — known: $(jq -r '.board.options // {} | keys | join(", ")' <<<"$TRACKER")"
 
-  local card; card=$(cmd_find "$issue") || exit 1
+  # cmd_find's own `die` writes its JSON to this substitution, so it has to be re-emitted:
+  # discarding it turns a named failure into a bare exit 1 with nothing on stdout.
+  local card; card=$(cmd_find "$issue") || { printf '%s\n' "$card"; exit 1; }
   [ "$(jq -r '.found' <<<"$card")" = "true" ] || die "issue #$issue has no card on project $PROJECT_NUMBER"
   local item_id project_id out
   item_id=$(jq -r '.item_id' <<<"$card")
