@@ -139,6 +139,22 @@ Then each one is HTML-escaped before interpolation, the same way a template
   fixed set of entries is
 ```
 
+### AC-8 — A module page names its complements, and nothing declares them
+
+```gherkin
+Given a module that opens a register and other modules that contribute to it
+When that module's page is built, in every language
+Then the contributing modules are listed as its complements, each linking to its
+  own page, derived from what the modules declare about registers rather than
+  from any field naming a complement
+And a module with no complement in either direction shows none, without an
+  empty heading standing where the list would be
+```
+
+The derivation is the point. A hand-written "goes well with" list is a second
+statement of a relationship the modules already carry, and it is the half that
+stops being updated first.
+
 ## Out of scope
 
 - The site favicon's emoji is not `site/modules.json`'s concern — AC-3 governs

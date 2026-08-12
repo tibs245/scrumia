@@ -5,6 +5,7 @@
 | Feature | Stratum | Status | In brief |
 |---|---|---|---|
 | [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same seven slots the slot-index feature reports, offered as choices. |
+| [extends-map](app/site/extends-map/index.md) | app/site | draft | The #extends section of the home page: how a skill declares an extension point, how any module contributes to it as data, and how the table… |
 | [ground-and-shell](app/site/ground-and-shell/index.md) | app/site | active | Everything on the site that is not a section: the token vocabulary the pages are written in, the lit ground they sit on, and the chrome… |
 | [hero](app/site/hero/index.md) | app/site | active | The first thing a reader sees: an eyebrow, a three-line architecture-scale headline, one sentence of lead copy, one filled control, Hop's… |
 | [module-pages](app/site/module-pages/index.md) | app/site | active | One page per marketplace module, in every language the site ships, generated rather than written. |
@@ -16,5 +17,9 @@
 | [execution-policy](business/execution-policy/index.md) | business | active | Which model executes a ticket, decided from two labels the manager already sets at refinement: scope/ — how far the change reaches — and… |
 | [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
+| [knowledge-placement](business/knowledge-placement/index.md) | business | draft | What happens to something an agent just learned. |
+| [local-extension](business/local-extension/index.md) | business | draft | The places a module may live besides a marketplace, and the material a project may add without a module at all. |
 | [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through extends, a flat, unordered list in . |
+| [module-anatomy](business/module-anatomy/index.md) | business | draft | The shape a ScrumIA module takes inside itself, and the one checker that says whether a given module has it. |
+| [module-authoring](business/module-authoring/index.md) | business | draft | How a ScrumIA module comes into existence, changes, and moves — from nothing to a module that already meets the anatomy standard, and from… |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
