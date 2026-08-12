@@ -60,16 +60,20 @@ Then the working tree is unchanged after all four runs, no file was created, rep
 ```gherkin
 Given this repository's marketplace gate and the two surfaces
 When the gate runs
-Then every rule it applies that is decidable from one module's tree comes from the
-  procedural check rather than from its own code
-And the checks it keeps are exactly those neither surface can see: the manifest listing
-  the plugins, their versions and their sources, and the rules governing the specs tree
+Then every rule it applies that a surface also applies comes from that surface rather
+  than from its own code
+And what it keeps is what no surface applies: the manifest listing the plugins, their
+  versions and their sources; the rules governing the specs tree and the repository's own
+  prose; and any module rule a surface could take and has not taken yet, each named where
+  it is kept
 And no rule is verified in both places
 ```
 
 The second clause is what stops AC-5 from being read as "keep the manifest checks and
 delete the rest". The specs-tree rules are not a module's property and the procedural check
 cannot see them; handing them over would not be delegation, it would leave them unenforced.
+A rule a surface could decide and does not yet apply is the same failure reached later:
+deleting it from the consumer hands it to nobody, which is why it stays, named.
 
 ### AC-6 — A module with no README is a finding
 

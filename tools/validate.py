@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """Validate the ScrumIA marketplace: the plugin manifest, the specs tree, and what neither.
 
-Every rule a single module's own tree can answer is `scrumia-module check`'s, delegated
-per module across a process boundary — never reimplemented here. What this gate keeps is
-what that tool cannot see: the manifest listing the plugins with their versions and
-sources, the rules governing the specs tree, and the handful of module rules no surface
-covers yet (`features/business/module-anatomy/`'s BR-5).
+Every module rule `scrumia-module check` applies is delegated to it, never reimplemented
+here. What this gate keeps is what no surface applies — features/business/module-anatomy/'s
+BR-5, and main() names each residue where it sits.
 
 Run from the repo root: python3 tools/validate.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies.
@@ -98,18 +96,11 @@ def check_marketplace() -> dict[str, dict]:
 
 
 def check_module_anatomy() -> None:
-    """Every rule one module's tree can answer comes from `scrumia-module check`, per module.
+    """Delegate to `scrumia-module check`, once per module, per features/business/module-anatomy/tech.md.
 
-    Reached by path rather than by the name it publishes: CI runs no harness, so no
-    plugin's bin/ is on PATH — the asymmetry ADR-0020 records as accepted and
-    check_extends_tool_runs already meets. It stays a subprocess reading `--json`; a
-    Python gate importing the tool would be reaching into another module, which is the
-    finding the tool itself raises.
-
-    Checking many modules is this loop, not a batch flag the tool does not have. `state`
-    is authoritative and is never inferred from whether `findings` is empty: `1` (the tool
-    failed) and `4` (not a module) are runs that could not conclude, and folding either
-    into the finding count is how a module nobody could read passes as clean.
+    Reached by path, not by the name it publishes: CI runs no harness, so no plugin's bin/
+    is on PATH. Branching on `state` and never on the finding list is what keeps a run that
+    could not conclude from reading as a clean module.
     """
     tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
     if not tool.exists():
@@ -135,11 +126,11 @@ def check_module_anatomy() -> None:
         except json.JSONDecodeError:
             error(f"{rel}: scrumia-module returned no verdict (exit {result.returncode}) — {reason}")
             continue
-        state = verdict.get("state")
+        state, findings = verdict.get("state"), verdict.get("findings") or []
         if state == "clean":
             continue
-        if state == "findings":
-            for finding in verdict.get("findings", []):
+        if state == "findings" and findings:
+            for finding in findings:
                 error(f"{rel}/{finding['file']}: {finding['rule']} — {finding['message']}")
             continue
         error(
@@ -228,15 +219,10 @@ CANONICAL_BLOB = "https://github.com/tibs245/scrumia/blob/main/"
 def check_doc_links() -> None:
     """Relative markdown links outside plugins/ resolve, and a canonical URL names a file.
 
-    Links may use ${CLAUDE_SKILL_DIR} (the only variable Claude Code substitutes
-    inside skill content — ${CLAUDE_PLUGIN_ROOT} works in hooks.json/MCP configs
-    only), which outside a skill directory resolves to nothing.
-
-    Inside plugins/, resolution, containment and the two variables are `scrumia-module
-    check`'s: one module's tree answers all of them. What stays here for those files is
-    the canonical blob URL, which names a file in *this* repository — invisible from any
-    module's tree, and the escape hatch ADR-0018 opens, so it is where links rot next if
-    nothing watches it.
+    Inside plugins/, resolution and containment are `scrumia-module check`'s. The
+    canonical blob URL stays here for every file: it names a file in *this* repository,
+    which no module's tree can see, and it is the escape hatch ADR-0018 opens — so it is
+    where links rot next if nothing watches it.
     """
     link_re = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
     for md in sorted([
@@ -264,6 +250,22 @@ def check_doc_links() -> None:
                 continue
             if not (md.parent / target).resolve().exists():
                 error(f"{rel}: broken link → {target}")
+
+
+def check_published_names() -> None:
+    """A bin/ entry that is a link to nothing — BR-7's clause the checker cannot see yet.
+
+    `scrumia-module` filters bin/ with `is_file()`, which follows the link, so a name
+    resolving nowhere is skipped and the module exits clean. Removing this with the rest
+    of the delegated checks would leave BR-7's `bin/` clause enforced in no surface at
+    all; it goes when tibs245/scrumia#312 lands, and not before.
+    """
+    for entry in sorted((ROOT / "plugins").glob("*/bin/*")):
+        if entry.is_symlink() and not entry.exists():
+            error(
+                f"{entry.relative_to(ROOT)}: a published name resolving nowhere — "
+                f"a name on PATH that cannot run, and the caller cannot see why"
+            )
 
 
 def check_french_leftovers() -> None:
@@ -344,7 +346,9 @@ def check_extends_tool_runs() -> None:
 
     This is the only place a `dependencies.jsonl` entry is checked against who actually
     publishes the name and from which source — a question one module's tree cannot
-    answer, and which `scrumia-module` declines for exactly that reason.
+    answer, and which `scrumia-module` declines for exactly that reason. It is narrower
+    than the check it replaced: a bare name found on the runner's own PATH satisfies the
+    dependency unchecked, and a publisher declaring no repository only notes it.
     """
     tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
     if not tool.exists():
@@ -643,12 +647,13 @@ def main() -> int:
     check_module_anatomy()
 
     # Kept under module-anatomy's BR-5: scrumia-module reads no frontmatter, no
-    # hooks.json and no changelog, so no surface covers these yet.
+    # hooks.json and no changelog, and misses a bin/ name resolving nowhere (#312).
     check_skills()
     check_agents()
     check_commands()
     check_hooks()
     check_plugin_changelogs()
+    check_published_names()
 
     check_doc_links()
     check_french_leftovers()

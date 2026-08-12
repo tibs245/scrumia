@@ -173,15 +173,59 @@ def test_a_conformant_module_produces_no_finding() -> None:
         shutil.rmtree(tmp)
 
 
-def test_a_missing_readme_fails_the_gate() -> None:
+def test_a_delegated_finding_fails_the_gate() -> None:
     print("a module with no README is a finding, and a finding fails the gate (AC-6)")
     tmp = Path(tempfile.mkdtemp())
     try:
         install_checker(tmp)
         (write_module(tmp) / "README.md").unlink()
+        v.WARNINGS.clear()
         errors = run_check(tmp, "check_module_anatomy")
         check("the missing README is reported through the delegation",
               any("README.md" in e and "module-anatomy/BR-4" in e for e in errors), str(errors))
+        # main() returns 1 on ERRORS and 0 on WARNINGS, so which list it lands in is
+        # the whole of "a finding fails the gate".
+        check("as an error, which is what makes the run exit non-zero",
+              list(v.WARNINGS) == [], str(v.WARNINGS))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_the_gate_says_so_when_the_checker_is_missing() -> None:
+    print("no checker on disk is an error — a gate with nothing to delegate to is not clean")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        write_module(tmp)
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the missing checker is reported",
+              any("scrumia-module" in e and "missing" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_a_published_name_resolving_nowhere_is_still_caught() -> None:
+    print("a dangling bin/ symlink: BR-7's clause the checker misses, kept here until #312")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
+        bin_dir.mkdir(parents=True)
+        (bin_dir / "scrumia-ghost").symlink_to("../scripts/gone.sh")
+        errors = run_check(tmp, "check_published_names")
+        check("the name resolving nowhere is reported",
+              any("scrumia-ghost" in e and "resolving nowhere" in e for e in errors), str(errors))
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_a_working_published_name_is_not_flagged() -> None:
+    print("a bin/ entry that resolves is untouched — executability is the checker's")
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
+        bin_dir.mkdir(parents=True)
+        (bin_dir / "scrumia-real").write_text("#!/bin/sh\n", encoding="utf-8")
+        errors = run_check(tmp, "check_published_names")
+        check("no findings", errors == [], str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -995,7 +1039,10 @@ def main() -> int:
                  test_doc_links_leaves_plugins_to_the_procedural_check,
                  test_delegation_still_catches_what_the_gate_stopped_checking,
                  test_a_conformant_module_produces_no_finding,
-                 test_a_missing_readme_fails_the_gate,
+                 test_a_delegated_finding_fails_the_gate,
+                 test_the_gate_says_so_when_the_checker_is_missing,
+                 test_a_published_name_resolving_nowhere_is_still_caught,
+                 test_a_working_published_name_is_not_flagged,
                  test_a_run_that_could_not_conclude_is_not_read_as_clean,
                  test_a_directory_that_is_not_a_module_is_not_judged,
                  test_every_module_is_checked_including_the_one_shipping_the_checker,

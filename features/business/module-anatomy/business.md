@@ -129,15 +129,22 @@ is forbidden is the same *question* asked twice, in two wordings that will drift
 ## A consumer adds only what is its own
 
 Whatever a consumer of either surface checks on top must be something neither surface
-covers. This repository's marketplace gate has two such things — the manifest that lists
-the plugins, their versions and their sources, and the rules governing the specs tree,
-neither of which is a property of any single module — and it delegates everything that is.
-A check performed in two places is two renderings of one rule, and two renderings of one
-rule diverge; the duplication is itself a defect this feature counts.
+covers. This repository's marketplace gate keeps the manifest that lists the plugins,
+their versions and their sources, the rules governing the specs tree, and the rules
+governing its own repository — none of which is a property of any single module — and it
+delegates everything that is. A check performed in two places is two renderings of one
+rule, and two renderings of one rule diverge; the duplication is itself a defect this
+feature counts.
 
 The boundary is what a surface can see. The procedural check reads one module's tree, so
 it can never adopt a rule about the specs tree or about the relationship between modules;
 handing it one would not be delegation, it would be a rule left unenforced.
+
+A rule a surface *could* decide and does not yet apply is that same failure reached later:
+deleting it from the consumer hands it to nobody. It stays with the consumer, named there
+as what it is, until the surface takes it. Marking it is what the duplication rule permits
+and what keeps the arrangement from becoming permanent — nothing is verified twice, and
+nothing is quietly dropped on the way.
 
 ## Neither surface writes anything
 

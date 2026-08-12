@@ -18,7 +18,7 @@ surfaces included.
 - Implemented by: no App feature. The procedural check is `scrumia-module check`, a name
   `scrumia-core` publishes on `PATH` like `scrumia-extends`; the audit is a skill in the
   same module. `tools/validate.py` becomes a consumer of the first and keeps only what
-  neither surface can see.
+  neither surface applies.
 - Defers to: `features/business/modular-composition/` for what a module owes to be
   **pluggable**. This feature adds nothing to that list and answers a different question:
   whether a module can be navigated and verified. `business.md` § *The test this standard
