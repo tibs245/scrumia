@@ -65,14 +65,20 @@ second statement of the rule. "I will restate it somewhere closer to hand" is ex
 duplication this step exists to catch.
 
 Where what you are routing is itself the second copy — an entry that already exists
-somewhere with more authority — stopping is not the whole answer. The authority stands, the
-entry is the duplicate, and the answer says so: reduce it to a pointer, or drop it. Leaving
-both is the two-copies state this step exists to end, and a sweep meets it constantly.
+somewhere with more authority — stopping is not the whole answer. The authority stands and
+the entry is the duplicate: **drop it** where a reader standing at the duplicate would
+reach the authority anyway, and leave **a pointer** only where they would not. Leaving both
+statements is the two-copies state this step exists to end, and a sweep meets it constantly.
 
-The search has a third outcome besides *placed* and *not placed*, and it is the one worth
-saying out loud: **the fact is not true here.** A file that was never renamed, a flag that
-does not exist, a rule contradicted by what you just read. Say so and stop — a wrong fact
-has no destination, and every branch below will happily give it one.
+There is a third outcome besides *placed* and *not placed*, and it is the one worth saying
+out loud: **the fact is not true here** — a file that was never renamed, a flag that does
+not exist, a rule the thing it describes has since dropped. Say so and stop; a wrong fact
+has no destination, and every branch below will happily give it one. Where it is true only
+in a narrower form, that narrower form is the fact: state it and route that.
+
+**This step runs on one fact, not on one file.** A file Step 1 split into three gets three
+searches, and can come back placed, untrue and routable at once. Stopping on the file
+because its first claim is stale is how a live lesson gets thrown away with a dead one.
 
 ## Step 3 — The tree
 
@@ -98,11 +104,21 @@ a repository that ships its own tooling — where a rule about the tool and a co
 the house are the same sentence — and that is the case the order is built for, not an edge
 of it.
 
-Questions 1 and 2 both fit more often than they look, because a rule the product is built
-to satisfy is frequently also a rule about a module you run. Question 1 is how a module
-*behaves when you run it*; question 2 is what the product *must do*, the kind of rule that
-has to be written before it can be built. When both genuinely fit, the module answer is the
-one that reaches every project running it, which is why it is asked first.
+Questions 1 and 2 both fit more often than they look, and one word separates them:
+**observed, or decided.**
+
+- Question 1 takes what a module **already does** — a behaviour you found out about. It is
+  reported where it is read, and the module is the destination because the behaviour is
+  already true for every project running it.
+- Question 2 takes what the product **should do** — a behaviour somebody chose. A decision
+  is specified before it is built, so it goes to a feature even when the thing that will
+  eventually carry it is a module.
+
+Sending a decision straight into a module's prose skips the specification and writes it
+where a project would find the rule but not the reason. That is the specs-before-code order
+inverted, and a repository whose product *is* its modules meets this collision on nearly
+every fact rather than at its edges — which is exactly why the test is *observed or
+decided* and not *which artefact will hold it*.
 
 **1 — that module.** Name it: the module that publishes the thing the fact is about. A rule
 about how a published name behaves belongs to whoever publishes it, not to the project that
@@ -111,7 +127,9 @@ tripped over it.
 Where the cause sits in one module and the rule has to be acted on in another, the
 destination is **the module whose skill would carry the sentence** — where it is read at
 the moment it applies. A rule filed against its cause and never read where it bites is
-placed wrong, however accurately it names the cause.
+placed wrong, however accurately it names the cause. Where two modules both read it when it
+applies, it goes to whichever reads it **first**; the later one takes a pointer if it needs
+one.
 
 Where no module owns it at all, do not create one for it —
 [`module-authoring`](https://github.com/tibs245/scrumia/blob/main/features/business/module-authoring/business.md)
@@ -131,7 +149,10 @@ convention, a house rule, a prerequisite. Say which of the three shapes
 [`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)
 lists it takes — a directive contributed to a register, a rules section, or a skill the
 project ships to itself — and why that one, in a line. Naming the shape is the answer;
-which register a directive joins is settled where it is written, not here. **A prerequisite
+which register a directive joins is settled where it is written, not here. Where none of
+the three fits — a module in the composition may own project-level material of its own
+shape — say which is closest **and that none fits**. That is a finding for
+`local-extension`, whose list it is; it is not a shape to force the fact into. **A prerequisite
 lands in this branch, not in memory**: "you need X to work on this" is framed as a note
 about a machine and is needed by whoever clones the repository. What is on *your* machine
 and absent from the project's prerequisites is question 6's.
@@ -199,7 +220,9 @@ Naming a destination that does not exist yet, and creating nothing, is a complet
 ## Sweeping a memory directory
 
 Route each entry on its own — Step 1 first, since an entry is where two facts are most
-likely to be wearing one filename. Report a list: entry, destination, deciding question.
+likely to be wearing one filename. A file that only lists the others is an index: it is
+navigation, not an entry, and it is routed nowhere — what it is owed is a check that its
+lines still point at something. Report a list: entry, destination, deciding question.
 Expect most of an untouched directory to leave. The default destination costs nothing to
 write and everything to retrieve, which is the whole reason this tree exists.
 
