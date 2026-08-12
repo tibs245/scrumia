@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — Modules that fill no slot are offered as additions (AC-9)
+## 2026-08-12 — Additions past the seven slots, ours and the visitor's own (AC-9, AC-10)
 - Issue: #298
 - Category: Added
 - Breaking: no
