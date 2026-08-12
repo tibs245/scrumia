@@ -27,10 +27,33 @@ variants).
 ## Roles
 
 Which roles exist is a property of the composition, not of one module.
-`settings.team.roles` is the single list, and an entry names its provider with
-`from:` when that provider is not the team module
-(`docs/adr/0014-roles-ship-with-their-capability.md`). A role whose slot is
-empty does not exist: it would have nothing to guard but its own taste.
+`settings.team.roles` is the single list, and it stays a single shared list
+rather than descending into any module's own settings: it declares the team,
+which is the project's fact, not one module's configuration.
+
+**An entry names the agent and says whether this project wants it.** Nothing
+else — the agent's own file already carries its description and what it guards,
+and a project that restated them would own the half that stops being updated.
+
+```yaml
+settings:
+  team:
+    roles:
+      - { name: scrumia-manager,  enabled: true }
+      - { name: scrumia-designer, enabled: true }
+      - { name: acme-legal,       enabled: true }
+```
+
+The name is the **agent's** name, not a role label to be translated into one.
+There is no provider field: an agent a module ships and an agent a project
+writes for itself enter on the same line, and resolving the name to a runnable
+agent is the harness's job rather than a convention this feature would have to
+state and something would have to enforce. A role a project enables whose agent
+does not resolve is a finding, reported with the restart that usually explains
+it (§ *Reaching a role requires a restart after install*).
+
+A role whose slot is empty does not exist: it would have nothing to guard but
+its own taste.
 
 Each role's scope and its explicit refusal — a role with no refusal line
 would be indistinguishable from another and shouldn't exist as a separate

@@ -6,8 +6,8 @@ For whoever adopts or extends ScrumIA — a project declaring which modules it r
 the modules themselves, written to be pluggable. It brings one flat declaration
 (`modules`) a project edits to take exactly the capability it needs, so adopting one
 module never requires taking the whole method. It matters because a project that forks
-a monolithic method to adapt one part of it stops receiving updates to the rest;
-The composition is what lets the reference answers change without breaking a project's own
+a monolithic method to adapt one part of it stops receiving updates to the rest, and the
+composition is what lets the reference answers change without breaking a project's own
 choices. Not instrumented today: nothing counts how many projects run with which
 modules; the composition's shape is read from `.scrumia/config.yaml`, not aggregated.
 
@@ -48,9 +48,8 @@ The three sources are the three locations `features/business/local-extension/` d
 and naming the source in the key is why no separate origin field exists to disagree with
 it.
 
-**The mapping is not ordered.** The former `extends:` key invited ESLint's last-wins
-reflex; the key is renamed and the rule survives the rename. Order between modules decides
-nothing.
+**The mapping is not ordered.** Any reader brings a last-wins reflex uninvited; this rule
+exists to contradict it on first read. Order between modules decides nothing.
 
 **A module installed and named nowhere is inert.** Presence on disk is not participation:
 a project may have twenty modules enabled and run the five it names. That is what makes a
@@ -65,13 +64,23 @@ why, and BR-9 below is the rule it protects.
 
 Three layers, each overriding the one before:
 
-1. `settings:` — the shared base, and the only home for a key several modules write
-2. `modules[<key>].params:` — this module's own
-3. the project's local layer
+| Layer | Where | Versioned |
+|---|---|---|
+| 1 | `settings:` in `.scrumia/config.yaml` | yes |
+| 2 | `modules[<key>].params:` | yes |
+| 3 | `.scrumia/config.local.yaml` | **no** — gitignored |
 
-Layer 1 is not vestigial: `settings.team.roles` is written by the team module *and* by any
-module shipping its own standing role (ADR-0014). A setting with two writers cannot live
-inside one writer's block.
+**Layer 2 is where a module's own settings live.** A key one module reads belongs in that
+module's `params:`, not in `settings:`. What stays in layer 1 is what is not a module's:
+`settings.team.roles` declares the team, which `features/business/agent-team/` owns and
+which three modules read.
+
+**Layer 3 is per-machine and never committed.** It is what lets one developer run a
+different value without changing what the repository says. The cost is stated rather than
+hidden: two machines can resolve different settings from one repository, so a composition
+is reproducible in its *modules* — which the qualified key guarantees — and not necessarily
+in its *values*. A reader who needs to know what a machine actually resolved asks the
+tooling rather than reading the file.
 
 The order is stated so it can be checked. An order only applied, never written, can invert
 without anything failing.
@@ -362,9 +371,10 @@ the composition.
   source is a marketplace (`<owner>/<repo>`), `shared`, or `local`. A bare name is not a
   declaration, and no field beside the key restates the origin.
 - **BR-14** — A module's configuration resolves from three layers in a stated order:
-  `settings:`, then the module's own `params:`, then the project's local layer. A key
-  several modules write stays in the first, because a setting with two writers cannot live
-  inside one writer's block.
+  `settings:`, then the module's own `params:`, then `.scrumia/config.local.yaml`, which is
+  never committed. A key one module reads belongs in that module's `params:`; `settings:`
+  holds what is no module's, and a composition is reproducible in its modules but not
+  necessarily in its values.
 
 ## Vocabulary
 

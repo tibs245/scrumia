@@ -78,8 +78,12 @@ Naming the module and its origin gives a reader the composition's full intent â€
 module comes from a shared checkout* is a fact about the project, and it is the fact AC-6
 and AC-7 turn on. Where that checkout is, is a fact about the machine.
 
-**The per-machine half lives in `.scrumia/.env.local`, and that file is never
-committed.** A repository that versions it has reintroduced exactly the machine path this
+**The per-machine half lives in `.scrumia/.env.local`, as `SCRUMIA_SHARED_DIR`, and that
+file is never committed.** One variable, `KEY=value`, naming the directory the `shared`
+source resolves to; a module keyed `shared:acme-conventions` is looked for at
+`$SCRUMIA_SHARED_DIR/acme-conventions`. Both readers of the composition load it â€” naming
+one and not the other is how the same machine reports a module present to one tool and
+absent to the other. A repository that versions it has reintroduced exactly the machine path this
 rule removes, so the file's absence from version control is part of the rule and not an
 operational detail. A clone arrives without it, which is the correct starting state: the
 composition then reports declared absences rather than resolving paths that do not exist

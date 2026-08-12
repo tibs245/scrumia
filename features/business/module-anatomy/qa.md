@@ -11,10 +11,17 @@ Each criterion names the surface it applies to. A criterion naming neither appli
 ```gherkin
 Given any directory carrying a plugin manifest
 When the procedural check is asked for a verdict on it
-Then it returns a list of findings — possibly empty — each naming the module, the file
-  and the rule that was not met, and it exits `0`, `1` or `2` so that "checked, nothing
-  found" is never confused with "could not check"
+Then it returns findings — possibly none — each naming the module, the file, the
+  qualified rule and one line of what was not met
+And it exits with the code its state carries, so that a clean module, a malformed one, a
+  target that is not a module, a bad invocation and the tool's own failure are five
+  distinguishable outcomes rather than "zero or non-zero"
+And `--json` names the state in a field, so no consumer infers it from whether the
+  finding list is empty
 ```
+
+A consumer that branches on truthiness reports a clean module as non-conformant the day
+`jq` goes missing. That is the failure this criterion exists to fail on.
 
 ### AC-2 — Run on this repository's own modules, it returns findings
 
@@ -100,8 +107,10 @@ the noise the specs catalog already refuses one level up.
 ```gherkin
 Given a module containing a relative path that leaves the module's own root
 When the procedural check runs over it
-Then a finding names the file and the reference, citing the rule as
-  `features/business/modular-composition/`'s rather than restating it
+Then a finding names the file and the reference, and cites the rule by its qualified
+  identifier — `modular-composition/BR-7` — with any document it points at given as an
+  absolute URL, because the check runs in projects that never had this repository's
+  `features/` tree
 Given instead a module reaching another by a bare name published on `PATH`, or citing a
   document by absolute URL
 When the same check runs

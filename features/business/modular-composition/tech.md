@@ -25,8 +25,8 @@ Four inputs, one output, nothing stored in between.
                                            │  module · root · source
                                            ▼
   .scrumia/config.yaml       ┌───────────────────────────┐
-  extends: […]        ──────▶│ 2. keep what this project │
-  apps[].extends: […] ──────▶│    runs, for this app     │
+  modules: {…}        ──────▶│ 2. keep what this project │
+  apps[].modules: {…} ──────▶│    runs, for this app     │
                              └─────────────┬─────────────┘
                                            │  the in-scope modules
                                            ▼
@@ -57,14 +57,45 @@ ADR-0020 and repeated here because it is the mechanism's blind spot: **CI can on
 exercise the override, never the product's own path.**
 
 **Step 2 is what makes a module inert.** A module discovered in step 1 and named in no
-`extends` list is dropped here — it is installed, and this project does not run it.
+`modules` mapping is dropped here — it is installed, and this project does not run it.
+
+**Step 2 is also where a discovered root becomes a key.** Step 1 yields a root and a source
+derived from `plugin.json`'s `repository`/`homepage`, normalised to `<owner>/<repo>`. A
+module with no such field derives an empty source, and an empty source is not a match for
+anything: it is resolved against the declared `local:` and `shared:` keys by its plugin
+name, and the location it is credited with is the one its key states. A declared
+`local:<name>` with no discovered root of that name is a declared absence
+(`features/business/local-extension/` BR-8); a discovered root matching two declared keys
+is the conflict BR-7 reports.
+
+Declaring a module in `.scrumia/config.yaml` does not put it on `PATH`. Both are required,
+and they answer different questions — the harness decides what is *reachable*, the
+configuration decides what is *run*. A module declared and not enabled is reported as a
+declared absence rather than as a configuration error.
+
+**Which shape step 2 reads.** Three have existed; the precedence is fixed and stated so a
+half-migrated file cannot resolve to nothing:
+
+| Present | Read | Warning |
+|---|---|---|
+| `modules:` | it, and only it | none |
+| no `modules:`, `extends:` present | `extends:` | migrate to `modules:` (ADR-0021) |
+| neither, `composition:`/`practices:` present | those | migrate to `modules:` |
+| none of them | nothing | the composition is empty, said as such |
+
+The last row is the one that must not be silent. A file carrying `modules:` and read by a
+tool that only tests for `extends:` resolves to zero modules, and a register with no
+contributions is an *answer* under BR-1 — so every table renders empty and nothing fails.
+Testing the shapes in this order, and naming the empty composition, is what keeps that from
+looking like a correct run.
 
 ## Where each thing is resolved, and by what
 
 | Question | Answered by | When |
 |---|---|---|
 | Which modules exist here? | the harness, through PATH | every call |
-| Which of them does this project run? | `.scrumia/config.yaml` | every call |
+| Which of them does this project run? | `.scrumia/config.yaml`'s `modules` | every call |
+| Where does a `shared` module sit on this machine? | `$SCRUMIA_SHARED_DIR`, from `.scrumia/.env.local` | when a `shared:` key is declared |
 | Which app does this file belong to? | the longest `apps[].path` prefixing it | on `--path` |
 | What does a module contribute? | its own `extends.json` | every call |
 | Where is a fragment? | the module root, joined with `read` | at print time |
@@ -82,8 +113,8 @@ anything the module says about itself:
 | Scope | Source | Rank |
 |---|---|---|
 | project-local | `.scrumia/extends.json` | 0 |
-| app | the app's own `extends` list | 1 |
-| project-wide | the top-level `extends` list | 2 |
+| app | the app's own `modules` mapping | 1 |
+| project-wide | the top-level `modules` mapping | 2 |
 
 Then `required` before `optional`, then module name, then directive name — so two runs on
 the same inputs print the same table, and a reader can check the order rather than trust it.
@@ -195,5 +226,5 @@ neighbouring line, and diffing as exactly what changed.
   to look for. A module that contributes the identical row to three registers has probably
   not decided what each register is for.
 - **Never encode a consumer.** No skill name, no module name, no "only when the app is
-  Rust". If a directive should only reach some apps, that is the project's `extends`, per
+  Rust". If a directive should only reach some apps, that is the app's own `modules`, per
   app, doing its job — not a condition inside data that is supposed to hold none.

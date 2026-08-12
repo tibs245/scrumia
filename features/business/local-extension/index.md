@@ -15,7 +15,7 @@ deliberately not a module: a directive, a rules section, a skill. What a project
 
 - Implemented by: no App feature. Resolution is `scrumia-core`'s, through the name it
   publishes for rendering a register's directives.
-- Defers to: `features/business/modular-composition/` for what `extends` is, what a
+- Defers to: `features/business/modular-composition/` for what `modules` is, what a
   directive is, and the order in which contributions are rendered — a project-local
   contribution's precedence is stated there and not restated here.
 - Defers to: `features/business/module-anatomy/` for what any module must look like. A

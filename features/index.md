@@ -19,7 +19,7 @@
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
 | [knowledge-placement](business/knowledge-placement/index.md) | business | draft | What happens to something an agent just learned. |
 | [local-extension](business/local-extension/index.md) | business | draft | The places a module may live besides a marketplace, and the material a project may add without a module at all. |
-| [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through extends, a flat, unordered list in . |
+| [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through modules, an unordered mapping in . |
 | [module-anatomy](business/module-anatomy/index.md) | business | draft | The shape a ScrumIA module takes inside itself, and what says whether a given module has it. |
 | [module-authoring](business/module-authoring/index.md) | business | draft | How a ScrumIA module comes into existence, changes, and moves — from nothing to a module that already meets the anatomy standard, and from… |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
