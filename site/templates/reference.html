@@ -193,24 +193,27 @@
   name: <span class="k">"my-project"</span>
   repo: <span class="k">"tibs245/my-project"</span>
 
-composition:
-  specs:     scrumia-specs
-  tracker:   scrumia-github-project
-  team:      scrumia-teams
-  discovery: scrumia-discovery
-  design:    scrumia-design
+modules:
+  "tibs245/scrumia:<span class="m">scrumia-specs</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-github-project</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-teams</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-discovery</span>": {}
+  "tibs245/scrumia:<span class="m">scrumia-design</span>": {}
 
 apps:
   - name: web
     path: apps/web
     type: frontend
-    implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd]
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: api
     path: apps/api
     type: backend
-    implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+    modules:
+      "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-practice-solid</span>": {}
 
 settings:
   autonomy:
