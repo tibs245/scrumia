@@ -11,6 +11,7 @@
 #
 #   scrumia-extends <register> [--app <name>|--path <file>] [--json]
 #   scrumia-extends --list
+#   scrumia-extends --modules
 #   scrumia-extends --check
 #   scrumia-extends --settings [<source>:<module>]
 
@@ -18,10 +19,17 @@ set -uo pipefail
 
 SELF=$(basename "$0")
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+
+# Everything the project keeps under .scrumia/ is found beside the configuration, never
+# beside the working directory: pointing $SCRUMIA_CONFIG at another project must take that
+# project's modules and overrides with it, or the two disagree about which is being read.
+SCRUMIA_DIR=$(dirname -- "$CONFIG")
 # Layer 3 of the settings cascade. Never committed, so it is absent far more often than
 # present, and its absence is the ordinary case rather than a missing prerequisite.
-CONFIG_LOCAL="${SCRUMIA_CONFIG_LOCAL:-.scrumia/config.local.yaml}"
-LOCAL_EXTENDS="${SCRUMIA_LOCAL_EXTENDS:-.scrumia/extends.json}"
+CONFIG_LOCAL="${SCRUMIA_CONFIG_LOCAL:-$SCRUMIA_DIR/config.local.yaml}"
+LOCAL_EXTENDS="${SCRUMIA_LOCAL_EXTENDS:-$SCRUMIA_DIR/extends.json}"
+LOCAL_MODULES="$SCRUMIA_DIR/modules"
+ENV_LOCAL="$SCRUMIA_DIR/.env.local"
 
 die() { echo "$SELF: $1" >&2; exit 1; }
 note() { echo "$SELF: $1" >&2; }
@@ -33,6 +41,7 @@ scrumia-extends <register> --app <name> # …including the modules that app exte
 scrumia-extends <register> --path <f>   # …resolving the app from a file's path
 scrumia-extends <register> --json       # the same rows, unrendered
 scrumia-extends --list                  # every register opened here, and what reaches it
+scrumia-extends --modules [--json]      # every declared module, and where it resolved from
 scrumia-extends --check                 # declared dependencies that are not met
 scrumia-extends --settings [<key>]      # a module's configuration, the cascade applied
 
@@ -41,10 +50,18 @@ A project declares the modules it runs under `modules:`, a mapping keyed
 is not a declaration and resolves to nothing. The retired `extends:` list and the older
 `composition:`/`practices:` keys are still read, with a warning.
 
-A module is found through $PATH: the harness puts <pluginRoot>/bin on it for every
-enabled plugin, so the parent of such an entry is a module root. $SCRUMIA_MODULE_DIR
-overrides that with a directory holding <module>/ checkouts — for this repository and
-for CI, where no harness is running.
+Each source is looked for in its own place, all three in one pass:
+
+  <owner>/<repo>  every "…/bin" entry of $PATH whose parent is a plugin root — the
+                  harness puts one there for every enabled plugin. $SCRUMIA_MODULE_DIR
+                  stands in for this tier with a directory of <module>/ checkouts, for
+                  this repository and for CI, where no harness is running.
+  shared          $SCRUMIA_SHARED_DIR/<module>/, the variable read from .scrumia/.env.local
+                  (KEY=value, never committed) unless the environment already carries it.
+  local           .scrumia/modules/<module>/, beside the configuration that declares it.
+
+A declaration no root answers is a declared absence; one that two distinct roots answer
+is a conflict, named with both and bound to neither. --check exits non-zero on it.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -163,17 +180,55 @@ app_of_path() {
 
 # ---------------------------------------------------------------- the modules
 
-# The harness prepends <pluginRoot>/bin to PATH for every enabled plugin, with the install
-# path — version segment included — already resolved (ADR-0018). Reading the module roots
-# back out of it is what lets an extension be a data file and nothing else: no module has
-# to publish an executable just to be readable, and no path into a sibling is ever written.
+# One <module>/ per entry of a directory of checkouts, and no deeper. A tree walked to
+# find modules would adopt one by having it copied into it, which is the opposite of a
+# composition that declares what it runs. The path is physical — links resolved — because
+# that, and not the name, is what says two routes reached one module.
+roots_under() {
+  local loc=$1 dir=$2 d
+  [ -n "$dir" ] && [ -d "$dir" ] || return 0
+  for d in "$dir"/*/; do
+    [ -d "$d" ] || continue
+    [ -f "${d}.claude-plugin/plugin.json" ] || continue
+    printf '%s\t%s\n' "$loc" "$(cd -- "$d" && pwd -P)"
+  done
+}
+
+# The per-machine half of a `shared` declaration, and nothing else: a `KEY=value` file,
+# never committed. Read as data, never sourced — a machine's file that a tool executes is
+# a machine's file that can do anything. An already-set variable wins, so one run can be
+# pointed elsewhere without editing a machine's state (local-extension BR-6).
+load_env_local() {
+  local line key value
+  [ -f "$ENV_LOCAL" ] || return 0
+  while IFS= read -r line || [ -n "$line" ]; do
+    line=${line%$'\r'}; line=${line#"${line%%[! ]*}"}
+    key=${line%%=*}; value=${line#*=}
+    [ "$key" != "$line" ] || continue
+    # Surrounding quotes are habit, not syntax: they are dropped, and nothing else about
+    # the value is interpreted. A path with a space needs neither, since nothing splits it.
+    value=${value#\"}; value=${value%\"}; value=${value#\'}; value=${value%\'}
+    [ "$key" = SCRUMIA_SHARED_DIR ] || continue
+    [ -n "${SCRUMIA_SHARED_DIR:-}" ] || SCRUMIA_SHARED_DIR=$value
+  done < "$ENV_LOCAL"
+}
+
+# Three tiers, one pass, each root tagged with the tier it came from — never one tier
+# instead of another, because a fallback makes the answer depend on what is missing.
+#
+# The marketplace tier reads the roots back out of PATH: the harness prepends
+# <pluginRoot>/bin to it for every enabled plugin, with the install path — version segment
+# included — already resolved (ADR-0018). That is what lets an extension be a data file and
+# nothing else: no module has to publish an executable just to be readable, and no path
+# into a sibling is ever written. The other two are plain directories, stated in
+# features/business/local-extension/'s tech.md.
 discover_roots() {
-  local dir root name
+  local dir loc root name src
+  load_env_local
   ROOTS=$(
     {
       if [ -n "${SCRUMIA_MODULE_DIR:-}" ]; then
-        find "$SCRUMIA_MODULE_DIR" -maxdepth 3 -name plugin.json -path '*/.claude-plugin/*' 2>/dev/null |
-          while IFS= read -r f; do printf '%s\n' "$(cd -- "$(dirname -- "$f")/.." && pwd)"; done
+        roots_under marketplace "$SCRUMIA_MODULE_DIR"
       else
         # No `case` here: bash 3.2 mis-parses a pattern's `)` inside a command
         # substitution, and macOS still ships 3.2 as /bin/bash.
@@ -181,28 +236,31 @@ discover_roots() {
           root=${dir%/bin}
           [ "$root" != "$dir" ] || continue
           [ -f "$root/.claude-plugin/plugin.json" ] || continue
-          printf '%s\n' "$root"
+          printf 'marketplace\t%s\n' "$(cd -- "$root" && pwd -P)"
         done < <(printf '%s\n' "$PATH" | tr ':' '\n')
       fi
+      roots_under shared "${SCRUMIA_SHARED_DIR:-}"
+      roots_under local "$LOCAL_MODULES"
     } | awk '!seen[$0]++'
   )
 
   MODULES="[]"
-  while IFS= read -r root; do
+  while IFS=$'\t' read -r loc root; do
     [ -n "$root" ] || continue
     name=$(jq -r '.name // ""' "$root/.claude-plugin/plugin.json" 2>/dev/null)
     [ -n "$name" ] || name=$(basename "$root")
     # The module's own claim about where it came from, normalised to owner/repo. It is
-    # what a caller's qualified dependency is checked against; a module that declares
-    # none makes that check unverifiable rather than failed.
+    # what a marketplace key and a caller's qualified dependency are checked against; a
+    # module that declares none makes that check unverifiable rather than failed. It says
+    # nothing about `shared` or `local`, which a manifest cannot know it is in.
     src=$(jq -r '(.repository // .homepage // "")
       | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' \
       "$root/.claude-plugin/plugin.json" 2>/dev/null)
-    MODULES=$(jq -c --arg m "$name" --arg r "$root" --arg s "$src" \
+    MODULES=$(jq -c --arg m "$name" --arg r "$root" --arg s "$src" --arg l "$loc" \
       --slurpfile ex <(read_json "$root/extends.json") \
       --slurpfile rg <(read_json "$root/registers.json") \
       --slurpfile dp <(read_jsonl "$root/dependencies.jsonl") \
-      '. + [{module: $m, root: $r, source: $s, extends: $ex[0], registers: $rg[0], runs: $dp[0]}]' \
+      '. + [{module: $m, root: $r, location: $l, source: $s, extends: $ex[0], registers: $rg[0], runs: $dp[0]}]' \
       <<<"$MODULES")
   done <<<"$ROOTS"
 
@@ -211,7 +269,8 @@ discover_roots() {
   # "the project override beats both", kept as a scope rather than as a self-ranking).
   if [ -f "$LOCAL_EXTENDS" ]; then
     MODULES=$(jq -c --slurpfile ex <(read_json "$LOCAL_EXTENDS") \
-      '. + [{module: "(this project)", root: ".", extends: $ex[0], registers: {}, runs: []}]' <<<"$MODULES")
+      '. + [{module: "(this project)", root: ".", location: "project", source: "",
+             extends: $ex[0], registers: {}, runs: []}]' <<<"$MODULES")
   fi
 }
 
@@ -240,48 +299,94 @@ read_json() {
   fi
 }
 
+# ---------------------------------------------------------------- binding
+
+# Every jq below that turns declarations into roots starts from this. Written once and
+# passed in, because a binding rule applied in two places will eventually be two rules,
+# and the second one is always the lenient one.
+#
+# A key binds within the tier its source names, and nowhere else: a marketplace key wants
+# the repository the manifest claims, `shared:` and `local:` want the name inside their own
+# directory — a manifest cannot know which of those it was checked out into. A bare name
+# from the retired `extends:` list predates the grammar, so it carries no tier and binds in
+# any. `local-extension` BR-7's identity test is `unique` over the physical root: two routes
+# to one directory are one module, two directories are the conflict.
+BIND_DEFS='
+  def binds($d): .module == $d.module
+    and ( if $d.legacy then true
+          elif $d.source == "local" or $d.source == "shared" then .location == $d.source
+          elif $d.source == "" then false
+          else .location == "marketplace" and .source != "" and .source == $d.source end );
+  def bound($decls; $mods): [ $decls[] | . as $d
+    | (.roots = ([ $mods[] | select(binds($d)) ] | unique_by(.root)))
+    | .state = ( if (.roots | length) == 0 then "absent"
+                 elif ([.roots[].root] | unique | length) > 1 then "conflict"
+                 else "resolved" end ) ];
+  def resolved($decls; $mods): [ bound($decls; $mods)[] | select(.state == "resolved") ];
+'
+
 # ---------------------------------------------------------------- the rows
 
 # Scope decides order and precedence, and it comes from the project's composition, never
 # from a module ranking itself: local > the app's own modules > the project-wide ones.
 # That is ADR-0010's "specific beats generic, the project override beats both", expressed
 # where the project can see it.
-#
-# A marketplace key names the repository the discovered module must claim, so an empty
-# source matches no marketplace. `local:` and `shared:` match on the name alone, which is
-# provisional and looser than tech.md: until #291 resolves those two against a filesystem
-# location, `local:x` binds a marketplace `x` and credits it to `local`.
 rows_for() {
-  jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" '
-    def matches($m):
-      .module == $m.module
-      and ( .legacy
-            or .source == "local" or .source == "shared"
-            or (.source != "" and .source == ($m.source // "")) );
-    ([$scopes.apps[] | select(.name == $app) | .modules] | first // []) as $appmods
-    | ($scopes.project // []) as $projmods
+  jq -c --arg reg "$1" --arg app "${2:-}" --argjson scopes "$SCOPES" "$BIND_DEFS"'
+    . as $mods
+    | ([$scopes.apps[] | select(.name == $app) | .modules] | first // []) as $appmods
+    | resolved($appmods; $mods) as $app_bound
+    | ([$app_bound[].roots[0].root] | map({(.): true}) | add // {}) as $taken
+    | [ $app_bound[] | {scope: 1, decl: ., mod: .roots[0]} ]
+      + [ resolved(($scopes.project // []); $mods)[]
+          | select($taken[.roots[0].root] | not) | {scope: 2, decl: ., mod: .roots[0]} ]
+      + [ $mods[] | select(.module == "(this project)") | {scope: 0, decl: {}, mod: .} ]
     | [ .[]
-        | . as $m
-        | ( if $m.module == "(this project)" then { scope: 0, decl: {} }
-            elif ($appmods | map(select(matches($m))) | first) then
-              { scope: 1, decl: ($appmods | map(select(matches($m))) | first) }
-            elif ($projmods | map(select(matches($m))) | first) then
-              { scope: 2, decl: ($projmods | map(select(matches($m))) | first) }
-            else empty end ) as $d
-        | $d.scope as $scope
-        | ($m.extends[$reg] // [])[]
-        | { scope: $scope
-          , scope_name: (["project-local", "app", "project-wide"][$scope])
-          , module: $m.module
-          , declared_as: ($d.decl.key // $m.module)
-          , source: ($d.decl.source // "")
-          , root: $m.root
+        | . as $b
+        | ($b.mod.extends[$reg] // [])[]
+        | { scope: $b.scope
+          , scope_name: (["project-local", "app", "project-wide"][$b.scope])
+          , module: $b.mod.module
+          , declared_as: ($b.decl.key // $b.mod.module)
+          , source: ($b.decl.source // "")
+          , location: $b.mod.location
+          , root: $b.mod.root
           , name: (.name // "(unnamed)")
           , type: (.type // "norm")
           , when: (.when // "required")
           , summary: (.summary // "")
           , read: (.read // "") } ]
     | sort_by([.scope, (if .when == "required" then 0 else 1 end), .module, .name])' <<<"$MODULES"
+}
+
+# Every declaration this project makes, with what it bound to. One list, so the register
+# tables, --modules and --check cannot disagree about what resolved.
+bindings() {
+  jq -c --argjson scopes "$SCOPES" "$BIND_DEFS"'
+    # An absent declaration still states where it would have come from — that is the whole
+    # content of a declared absence (BR-8). A bare name from the retired list states none,
+    # which is what the grammar replaced it for.
+    def tier: if . == "local" or . == "shared" then . else "marketplace" end;
+    . as $mods
+    | [ bound(($scopes.project // []); $mods)[] | . + {scope: "project-wide"} ]
+      + [ $scopes.apps[] | .name as $a | bound(.modules; $mods)[] | . + {scope: $a} ]
+    | map({ key, module, source, scope, state
+          , location: ( if .state == "resolved" then .roots[0].location
+                        elif .legacy then "any"
+                        elif .source == "" then "(none)"
+                        else (.source | tier) end )
+          , roots: [.roots[] | {location, root}] })' <<<"$MODULES"
+}
+
+# A conflict is loud wherever it is reached, and fatal only at --check: a shortened table
+# with no word said is the silent failure BR-9 exists to end, and a whole session stopped
+# by a module the task never needed is the other way to get it wrong.
+conflict_lines() {
+  jq -r '.[] | select(.state == "conflict")
+    | "`\(.key)` is answered by \(.roots | length) different modules — "
+      + ([.roots[] | .location + " " + .root] | join(", "))
+      + " — so it binds neither and contributes no directive. Nothing picks between them."' \
+    <<<"$1" | awk 'NF && !seen[$0]++'
 }
 
 render_table() {
@@ -323,14 +428,53 @@ EOF
 # ---------------------------------------------------------------- commands
 
 cmd_register() {
-  local reg=$1 app=$2 as_json=$3 rows
+  local reg=$1 app=$2 as_json=$3 rows line
   rows=$(rows_for "$reg" "$app")
 
   if ! jq -e --arg r "$reg" 'any(.[]; .registers[$r] != null)' >/dev/null <<<"$MODULES"; then
     note "no installed module opens the register '$reg' — run 'scrumia-extends --list' for the ones that exist"
   fi
 
+  # Said on every table, not only on --modules: a table shortened by a conflict is
+  # indistinguishable from a correct one, and this is the only place it can be said.
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    note "$line"
+  done < <(conflict_lines "$(bindings)")
+
   if [ "$as_json" = yes ]; then jq '.' <<<"$rows"; else render_table "$reg" "$rows" "$app"; fi
+}
+
+# AC-3's surface. compose-status.sh prints the declarations as written — a different claim,
+# needing no location, and its stdout is a versioned fixture that must not depend on which
+# machine ran it. This one resolves, so this one reports where each module came from.
+cmd_modules() {
+  local as_json=$1 all line
+  all=$(bindings)
+
+  if [ "$as_json" = yes ]; then jq '.' <<<"$all"; return; fi
+
+  printf '# modules — %s declared, %s resolved\n\n' \
+    "$(jq 'length' <<<"$all")" "$(jq '[.[] | select(.state == "resolved")] | length' <<<"$all")"
+
+  if [ "$(jq 'length' <<<"$all")" -eq 0 ]; then
+    printf 'This project declares no module: `%s` in %s is empty.\n' "$KEY_READ" "$CONFIG"
+    return
+  fi
+
+  printf '| Declared as | Scope | Location | State | Resolved to |\n|---|---|---|---|---|\n'
+  jq -r '.[] | "| `" + .key + "` | " + .scope + " | " + .location + " | " + .state + " | "
+             + (if (.roots | length) == 0 then "—"
+                else ([.roots[] | "`" + .root + "`"] | join("<br>")) end) + " |"' <<<"$all"
+
+  printf '\nA declaration nothing answers is an absence, not a failure: the module is not\n'
+  printf 'reachable from here, every register renders without it, and the location above is\n'
+  printf 'where it would come from.\n'
+
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    note "$line"
+  done < <(conflict_lines "$all")
 }
 
 cmd_list() {
@@ -394,7 +538,16 @@ publisher_of() {
 }
 
 cmd_check() {
-  local failed=0
+  local failed=0 line
+  # The one surface a conflict is fatal at (local-extension BR-9). Everywhere else it is
+  # reported and the composition carries on; here it is what it is — a declaration that
+  # cannot be met, so nothing that depends on that module can be trusted to have run.
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    echo "$line" >&2
+    failed=$((failed + 1))
+  done < <(conflict_lines "$(bindings)")
+
   # A `runs` entry is qualified — <source>:<name> — because PATH is one flat namespace
   # shared with every enabled plugin, so a bare name says which command, never whose.
   # What is *executed* stays the bare name: the qualification is a claim to check, not
@@ -464,6 +617,7 @@ REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  MODE=list; shift ;;
+    --modules) MODE=modules; shift ;;
     --check) MODE=check; shift ;;
     # The key is optional: without one, the answer is the base layer a module inherits
     # before any `params:` of its own.
@@ -491,6 +645,7 @@ fi
 
 case "$MODE" in
   list)     [ -z "$REGISTER" ] || usage; cmd_list ;;
+  modules)  [ -z "$REGISTER" ] || usage; cmd_modules "$AS_JSON" ;;
   check)    [ -z "$REGISTER" ] || usage; cmd_check ;;
   settings) [ -z "$REGISTER" ] || usage; cmd_settings "$MODULE_KEY" "$APP" ;;
   *)        [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;

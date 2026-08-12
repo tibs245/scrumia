@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Acceptance tests for plugins/scrumia-core/bin/scrumia-extends (#302).
+"""Acceptance tests for plugins/scrumia-core/bin/scrumia-extends (#302, #291).
 
 AC-17 and AC-18 of features/business/modular-composition/: a module is declared by
 source and a bare name is not a declaration; a setting resolves through three layers
 in a stated order.
+
+AC-1..AC-5, AC-9 and AC-10 of features/business/local-extension/: each source resolves
+from its own location, resolution states which, and one declaration answered by two
+distinct modules is a conflict that binds neither.
 
 Run from the repo root: python3 tools/test_scrumia_extends.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies beyond the YAML
@@ -12,6 +16,7 @@ reader the tool itself needs.
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -19,6 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TOOL = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
+MODULE_TOOL = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
 FAILURES: list[str] = []
 
 
@@ -38,14 +44,43 @@ def config_with(body: str) -> Path:
     return Path(handle.name)
 
 
-def run(args: list[str], config: Path, local: Path | None = None):
-    """No harness runs here, so $SCRUMIA_MODULE_DIR stands in for PATH discovery."""
+def run(args: list[str], config: Path, local: Path | None = None, shared: Path | None = None):
+    """No harness runs here, so $SCRUMIA_MODULE_DIR stands in for PATH discovery.
+
+    $SCRUMIA_SHARED_DIR is pinned on every call, empty unless a test names one: a
+    developer's own machine may carry it, and a test that inherited it would pass or
+    fail on whose machine it ran.
+    """
     env = {**os.environ, "SCRUMIA_MODULE_DIR": "plugins", "NO_COLOR": "1",
-           "SCRUMIA_CONFIG": str(config)}
+           "SCRUMIA_CONFIG": str(config), "SCRUMIA_SHARED_DIR": str(shared) if shared else ""}
     env["SCRUMIA_CONFIG_LOCAL"] = str(local) if local else "/nonexistent/config.local.yaml"
     proc = subprocess.run([str(TOOL), *args], cwd=ROOT, env=env,
                           capture_output=True, text=True, timeout=60)
     return proc.returncode, proc.stdout, proc.stderr
+
+
+def make_module(root: Path, name: str, repo: str | None = None,
+                register: str = "implement") -> Path:
+    """The smallest tree the tool recognises as a module, contributing one directive."""
+    (root / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    manifest: dict = {"name": name, "version": "0.1.0"}
+    if repo:
+        manifest["repository"] = f"https://github.com/{repo}"
+    (root / ".claude-plugin" / "plugin.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (root / "extends.json").write_text(json.dumps({register: [{
+        "name": f"Directive of {name}", "type": "norm", "when": "required",
+        "summary": "what the fragment says", "read": "README.md"}]}), encoding="utf-8")
+    (root / "README.md").write_text(f"# {name}\n\nA module.\n", encoding="utf-8")
+    return root
+
+
+def project_with(body: str) -> Path:
+    """A throwaway project directory, so `.scrumia/modules/` and `.scrumia/.env.local`
+    resolve beside the configuration the way they do in a real one."""
+    project = Path(tempfile.mkdtemp(prefix="scrumia-project-"))
+    (project / ".scrumia").mkdir()
+    (project / ".scrumia" / "config.yaml").write_text(body, encoding="utf-8")
+    return project
 
 
 def modules_in(config: Path, register: str = "implement", app: str = "") -> set[str]:
@@ -61,9 +96,8 @@ def rows_in(config: Path, register: str = "implement") -> list[dict]:
     return json.loads(out)
 
 
-# Every plugin in this repository claims tibs245/scrumia in its manifest, which is what
-# a marketplace key is checked against. `local:` and `shared:` name a location no
-# manifest can know about, so those match on the module's name alone.
+# Every plugin here claims tibs245/scrumia, which is what a marketplace key is checked
+# against; `local:` and `shared:` have directories of their own and are answered by neither.
 MARKETPLACE = """
 project: { name: "Keyed" }
 modules:
@@ -180,14 +214,8 @@ def test_ac17_a_module_is_declared_by_source() -> None:
     os.unlink(wrong)
 
     nearby = config_with(LOCAL_AND_SHARED)
-    found = modules_in(nearby)
-    check("a local: key resolves by name", "scrumia-practice-tdd" in found, found)
-    check("a shared: key resolves by name", "scrumia-design" in found, found)
-    rows = rows_in(nearby)
-    check("each is credited with the location its own key states",
-          {r["module"]: r["source"] for r in rows} ==
-          {"scrumia-practice-tdd": "local", "scrumia-design": "shared"},
-          {r["module"]: r["source"] for r in rows})
+    check("a local: or shared: key is not answered by a marketplace module of that name",
+          modules_in(nearby) == set(), modules_in(nearby))
     os.unlink(nearby)
 
     apps = config_with(PER_APP)
@@ -320,6 +348,218 @@ def test_ac18_a_setting_resolves_through_three_layers() -> None:
     os.unlink(config)
 
 
+THREE_LOCATIONS = """
+project: { name: "Three" }
+modules:
+  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "shared:acme-conventions": {}
+  "local:acme-docs-rules": {}
+"""
+
+ABSENT_SHARED = """
+project: { name: "Fresh clone" }
+modules:
+  "shared:acme-conventions": {}
+"""
+
+CONFLICTING = """
+project: { name: "Conflict" }
+extends:
+  - acme-conventions
+"""
+
+SHADOWED = """
+project: { name: "Promoting" }
+modules:
+  "shared:scrumia-practice-tdd": {}
+"""
+
+PROJECT_DIRECTIVE = """
+project: { name: "No module at all" }
+modules: {}
+"""
+
+
+def test_ac1_ac2_each_source_resolves_from_its_own_location() -> None:
+    print("AC-1, AC-2 — a shared checkout and a module inside the project reach the table")
+
+    project = project_with(THREE_LOCATIONS)
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(project / ".scrumia" / "modules" / "acme-docs-rules", "acme-docs-rules")
+
+    config = project / ".scrumia" / "config.yaml"
+    _, out, _ = run(["implement", "--json"], config, shared=shared)
+    rows = json.loads(out)
+    by_module = {r["module"]: r for r in rows}
+    check("the shared checkout's directive is in the table",
+          "acme-conventions" in by_module, sorted(by_module))
+    check("the in-project module's directive is in the table",
+          "acme-docs-rules" in by_module, sorted(by_module))
+    check("a marketplace module beside them still resolves",
+          "scrumia-practice-tdd" in by_module, sorted(by_module))
+    check("nothing distinguishes the three rows but the location reported alongside them",
+          {m: r["location"] for m, r in by_module.items()} ==
+          {"acme-conventions": "shared", "acme-docs-rules": "local",
+           "scrumia-practice-tdd": "marketplace"},
+          {m: r["location"] for m, r in by_module.items()})
+
+    # BR-6: the path is per-machine and reaches the tool through the environment, so the
+    # file naming it is interchangeable with the variable and neither is versioned.
+    (project / ".scrumia" / ".env.local").write_text(
+        f"# this machine\nSCRUMIA_SHARED_DIR={shared}\n", encoding="utf-8")
+    _, out, _ = run(["implement", "--json"], config)
+    check("the same answer when the path comes from .scrumia/.env.local instead",
+          "acme-conventions" in {r["module"] for r in json.loads(out)}, out[:200])
+
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+
+def test_ac3_resolution_states_where_each_module_came_from() -> None:
+    print("AC-3 — every declared module is shown with the location it resolved from")
+
+    project = project_with(THREE_LOCATIONS)
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(project / ".scrumia" / "modules" / "acme-docs-rules", "acme-docs-rules")
+    config = project / ".scrumia" / "config.yaml"
+
+    _, out, _ = run(["--modules", "--json"], config, shared=shared)
+    reported = {row["key"]: row for row in json.loads(out)}
+    check("every declaration is reported", len(reported) == 3, sorted(reported))
+    check("each carries the location it resolved from",
+          {k: r["location"] for k, r in reported.items()} ==
+          {"tibs245/scrumia:scrumia-practice-tdd": "marketplace",
+           "shared:acme-conventions": "shared", "local:acme-docs-rules": "local"},
+          {k: r["location"] for k, r in reported.items()})
+    check("and the directory it resolved to",
+          all(len(r["roots"]) == 1 and r["state"] == "resolved" for r in reported.values()),
+          reported)
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+    # AC-6's half of the same rule: no location a clone can reach, so no root — and the
+    # report must still say which location it would have come from.
+    fresh = project_with(ABSENT_SHARED)
+    code, out, _ = run(["--modules", "--json"], fresh / ".scrumia" / "config.yaml")
+    absent = json.loads(out)[0]
+    check("a module the machine cannot reach is a declared absence, not a blank",
+          absent["state"] == "absent" and absent["location"] == "shared"
+          and absent["roots"] == [], absent)
+    check("and reading a composition with one is not a failure", code == 0, code)
+    shutil.rmtree(fresh)
+
+
+def test_ac4_a_local_module_is_held_to_the_same_standard() -> None:
+    print("AC-4 — the anatomy checker returns the same verdict wherever the module sits")
+
+    published = Path(tempfile.mkdtemp(prefix="scrumia-published-"))
+    make_module(published / "acme-conventions", "acme-conventions")
+    # A finding every module can produce: the README carries none of the three sections.
+    project = project_with(THREE_LOCATIONS)
+    inside = project / ".scrumia" / "modules" / "acme-conventions"
+    inside.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(published / "acme-conventions", inside)
+
+    verdicts = []
+    for where in (published / "acme-conventions", inside):
+        proc = subprocess.run([str(MODULE_TOOL), "check", str(where), "--json"],
+                              capture_output=True, text=True, timeout=60)
+        verdicts.append((proc.returncode, json.loads(proc.stdout)["findings"]))
+    check("the same tree produces findings at all", verdicts[0][1] != [], verdicts[0])
+    check("and the identical verdict from both locations, with no local allowance",
+          verdicts[0] == verdicts[1], verdicts)
+    shutil.rmtree(project)
+    shutil.rmtree(published)
+
+
+def test_ac5_one_declaration_two_modules_is_a_conflict() -> None:
+    print("AC-5 — two distinct modules answering one declaration bind neither")
+
+    project = project_with(CONFLICTING)
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
+    config = project / ".scrumia" / "config.yaml"
+
+    code, out, err = run(["implement", "--json"], config, shared=shared)
+    check("neither is used — no directive of that module reaches the register",
+          json.loads(out) == [], out[:200])
+    check("the conflict is named, with both locations",
+          "acme-conventions" in err and "shared" in err and "local" in err, err.strip())
+    check("the shortened table is not the only signal",
+          "binds neither" in err, err.strip())
+    check("and it does not stop the composition being read", code == 0, code)
+
+    _, out, _ = run(["--modules", "--json"], config, shared=shared)
+    row = json.loads(out)[0]
+    check("--modules reports it as a conflict naming every root",
+          row["state"] == "conflict" and len(row["roots"]) == 2, row)
+
+    code, _, err = run(["--check"], config, shared=shared)
+    check("the dependency check exits non-zero on it", code != 0, code)
+    check("and says what is unmet", "unmet dependency" in err, err.strip())
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+
+def test_ac5_identity_and_declaration_settle_the_other_two_cases() -> None:
+    print("AC-5 — one module reached twice, and an undeclared copy, are not conflicts")
+
+    project = project_with(CONFLICTING)
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    (project / ".scrumia" / "modules").mkdir(parents=True)
+    (project / ".scrumia" / "modules" / "acme-conventions").symlink_to(
+        shared / "acme-conventions", target_is_directory=True)
+    config = project / ".scrumia" / "config.yaml"
+
+    _, out, err = run(["--modules", "--json"], config, shared=shared)
+    row = json.loads(out)[0]
+    check("two routes to one directory are one module, resolved and used",
+          row["state"] == "resolved" and len(row["roots"]) == 1, row)
+    check("and nothing is called a conflict", "binds neither" not in err, err.strip())
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+    # The promotion case: the published module is installed and a checkout of it is
+    # declared. module-authoring BR-3 is only affordable if that is not a fault.
+    promoting = project_with(SHADOWED)
+    checkout = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(checkout / "scrumia-practice-tdd", "scrumia-practice-tdd")
+    _, out, err = run(["--modules", "--json"], promoting / ".scrumia" / "config.yaml",
+                      shared=checkout)
+    row = json.loads(out)[0]
+    check("the declared checkout resolves while the published copy is simply not run",
+          row["state"] == "resolved" and row["location"] == "shared"
+          and row["roots"][0]["root"].startswith(str(checkout.resolve())), row)
+    check("and no conflict is reported", "binds neither" not in err, err.strip())
+    shutil.rmtree(promoting)
+    shutil.rmtree(checkout)
+
+
+def test_ac9_ac10_no_versioned_path_and_no_installation() -> None:
+    print("AC-9, AC-10 — the machine's path is not versioned, and a directive needs no module")
+
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+    check("the file naming the shared directory is excluded from version control",
+          ".scrumia/.env.local" in [line.strip() for line in gitignore], gitignore)
+
+    project = project_with(PROJECT_DIRECTIVE)
+    (project / ".scrumia" / "extends.json").write_text(json.dumps({"implement": [{
+        "name": "A house rule", "type": "norm", "when": "required",
+        "summary": "this project's own", "read": "CLAUDE.md"}]}), encoding="utf-8")
+    code, out, _ = run(["implement", "--json"], project / ".scrumia" / "config.yaml")
+    rows = json.loads(out)
+    check("the project's own directive appears with no module created or installed",
+          [r["name"] for r in rows] == ["A house rule"], rows)
+    check("and it outranks every module, at scope 0",
+          rows and rows[0]["scope"] == 0, rows)
+    check("reading it is not a failure", code == 0, code)
+    shutil.rmtree(project)
+
+
 def main() -> int:
     if not os.access(TOOL, os.X_OK):
         print(f"error: {TOOL.relative_to(ROOT)} is not executable")
@@ -329,6 +569,12 @@ def main() -> int:
     test_ac17_the_retired_list_is_still_read()
     test_a_composition_declaring_nothing_does_not_look_correct()
     test_ac18_a_setting_resolves_through_three_layers()
+    test_ac1_ac2_each_source_resolves_from_its_own_location()
+    test_ac3_resolution_states_where_each_module_came_from()
+    test_ac4_a_local_module_is_held_to_the_same_standard()
+    test_ac5_one_declaration_two_modules_is_a_conflict()
+    test_ac5_identity_and_declaration_settle_the_other_two_cases()
+    test_ac9_ac10_no_versioned_path_and_no_installation()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
 
