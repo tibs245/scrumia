@@ -103,41 +103,67 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
 ```gherkin
 Given a visitor who has answered the seven slots
 When they look for a module that adds a capability without replacing any of them
-Then the composer offers the modules that fill no slot, stated as additions
-  rather than as an eighth slot, and picking one changes both artifacts it takes
-  away — the install commands and the `extends` list in the config
+Then the composer offers the modules that fill no slot, stated as additions rather
+  than as an eighth slot, and picking one changes both artifacts it takes away —
+  the install commands, and one more key in the `modules` mapping of the config
 And leaving every addition unpicked is a complete composition, not an unanswered
   question
+And the block carries no sign, no leader, no fill and no `<details>` — it is a
+  shelf of options, drawn as the body of a slot row without the row
 ```
 
-The seven rows are choices between alternatives; these are not. Drawing them as
-an eighth row would claim a slot that `modular-composition` does not define — and
-since `extends` is a flat list, an addition is one more line in it, indistinguishable
-from a module that answers a slot.
+The seven rows are choices between alternatives; an addition is not. The last
+clause is not styling: `design/components/slot-index/spec.md` refuses *"a row with
+a claim where its question should be"* and refuses a second way to draw a slot, so
+three of the row's five cells would have nothing true in them. `.shelf` and `.opt`
+are what the seven rows already open into, so the shelf reads as continuous with
+them without impersonating one.
 
 ### AC-10 — A visitor's own module reaches the config, and only the config
 
 ```gherkin
 Given a visitor who runs a module this site has never heard of
-When they name it in the additions block and state which of the three locations
-  it comes from
-Then it appears in the emitted `extends` list like any other entry
-And no install command is emitted for it — the site cannot know how to install
-  what it does not ship, and stating that is what keeps the rest of the commands
-  trustworthy
-And a module named with no location stated is refused rather than assumed to be
-  published
+When they name it in the additions block, choosing its source
+Then it appears in the emitted `modules` mapping keyed `<source>:<module>` like
+  every other entry, per
+  [ADR-0021](../../../../docs/adr/0021-modules-keyed-by-source.md)
+And no install command is emitted for it — the site cannot know how to install what
+  it does not ship, and saying so is what keeps the other commands trustworthy
+And an entry whose key does not match `<source>:<module>` is refused rather than
+  emitted
 ```
 
-This is what stops the composer reading as a closed catalogue. The mechanism costs
-one line because `extends` is flat: what a visitor adds and what this marketplace
-ships occupy the same list, which is the argument the section exists to make.
+The location is not a second answer to collect: it is the `<source>:` half of the
+key, so the entry is one field with an inline source choice, never a name plus a
+separate origin — that pairing is what ADR-0021 rejected.
 
-A custom **slot** is deliberately absent, and not as an omission: since
-[ADR-0019](../../../../docs/adr/0019-extends-replaces-composition-and-practices.md)
-the configuration carries no slot key for one to be written into. A visitor wanting
-their own step contributes a directive to a register — `features/business/local-extension/`
-BR-3 — which needs no module and no slot at all.
+### AC-11 — The free entry is script-gated, and absent without script
+
+```gherkin
+Given the home page with JavaScript disabled
+When the additions block is rendered
+Then the free entry is not present, while every other choice in `#composer` — the
+  seven rows and the shelf of known additions — still works through `:has()` alone
+Given the page with script
+Then the free entry appears as the last option of the shelf and reveals its field
+  only when checked, so the section's resting state contains no empty box
+```
+
+Text cannot become YAML through `:has()`. Without the gate a no-JS visitor meets a
+field that silently does nothing under seven rows that all work — the precedent for
+the fix is two rules away, `.presets { display: none } .js .presets { … }`.
+
+Siting it as the last `.opt` is what keeps AC-1 true: a free-text field is a
+stronger form signal than the `<select>` `slot-index` already refuses, and an empty
+box in the resting state would make the section read as a form being filled rather
+than a composition assembling. The field is a component this site does not have
+yet — `design/components/` must carry it before it is written, and its label may
+not be the placeholder alone.
+
+A custom **slot** is deliberately absent, and not as an omission: the configuration
+carries no slot key for one to be written into. A visitor wanting their own step
+contributes a directive to a register — `features/business/local-extension/` BR-3 —
+which needs no module and no slot at all.
 
 ## Out of scope
 

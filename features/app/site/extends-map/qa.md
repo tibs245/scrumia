@@ -62,36 +62,52 @@ Then it carries no literal colour, spacing or duration of its own, every value i
   comes from `design/tokens.css`, and every stroke and label remains legible in both
 ```
 
-### AC-7 — The figure contains its own overflow
+### AC-7 — The figure turns rather than scrolls
 
 ```gherkin
-Given a viewport narrower than the figure's natural width
+Given a viewport narrower than the width three columns need
 When the page is displayed
-Then the figure scrolls within its own container and the page body does not scroll
-  horizontally
+Then the figure becomes a vertical list — each register followed by its contributors
+  indented under it — carrying the same rows, the same order and the same words, with
+  nothing cut and nothing off-screen
+And neither the figure nor the page body scrolls horizontally; only the third beat's
+  table may scroll inside its own container
 ```
+
+`run-horizon`'s spec refuses the sideways drag for a stated reason this section inherits:
+the column that falls off here is the contributors, which is half the argument. A visitor
+who does not drag concludes a register has one contributor — the claim the section exists
+to refute.
 
 ### AC-8 — The figure is not the only carrier
 
 ```gherkin
 Given a reader who cannot see the figure
 When the section is read as text
-Then the four things the figure makes visible are each stated in the section's prose or
-  in the figure's text alternative, and that alternative describes the mechanism rather
-  than the shapes
+Then the three facts the figure carries, and the fourth the invocation's position
+  carries, are each stated in the section's prose or in the figure's text alternative,
+  and that alternative describes the mechanism rather than the shapes
 ```
 
 ## Drift
 
-### AC-9 — A changed mechanism makes this section wrong, and something says so
+### AC-9 — A changed mechanism makes this section wrong, and review is what catches it
 
 ```gherkin
 Given a change to what `features/business/modular-composition/` states about registers,
   contributions or rendering order
-When the site is built
-Then the mismatch surfaces — the section is not merely out of date, it is stating
-  something no longer true, and it is treated as a defect rather than as pending work
+When that change is reviewed
+Then this section is named among what the change invalidates, and it is treated as
+  stating something no longer true rather than as pending work
+And the names and rows the section shows are re-checked against the composition by AC-2,
+  which a build can run
 ```
+
+Split deliberately. A build cannot diff the *meaning* of a spec's prose against a
+hand-written figure, so a criterion asking it to would be one that can never pass — the
+mirror of the criterion that can never fail. What a build can check is AC-2: every name
+shown exists. The rest is a review obligation, and stating it as one is what keeps it from
+being written as a validation nobody can implement.
 
 ### AC-10 — No number that rots silently
 
@@ -101,3 +117,7 @@ When it is checked for claims about the composition
 Then any count of registers, modules or directives is generated with the page, and no
   such count is hard-written into the prose
 ```
+
+The home page already ships literal counts in its hero. This criterion binds this section
+only; holding two standards at two scroll positions is a known state, tracked on the ticket
+that generates the hero's numbers, not a licence for this one.

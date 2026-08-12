@@ -49,13 +49,13 @@ Then "make the change" is the destination it returns, arrived at through the sam
 
 ## The boundary of agent memory
 
-### AC-5 — Something that survives the handover is refused for memory
+### AC-5 — Something that survives the handover is rejected for memory
 
 ```gherkin
 Given a fact that whoever clones this repository would need in order to work on it
 When it is offered to agent memory
-Then the tree refuses that destination, names the one that fits, and states the handover
-  test as the reason
+Then the tree rejects that placement, names the destination that fits, and states the
+  handover test as the reason
 ```
 
 ### AC-6 — Something nobody else can use is accepted in memory

@@ -79,9 +79,9 @@ Then it names the bump the change calls for and points at
 ```gherkin
 Given a need that amounts to one standing rule
 When the authoring pass is asked to create a module for it
-Then no module is created, and the pass names the destination that fits — a directive, a
-  rules section, or a line in the project's own configuration — citing
-  `features/business/knowledge-placement/` for the choice
+Then no module is created, and the pass names the destination that fits, taken from the
+  shapes `features/business/local-extension/` lists and chosen through
+  `features/business/knowledge-placement/`'s tree — enumerating neither itself
 ```
 
 ### AC-8 — A new slot is refused unless a project would fill it differently

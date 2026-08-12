@@ -139,7 +139,7 @@ Then each one is HTML-escaped before interpolation, the same way a template
   fixed set of entries is
 ```
 
-### AC-8 — A module page shows what it plugs into, derived and never declared
+### AC-12 — A module page shows what it plugs into, derived and never declared
 
 ```gherkin
 Given a module that opens registers, and modules that declare contributions to
@@ -150,9 +150,23 @@ Then it names the registers it opens and the modules contributing to each, and
   to its own page
 And all of it is derived from what each module declares in its own
   `registers.json` and `extends.json`, with no field anywhere naming a relation
-And a module declaring neither shows this section not at all, with no empty
+And a register a module opens that nobody contributes to is shown with `no
+  contribution` in words, never omitted
+And a module declaring neither file shows this section not at all, with no empty
   heading standing where the list would be
 ```
+
+**A register with no contributor is shown.** Three of the twelve modules open one
+today — `scrumia-discovery` (`scope-idea`, `split`), `scrumia-teams` (`sprint`),
+`scrumia-design` (`design`) — and each teaches the mechanism for free.
+`extends-map` AC-3 requires exactly this on the home page; two specs on one branch
+must not rule opposite ways on the same fact. `modular-composition` BR-1 is the
+authority: an empty register is an answer, not a failure.
+
+Draw the absence with `slot-index`'s state machinery rather than a new one — dashed
+leader, `--text-faint`, spelled out in words. Its spec gives the reason verbatim: a
+missing row says *we forgot*, a dashed leader says *we decided*. Not the gap idiom,
+which is reserved for a degradation; an unfilled register is not a loss.
 
 **Derived from the modules' own declarations, not from this repository's
 composition.** `scrumia-extends` answers for the modules a project runs; this
@@ -161,11 +175,11 @@ and practice modules showing nothing while they in fact declare contributions to
 `implement`, `review` and `audit`.
 
 This section says what is mechanically true and stops there. On today's twelve
-modules it is empty for `scrumia-core`, `scrumia-rules` and `scrumia-discovery`,
-which is a correct answer and not a gap — AC-9 is what a reader of those pages
-needs.
+modules it is absent only for `scrumia-core` and `scrumia-rules`, which declare
+neither file — a correct answer and not a gap, and AC-13 is what a reader of those
+two pages needs.
 
-### AC-9 — A module page says what it goes well with, and cannot invent one
+### AC-13 — A module page says what it goes well with, and cannot invent one
 
 ```gherkin
 Given a module whose usefulness alongside another is not expressed by any
@@ -180,8 +194,22 @@ And a module with nothing to say carries no such section, with no empty heading
   standing where it would be
 ```
 
+**The two sections take different forms, not different headings.** The derived half
+is a table — register, direction, module — because the data is genuinely tabular and
+runs from one row to seven, and `.table-wrap` already exists. The editorial half is
+one prose sentence with inline links and no list at all. Two adjacent `<ul>`s
+differing only in wording would hide the very distinction these two criteria spend
+two paragraphs defending; prose against a table is legible at a glance, and each may
+vanish alone without the page looking cut.
+
+Module names in both sections are `--text` at rest and `--accent` on
+`:hover`/`:focus-visible`, never accent at rest: seven links in one block, under a
+section that already spends an accent rule, is the pointing-inflation
+`design/identity.md` refuses. And neither section draws a module as `module-card` —
+a reference to a module drawn heavier than the module the page is about.
+
 The two sections answer different questions and neither is a rendering of the
-other: AC-8 says who this module mechanically connects to, AC-9 says what to
+other: AC-12 says who this module mechanically connects to, AC-13 says what to
 install beside it. Only the second is what a reader arriving at
 `scrumia-rules` — which declares nothing and exists precisely for implementation
 modules — came to find out.

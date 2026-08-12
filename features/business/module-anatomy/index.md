@@ -20,9 +20,9 @@ surfaces included.
   same module. `tools/validate.py` becomes a consumer of the first and keeps only what
   neither surface can see.
 - Defers to: `features/business/modular-composition/` for what a module owes to be
-  **pluggable** — that list is closed at three items on the test of silent breakage
-  across compositions, and this feature adds nothing to it. It answers a different
-  question, on a different test: whether a module can be navigated and verified.
+  **pluggable**. This feature adds nothing to that list and answers a different question:
+  whether a module can be navigated and verified. `business.md` § *The test this standard
+  is judged on* states why the two do not overlap.
 - Defers to: `features/business/release-versioning/` for what a change to a module costs
   a project that has adopted it. This feature says what a module must look like, not what
   moving it promises.

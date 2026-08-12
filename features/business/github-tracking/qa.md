@@ -163,3 +163,20 @@ Then every commit of that ticket is returned — a lookup that returns only some
 - Authentication and reachability failures — `gh` not logged in, the `project` scope
   missing, the board unreachable. `scrumia-board doctor` names which one; that is
   operational resilience, not a tracking business rule.
+
+### AC-13 — The `discussion` label is subtracted, not merely declared
+
+```gherkin
+Given issues on the board, one of them carrying `discussion`
+When the status reading and the next-step reading count what is waiting to be started
+Then the labelled issue is not among them, and neither reading recommends refining it
+Given instead the label declared and no reading subtracting it
+When the same readings run
+Then this criterion fails — a label nothing queries is documentation, not a filter, and
+  this feature admits a label only on that test
+```
+
+The label's declaration is cheap; the exclusion is the work. Without it a backlog fills
+with issues nobody intends to start, and the readings that decide what to do next are the
+first casualty.
+

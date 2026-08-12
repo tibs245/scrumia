@@ -73,14 +73,28 @@ No versioned file names a path outside the project.
 
 A module's configuration is resolved from three layers, each overriding the one before:
 
-1. `settings:` — the shared base, and the only place a key several modules write can live
-2. `modules[<key>].params:` — this module's own, overriding the base
-3. the project's local layer — overriding both
+1. `settings:` — what is no module's, versioned
+2. `modules[<key>].params:` — this module's own, versioned, overriding the base
+3. `.scrumia/config.local.yaml` — per-machine, **never committed**, overriding both
 
-Layer 1 survives because not every setting has one reader: `settings.team.roles` is
-written by `scrumia-teams` and by `scrumia-design`, which registers its own role there
-(ADR-0014). Collapsing it into one module's `params:` would make one module's block the
-home of another module's declaration.
+**A key one module reads moves into that module's `params:`.** Of the five `settings.*`
+blocks this repository runs, `specs`, `design`, `tracker` and `autonomy` each have one
+reader and descend; `team.roles` stays, because it declares the team rather than a module's
+configuration and three modules read it. That migration is part of this decision rather
+than a consequence left implicit — it is the half that makes `settings:` stop being keyed
+by a vocabulary the composition retired.
+
+`team.roles` also changes shape here: an entry becomes the agent's name and whether the
+project wants it, and the `from:` field is deleted. It existed to name the module a role
+came from, which was only necessary because the declaration sat outside that module; the
+agent's own file already carries its description, and resolving a name to a runnable agent
+is the harness's job. `features/business/agent-team/` owns that rule.
+
+**Layer 3's cost is stated rather than hidden.** Two machines can resolve different values
+from one repository, so a composition is reproducible in its *modules* — which the
+qualified key guarantees — and not necessarily in its *values*. That is the price of a
+per-machine override, and it is paid knowingly: the alternative, a versioned override
+block, leaves a reader asking why the value was not edited in `settings:` directly.
 
 The order is stated rather than implied, for the reason ADR-0019 gave about ESLint: a
 reader brings a precedence reflex uninvited, and an order nobody can check is one that can
@@ -96,8 +110,9 @@ considered and rejected below.
 ## Arguments for
 
 - One word, one meaning: the configuration says `modules`, a module says `extends`.
-- The composition is reproducible: the same file resolves to the same modules on any
-  machine, or reports what it cannot reach.
+- The composition is reproducible **in its modules**: the same file resolves to the same
+  set on any machine, or reports what it cannot reach. Values are a separate question,
+  answered by layer 3 above.
 - A local module costs one line and is expressible at all, which the flat list made
   impossible without a second field.
 - `settings:` stops being the only half keyed by a retired vocabulary.
@@ -111,13 +126,24 @@ considered and rejected below.
   flat, unordered, no slot key — and this ADR keeps all of it. What it changes is the key's
   name and shape, which ADR-0019 had no reason to question because local modules were not
   yet specified.
-- **A migration.** `scrumia-init` writes the key, `scrumia-extends` and
-  `compose-status.sh` read it, the site's composer emits it, and every project that
-  adopted `extends:` must be migrated. The reader count is two, which is why the cost is
-  acceptable; the writer count is what makes it a real piece of work.
-- **Two homes for a setting.** The cascade is a rule to learn, and the boundary between
-  layer 1 and layer 2 will be argued. Accepted over the alternative, which was making one
-  module's block hold another module's registration.
+- **A migration, and larger than the key.** `scrumia-init` writes it, `scrumia-extends` and
+  `compose-status.sh` read it, the site's composer emits it, and every project on `extends:`
+  must be migrated. Beyond those: `tests/fixtures/composition-output.txt`,
+  `check_composition_drift()` in `tools/validate.py`, `site/i18n/*/index.json`, this
+  repository's own `CLAUDE.md` and `.scrumia/config.yaml`, and `scrumia-init`'s own skill
+  text. Plus the `settings:` migration above, which is the larger half. The reader count is
+  two, which is why the shape change is affordable; the writer count is what makes this a
+  real piece of work rather than a rename.
+- **A half-migrated file must not resolve to nothing.** Both readers currently gate on
+  `has("extends")`, so a correctly migrated config makes them warn about
+  `composition:`/`practices:` and resolve zero modules — and a register with no
+  contributions is an *answer* under BR-1, so every table renders empty and nothing fails.
+  The three-way precedence is stated in `features/business/modular-composition/`'s `tech.md`
+  for that reason, and the empty composition is named rather than left silent.
+- **Three homes for a setting.** The cascade is a rule to learn, and the boundary between
+  layer 1 and layer 2 will be argued. Accepted because the alternative for layer 1 was
+  making one module's block hold what three modules read, and the alternative for layer 3
+  was no per-machine override at all.
 
 ## Rejected — a module's `extends:` nested under it
 

@@ -200,9 +200,12 @@ is what this feature exists to replace.
   the procedural check enforces it and this one does not restate it.
 - **BR-8** — An extension data file is optional and its absence is a statement. A file a
   module does ship parses, and declares only things that exist.
-- **BR-9** — Every module ships against this standard, the module owning the two surfaces
+- **BR-9** — A module declaring a standing role ships the agent that role names. A role a
+  project enables whose agent the module does not ship is a finding, reported with the
+  restart that usually explains it.
+- **BR-10** — Every module ships against this standard, the module owning the two surfaces
   included. There is no exemption, and a finding on the owner is reported like any other.
-- **BR-10** — Every question the audit asks is one of this feature's rules, phrased as a
+- **BR-11** — Every question the audit asks is one of this feature's rules, phrased as a
   question, closed, and answerable from one file at a time. The audit holds no rule of its
   own, and a question it cannot answer that way belongs to the procedural check or to
   neither.
