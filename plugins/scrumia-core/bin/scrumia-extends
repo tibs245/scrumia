@@ -465,7 +465,7 @@ cmd_modules() {
   printf '| Declared as | Scope | Location | State | Resolved to |\n|---|---|---|---|---|\n'
   jq -r '.[] | "| `" + .key + "` | " + .scope + " | " + .location + " | " + .state + " | "
              + (if (.roots | length) == 0 then "—"
-                else ([.roots[] | "`" + .root + "`"] | join("<br>")) end) + " |"' <<<"$all"
+                else ([.roots[] | "`" + .root + "`"] | join(", ")) end) + " |"' <<<"$all"
 
   printf '\nA declaration nothing answers is an absence, not a failure: the module is not\n'
   printf 'reachable from here, every register renders without it, and the location above is\n'
