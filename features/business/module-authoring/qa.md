@@ -32,9 +32,8 @@ Then a marketplace is the location, and before creating anything the pass states
   a deprecation window before a renamed thing disappears
 ```
 
-All three reaches `business.md`'s table names are exercised. Two of them would let an
-implementation covering two branches pass, and the third is the one the epic's open
-question turned on.
+All three reaches `business.md`'s table names are exercised. With only two, an
+implementation covering two branches passes on a rule it never ran.
 
 ### AC-3 — Promotion rewrites no file
 
@@ -120,14 +119,19 @@ Then the slot is refused, and the pass offers the two accepted alternatives — 
 Given a module whose need opens and extends no register, reads no setting and publishes
   no name on `PATH`
 When the authoring pass produces it
-Then the module carries no declaration of any of the three — no extension data file, no
-  settings section in its README, nothing under `bin/` — and no file it did write
-  contains a heading with nothing under it or a marker to be filled in later
+Then the module carries no declaration of any of the three — no `registers.json` and no
+  `extends.json`, no settings section in its README, nothing under `bin/` — and no file
+  it did write contains a heading with nothing under it or a marker to be filled in later
 ```
 
-Each third names a surface the anatomy checker can see, which is what lets the scenario
-fail. A setting a module reads has no file of its own; what it has is the optional README
-section whose absence states that it reads none, and that section is the surface here.
+Each third names something observable, which is what lets the scenario fail. A setting a
+module reads has no file of its own; what it has is the optional README section whose
+absence states that it reads none. Whether that absence is *true* is read rather than
+computed, and stays the audit's question.
+
+The Then names two of the three extension data files and not the third: what a module
+**runs** is a fourth axis this Given does not fix, and a module opening no register may
+still declare the published names it invokes.
 
 ### AC-10 — A pass may end having created nothing
 

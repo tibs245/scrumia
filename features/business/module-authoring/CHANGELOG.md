@@ -3,7 +3,7 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — AC-2, AC-7 and AC-9 name surfaces that can fail
+## 2026-08-12 — AC-2 reaches the third location, AC-7 the band below the threshold, AC-9 a surface that can fail
 - Issue: #289
 - Category: Changed
 - Breaking: no
