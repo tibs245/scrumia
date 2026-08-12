@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — A module reads its configuration through the cascade, and stops when it cannot (BR-15, AC-19)
+- Issue: #315
+- Category: Added
+- Breaking: no — BR-14 already stated the order; this states who applies it and what happens when nobody can
+
 ## 2026-08-12 — `tech.md` names the debt a `local:` or `shared:` key carries until it resolves
 - Issue: #302
 - Category: Added

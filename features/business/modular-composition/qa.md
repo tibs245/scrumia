@@ -216,21 +216,6 @@ Then the role appears in the single `settings.team.roles` list, carrying a `from
   naming its provider, and routing needs no knowledge of where the definition lives
 ```
 
-## Out of scope
-
-- **Module versioning and migration on a breaking change** — what a major, minor or
-  patch bump means for a project already using a module, how long a renamed thing
-  keeps working, and when that project finds out. Specified by
-  `features/business/release-versioning/`; this feature only establishes that a module
-  exists and can be composed, not how it evolves once adopted.
-- **Any single module's own settings or file layout** — each module documents what it
-  reads under its own settings key in its own `SKILL.md`; this feature does not
-  duplicate any module's contract, only the shared rule that a contract must exist.
-- **Whether a directive's one-line summary still describes its fragment.** Nothing
-  checks it, and nothing can: it is prose about prose. The mechanism narrows the drift
-  to one line sitting beside the path it describes, which is as far as this feature
-  claims to go.
-
 ### AC-17 — A module is declared by source, and a bare name is not a declaration
 
 ```gherkin
@@ -256,5 +241,41 @@ Then the local layer's value wins, then the module's, then the base — and the 
 Given instead a key several modules write, present only in `settings:`
 When each of them reads it
 Then all of them see it, and nothing requires it to be moved inside one module's block
+Given a module that opens `.scrumia/config.yaml` and reads `settings:` for itself
+When the same key is overridden in layer 2 or layer 3
+Then that module resolves the base value and neither override reaches it — the layers
+  are consumed through the cascade, or they are decoration
 ```
+
+### AC-19 — A module that cannot resolve its configuration says so, instead of defaulting
+
+```gherkin
+Given a module whose configuration cannot be resolved — the resolver is not reachable,
+  it fails, or no layer carries the block that module reads
+When the module runs
+Then it names what it could not resolve and for which module, and stops
+And it does not fall back to its own built-in defaults, because an answer computed from
+  defaults is indistinguishable from an answer computed from configuration — the caller
+  cannot tell that the setting was never read, and neither can the person reading the
+  output afterwards
+```
+
+The two failures are not symmetric, and the asymmetry is the point. A consumer that dies
+on a migrated key is fixed the day the migration lands; a consumer that quietly substitutes
+its defaults keeps producing well-formed answers nobody has reason to doubt.
+
+## Out of scope
+
+- **Module versioning and migration on a breaking change** — what a major, minor or
+  patch bump means for a project already using a module, how long a renamed thing
+  keeps working, and when that project finds out. Specified by
+  `features/business/release-versioning/`; this feature only establishes that a module
+  exists and can be composed, not how it evolves once adopted.
+- **Any single module's own settings or file layout** — each module documents what it
+  reads under its own settings key in its own `SKILL.md`; this feature does not
+  duplicate any module's contract, only the shared rule that a contract must exist.
+- **Whether a directive's one-line summary still describes its fragment.** Nothing
+  checks it, and nothing can: it is prose about prose. The mechanism narrows the drift
+  to one line sitting beside the path it describes, which is as far as this feature
+  claims to go.
 
