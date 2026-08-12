@@ -4,6 +4,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
+- `scrumia-place` — one tree from something just learned to exactly one destination: a
+  module, this project, a feature, a ticket, the change itself, or agent memory. Memory is
+  bounded by the handover test — *would this survive being handed to someone else,
+  usefully?* — applied to what an entry says and never to the directory it sits in, so a
+  committed memory directory exempts nothing in it. It reminds after the write; it
+  intercepts nothing.
 - `scrumia-extends` — prints the directives that extend one register, for this project:
   name, type, whether it is required, one line of what it says, and the file to open.
   It computes on demand and stores nothing, so there is no artefact to rebuild or to
