@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — Each source resolves from its own location, and a conflict names both (BR-1, BR-7, BR-9, AC-1..AC-5, tech.md)
+- Issue: #291
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-12 — A module's location is its declaration's source, not a field beside it (BR-6, AC-9)
 - Issue: #302
 - Category: Changed

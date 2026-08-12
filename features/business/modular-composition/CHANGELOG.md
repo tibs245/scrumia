@@ -18,6 +18,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Changed
 - Breaking: no
 
+## 2026-08-12 — Discovery is three tiers in one pass, and binding is stated per tier (tech.md)
+- Issue: #291
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-12 — `tech.md` names the debt a `local:` or `shared:` key carries until it resolves
 - Issue: #302
 - Category: Added
