@@ -26,6 +26,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   answers on a module still being written. It writes nothing — no fix, no scaffold. Its
   exit status separates five states a boolean collapses, which `--help` enumerates: read
   `state`, never the length of `findings`, because a non-zero exit is not a finding.
+- `scrumia-module-audit` — the anatomy standard's other surface: a checklist an agent
+  answers over one module, one question at a time, one file at a time, for the rules the
+  procedural check cannot decide from the tree alone. Reports in the same finding shape as
+  `scrumia-module check --json`. Writes nothing.
 - `scrumia-extend` — the extension protocol itself: what a register is, what the three
   data files a module may ship declare, and how to open an extension point in a skill.
 - `dependencies.jsonl` — this module declares the published names it runs, each qualified
