@@ -85,6 +85,20 @@ tooling rather than reading the file.
 The order is stated so it can be checked. An order only applied, never written, can invert
 without anything failing.
 
+**A module reads through the cascade, not out of the file.** The three layers are a rule
+about resolution, and resolution happens somewhere. A module that opens
+`.scrumia/config.yaml` itself and reads `settings:` sees layer 1 and nothing else, whatever
+the table above promises: layers 2 and 3 are invisible to it, so a per-machine override is
+a documented feature that changes nothing for the only thing that consumes it. Declaring
+the layers and reading past them are two halves of one rule, and the second is the half
+that can be absent without any of it failing.
+
+**A module that cannot resolve its configuration stops.** It names what it was resolving
+and for which module, and answers nothing. Falling back to its own built-in defaults is
+worse than an error, because the answer is well-formed: nothing fails, no one is told, and
+the module runs on values a person never chose. That is how a migration of layer 1 breaks
+one consumer loudly and another silently, and it is the silent one that costs.
+
 ## `practices` is retired as a named slot
 
 `implementation` and `practices` were always two answers to the same question — how an
@@ -375,6 +389,11 @@ the composition.
   never committed. A key one module reads belongs in that module's `params:`; `settings:`
   holds what is no module's, and a composition is reproducible in its modules but not
   necessarily in its values.
+- **BR-15** — A module reads its configuration **through** that cascade, never out of the
+  raw configuration file: reading `settings:` directly resolves layer 1 and silently
+  discards the other two. A module that cannot resolve its configuration — the resolver
+  absent, or no layer carrying the block it reads — names what it could not resolve and
+  stops, rather than answering from its own defaults.
 
 ## Vocabulary
 

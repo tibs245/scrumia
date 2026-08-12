@@ -256,6 +256,23 @@ GitHub. A review of anything touching scope labelling has to check it by hand, `
 list`, since it is one of this criterion's three surfaces and the only one that is not
 in the working tree to grep.
 
+### AC-22 — A policy that cannot be resolved is reported, not answered around
+
+```gherkin
+Given a configuration from which the policy itself cannot be resolved — no layer of the
+  composition's settings cascade carries the grid, the axes' defaults and the label
+  prefixes — as opposed to a grid that resolves and has no cell for one pair
+When the execution policy is asked which model runs a ticket
+Then it names what it could not resolve and answers no model at all
+And the two cases stay distinguishable: a hole in a grid is project data, reported and
+  answered around by AC-10; an unresolvable grid is a broken installation, and answering
+  it with the unlabeled default would run every ticket of the project on that default
+  while reporting nothing a caller acts on
+```
+
+This is where the axes stop being the risk. AC-10's hole affects one pair; this affects
+every pair at once, and its symptom — a plausible model name — is the same in both.
+
 ## Out of scope
 
 - Who reads the accumulated records, and on what occasion. This feature requires that
