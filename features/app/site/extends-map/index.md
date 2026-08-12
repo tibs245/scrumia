@@ -1,6 +1,6 @@
 # Extends map — the home page's extension section
 
-**Status**: draft
+**Status**: active
 
 ## In brief
 

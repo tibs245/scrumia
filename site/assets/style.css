@@ -733,6 +733,60 @@ section > h2::before {
   .shelf { padding-left: 0; }
 }
 
+/* ---------- Extends ---------- *
+ * DECLARES / REGISTER / CONTRIBUTES — identity.md's labelled-column idiom, drawn
+ * from the composition instead of a request. Every row carries its own labels,
+ * like .slot-name — there is no shared header band, which reads as a second
+ * <table> next to the real one three beats later. Mobile-first: the vertical
+ * list AC-7 asks for is the base state, the three-column grid the enhancement.
+ */
+
+.ext-figure { margin: var(--space-8) 0 var(--space-6); --ext-label-w: 6.5rem; }
+
+.ext-row { border-top: 1px solid var(--border); padding: var(--space-4) 0; display: grid; gap: var(--space-2); }
+.ext-row:last-of-type { border-bottom: 1px solid var(--border); }
+
+.ext-label {
+  display: inline-block; min-width: var(--ext-label-w); flex: none;
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-faint);
+}
+.ext-declares { margin: 0; }
+.ext-declares code, .ext-register code { color: var(--text); font-size: var(--text-base); }
+.ext-skill { color: var(--text-soft); font-size: var(--text-sm); }
+
+.ext-register { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+.ext-lead { display: none; }
+
+/* Flex, not the inline flow .ext-declares gets for free: a <ul> is a block, so
+   without this its contributors start a new line at the row's own left edge
+   instead of the column .ext-declares/.ext-register already established. */
+.ext-contributes, .ext-contributes-none { display: flex; align-items: flex-start; gap: var(--space-3); margin: 0; }
+.ext-contributes ul { margin: 0; padding: 0; list-style: none; }
+.ext-contributes li { margin: 0 0 var(--space-1); }
+/* A <code> chip, same as the declaring module's — one kind of object, one
+   treatment, rather than the faint bare text a "several modules contribute"
+   claim would otherwise render as the section's least confident-looking fact. */
+.ext-contributes li code { font-size: var(--text-sm); }
+.ext-contributes-none { color: var(--text-faint); font-family: var(--font-mono); font-size: var(--text-sm); }
+
+.ext-facts { margin: 0 0 var(--space-6); padding-left: var(--space-5); color: var(--text-soft); max-width: var(--measure); }
+.ext-facts li { margin: 0 0 var(--space-2); line-height: var(--leading-snug); }
+/* li::marker inherits --accent site-wide; --accent belongs to the invocation alone (ux.md). */
+.ext-facts li::marker { color: var(--text-faint); }
+.ext-facts code { color: var(--text); }
+
+.ext-ask { margin: 0 0 var(--space-2); color: var(--text-soft); }
+
+/* The complement of .slot-row's own `max-width: 800px` turn, so the two index
+   figures on this page change layout at the same width rather than one lagging
+   the other by a stray breakpoint. */
+@media (min-width: 801px) {
+  .ext-row { grid-template-columns: 1fr 1fr 2fr; gap: var(--space-4); align-items: start; }
+  .ext-lead { display: block; flex: 1; height: 0; border-bottom: 1px dotted var(--border-strong); opacity: 0.7; }
+  .ext-row-empty .ext-lead { border-bottom-style: dashed; border-bottom-color: var(--border); opacity: 1; }
+}
+
 /* ---------- Modules ---------- */
 
 .modules { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
@@ -1138,6 +1192,12 @@ footer a:hover { color: var(--accent); }
 .js .slots.is-in > .slot:nth-child(5) { --i: 4; }
 .js .slots.is-in > .slot:nth-child(6) { --i: 5; }
 .js .slots.is-in > .slot:nth-child(7) { --i: 6; }
+
+/* The two rows of the extends figure, then the invocation before the table it
+   produces — the same DOM-order-is-arrival-order rule as the hero and the run. */
+.js .ext-figure.is-in > *:nth-child(2) { --i: 1; }
+.js .ext-invoke.is-in > *:nth-child(2) { --i: 1; }
+.js .ext-invoke.is-in > *:nth-child(3) { --i: 2; }
 
 @media (prefers-reduced-motion: reduce) {
   /* Reveal without movement, and drop every transition to a single frame —

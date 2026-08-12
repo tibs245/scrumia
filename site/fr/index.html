@@ -612,6 +612,60 @@ apps:
        data-note-practices-noapp="Les pratiques s'attachent aux apps. Sans app déclarée, elles s'installent et n'activent rien tant qu'aucune app n'apparaît dans le fichier."></div>
 </section>
 
+<section id="extends">
+  <h2>Extends</h2>
+  <p class="section-intro">Un skill déclare où il peut être étendu ; n'importe quel module répond, et rien n'est stocké — donc rien ne peut périmer.</p>
+
+  <!-- Two real registers of this repository's own composition, computed by
+       tools/build_site.py (extends_map_specials) — never hand-typed here, so the
+       figure cannot name a module or a register this project does not run.
+       Each row carries its own labels (like .slot-name) rather than a shared
+       header band: a header row here reads as a second <table>, three beats
+       before the real one, and undercuts the point that one of them is drawn
+       and the other computed. -->
+  <div class="ext-figure summon">
+    <div class="ext-row">
+      <p class="ext-declares"><span class="ext-label">Déclare</span><code>scrumia-github-project</code> <span class="ext-skill">scrumia-ticket</span></p>
+      <p class="ext-register"><span class="ext-label">Registre</span><code>implement</code><span class="ext-lead" aria-hidden="true"></span></p>
+      <div class="ext-contributes"><span class="ext-label">Contribue</span><ul><li><code>scrumia-design</code></li><li><code>scrumia-specs</code></li></ul></div>
+    </div>
+
+    <!-- The register name stays full-strength here, unlike .slot-empty's dimmed
+         .slot-name: dimming it would read as "this register is lesser", which is
+         the opposite of the "legitimate outcome" AC-3 asks the empty case to be. -->
+    <div class="ext-row ext-row-empty">
+      <p class="ext-declares"><span class="ext-label">Déclare</span><code>scrumia-teams</code> <span class="ext-skill">scrumia-sprint</span></p>
+      <p class="ext-register"><span class="ext-label">Registre</span><code>sprint</code><span class="ext-lead" aria-hidden="true"></span></p>
+      <p class="ext-contributes ext-contributes-none"><span class="ext-label">Contribue</span>aucune contribution</p>
+    </div>
+  </div>
+
+  <!-- The figure's own facts, restated in words: AC-8 wants a reader who cannot
+       see the figure to still receive the argument, not a caption of its shapes. -->
+  <ul class="ext-facts">
+    <li>Un skill ouvre un registre sans nommer qui le remplira.</li>
+    <li>N'importe quel module installé peut y contribuer sans nommer le skill en retour — ici, <code>implement</code> trouve réponse chez <code>scrumia-design</code>, <code>scrumia-specs</code>.</li>
+    <li>Un registre peut ne porter aucune contribution, et c'est un état normal, pas un manque — ici, <code>sprint</code> n'en porte encore aucune.</li>
+  </ul>
+
+  <!-- The table is downstream of the ask, not stored beside the modules above.
+       --accent is spent here and nowhere else in the section body: this is the
+       point the mechanism's own claim turns on (identity.md decision 4). -->
+  <div class="ext-invoke summon">
+    <p class="ext-ask">Demandez, et la composition de ce projet répond :</p>
+<pre><code><span class="k">scrumia-extends</span> implement</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Directive</th><th>Ce qu'elle dit</th><th>Depuis</th></tr></thead>
+        <tbody><tr><td><code>Design system first</code></td><td>Read the identity and the tokens before writing anything a user looks at; never inline a value</td><td><code>scrumia-design</code></td></tr><tr><td><code>One test per acceptance criterion</code></td><td>Criteria carry stable identifiers and become the tests — that is what makes them acceptance criteria</td><td><code>scrumia-specs</code></td></tr><tr><td><code>The spec is written first</code></td><td>Load the feature that owns the rule before writing code, and update it when the rule moves</td><td><code>scrumia-specs</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>Le tableau ci-dessus n'est lu nulle part : il a été calculé au moment de la demande, donc il ne peut pas périmer. C'est ce qui peut être <em>ajouté</em> sans rien remplacer — voir <a href="#slots">Slots</a> pour ce qui peut être <em>remplacé</em>. Écrire sa propre contribution est le travail de <a href="reference.html">la référence</a>, pas celui de cette page.</p>
+</section>
+
 <section id="modules">
   <h2>Modules</h2>
   <p class="section-intro">Douze livrés. Chacun est un plugin Claude Code standard — installez ce dont vous avez besoin.</p>

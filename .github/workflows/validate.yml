@@ -29,6 +29,8 @@ jobs:
         run: python3 tools/test_module_check.py
       - name: Test the site builder's guards
         run: python3 tools/test_build_site.py
+      - name: Check the extends section against its acceptance criteria
+        run: python3 tools/test_extends_map.py
       - name: Check the composer's rows against the files it pre-renders
         run: python3 tools/test_composer.py
       - name: Check the composition summary against its acceptance criteria

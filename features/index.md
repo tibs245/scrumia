@@ -5,7 +5,7 @@
 | Feature | Stratum | Status | In brief |
 |---|---|---|---|
 | [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same seven slots the slot-index feature reports, offered as choices. |
-| [extends-map](app/site/extends-map/index.md) | app/site | draft | The #extends section of the home page: how a skill declares an extension point, how any module contributes to it as data, and how the table… |
+| [extends-map](app/site/extends-map/index.md) | app/site | active | The #extends section of the home page: how a skill declares an extension point, how any module contributes to it as data, and how the table… |
 | [ground-and-shell](app/site/ground-and-shell/index.md) | app/site | active | Everything on the site that is not a section: the token vocabulary the pages are written in, the lit ground they sit on, and the chrome… |
 | [hero](app/site/hero/index.md) | app/site | active | The first thing a reader sees: an eyebrow, a three-line architecture-scale headline, one sentence of lead copy, one filled control, Hop's… |
 | [module-pages](app/site/module-pages/index.md) | app/site | active | One page per marketplace module, in every language the site ships, generated rather than written. |
