@@ -7,7 +7,7 @@
 What happens to something an agent just learned. One tree, one destination per fact:
 a module when it holds for every project running that module, the project when it holds
 for this repository, a feature when it changes what the product does, a ticket when it is
-a debate rather than a rule — and agent memory only for what would not survive being
+a discussion rather than a rule — and agent memory only for what would not survive being
 handed to someone else. Deciding to fix it now is a branch of the same tree, not a
 separate question. The tree reminds; it does not block.
 
@@ -22,7 +22,7 @@ separate question. The tree reminds; it does not block.
   for the refusal to create one for a single rule — the two refusals meet here from
   opposite sides.
 - Defers to: `features/business/github-tracking/` for what an issue carries, how it is
-  labelled and where those labels are declared. This feature says a debate becomes an
+  labelled and where those labels are declared. This feature says a discussion becomes an
   issue; it spells no label.
 - Defers to: `features/business/feature-format/` for what belongs in a feature and in
   which file. This feature routes toward a feature; it decides nothing about its shape.

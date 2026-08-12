@@ -101,21 +101,21 @@ Then the tree returns either the destination it should have had, with the handov
   entry to be re-explained to do so
 ```
 
-## Debates
+## Discussions
 
 ### AC-10 — An existing issue is found before a new one is created
 
 ```gherkin
-Given a debate about something an issue already covers, and that issue is closed
+Given a discussion about something an issue already covers, and that issue is closed
 When the tree routes it
 Then the closed issue is found and proposed, because the search covers every state, and
   no new issue is created
 ```
 
-### AC-11 — A new debate issue is excluded from what is counted as work
+### AC-11 — A new discussion issue is excluded from what is counted as work
 
 ```gherkin
-Given no existing issue matching a debate
+Given no existing issue matching a discussion
 When a new one is created for it
 Then it carries the label `features/business/github-tracking/` declares for that purpose,
   and the status and next-step readings do not count it as a ticket awaiting refinement
@@ -127,7 +127,7 @@ it: a label nothing queries is documentation, not a filter.
 ### AC-12 — The board is never the search surface
 
 ```gherkin
-Given a debate whose subject was settled and whose issue has left the board
+Given a discussion whose subject was settled and whose issue has left the board
 When the tree searches
 Then the search runs over issues in every state and not over the board, and the settled
   issue is reachable
@@ -157,7 +157,7 @@ Then it completes, the run is not interrupted, and the question about placement 
 
 ```gherkin
 Given a composition with no module in the tracker slot
-When the tree routes a debate
+When the tree routes a discussion
 Then it names the gap and the module that would fill it, creates nothing, and does not
-  write the debate into a file in the repository
+  write the discussion into a file in the repository
 ```

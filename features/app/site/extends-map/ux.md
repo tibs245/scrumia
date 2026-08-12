@@ -28,6 +28,12 @@ mechanism from a plugin registry. An empty register is an answer, not a failure 
 `modular-composition`'s AC-1 — and a figure that only draws the populated case has drawn
 something else.
 
+**And nothing else.** The three locations a contributing module may live in —
+`local-extension`'s — are deliberately absent from this figure. They are a second,
+orthogonal mechanism, and a figure carrying two of those is how the fourth item above gets
+dropped to make room. Where a module comes from belongs to `reference.html`; the section
+points there and does not draw it.
+
 ## What it may not claim
 
 **No invented module, no invented register.** Every name in the figure and in the table is
