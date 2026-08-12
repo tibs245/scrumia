@@ -38,18 +38,25 @@ load_config() {
   REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
 }
 
-# The key this module is declared under: its own name, qualified by the repository it
-# claims (ADR-0021). Read from its own manifest rather than written as a literal, so a
-# fork resolves under the key a fork's configuration actually carries. Echoes nothing and
-# returns non-zero on failure — a `die` here would print its JSON into the caller's
-# variable and exit the subshell only.
+# The key this module's `params:` sit under. The project's own declaration decides it —
+# `local:`, `shared:` and a fork's marketplace are all legal sources (BR-13), and none of
+# them is predictable from this module's manifest — so the config is asked first and the
+# manifest is only the fallback for a project that declares no module of this name.
+# Echoes nothing and returns non-zero when neither answers; a `die` here would print its
+# JSON into the caller's variable and exit the subshell only.
 module_key() {
-  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src
-  [ -f "$manifest" ] || return 1
+  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src declared
   name=$(jq -r '.name // ""' "$manifest" 2>/dev/null)
+  [ -n "$name" ] || name=$(basename "$MODULE_ROOT")
+  [ -n "$name" ] || return 1
+
+  declared=$(jq -r --arg n "$name" '(.modules // {}) | keys[]? | select(sub("^.*:"; "") == $n)' \
+    <<<"$CFG" 2>/dev/null | head -1)
+  [ -n "$declared" ] && { printf '%s\n' "$declared"; return 0; }
+
   src=$(jq -r '(.repository // .homepage // "")
     | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' "$manifest" 2>/dev/null)
-  [ -n "$name" ] && [ -n "$src" ] || return 1
+  [ -n "$src" ] || return 1
   printf '%s:%s\n' "$src" "$name"
 }
 
@@ -60,7 +67,12 @@ module_key() {
 # one wrong answer nobody has reason to check (`execution-policy` AC-22).
 load_policy() {
   local key out
-  key=$(module_key) || die "cannot read $MODULE_ROOT/.claude-plugin/plugin.json — this module cannot name itself, so its execution policy cannot be resolved"
+  if ! key=$(module_key); then
+    # Layer 2 is the only layer keyed by a module, so an unnameable module loses that
+    # layer and keeps the other two — degraded, exactly as the resolver itself degrades.
+    warn "cannot derive this module's key from $CONFIG or its own manifest — resolving without its params: layer"
+    key=""
+  fi
 
   command -v scrumia-extends >/dev/null 2>&1 ||
     die "scrumia-extends not found — enable scrumia-core and restart the session. No model is chosen: reading $CONFIG directly would resolve one layer of three and answer with a model nobody configured"
@@ -71,13 +83,29 @@ load_policy() {
 
   # ADR-0021 moves what `settings.team.execution` held into this module's own `params:`,
   # so the resolved block carries `execution` at its top level. The retired nest is still
-  # read while projects migrate — the deprecation window release-versioning grants, not a
-  # permanent alternative — and it is read *second*: on a half-migrated project both
-  # shapes are present, and the layer the cascade ranks higher is the one that must win.
-  EXEC=$(jq -c 'if (.execution | type) == "object" then .execution
-                elif (.team.execution | type) == "object" then .team.execution
-                else empty end' <<<"$out")
-  [ -n "$EXEC" ] || die "no execution policy in the resolved settings for $key — looked for 'execution' and the retired 'team.execution', and no layer of the cascade carries either. Run scrumia-team-setup; no model is chosen, because one taken from defaults would read like one taken from the grid"
+  # read while projects migrate, and the two are *merged* rather than chosen between:
+  # picking one whole shape would drop every key the other still carries onto this
+  # script's own literals — a project that has migrated its matrix but not its label
+  # prefixes would match no ticket and route every one of them to `unlabeled`. The new
+  # shape wins key by key.
+  EXEC=$(jq -c '(.team.execution // {}) * (.execution // {})' <<<"$out")
+
+  # The grid is the policy. Its absence is a broken installation, not a hole in a table
+  # (`execution-policy` AC-22 vs AC-10), and answering it from this script's literals
+  # would run every ticket in the project on a default nobody chose.
+  jq -e '(.matrix | type) == "object" and (.matrix | length) > 0' >/dev/null 2>&1 <<<"$EXEC" ||
+    die "no execution grid in the resolved settings for ${key:-this module} — looked for 'execution.matrix' and the retired 'team.execution.matrix', and no layer of the cascade carries either. Run scrumia-team-setup; no model is chosen, because one taken from this tool's defaults would read like one taken from the grid"
+
+  # Beyond the grid the tool carries literals, and a literal standing in for a value
+  # nobody configured is the same failure one size smaller. Not fatal — the grid still
+  # decides every labelled ticket — but never silent.
+  local fell_back
+  fell_back=$(jq -r '[ (if has("unlabeled") then empty else "unlabeled" end)
+                     , (if has("unrated_risk") then empty else "unrated_risk" end)
+                     , (if (.labels | type) == "object" then empty else "labels" end) ]
+                     | join(", ")' <<<"$EXEC")
+  [ -z "$fell_back" ] ||
+    warn "the resolved policy carries no $fell_back — this tool's own defaults stand in; configure them under execution"
 }
 
 labels_of_issue() {

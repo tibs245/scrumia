@@ -37,11 +37,15 @@ Under `settings.team` in `.scrumia/config.yaml`: `roles`, `execution` (the model
 matrix by scope × risk, plus label prefixes and aliases), `escalation.to_human`,
 `sprint.max_tickets`.
 
-`scrumia-pick-model` resolves `execution` through the composition's settings cascade —
-that base layer, then this module's own `params:`, then `.scrumia/config.local.yaml` — so
-a per-machine override reaches it. When none of the three carries a policy it answers no
-model at all and says so, rather than falling back to its own defaults: a model name taken
-from a default is indistinguishable from one taken from the grid.
+`scrumia-pick-model` resolves `execution` through the composition's settings cascade rather
+than reading the configuration file, so a per-machine override reaches it, and it finds the
+key in this module's own `params:` once a project has migrated there.
+
+**The grid is the one setting it will not stand in for.** When no layer carries a matrix it
+answers no model at all and says so — a model name taken from a built-in default is
+indistinguishable from one taken from the grid. The values around it (`unlabeled`,
+`unrated_risk`, the label prefixes) do have built-in defaults, and it names each one that
+stood in.
 
 ## What it expects to find
 

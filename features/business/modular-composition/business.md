@@ -94,10 +94,18 @@ the layers and reading past them are two halves of one rule, and the second is t
 that can be absent without any of it failing.
 
 **A module that cannot resolve its configuration stops.** It names what it was resolving
-and for which module, and answers nothing. Falling back to its own built-in defaults is
-worse than an error, because the answer is well-formed: nothing fails, no one is told, and
-the module runs on values a person never chose. That is how a migration of layer 1 breaks
-one consumer loudly and another silently, and it is the silent one that costs.
+and for which module, proposes the next step — BR-3's obligation, which this does not
+suspend — and answers nothing. Falling back to its own built-in defaults is worse than an
+error, because the answer is well-formed: nothing fails, no one is told, and the module
+runs on values a person never chose. That is how a migration of layer 1 breaks one
+consumer loudly and another silently, and it is the silent one that costs.
+
+**A key the layers do not carry is not the same as a value a module has an opinion
+about.** A module may carry a default for a knob it can sensibly do without, and it says
+when one stands in; what it may not do is carry a default for the thing it exists to
+resolve, because there the default is indistinguishable from a resolved answer. Which of
+its keys is which is the module's own to state, in its README — the rule here is only that
+the second kind stops it and the first kind is said out loud.
 
 ## `practices` is retired as a named slot
 
@@ -391,9 +399,12 @@ the composition.
   necessarily in its values.
 - **BR-15** — A module reads its configuration **through** that cascade, never out of the
   raw configuration file: reading `settings:` directly resolves layer 1 and silently
-  discards the other two. A module that cannot resolve its configuration — the resolver
-  absent, or no layer carrying the block it reads — names what it could not resolve and
-  stops, rather than answering from its own defaults.
+  discards the other two.
+- **BR-16** — A module that cannot resolve its configuration — the resolver absent, or no
+  layer carrying the block it reads — names what it could not resolve, proposes the next
+  step as BR-3 requires, and stops. It does not answer from its own defaults. BR-3 governs
+  the message; what this rule adds is that a configuration one cannot resolve has no
+  degraded mode to continue in, because every later answer would be well-formed and wrong.
 
 ## Vocabulary
 

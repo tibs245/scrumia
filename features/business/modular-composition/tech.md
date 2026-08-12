@@ -89,6 +89,24 @@ contributions is an *answer* under BR-1 — so every table renders empty and not
 Testing the shapes in this order, and naming the empty composition, is what keeps that from
 looking like a correct run.
 
+**Which shape a module's own settings are read in.** ADR-0021 moves what `settings.<slot>`
+held into that module's `params:`, so the same key exists in two shapes during the
+migration. A consumer reads both, and *merges* them key by key:
+
+| Present in the resolved block | Read |
+|---|---|
+| the key at the top level | it — the migrated shape wins |
+| the key only under the retired `settings.<slot>` nest | it, for the deprecation window |
+| both | merged, the top-level key winning per key, never per block |
+
+Merging per key rather than choosing a block is the part that is not obvious. A project
+migrates one key at a time; a consumer that picked whichever block looked newer would drop
+every key the other still carried onto its own built-in defaults — a well-formed answer
+nobody configured, which is BR-16's failure arriving through the migration meant to avoid
+it. The retired nest's reading window is a deprecation like any other, and
+`features/business/release-versioning/` decides when it closes: the entry naming its removal
+release is in this feature's `CHANGELOG.md`.
+
 ## Where each thing is resolved, and by what
 
 | Question | Answered by | When |

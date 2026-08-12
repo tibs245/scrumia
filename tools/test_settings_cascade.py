@@ -209,23 +209,81 @@ def test_layer_two_reaches_both() -> None:
           f"{code} {out} {err}")
 
 
-def test_params_outrank_the_retired_nest() -> None:
-    """Half-migrated: layer 2 must beat the base layer, not the other way round."""
+def test_params_outrank_settings_on_the_same_key() -> None:
+    """BR-14's order, tested where it can actually be observed.
+
+    Both values sit in the *same* shape, so only the layer order decides which wins —
+    a fixture whose two values sit in different shapes would be decided by the consumer's
+    shape rule instead, and would pass with the cascade's merge order inverted.
+    """
     both = RETIRED_SHAPE.replace("extends:\n  - scrumia-teams\n  - scrumia-github-project\n",
                                  f'modules:\n  "{TEAMS_KEY}":\n    params:\n'
-                                 '      execution:\n        matrix:\n          L: { low: opus }\n'
+                                 '      team:\n        execution:\n          matrix:\n'
+                                 '            L: { low: opus }\n'
                                  f'  "{TRACKER_KEY}":\n    params:\n'
-                                 '      project_number: 77\n')
+                                 '      tracker:\n        project_number: 77\n')
     cfg = write("half.yaml", both)
     code, out, err = run(BOARD, ["doctor"], cfg)
     answer = as_json(out) or {}
-    check("BR-14 order: a module's params: outrank the retired settings.tracker nest",
+    check("BR-14 order: params: beat settings: on the identical key",
           answer.get("project_number") == 77, f"{code} {out} {err}")
 
     code, out, err = run(PICK, ["--scope", "L", "--risk", "low"], cfg)
     answer = as_json(out) or {}
-    check("BR-14 order: a module's params: outrank the retired settings.team.execution nest",
+    check("BR-14 order: params: beat settings: on the identical matrix cell",
           code == 0 and answer.get("model") == "opus", f"{code} {out} {err}")
+
+
+def test_a_local_source_resolves() -> None:
+    """BR-13 admits `local:` and `shared:`; a key derived from a manifest cannot guess them."""
+    cfg = write("local.yaml", BASE_PROJECT + """modules:
+  "local:scrumia-teams":
+    params:
+      execution:
+        unlabeled: sonnet
+        matrix:
+          L: { high: opus }
+  "local:scrumia-github-project":
+    params:
+      project_number: 42
+      board: { field_id: "FIELD_LOCAL_SOURCE" }
+settings: {}
+""")
+    code, out, err = run(BOARD, ["doctor"], cfg)
+    answer = as_json(out) or {}
+    check("BR-13: a module declared from `local:` still resolves its own params:",
+          answer.get("project_number") == 42, f"{code} {out} {err}")
+
+    code, out, err = run(PICK, ["--scope", "L", "--risk", "high"], cfg)
+    answer = as_json(out) or {}
+    check("BR-13: the policy resolves under a `local:` key too",
+          code == 0 and answer.get("model") == "opus", f"{code} {out} {err}")
+
+
+def test_a_partial_migration_keeps_both_halves() -> None:
+    """One key migrated, the rest not: nothing may fall through to a built-in literal."""
+    partial = RETIRED_SHAPE.replace(
+        "extends:\n  - scrumia-teams\n  - scrumia-github-project\n",
+        f'modules:\n  "{TEAMS_KEY}":\n    params:\n'
+        '      execution:\n        matrix:\n          L: { low: opus }\n'
+        f'  "{TRACKER_KEY}":\n    params:\n'
+        '      board:\n        field_id: "FIELD_MIGRATED"\n'
+    ).replace("      unlabeled: sonnet\n", "      unlabeled: opus\n")
+    cfg = write("partial.yaml", partial)
+
+    code, out, err = run(PICK, ["--scope", "XL", "--risk", "low"], cfg)
+    answer = as_json(out) or {}
+    check("AC-22: an unmigrated `unlabeled` survives beside a migrated matrix",
+          code == 0 and answer.get("model") == "opus", f"{code} {out} {err}")
+
+    code, out, err = run(BOARD, ["move", "1", "in_progress"], cfg)
+    answer = as_json(out) or {}
+    check("AC-18: an unmigrated flow and options survive beside a migrated field id",
+          code != 0 and "graphql lookup failed" in (answer.get("error") or ""),
+          f"{code} {out} {err}")
+    code, out, err = run(BOARD, ["doctor"], cfg)
+    check("AC-18: and the migrated field id is the one that wins",
+          (as_json(out) or {}).get("field_id") == "FIELD_MIGRATED", f"{code} {out} {err}")
 
 
 # --------------------------------------------------------------- AC-19 and AC-22
@@ -242,7 +300,8 @@ def test_no_resolver_stops_both_tools() -> None:
     check("AC-19: and it names scrumia-extends as what it could not reach",
           "scrumia-extends" in (answer.get("error") or ""), answer.get("error"))
 
-    code, out, err = run(BOARD, ["doctor"], cfg, resolver=False)
+    # `doctor` is the deliberate exception, covered by its own test below.
+    code, out, err = run(BOARD, ["read"], cfg, resolver=False)
     answer = as_json(out) or {}
     check("AC-19: scrumia-board refuses to run when the resolver is unreachable",
           code != 0 and answer.get("ok") is False
@@ -260,6 +319,50 @@ def test_no_policy_at_all_stops_the_tool() -> None:
           f"{code} {out} {err}")
     check("AC-22: and the refusal names the block it looked for",
           "execution" in (answer.get("error") or ""), answer.get("error"))
+
+
+def test_an_empty_policy_block_is_not_a_policy() -> None:
+    """`execution: {}` resolves — and carries no grid, which is AC-22's Given word for word."""
+    cfg = write("emptyexec.yaml", BASE_PROJECT + """extends:
+  - scrumia-teams
+settings:
+  team:
+    execution: {}
+""")
+    code, out, err = run(PICK, ["--scope", "L", "--risk", "high"], cfg)
+    answer = as_json(out) or {}
+    check("AC-22: a resolved but empty execution block answers no model",
+          code != 0 and answer.get("ok") is False and "model" not in answer,
+          f"{code} {out} {err}")
+
+
+def test_a_policy_without_its_defaults_says_so() -> None:
+    """A grid alone still answers, but the literals standing in for the rest are named."""
+    cfg = write("gridonly.yaml", BASE_PROJECT + """extends:
+  - scrumia-teams
+settings:
+  team:
+    execution:
+      matrix:
+        L: { high: opus }
+""")
+    code, out, err = run(PICK, ["--scope", "L", "--risk", "high"], cfg)
+    answer = as_json(out) or {}
+    check("AC-22: a grid with no configured defaults answers, and names what stood in",
+          code == 0 and answer.get("model") == "opus"
+          and "unlabeled" in err and "unrated_risk" in err, f"{code} {out} {err}")
+
+
+def test_doctor_diagnoses_rather_than_dies() -> None:
+    """The one command whose contract is "tell me what is broken" must survive it."""
+    cfg = write("doctor.yaml", RETIRED_SHAPE)
+    code, out, err = run(BOARD, ["doctor"], cfg, resolver=False)
+    answer = as_json(out) or {}
+    check("AC-19: doctor reports the unresolved composition as a failed check",
+          answer.get("checks", {}).get("settings_resolved") is False
+          and answer.get("ok") is False, f"{code} {out} {err}")
+    check("AC-19: and names it as the cause, ahead of the symptoms it produces",
+          "scrumia-extends" in (answer.get("detail") or ""), answer.get("detail"))
 
 
 def test_a_hole_in_the_grid_still_answers() -> None:
@@ -303,9 +406,14 @@ def main() -> int:
     for test in (test_layer_three_reaches_the_policy,
                  test_layer_three_reaches_the_board,
                  test_layer_two_reaches_both,
-                 test_params_outrank_the_retired_nest,
+                 test_params_outrank_settings_on_the_same_key,
+                 test_a_local_source_resolves,
+                 test_a_partial_migration_keeps_both_halves,
                  test_no_resolver_stops_both_tools,
                  test_no_policy_at_all_stops_the_tool,
+                 test_an_empty_policy_block_is_not_a_policy,
+                 test_a_policy_without_its_defaults_says_so,
+                 test_doctor_diagnoses_rather_than_dies,
                  test_a_hole_in_the_grid_still_answers,
                  test_board_settings_gate_before_the_api):
         print(f"\n{test.__name__}")

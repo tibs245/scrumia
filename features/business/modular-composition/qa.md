@@ -230,7 +230,7 @@ Then it is reported as not a declaration, naming the key, rather than resolved a
   whichever module of that name happens to be installed
 ```
 
-### AC-18 — A setting resolves through three layers, in the stated order
+### AC-18 — A setting resolves through three layers, and reaches the module that reads it
 
 ```gherkin
 Given a key present in `settings:`, overridden in a module's `params:`, and overridden
@@ -253,11 +253,16 @@ Then that module resolves the base value and neither override reaches it — the
 Given a module whose configuration cannot be resolved — the resolver is not reachable,
   it fails, or no layer carries the block that module reads
 When the module runs
-Then it names what it could not resolve and for which module, and stops
+Then it names what it could not resolve and for which module, proposes the next step, and
+  stops
 And it does not fall back to its own built-in defaults, because an answer computed from
   defaults is indistinguishable from an answer computed from configuration — the caller
   cannot tell that the setting was never read, and neither can the person reading the
   output afterwards
+Given instead a command whose whole purpose is to diagnose the composition
+When the same configuration cannot be resolved
+Then it reports the failure as one of its checks rather than stopping — a diagnostic that
+  cannot run when the composition is broken diagnoses nothing
 ```
 
 The two failures are not symmetric, and the asymmetry is the point. A consumer that dies
@@ -272,7 +277,8 @@ its defaults keeps producing well-formed answers nobody has reason to doubt.
   `features/business/release-versioning/`; this feature only establishes that a module
   exists and can be composed, not how it evolves once adopted.
 - **Any single module's own settings or file layout** — each module documents what it
-  reads under its own settings key in its own `SKILL.md`; this feature does not
+  reads under its own settings key in its own `README.md` (`module-anatomy`); this
+  feature does not
   duplicate any module's contract, only the shared rule that a contract must exist.
 - **Whether a directive's one-line summary still describes its fragment.** Nothing
   checks it, and nothing can: it is prose about prose. The mechanism narrows the drift

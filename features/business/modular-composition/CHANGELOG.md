@@ -3,10 +3,21 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — A module reads its configuration through the cascade, and stops when it cannot (BR-15, AC-19)
+## 2026-08-12 — The `settings.<slot>` nests are deprecated in favour of each module's `params:`
+- Issue: #315
+- Category: Deprecated
+- Breaking: no — a consumer reads both shapes and merges them key by key (`tech.md`);
+  removal comes two releases after this one
+
+## 2026-08-12 — A module reads its configuration through the cascade, and stops when it cannot (BR-15, BR-16, AC-19)
 - Issue: #315
 - Category: Added
-- Breaking: no — BR-14 already stated the order; this states who applies it and what happens when nobody can
+- Breaking: no
+
+## 2026-08-12 — AC-18 also requires the layers to reach the module, and the criteria leave the out-of-scope section
+- Issue: #315
+- Category: Changed
+- Breaking: no
 
 ## 2026-08-12 — `tech.md` names the debt a `local:` or `shared:` key carries until it resolves
 - Issue: #302

@@ -259,19 +259,28 @@ in the working tree to grep.
 ### AC-22 — A policy that cannot be resolved is reported, not answered around
 
 ```gherkin
-Given a configuration from which the policy itself cannot be resolved — no layer of the
-  composition's settings cascade carries the grid, the axes' defaults and the label
-  prefixes — as opposed to a grid that resolves and has no cell for one pair
+Given a configuration from which no grid resolves at all — no layer of the composition's
+  settings cascade carries one, or the block that would carry it is empty — as opposed to
+  a grid that resolves and has no cell for one pair
 When the execution policy is asked which model runs a ticket
-Then it names what it could not resolve and answers no model at all
+Then it names what it could not resolve, proposes the next step, and answers no model
 And the two cases stay distinguishable: a hole in a grid is project data, reported and
-  answered around by AC-10; an unresolvable grid is a broken installation, and answering
-  it with the unlabeled default would run every ticket of the project on that default
-  while reporting nothing a caller acts on
+  answered around by AC-10; a grid that does not resolve is a broken installation, and
+  answering it with the unlabeled default would run every ticket of the project on that
+  default while reporting nothing a caller acts on
+Given instead a grid that resolves beside no configured unlabeled default, risk default
+  or label prefixes
+When the policy is read
+Then it answers from the grid and names each value its own implementation stood in for —
+  the ticket still gets the model its cell names, and nobody is left believing a built-in
+  literal was a project's choice
 ```
 
 This is where the axes stop being the risk. AC-10's hole affects one pair; this affects
-every pair at once, and its symptom — a plausible model name — is the same in both.
+every pair at once, and its symptom — a plausible model name — is the same in both. The
+second half draws the line the first one needs: the grid is the thing the policy exists to
+resolve, so its absence stops the answer, while the values around it are conveniences whose
+substitution only has to be visible.
 
 ## Out of scope
 
