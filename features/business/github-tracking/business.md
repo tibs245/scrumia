@@ -125,6 +125,12 @@ filed to avoid creating. The subtraction above is therefore a backstop rather th
 mechanism: it catches the issues a human carded by hand, which is the only way one arrives
 on the board.
 
+This is the opposite of what an issue filed for work owes — a reservation raised during a
+review, say, is not handled until its card exists, because a cardless ticket is exactly as
+forgotten as no ticket. Both follow from the same rule rather than contradicting it: a card
+is what makes an issue visible as work, so the issue that *is* work must have one and the
+issue that is not must not.
+
 `scope/*` has exactly one programmatic reader, `scrumia-pick-model`, and what its cell means
 is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —
 routes by the diff's actual scope, not by this label
