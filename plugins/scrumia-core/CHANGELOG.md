@@ -27,10 +27,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `settings:`, then that module's `params:`, then `.scrumia/config.local.yaml`, which is
   per-machine and never committed. The layers that answered are named on stderr, so two
   machines resolving different values can be told apart from a misread file.
-- `compose-status.sh` shows each module under its declared key with its `params:`, and
-  names a local layer when one is in effect. Its migration notices moved to stderr: the
-  report on stdout is published verbatim on the site, and a migration is the reader's
-  business rather than part of the composition.
+- `compose-status.sh` shows each module under its declared key with its `params:`. Its
+  migration notices, and the line naming a local layer in effect, moved to stderr: the
+  report on stdout is published verbatim on the site and gated by a fixture, so neither a
+  migration nor a machine-local override belongs in it.
 - `compose-status.sh` reports `extends` and the apps' own lists, and points at
   `scrumia-extends --list` for what each module contributes. The retired
   `composition:`/`practices:` shape is still read, and now says so.
