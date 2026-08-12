@@ -122,7 +122,9 @@ case "$SHAPE" in
            note "warning: $CONFIG declares its modules under the retired 'extends:' — read for one more minor, migrate to 'modules:', keyed <source>:<module> (ADR-0021)" ;;
   legacy)  KEY=composition; HEADING="Modules this project extends"; APP_COL=Extends; APP_LABEL=extends
            note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to modules:" ;;
-  *)       KEY=modules; HEADING="Modules this project runs"; APP_COL=Modules; APP_LABEL=modules ;;
+  # "declares", not "runs": this resolves nothing, so a heading claiming a `shared:` module
+  # runs is how one tool reports present what the other reports absent (local-extension BR-6).
+  *)       KEY=modules; HEADING="Modules this project declares"; APP_COL=Modules; APP_LABEL=modules ;;
 esac
 
 MODULES=$(jq -r --arg shape "$SHAPE" '

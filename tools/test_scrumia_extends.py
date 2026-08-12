@@ -5,9 +5,9 @@ AC-17 and AC-18 of features/business/modular-composition/: a module is declared 
 source and a bare name is not a declaration; a setting resolves through three layers
 in a stated order.
 
-AC-1..AC-5, AC-9 and AC-10 of features/business/local-extension/: each source resolves
-from its own location, resolution states which, and one declaration answered by two
-distinct modules is a conflict that binds neither.
+AC-1..AC-5, AC-9, AC-10 and AC-11 of features/business/local-extension/: each source
+resolves from its own location, resolution states which, one declaration answered by two
+distinct modules is a conflict that binds neither, and one naming no location is a shadow.
 
 Run from the repo root: python3 tools/test_scrumia_extends.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies beyond the YAML
@@ -517,8 +517,8 @@ def test_ac5_one_declaration_two_modules_is_a_conflict() -> None:
     shutil.rmtree(shared)
 
 
-def test_ac5_a_bare_name_answered_twice_is_a_shadow_not_a_conflict() -> None:
-    print("AC-5 — a declaration naming no location is shadowed, reported and used")
+def test_ac11_a_bare_name_answered_twice_is_a_shadow_not_a_conflict() -> None:
+    print("AC-11 — a declaration naming no location is shadowed, reported and used")
 
     project = project_with(SHADOWING)
     shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
@@ -650,7 +650,7 @@ def main() -> int:
     test_ac3_resolution_states_where_each_module_came_from()
     test_ac4_a_local_module_is_held_to_the_same_standard()
     test_ac5_one_declaration_two_modules_is_a_conflict()
-    test_ac5_a_bare_name_answered_twice_is_a_shadow_not_a_conflict()
+    test_ac11_a_bare_name_answered_twice_is_a_shadow_not_a_conflict()
     test_ac5_identity_and_declaration_settle_the_other_two_cases()
     test_env_local_is_read_or_reported_never_silently_empty()
     test_ac9_ac10_no_versioned_path_and_no_installation()

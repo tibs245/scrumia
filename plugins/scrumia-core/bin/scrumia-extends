@@ -396,11 +396,14 @@ bindings() {
     . as $mods
     | [ bound(($scopes.project // []); $mods)[] | . + {scope: "project-wide"} ]
       + [ $scopes.apps[] | .name as $a | bound(.modules; $mods)[] | . + {scope: $a} ]
+    # A conflict resolved nowhere, so it is credited with nowhere: naming the narrowest of
+    # the roots it refused to pick between would read as the one it picked.
     | map({ key, module, source, scope, state
-          , location: ( if .state == "absent" then
-                          (if .legacy then "any" elif .source == "" then "(none)"
-                           else (.source | tier) end)
-                        else .roots[0].location end )
+          , location: ( if .state == "resolved" or .state == "shadow" then .roots[0].location
+                        elif .state == "conflict" then "—"
+                        elif .legacy then "any"
+                        elif .source == "" then "(none)"
+                        else (.source | tier) end )
           , roots: [.roots[] | {location, root}] })' <<<"$MODULES"
 }
 
@@ -590,15 +593,23 @@ publisher_of() {
 }
 
 cmd_check() {
-  local failed=0 line
+  local failed=0 line all
   # The one surface a conflict is fatal at (local-extension BR-9). Everywhere else it is
   # reported and the composition carries on; here it is what it is — a declaration that
   # cannot be met, so nothing that depends on that module can be trusted to have run.
+  all=$(bindings)
   while IFS= read -r line; do
     [ -n "$line" ] || continue
     echo "$line" >&2
     failed=$((failed + 1))
-  done < <(conflict_lines "$(bindings)")
+  done < <(conflict_lines "$all")
+
+  # A shadow is met, so it is said and not counted. Said here because this is the surface
+  # someone runs when asking what is wrong, and it was the only one staying silent.
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    note "$line"
+  done < <(shadow_lines "$all")
 
   # A `runs` entry is qualified — <source>:<name> — because PATH is one flat namespace
   # shared with every enabled plugin, so a bare name says which command, never whose.

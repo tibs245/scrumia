@@ -93,8 +93,18 @@ Four outcomes, one per declaration:
 | Surface | Resolved | Absent | Shadow | Conflict |
 |---|---|---|---|---|
 | a register's table | its rows, in scope order | absent from the table | the narrowest module's rows, named on stderr | absent from the table, named on stderr |
-| `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, every root |
-| `--check` | — | — | — | an unmet dependency; exit non-zero |
+| `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
+| `--check` | — | — | named, not counted | an unmet dependency; exit non-zero |
+| `compose-status.sh` | the declaration as written, under a heading saying so | the same — it resolves nothing, so it distinguishes none of these | | |
+
+A conflict is credited with no location, where a resolved or shadowed declaration is
+credited with the one it bound. Naming the narrowest of the roots it refused to pick
+between would read as the one it picked, in the one column a reader scans first.
+
+`--check` reports a shadow without counting it. That buys the person running it by hand,
+not CI: `tools/validate.py` reads that stderr only on a non-zero exit, so a green run
+discards it. It is still the right surface, because it is the one someone runs when asking
+what is wrong.
 
 Exit status still carries meaning only for `--check`. A register table is an answer whether
 it is long or short, and a conflict must not stop a skill that never needed that module —
@@ -117,7 +127,9 @@ root a declaration bound.
 `--modules` exists because "the composition is reported" had two candidate readers and only
 one of them resolves anything. `compose-status.sh` prints the declarations as written; its
 stdout is a versioned fixture, and giving it a resolved location would make a gated artefact
-depend on which machine ran it.
+depend on which machine ran it. What it owes instead is BR-6's other half — its heading says
+what it did, *the modules this project declares*, because a heading claiming they run
+claims exactly what it did not check.
 
 ## The row shape a consumer may depend on
 
