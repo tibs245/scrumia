@@ -260,14 +260,19 @@ def test_ac8_containment(tmp: Path) -> None:
     _, envelope = verdict(quoting)
     check("a README quoting a hooks.json raises nothing", envelope["findings"] == [],
           messages(envelope))
+    fence = "```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/run.sh\n```\n"
     unsubstituted = module(tmp / "ac8d", **{
         "README.md": README,
-        "skills__s__SKILL.md": "# s\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/run.sh\n```\n",
+        "skills__s__SKILL.md": f"# s\n\nRead [the guide](guides/01-run.md).\n\n{fence}",
+        "skills__s__guides__01-run.md": f"# running\n\n{fence}",
+        "agents__a.md": f"---\nname: a\n---\n\n{fence}",
+        "commands__c.md": f"# c\n\n{fence}",
     })
     _, envelope = verdict(unsubstituted)
-    check("the same variable inside a skill is a finding",
-          any("CLAUDE_PLUGIN_ROOT" in f["message"] for f in envelope["findings"]),
-          messages(envelope))
+    flagged = {f["file"] for f in envelope["findings"] if "CLAUDE_PLUGIN_ROOT" in f["message"]}
+    check("the variable is a finding in every file an agent executes, not only SKILL.md",
+          flagged == {"skills/s/SKILL.md", "skills/s/guides/01-run.md",
+                      "agents/a.md", "commands/c.md"}, str(sorted(flagged)))
 
     permitted = module(tmp / "ac8b", **{
         "README.md": README,

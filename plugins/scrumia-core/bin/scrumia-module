@@ -210,17 +210,19 @@ class Checker:
             text = self.read(md)
             skill_dir = self.skill_dir_of(md)
 
-            # Anywhere in a skill, where every line is something an agent is told to do.
-            # Elsewhere the variable is legitimate prose — a README quoting the hooks.json
-            # that does substitute it — so outside a skill only a path built from it is a
-            # finding, and check_target raises that one.
-            whole_file = md.name == "SKILL.md" and bool(PLUGIN_ROOT_RE.search(text))
+            # The discriminator is whether an agent executes the file, not what it is
+            # named: a guide a skill routes to is executed as surely as the SKILL.md that
+            # routed there. Anywhere else the variable is legitimate prose — a README
+            # quoting the hooks.json that does substitute it — and only a path built from
+            # it is a finding, which check_target raises.
+            executed = md.relative_to(self.root).parts[0] in ("skills", "agents", "commands")
+            whole_file = executed and bool(PLUGIN_ROOT_RE.search(text))
             if whole_file:
                 self.report(
                     md,
                     "module-anatomy/BR-7",
-                    "${CLAUDE_PLUGIN_ROOT} is never substituted in a skill — "
-                    "use ${CLAUDE_SKILL_DIR}",
+                    "${CLAUDE_PLUGIN_ROOT} is never substituted in markdown an agent "
+                    "reads — use ${CLAUDE_SKILL_DIR}",
                 )
 
             for match in LINK_RE.finditer(text):
@@ -281,10 +283,10 @@ class Checker:
     def check_published_names(self) -> None:
         """A name under bin/ is how another module reaches this one; one that cannot run
         is a reference that fails at the moment it is followed."""
+        # Files only: a bin/lib/ a module's own scripts source is a legitimate arrangement,
+        # and refusing it would be a rule no feature states.
         for entry in sorted((self.root / "bin").glob("*")) if (self.root / "bin").is_dir() else []:
-            if not entry.is_file():
-                self.report(entry, "module-anatomy/BR-7", "bin/ holds published executables, nothing else")
-            elif not os.access(entry, os.X_OK):
+            if entry.is_file() and not os.access(entry, os.X_OK):
                 self.report(
                     entry,
                     "module-anatomy/BR-7",
