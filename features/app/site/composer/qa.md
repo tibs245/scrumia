@@ -98,6 +98,21 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
   `--human`, in both the light and the dark theme
 ```
 
+### AC-9 — A composition can be extended past the seven slots
+
+```gherkin
+Given a visitor who has answered the seven slots
+When they look for a module that adds a capability without replacing any of them
+Then the composer offers the modules that fill no slot, stated as additions
+  rather than as an eighth slot, and picking one changes the two artifacts it
+  takes away — the install commands and the `extends` list in the config
+And leaving all of them unpicked is a complete composition, not an unanswered
+  question
+```
+
+The seven rows are choices between alternatives; these are not. Drawing them as
+an eighth row would claim a slot that `modular-composition` does not define.
+
 ## Out of scope
 
 - What the seven slots are, their questions, and what an absent capability
