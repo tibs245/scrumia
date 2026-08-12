@@ -20,11 +20,19 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   composition's three-layer cascade, instead of reading `settings.tracker` out of
   `.scrumia/config.yaml`. A value set in `.scrumia/config.local.yaml` now actually reaches
   it, and a project that has moved those keys into this module's `params:` keeps working —
-  both shapes are read while the migration is in flight, the module's own `params:` first.
+  both shapes are read and merged key by key while the migration is in flight, the migrated
+  key winning. The key its `params:` sit under comes from the project's own declaration, so
+  a `local:` or `shared:` source resolves like a marketplace one.
 - `scrumia-board` stops with a named error when its settings cannot be resolved at all —
   `scrumia-core` absent from the session, or no layer carrying the board's ids — rather
-  than continuing on defaults. `scrumia-board move` also re-emits the error its card
-  lookup produced instead of exiting 1 with nothing on stdout.
+  than continuing on defaults. `scrumia-board doctor` is the exception and reports it as a
+  fourth check, `settings_resolved`: the command you run to find out what is broken has to
+  survive the breakage. `scrumia-board move` also re-emits the error its card lookup
+  produced instead of exiting 1 with nothing on stdout.
+- `scrumia-core` is now load-bearing for this module: `scrumia-extends` was already declared
+  in `dependencies.jsonl`, but a project that ran the tracker without it used to reach the
+  board anyway. It now stops. Nothing that composes correctly is affected; a composition
+  that was quietly incomplete finds out.
 - The board tool is published as the name `scrumia-board`, which the harness puts on the
   session's PATH, and every skill and command runs that name instead of a path. Reaching it
   by path only ever worked in this module's own repository: installed, the module sits one
