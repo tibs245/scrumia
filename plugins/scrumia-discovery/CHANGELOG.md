@@ -7,6 +7,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `registers.json` and `dependencies.jsonl` — this module opens the `scope-idea` and
   `split` registers, and both skills ask what this project scopes against.
 
+### Changed
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
+
 ## [0.4.0] - 2026-08-10
 ### Added
 - The `discovery` slot: scope an idea before it becomes a ticket.

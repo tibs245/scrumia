@@ -13,6 +13,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `extends.json` — the six guides and four refusals are contributed to the `implement`,
   `review` and `audit` registers, so a skill applies them without naming this module.
 
+### Changed
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
+
 ## [0.4.0] - 2026-08-10
 ### Added
 - The `implementation` slot for SolidJS, plugged in app by app: fine-grained reactivity without defensive memoisation, behaviour-first component tests, feature-based structure.

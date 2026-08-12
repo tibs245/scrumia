@@ -26,6 +26,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   rather than added to the template every project receives.
 - `/next` and the config `scrumia-init` writes cite the tracker and team modules' published
   names — `scrumia-board`, `scrumia-pick-model` — rather than paths into those modules.
+- `README.md` — addressed to whoever is deciding whether to run this module, not to the
+  agent that already does: what it answers, what it refuses, what it ships.
 
 ## [0.4.0] - 2026-08-10
 ### Added
