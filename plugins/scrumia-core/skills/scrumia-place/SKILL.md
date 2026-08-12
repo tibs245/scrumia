@@ -35,6 +35,17 @@ Write what was learned as a rule someone who was not there could act on. "Reads 
 board without a filter truncate at thirty" is a fact; "I ran the board and got thirty rows"
 is a run.
 
+**State what must be true, not who does it** — and then check the sentence against the one
+question that separates questions 2 and 3: *would anything in the product have to change
+for this to hold?* "We open pull requests against the specs branch here" and "the ticket
+skill opens a pull request against the specs branch" are one fact in two costumes, and only
+the second admits that a tool must change. Answer that question about the fact and write the
+answer into the sentence before Step 3 reads it.
+
+This step is where one fact becomes one destination. Skip it and the tree still returns one
+answer per sentence — which is not the same thing, and is the duplication it exists to
+prevent arriving by a side door.
+
 If the sentence needs an *and*, or carries two claims of different reach, or states a rule
 *and* objects to something still in flight, it is two facts. Split them and route each
 separately — one memory entry routinely holds a general lesson, a detail true only of this
@@ -143,8 +154,16 @@ place now holding it. That is the honest form of the refusal, and it is not a re
 widen a module until one is warranted.
 
 **2 — a feature.** Name the feature that owns the behaviour, or state that none exists yet.
-That statement is an answer, not a failure. Do not pick the file inside it: which file
-receives what is the specs module's
+That statement is an answer, not a failure.
+
+**Which feature owns a rule is the specs module's question, not this one's.** Ask it the way
+the composition exposes it rather than picking by subject matter — two features whose names
+both sound right is the normal case, and the module that holds the specs is the only thing
+that knows which of them the rule is read from. Where the composition offers no such answer,
+name the closest feature **and say you are choosing rather than reading** — a guess reported
+as a guess is usable; a guess reported as a placement is not.
+
+Do not pick the file inside it: which file receives what is the specs module's
 ([`feature-format`](https://github.com/tibs245/scrumia/blob/main/features/business/feature-format/business.md)),
 and this skill stops at the feature.
 
