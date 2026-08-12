@@ -44,6 +44,33 @@ def run_piped(env: dict[str, str], args: list[str] | None = None):
     return proc.returncode, proc.stdout, proc.stderr
 
 
+# Unbreakable by design and exempt: a shell command, a lone token such as a
+# slash-command name, and a path — wrap folds at word boundaries or not at all,
+# so a line carrying one word past the width is the width's problem, not a defect.
+def foldable(line: str) -> bool:
+    body = line.split("compose-status.sh:", 1)[-1]
+    return len(body.split()) > 1 and not body.strip().startswith("claude ")
+
+
+def report_only(text: str) -> str:
+    """The report, without the tool's own notices.
+
+    A pty carries one stream, so a terminal capture holds stdout and stderr
+    interleaved. Every assertion about what the composition *says* runs on the
+    report; the notices are asserted separately, where they belong.
+    """
+    out, in_notice = [], False
+    for line in text.split("\n"):
+        if line.startswith("compose-status.sh:"):
+            in_notice = True
+            continue
+        if in_notice and line.strip():
+            continue
+        in_notice = False
+        out.append(line)
+    return "\n".join(out)
+
+
 def run_tty(env: dict[str, str]) -> str:
     """Same call, but with a real terminal on stdout — the colour path."""
     pid, fd = pty.fork()
@@ -134,11 +161,46 @@ extends: []
 apps: []
 """
 
+# The current shape: one mapping, every key qualified by the source it comes from,
+# and one bare name that is not a declaration at all.
+MODULES_CONFIG = """
+project:
+  name: "Demo"
+  repo: "acme/demo"
+modules:
+  "tibs245/scrumia:scrumia-specs":
+    params:
+      root: features
+  "shared:acme-conventions": {}
+  "local:acme-docs-rules": {}
+apps:
+  - name: "web"
+    path: "apps/web"
+    modules:
+      "tibs245/scrumia:scrumia-practice-tdd": {}
+"""
+
+UNSOURCED_CONFIG = """
+project:
+  name: "Bare name"
+modules:
+  "scrumia-specs": {}
+  ":scrumia-teams": {}
+  "github:scrumia-design": {}
+  "local:acme-docs-rules": {}
+"""
+
+LOCAL_LAYER = """
+settings:
+  autonomy:
+    level: autonomous
+"""
+
 
 def test_ac1_readable_and_names_what_is_plugged_in() -> None:
     print("AC-1 — reads well in a real terminal, names every module it runs")
     config = config_with(PROJECT_CONFIG)
-    out = ANSI.sub("", run_tty(env_for(config, COLUMNS="100"))).replace("\r\n", "\n")
+    out = report_only(ANSI.sub("", run_tty(env_for(config, COLUMNS="100"))).replace("\r\n", "\n"))
 
     check("names the project", "Demo" in out and "acme/demo" in out)
     check("lists every module extends names", all(m in out for m in
@@ -163,11 +225,6 @@ def test_ac1_narrow_terminal() -> None:
     config = config_with(PROJECT_CONFIG)
     for cols in (30, 40, 60):
         out = ANSI.sub("", run_tty(env_for(config, COLUMNS=str(cols)))).replace("\r\n", "\n")
-        # Unbreakable by design, and exempt: a shell command, and a lone token
-        # such as a slash-command name. Folding either breaks the copy-paste.
-        def foldable(line: str) -> bool:
-            return len(line.split()) > 1 and not line.strip().startswith("claude ")
-
         over = [l for l in out.split("\n") if len(l) > cols and foldable(l)]
         check(f"nothing foldable overflows at {cols} columns", not over, f"{over[:1]!r}")
         check(f"still names every module at {cols} columns",
@@ -183,8 +240,7 @@ def test_ac1_narrow_terminal() -> None:
     crowded = config_with(CROWDED_CONFIG)
     for cols in (80, 100):
         out = ANSI.sub("", run_tty(env_for(crowded, COLUMNS=str(cols)))).replace("\r\n", "\n")
-        over = [l for l in out.split("\n") if len(l) > cols and len(l.split()) > 1
-                and not l.strip().startswith("claude ")]
+        over = [l for l in out.split("\n") if len(l) > cols and foldable(l)]
         check(f"a crowded apps table still fits {cols} columns", not over, f"{over[:1]!r}")
         check(f"every practice is still named at {cols} columns",
               all(p in out for p in ("scrumia-practice-tdd", "scrumia-practice-solid",
@@ -209,7 +265,7 @@ def test_ac2_colour_gating() -> None:
     check("NO_COLOR set but empty keeps colour", "\x1b[" in still)
 
     check("the piped text matches the terminal text",
-          ANSI.sub("", tty).replace("\r\n", "\n") == piped)
+          report_only(ANSI.sub("", tty).replace("\r\n", "\n")) == piped)
     os.unlink(config)
 
 
@@ -221,9 +277,18 @@ def test_ac3_read_only_and_no_argument() -> None:
 
     check("exits 0 with no argument in a configured repo", code == 0, f"exit {code}, {err.strip()}")
     check("prints something to stdout", len(out.strip()) > 0)
-    check("nothing on stderr", err == "", err.strip())
+    check("stderr carries the migration notice and nothing else",
+          err.startswith("compose-status.sh:") and "migrate to 'modules:'" in err,
+          err.strip())
     check("no file created, changed or touched", before == after,
           str(set(before) ^ set(after))[:200])
+
+    # A migrated config earns silence: a warning every run is a warning nobody reads.
+    migrated = config_with(MODULES_CONFIG)
+    code, out, err = run_piped(env_for(migrated))
+    check("a config on modules: says nothing on stderr", err == "", err.strip())
+    check("and still prints its composition", "Demo" in out, out[:120])
+    os.unlink(migrated)
 
     code, _, err = run_piped(env_for(), ["--help"])
     check("--help documents the call", code == 2 and "compose-status.sh" in err)
@@ -240,16 +305,19 @@ def test_ac3_read_only_and_no_argument() -> None:
 def test_ac3_the_retired_shape_is_read_and_said_out_loud() -> None:
     print("AC-3 — the retired composition:/practices: keys are read, and named as retired")
     config = config_with(LEGACY_CONFIG)
-    _, out, _ = run_piped(env_for(config))
+    _, out, err = run_piped(env_for(config))
     check("the modules it names are still reported",
           "scrumia-specs" in out and "scrumia-github-project" in out)
     check("a null entry contributes nothing rather than a row",
           "null" not in out and "none" not in out.split("Extends")[0])
     check("the per-app implementation and practices fold into that app's extends",
           "scrumia-impl-solidjs" in out and "scrumia-practice-tdd" in out)
-    check("the reader is told the shape is retired", "retired" in out)
+    # The report is what the site publishes verbatim; a migration is the reader's
+    # business and belongs on the stream a published artefact does not carry.
+    check("the reader is told the shape is retired", "retired" in err, err.strip())
     check("the advice is given once, not repeated per key",
-          out.count("retired") == 1, out.count("retired"))
+          err.count("retired") == 1, err.count("retired"))
+    check("the report itself stays free of it", "retired" not in out)
     os.unlink(config)
 
     bare = config_with(EMPTY_CONFIG)
@@ -265,11 +333,64 @@ def test_ac3_config_text_is_never_expanded() -> None:
     print("AC-3 — config text is printed, never expanded against the filesystem")
     config = config_with(PROJECT_CONFIG.replace('name: "Demo"', 'name: "R&D * team"'))
     for cols in ("25", "100"):
-        out = ANSI.sub("", run_tty(env_for(config, COLUMNS=cols))).replace("\r\n", "\n")
+        out = report_only(ANSI.sub("", run_tty(env_for(config, COLUMNS=cols))).replace("\r\n", "\n"))
         check(f"the name survives a glob character at {cols} columns",
               "R&D * team" in out or ("R&D" in out and "* team" in out), out[:120])
         check(f"no repository file leaks into the output at {cols} columns",
               "compose-status.sh" not in out and "README.md" not in out, out[:200])
+    os.unlink(config)
+
+
+def test_ac17_the_key_carries_the_source() -> None:
+    print("AC-17 — a module is reported under the key it is declared by")
+    config = config_with(MODULES_CONFIG)
+    _, out, err = run_piped(env_for(config, COLUMNS="140"))
+
+    for key in ("tibs245/scrumia:scrumia-specs", "shared:acme-conventions",
+                "local:acme-docs-rules"):
+        check(f"{key} is reported by its key, source included", key in out, out[:300])
+    check("an app's own modules are keyed the same way",
+          "tibs245/scrumia:scrumia-practice-tdd" in out, out[:400])
+    check("the heading names what the file now declares",
+          "Modules this project runs" in out and "extends" not in out.split("App")[0])
+    check("a module's params are shown beside it", "root=features" in out, out[:300])
+    check("no migration notice for a config already on modules:", err == "", err.strip())
+    os.unlink(config)
+
+    bare = config_with(UNSOURCED_CONFIG)
+    _, out, _ = run_piped(env_for(bare, COLUMNS="140"))
+    check("a bare name is named as not a declaration",
+          "'scrumia-specs' is not a declaration" in out, out[:400])
+    check("and the grammar it should have used is stated",
+          "<source>:<module>" in out, out[:400])
+    # One grammar, two readers: a key one of them refuses and the other lists as a
+    # module running is the drift the qualified key exists to remove.
+    check("a key whose source half is missing is refused too",
+          "':scrumia-teams' is not a declaration" in out, out[:600])
+    check("a source outside the three BR-13 enumerates is refused",
+          "'github:scrumia-design' is not a declaration" in out, out[:600])
+    check("a sourced key beside them is not accused",
+          "'local:acme-docs-rules' is not a declaration" not in out)
+    os.unlink(bare)
+
+
+def test_ac18_the_local_layer_is_reported_as_such() -> None:
+    print("AC-18 — the per-machine layer is named where it changes what resolves")
+    config = config_with(MODULES_CONFIG)
+    _, without, err = run_piped(env_for(config))
+    check("nothing is claimed when there is no local layer",
+          "local layer" not in without and "local layer" not in err, without[:200])
+
+    local = config_with(LOCAL_LAYER)
+    _, report, err = run_piped(env_for(config, SCRUMIA_CONFIG_LOCAL=str(local)))
+    check("the layer in effect is named", "local layer is in effect" in err, err[:300])
+    check("the file that holds it is named", str(local) in err)
+    check("and the cost is stated, not hidden", "not versioned" in err, err[-400:])
+    # The report is versioned and gated by a fixture; what one machine happens to
+    # override is the least reproducible thing the tool knows.
+    check("the report itself carries nothing machine-local",
+          "local layer" not in report and str(local) not in report, report[-300:])
+    os.unlink(local)
     os.unlink(config)
 
 
@@ -301,6 +422,8 @@ def main() -> int:
     test_ac3_read_only_and_no_argument()
     test_ac3_the_retired_shape_is_read_and_said_out_loud()
     test_ac3_config_text_is_never_expanded()
+    test_ac17_the_key_carries_the_source()
+    test_ac18_the_local_layer_is_reported_as_such()
     test_ac4_both_skills_end_by_running_it()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0

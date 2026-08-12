@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
-# ScrumIA — prints the active composition, slot by slot then app by app.
+# ScrumIA — prints the active composition: the modules the project runs, then app by app.
 # Reads .scrumia/config.yaml. Writes nothing, anywhere.
+#
+# The site publishes this stdout verbatim and a fixture gates it, so a migration notice
+# goes to stderr rather than into a published artefact.
 
 # -f because every unquoted split below is over config text, never a path: a `*`
 # in the config would otherwise print a file listing instead of the value.
 set -fuo pipefail
 
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+CONFIG_LOCAL="${SCRUMIA_CONFIG_LOCAL:-.scrumia/config.local.yaml}"
 
 
 die() { echo "compose-status.sh: $1" >&2; exit 1; }
+# Folds like the report, because stderr and stdout share one terminal — a prefix on every
+# line would leave nothing to fold into at 30 columns. Needs WIDTH.
+note() {
+  printf '%scompose-status.sh:%s\n' "$WARN" "${WARN:+$RESET}" >&2
+  wrap '  ' "$WARN" "$1" >&2
+}
 
 usage() {
   cat >&2 <<'EOF'
 compose-status.sh
 
 Prints this project's ScrumIA composition — the modules it runs, then app by app.
-Takes no argument. Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and
-writes nothing. Colour is dropped when stdout is not a terminal, and when
-NO_COLOR is set to a non-empty value.
+A module is declared under `modules:`, keyed <source>:<module>; the retired `extends:`
+list and the older `composition:`/`practices:` keys are still read, with a warning on
+stderr. Takes no argument. Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml) and
+$SCRUMIA_CONFIG_LOCAL (default .scrumia/config.local.yaml), and writes nothing. Colour
+is dropped when stdout is not a terminal, and when NO_COLOR is set to a non-empty value.
 EOF
   exit 2
 }
@@ -92,22 +104,55 @@ WIDTH=$(term_width)
 NAME=$(jq -r '.project.name // "this project"' <<<"$CFG")
 REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
 
-# The list is flat, so there is no per-slot key to leave empty: a module is named or
-# it is not, and one that is not named is installed and inert.
-LEGACY=false
-jq -e 'has("extends")' >/dev/null <<<"$CFG" || LEGACY=true
+# Three shapes have existed; the precedence between them is fixed so that a half-migrated
+# file cannot resolve to nothing and read as a project that runs no modules.
+SHAPE=modules
+if ! jq -e 'has("modules")' >/dev/null <<<"$CFG"; then
+  if jq -e 'has("extends")' >/dev/null <<<"$CFG"; then
+    SHAPE=extends
+  elif jq -e 'has("composition") or has("practices")' >/dev/null <<<"$CFG"; then
+    SHAPE=legacy
+  else
+    SHAPE=none
+  fi
+fi
 
-MODULES=$(jq -r '
-  (.extends // ((.composition // {}) | to_entries | map(select(.value != null) | .value)))[]' <<<"$CFG")
+case "$SHAPE" in
+  extends) KEY=extends; HEADING="Modules this project extends"; APP_COL=Extends; APP_LABEL=extends
+           note "warning: $CONFIG declares its modules under the retired 'extends:' — read for one more minor, migrate to 'modules:', keyed <source>:<module> (ADR-0021)" ;;
+  legacy)  KEY=composition; HEADING="Modules this project extends"; APP_COL=Extends; APP_LABEL=extends
+           note "warning: $CONFIG still uses the retired composition:/practices: keys — read for now, migrate to modules:" ;;
+  *)       KEY=modules; HEADING="Modules this project runs"; APP_COL=Modules; APP_LABEL=modules ;;
+esac
+
+MODULES=$(jq -r --arg shape "$SHAPE" '
+  if $shape == "modules" then (.modules // {} | to_entries[]
+      | [ .key, ((.value // {}).params // {} | to_entries
+                 | map(.key + "=" + (.value | tostring)) | join(", ")) ])
+  elif $shape == "extends" then (.extends // [])[] | [., ""]
+  elif $shape == "legacy" then
+    ((.composition // {}) | to_entries | map(select(.value != null) | .value))[] | [., ""]
+  else empty end | @tsv' <<<"$CFG")
+
+# BR-13's grammar, spelled as scrumia-extends spells it: two readers of one key that
+# disagree about what a declaration is are worse than either answer alone.
+UNSOURCED=""
+[ "$SHAPE" = modules ] && UNSOURCED=$(jq -r '
+  def malformed:
+    (test(":") | not)                                    # no source at all
+    or startswith(":") or endswith(":")                  # one half missing
+    or (sub(":[^:]*$"; "") | . != "shared" and . != "local" and (test("^[^/]+/[^/]+$") | not));
+  [ (.modules // {} | keys[]), ((.apps // [])[] | .modules // {} | keys[]) ]
+  | map(select(malformed)) | .[]' <<<"$CFG")
 
 MOD_ROWS="" MOD_W=6
-for m in $MODULES; do
+while IFS=$'\t' read -r m params; do
   [ -n "$m" ] || continue
   [ ${#m} -gt "$MOD_W" ] && MOD_W=${#m}
-  MOD_ROWS="$MOD_ROWS$m"$'\n'
-done
+  MOD_ROWS="$MOD_ROWS$m"$'\t'"$params"$'\n'
+done <<<"$MODULES"
 
-APP_ROWS="" APP_W=3 PATH_W=4 EXT_W=7
+APP_ROWS="" APP_W=3 PATH_W=4 EXT_W=${#APP_COL}
 while IFS=$'\t' read -r app apath ext; do
   [ -n "$app" ] || continue
   [ -n "$apath" ] || apath="(no path)"
@@ -118,13 +163,15 @@ while IFS=$'\t' read -r app apath ext; do
 done < <(jq -r '.apps // [] | .[] | [
     .name // "?",
     .path // "",
-    ((.extends // ([.implementation] + (.practices // []) | map(select(. != null))))
+    ((if has("modules") then (.modules // {} | keys)
+      elif has("extends") then (.extends // [])
+      else ([.implementation] + (.practices // []) | map(select(. != null))) end)
       | if length == 0 then "none" else join(", ") end)
   ] | @tsv' <<<"$CFG")
 
-# 28 is the width of the "Modules this project extends" heading: a heading that
-# overflows is as unreadable as a row.
-MOD_TABLE_W=28
+# A heading that overflows is as unreadable as a row, and a key is longer than a name.
+MOD_TABLE_W=${#HEADING}
+[ "$MOD_W" -gt "$MOD_TABLE_W" ] && MOD_TABLE_W=$MOD_W
 APP_TABLE_W=$((APP_W + 2 + PATH_W + 2 + EXT_W))
 # The title carries the project name and repo, so it can be the widest line on the
 # page; it folds on the same test as a table rather than being exempt from it.
@@ -147,19 +194,26 @@ fi
 echo
 
 if [ "$NARROW" = true ]; then
-  while IFS= read -r m; do
+  while IFS=$'\t' read -r m params; do
     [ -n "$m" ] || continue
     printf '  %s%s%s\n' "$BOLD" "$m" "$RESET"
+    [ -n "$params" ] && wrap '    ' "$DIM" "$params"
   done <<<"$MOD_ROWS"
 else
-  printf '  %s%s%s\n' "$DIM" "Modules this project extends" "$RESET"
-  printf '  %s%s%s\n' "$DIM" "$(rule 28 $((WIDTH - 2)))" "$RESET"
-  while IFS= read -r m; do
+  printf '  %s%s%s\n' "$DIM" "$HEADING" "$RESET"
+  printf '  %s%s%s\n' "$DIM" "$(rule "$MOD_TABLE_W" $((WIDTH - 2)))" "$RESET"
+  while IFS=$'\t' read -r m params; do
     [ -n "$m" ] || continue
     printf '  %s\n' "$m"
+    [ -n "$params" ] && wrap '      ' "$DIM" "$params"
   done <<<"$MOD_ROWS"
 fi
-[ -n "$MODULES" ] || wrap '  ' "$WARN" "Nothing is plugged in: extends is empty."
+[ -n "$MODULES" ] || wrap '  ' "$WARN" "Nothing is plugged in: $KEY is empty."
+
+while IFS= read -r k; do
+  [ -n "$k" ] || continue
+  wrap '  ' "$WARN" "'$k' is not a declaration: a module is keyed <source>:<module> — <owner>/<repo>, 'shared' or 'local'. Nothing resolves for it."
+done <<<"$UNSOURCED"
 
 if [ -n "$APP_ROWS" ]; then
   echo
@@ -167,11 +221,11 @@ if [ -n "$APP_ROWS" ]; then
     while IFS=$'\t' read -r app apath ext; do
       [ -n "$app" ] || continue
       printf '  %s%s%s (%s)\n' "$BOLD" "$app" "$RESET" "$apath"
-      wrap '    ' "" "extends: $ext"
+      wrap '    ' "" "$APP_LABEL: $ext"
     done <<<"$APP_ROWS"
   else
     printf '  %s%s  %s  %s%s\n' "$DIM" "$(pad App "$APP_W")" "$(pad Path "$PATH_W")" \
-      "Extends" "$RESET"
+      "$APP_COL" "$RESET"
     printf '  %s%s%s\n' "$DIM" "$(rule "$APP_TABLE_W" $((WIDTH - 2)))" "$RESET"
     while IFS=$'\t' read -r app apath ext; do
       [ -n "$app" ] || continue
@@ -181,11 +235,10 @@ if [ -n "$APP_ROWS" ]; then
 fi
 
 echo
-if [ "$LEGACY" = true ]; then
-  wrap '  ' "$WARN" "This config still uses the retired composition:/practices: keys."
-  wrap '    ' "" "They are read for one more minor. Migrate to extends: with /scrumia-core:scrumia-compose."
-  echo
-fi
+# On stderr for the same reason the migration notice is: this one is machine-local, and
+# the report is a versioned artefact a fixture gates.
+[ -f "$CONFIG_LOCAL" ] &&
+  note "a local layer is in effect: $CONFIG_LOCAL overrides settings: and each module's params:. It is not versioned, so another machine resolves this composition's values differently."
 wrap '  ' "$DIM" "What each module contributes, and to which register: scrumia-extends --list."
 wrap '  ' "$DIM" "Change any of this with /scrumia-core:scrumia-compose."
 echo
