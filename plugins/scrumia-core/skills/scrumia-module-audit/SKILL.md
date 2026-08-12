@@ -5,11 +5,13 @@ description: Audits one ScrumIA module against the anatomy rules a program canno
 
 # Auditing a module's anatomy
 
-`features/business/module-anatomy/` is one authority applied through two surfaces. The
-procedural check — `scrumia-module check` — takes what a program can decide from a
-module's tree alone. This skill takes the half that has to be read to be judged: whether a
-file answers one concern, whether an index still carries content, and whether the README's
-optional sections match what the module actually needs.
+The anatomy standard —
+[`features/business/module-anatomy/`](https://github.com/tibs245/scrumia/blob/main/features/business/module-anatomy/business.md)
+— is one authority applied through two surfaces. The procedural check —
+`scrumia-module check` — takes what a program can decide from a module's tree alone. This
+skill takes the half that has to be read to be judged: whether a file answers one concern,
+whether an index still carries content, and whether the README's optional sections match
+what the module actually needs.
 
 It is a checklist, not a review. Every question below is closed, names exactly one rule,
 and is answered from one file — never by holding the rest of the module in context. That
@@ -21,11 +23,14 @@ scaffold what it found missing.
 
 ## Step 1 — Read the README once
 
-Before walking any other file, read the module's `README.md`. This is the one file every
-later question is allowed to hold alongside the file in front of it — not "the rest of the
-module," just this one anchor, read once and carried forward. Note which of the four
-optional sections it carries: **Settings it reads**, **What it expects to find**,
-**Decisions**, **Not shipped yet**.
+If the target carries no `.claude-plugin/plugin.json`, stop: it is not a module, and this
+audit — like `scrumia-module check` — has nothing to judge on a directory that happens not
+to be one.
+
+Otherwise, read the module's `README.md` once and record, as four booleans and nothing
+more, which of the optional sections it carries: **Settings it reads**, **What it expects
+to find**, **Decisions**, **Not shipped yet**. That record — not the file itself — is what
+Step 4 compares against; no later question re-opens the README to answer something else.
 
 If the module carries no README, stop: that is already `scrumia-module check`'s finding
 (`module-anatomy/BR-4`), and this audit has nothing to add until one exists.
@@ -55,10 +60,12 @@ skill's own file once its guides were split out. Everything else answers "not ap
 and moves on.
 
 Where it applies: does the file, past what exists and when to open each, also state a
-rule, a fact or a procedure that is not written in the file it points to? An index that
-still asserts something on its own account was never split — only prefixed.
+rule, a fact or a procedure of its own? An index that still asserts something on its own
+account was never split — only prefixed. Answered from the index alone: this is never a
+question of whether the same content also appears elsewhere, which would mean opening
+every file the index points to just to ask it.
 
-- Finding: `{ module, file, rule: "module-anatomy/BR-3", message: "carries <the content>, found nowhere else the index points to" }`
+- Finding: `{ module, file, rule: "module-anatomy/BR-3", message: "carries <the content> rather than routing to it" }`
 - No finding: the file only lists what exists and says when to open each.
 
 ## Step 3 — Walk the module's skills and scripts for what they read and need (`module-anatomy/BR-4`)
@@ -67,12 +74,15 @@ For every file the module ships that could act — a skill's instructions, a scr
 command — ask, of that file alone, four closed questions, each naming `module-anatomy/BR-4`
 and each answered from that one file:
 
-- Does it read a project setting: a key under `settings.` in `.scrumia/config.yaml`, an
-  environment variable, or a config file of its own?
+- Does it read a project setting: any key in `.scrumia/config.yaml`, an environment
+  variable, or a config file of its own?
 - Does it depend on something already being present that the module did not create —
   another directory, another module's output, a piece of state?
-- Does it record a decision — a choice made and the alternative it rejected — rather than
-  only the behaviour that follows from it?
+- Is this file itself a decision record — its whole subject one choice and the alternative
+  it rejected, the way `scrumia-design` ships
+  `skills/scrumia-design-system/decisions/D-01-two-columns.md`? Rationale prose inside an
+  ordinary skill file does not count — only a file whose entire job is recording the
+  decision does.
 - Does it describe something the module does not yet do — named, not built?
 
 Record which files answered yes to which, and to what.
@@ -87,7 +97,7 @@ Four comparisons, one per optional section:
 |---|---|---|
 | a file reads a setting | no **Settings it reads** | finding — the absence asserts the module reads none, and it doesn't |
 | a file depends on something present | no **What it expects to find** | finding — same reason |
-| a file records a decision | no **Decisions** | finding — same reason |
+| a file is a decision record | no **Decisions** | finding — same reason |
 | a file names something not yet built | no **Not shipped yet** | finding — same reason |
 | nothing found | section absent | no finding — the absence is true |
 
@@ -99,12 +109,10 @@ not a present one to be necessary, and AC-14 tests only the omission.
 
 ## Step 5 — The README length guardrail (`module-anatomy/BR-4`)
 
-Read the README once more, on its own. Past roughly eighty lines it has likely become
-documentation, which belongs in the module's skills or in `docs/`. This is a guardrail, not
-a threshold: judge what the extra lines are *doing*, never the count alone. A README this
-long because it lists real sections earned by a module that reads settings, needs something
-present and ships decisions is not a finding; one padded with restated `SKILL.md` content
-or narration is.
+Read the README once more, on its own. Past roughly eighty lines: **are the extra lines
+restating `SKILL.md` content or narrating, rather than stating sections this module has
+earned by reading settings, needing something present or shipping decisions?** This is a
+guardrail, not a threshold — judge what the extra lines are doing, never the count alone.
 
 - Finding: `{ module, file: "README.md", rule: "module-anatomy/BR-4", message: "past the guardrail, and the extra lines are <what they restate or narrate>" }`
 - No finding: the length is earned by the sections it states.
@@ -114,8 +122,11 @@ or narration is.
 Report every finding from Steps 2, 4 and 5 in one list, each row carrying `module`, `file`,
 `rule`, and one line of what was not met — the same four fields `scrumia-module check
 --json`'s `findings` array carries, so a consumer merges this list with the procedural
-check's without knowing which surface produced which row. A clean module gets one line:
-`<module> — no findings`.
+check's without knowing which surface produced which row. Match its conventions exactly:
+`module` is the name `plugin.json` declares, never the directory; `file` is the path
+relative to the module's own root (`skills/scrumia-init/SKILL.md`, not an absolute path
+and not one prefixed with `plugins/<module>/`). A clean module gets one line: `<module> —
+no findings`.
 
 No exit code: this is a skill, read by whoever asked for it, not a process another tool
 branches on.
