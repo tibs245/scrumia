@@ -4,65 +4,99 @@
 
 For whoever adopts or extends ScrumIA — a project declaring which modules it runs, and
 the modules themselves, written to be pluggable. It brings one flat declaration
-(`extends`) a project edits to take exactly the capability it needs, so adopting one
+(`modules`) a project edits to take exactly the capability it needs, so adopting one
 module never requires taking the whole method. It matters because a project that forks
 a monolithic method to adapt one part of it stops receiving updates to the rest;
-`extends` is what lets the reference answers change without breaking a project's own
+The composition is what lets the reference answers change without breaking a project's own
 choices. Not instrumented today: nothing counts how many projects run with which
 modules; the composition's shape is read from `.scrumia/config.yaml`, not aggregated.
 
-## `extends` is a routing mechanism first
+## The composition is a routing mechanism first
 
 An agent is effective when it reads the minimum it needs — but to read little it must
-know **where** the essential of its task is. `extends` exists to answer that, across
-projects with disjoint contexts served by the same set of modules: a team inside a
+know **where** the essential of its task is. Declaring the modules exists to answer that,
+across projects with disjoint contexts served by the same set of modules: a team inside a
 large company, a for-profit monorepo, this plugin repository. Extension — a project
 customising or adding to a module's behaviour — is a consequence of that routing, not
 its object.
 
-## `extends`
+## `modules`
 
-A flat list of plugged modules in `.scrumia/config.yaml`, ESLint-shaped, replacing the
-former `composition:` key:
+A mapping in `.scrumia/config.yaml`, keyed by each module's qualified source
+([ADR-0021](../../../docs/adr/0021-modules-keyed-by-source.md)):
 
 ```yaml
-extends:
-  - scrumia-specs
-  - scrumia-github-project
-  - scrumia-teams
+modules:
+  "tibs245/scrumia:scrumia-specs":
+    params:
+      root: features
+  "tibs245/scrumia:scrumia-github-project": {}
+  "local:acme-docs-rules": {}
 apps:
   - name: api
     path: apps/api
-    extends: [scrumia-impl-rust, scrumia-practice-tdd, scrumia-practice-solid]
+    modules:
+      "tibs245/scrumia:scrumia-impl-rust": {}
+      "tibs245/scrumia:scrumia-practice-tdd": {}
 ```
 
-**The list is not ordered.** ESLint's own `extends` carries last-wins semantics; this
-one does not. Any reader brings the ESLint reflex uninvited; this rule exists to
-contradict it on first read.
+**The key is `<source>:<module>`, always** — one grammar, no bare name. The source is a
+marketplace (`<owner>/<repo>`), `shared` for a directory of checkouts shared between a
+person's projects, or `local` for inside the project. A bare name would make the file's
+meaning depend on what happens to be installed, which is what the qualified key removes.
+The three sources are the three locations `features/business/local-extension/` defines,
+and naming the source in the key is why no separate origin field exists to disagree with
+it.
 
-**A module installed but named in no `extends` is inert.** Presence on disk is not
-participation: a project may have twenty modules enabled and run the five it names.
-That is what makes a module safe to install before deciding to use it, and it is why
-the mechanism never asks "is this slot filled" — only "does this project run it".
+**The mapping is not ordered.** The former `extends:` key invited ESLint's last-wins
+reflex; the key is renamed and the rule survives the rename. Order between modules decides
+nothing.
+
+**A module installed and named nowhere is inert.** Presence on disk is not participation:
+a project may have twenty modules enabled and run the five it names. That is what makes a
+module safe to install before deciding to use it, and it is why the mechanism never asks
+"is this slot filled" — only "does this project run it".
+
+**A key names who runs, never what they contribute.** What each module offers is its own
+`extends.json`, keyed by register. The two were deliberately not nested — ADR-0021 states
+why, and BR-9 below is the rule it protects.
+
+## A module's configuration cascades, in a stated order
+
+Three layers, each overriding the one before:
+
+1. `settings:` — the shared base, and the only home for a key several modules write
+2. `modules[<key>].params:` — this module's own
+3. the project's local layer
+
+Layer 1 is not vestigial: `settings.team.roles` is written by the team module *and* by any
+module shipping its own standing role (ADR-0014). A setting with two writers cannot live
+inside one writer's block.
+
+The order is stated so it can be checked. An order only applied, never written, can invert
+without anything failing.
 
 ## `practices` is retired as a named slot
 
 `implementation` and `practices` were always two answers to the same question — how an
 app is built — at two granularities. `practices` does not survive as its own key: a
-practice module is declared through `extends`, per app, alongside the implementation
+practice module is declared in an app's own `modules`, alongside the implementation
 module:
 
 ```yaml
 apps:
   - name: api
     path: apps/api
-    extends: [scrumia-impl-rust, scrumia-practice-tdd]
+    modules:
+      "tibs245/scrumia:scrumia-impl-rust": {}
+      "tibs245/scrumia:scrumia-practice-tdd": {}
   - name: prototype
     path: apps/prototype
-    extends: [scrumia-impl-solidjs]
+    modules:
+      "tibs245/scrumia:scrumia-impl-solidjs": {}
 ```
 
-TDD applies to `api`, not to `prototype` next to it, because each app's `extends` list
+TDD applies to `api`, not to `prototype` next to it, because each app's `modules` mapping
 is its own — the per-app axis the former `practices` slot carried is what makes this a
 per-app declaration and not a single project-wide list.
 
@@ -146,7 +180,7 @@ carry no source, because a register is a composition-local concept and not an en
 OS-wide namespace.
 
 **The order is the composition's, never a module's.** Project-local first, then the
-modules an app extends, then the project-wide ones; required before optional within a
+modules an app declares, then the project-wide ones; required before optional within a
 tier. A module does not rank itself against modules it has never heard of.
 
 **The table does not arbitrate.** Two directives whose prose contradicts each other are
@@ -261,7 +295,7 @@ A composition an agent retypes is a composition that drifts, and the drift is in
 because the prose still reads plausibly. So the skills that present the composition —
 `scrumia-init` and `scrumia-compose` — end by running `scrumia-core`'s
 `scripts/compose-status.sh`, which reads `.scrumia/config.yaml` and prints it: the
-modules the project runs, and each app with what it extends. What a human reads is the
+modules the project runs, and each app with the modules it declares. What a human reads is the
 file, every time, rather than what one session remembered of it.
 
 This is reporting, not resolution. Nothing calls the script to find out who provides
@@ -278,8 +312,8 @@ the composition.
 - **BR-1** — A register is a question, not a module. An extension point exists
   independently of whether any installed module currently contributes to it; a register
   nothing extends yields an empty table, which is an answer and not a failure.
-- **BR-2** — A module installed but named in no `extends` is inert. Presence is never
-  read as participation, and a project's `extends` is the only thing that decides which
+- **BR-2** — A module installed and named in no `modules` mapping is inert. Presence is
+  never read as participation, and a project's `modules` is the only thing that decides which
   modules contribute.
 - **BR-3** — A module never assumes another module's capability is present. It checks,
   and on finding the capability unprovided, it names the gap in a message a human or an
@@ -303,7 +337,7 @@ the composition.
   and nothing decides at runtime which module answers it.
 - **BR-8** — A register is opened by exactly one main skill, and may be extended by any
   number of modules. Two modules opening the same register is a conflict named by the
-  check, never arbitrated by list order — `extends` carries no order to arbitrate by.
+  check, never arbitrated by declaration order — `modules` carries no order to arbitrate by.
 - **BR-9** — A contribution names no consumer. A module declares what it offers and to
   which register; it does not name, and may not encode, which skill takes it. A key that
   named a consumer would make every cross-cutting module enumerate the modules that could
@@ -324,6 +358,13 @@ the composition.
 - **BR-12** — The directive table arbitrates nothing. Two contributions whose prose
   contradicts each other are both printed, in the computed order; resolving them is a
   composition decision a person makes, not one a generator may make silently.
+- **BR-13** — A module is declared by a key of the form `<source>:<module>`, always. The
+  source is a marketplace (`<owner>/<repo>`), `shared`, or `local`. A bare name is not a
+  declaration, and no field beside the key restates the origin.
+- **BR-14** — A module's configuration resolves from three layers in a stated order:
+  `settings:`, then the module's own `params:`, then the project's local layer. A key
+  several modules write stays in the first, because a setting with two writers cannot live
+  inside one writer's block.
 
 ## Vocabulary
 

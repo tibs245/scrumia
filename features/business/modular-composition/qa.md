@@ -230,3 +230,31 @@ Then the role appears in the single `settings.team.roles` list, carrying a `from
   checks it, and nothing can: it is prose about prose. The mechanism narrows the drift
   to one line sitting beside the path it describes, which is as far as this feature
   claims to go.
+
+### AC-17 — A module is declared by source, and a bare name is not a declaration
+
+```gherkin
+Given a project declaring one module from a marketplace, one from a shared checkout and
+  one from inside the project
+When the composition is read
+Then each is keyed `<source>:<module>`, each resolves from the location its source names,
+  and the location reported for it is the one in its key
+Given instead a configuration carrying a bare module name with no source
+When the same read runs
+Then it is reported as not a declaration, naming the key, rather than resolved against
+  whichever module of that name happens to be installed
+```
+
+### AC-18 — A setting resolves through three layers, in the stated order
+
+```gherkin
+Given a key present in `settings:`, overridden in a module's `params:`, and overridden
+  again in the project's local layer
+When the module reads it
+Then the local layer's value wins, then the module's, then the base — and the order is
+  stated where the layers are, not only applied
+Given instead a key several modules write, present only in `settings:`
+When each of them reads it
+Then all of them see it, and nothing requires it to be moved inside one module's block
+```
+

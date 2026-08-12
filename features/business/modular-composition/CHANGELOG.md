@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — `modules` keyed by source replaces `extends`, with a settings cascade (BR-13, BR-14, AC-17, AC-18)
+- Issue: #302
+- Category: Changed
+- Breaking: yes — every project on `extends:` migrates; see ADR-0021
+
 ## 2026-08-11 — A dependency names the source it comes from (BR-11, AC-12)
 - Issue: #281
 - Category: Changed

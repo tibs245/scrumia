@@ -24,8 +24,9 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0016](0016-global-feature-index.md) | The specs contract gains a global index; keys stop freezing values | accepted |
 | [0017](0017-version-bump-and-commit-signal.md) | What a version bump promises, and the commit signal it derives from | accepted |
 | [0018](0018-modules-reach-by-name.md) | A module reaches another by a published name, never by a path | accepted — extended by [0020](0020-skill-extension-protocol.md) |
-| [0019](0019-extends-replaces-composition-and-practices.md) | `extends` replaces `composition:`, and folds `practices` into it | accepted |
+| [0019](0019-extends-replaces-composition-and-practices.md) | `extends` replaces `composition:`, and folds `practices` into it | accepted — its `extends:` key superseded by [0021](0021-modules-keyed-by-source.md) |
 | [0020](0020-skill-extension-protocol.md) | A skill is extended by data, and the table is computed when asked | accepted |
+| [0021](0021-modules-keyed-by-source.md) | `modules` keyed by source, with a settings cascade | accepted |
 
 ## Scope of the decisions
 
