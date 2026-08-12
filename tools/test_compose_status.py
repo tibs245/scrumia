@@ -351,8 +351,10 @@ def test_ac17_the_key_carries_the_source() -> None:
         check(f"{key} is reported by its key, source included", key in out, out[:300])
     check("an app's own modules are keyed the same way",
           "tibs245/scrumia:scrumia-practice-tdd" in out, out[:400])
-    check("the heading names what the file now declares",
-          "Modules this project runs" in out and "extends" not in out.split("App")[0])
+    # Never "runs": this resolves nothing, and BR-6 forbids one tool claiming present what
+    # the resolver reports absent.
+    check("the heading claims a declaration, not a presence it did not check",
+          "Modules this project declares" in out and "extends" not in out.split("App")[0])
     check("a module's params are shown beside it", "root=features" in out, out[:300])
     check("no migration notice for a config already on modules:", err == "", err.strip())
     os.unlink(config)

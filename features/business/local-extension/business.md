@@ -137,14 +137,14 @@ the one running. The composition then describes a module nobody is executing.
 A rule that fired on the name alone would fire on the ordinary case this feature exists
 to support. Someone promoting a module has the published copy installed and a checkout of
 it beside them by construction, and `module-authoring`'s BR-3 only makes that move cheap
-if having both at once is not a fault. Three situations wear the same name, and they are
-three different answers:
+if having both at once is not a fault. Four situations wear the same name, and they are
+four different answers:
 
 | Situation | What it is | What happens |
 |---|---|---|
 | One module reached by two routes — a checkout linked into the project, the same directory reached twice | one module | resolved, used, its location reported once |
 | A copy in one location while another location holds the same name, and the composition declares which | a choice already made | the declared one resolves; the other is not run, because nothing declares it |
-| A declaration that names no location, answered in more than one | a shadow | the narrowest location wins, is used, and is reported with the others |
+| A declaration that names no location, answered in more than one location, one module each | a shadow | the narrowest location wins, is used, and is reported with the others |
 | One declaration answered by two distinct modules in the location it names | a conflict | reported naming both directories, neither used |
 
 The first is settled by identity, not by name: two routes reaching the same files are one
@@ -194,7 +194,8 @@ on one machine is a module the project cannot be handed to someone else with.
 
 - **BR-1** — A module lives in exactly one of three locations, and is the same artefact
   in each. Resolution finds all three in one pass; each location is a stated place, not a
-  tree to search, and inside the project that place is `.scrumia/modules/<module>/`.
+  tree to search, and inside the project that place is `modules/<module>/` beside the
+  configuration that declares it.
 - **BR-2** — A module resolved outside a marketplace is held to the anatomy standard
   unchanged. There is no local tier.
 - **BR-3** — Local material that is not a module — a directive, a rules section, a skill
@@ -213,8 +214,10 @@ on one machine is a module the project cannot be handed to someone else with.
   naming both directories. Nothing picks between them silently. Three cases are not
   conflicts: two routes to the same files are one module; a name present in a location
   the composition does not declare is a module it does not run; and a declaration naming
-  no location, answered in several, is a shadow — the narrowest wins, is used, and is
-  reported with the others and with the fix.
+  no location, answered by one module in each of several locations, is a shadow — the
+  narrowest wins, is used, and is reported with the others and with the fix. Where the
+  narrowest is itself ambiguous — two of the answers sharing a location — nothing is
+  narrowest and it is a conflict again.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
   present and never causes a failure.
