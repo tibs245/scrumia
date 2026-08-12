@@ -5,6 +5,7 @@
 set -uo pipefail
 
 CONFIG="${SCRUMIA_CONFIG:-.scrumia/config.yaml}"
+MODULE_ROOT=$(cd -- "$(dirname -- "$0")/.." && pwd)
 
 die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
 warn() { echo "scrumia-pick-model: $1" >&2; }
@@ -14,8 +15,10 @@ usage() {
 scrumia-pick-model <issue-number>
 scrumia-pick-model --scope S|M|L|XL [--risk low|medium|high|critical]
 
-Reads settings.team.execution from .scrumia/config.yaml and returns the model
-to run a ticket on — or, for oversized work, an instruction to split first.
+Resolves this module's execution policy through the composition's settings cascade —
+`settings:`, then this module's `params:`, then .scrumia/config.local.yaml — and returns
+the model to run a ticket on, or, for oversized work, an instruction to split first.
+Answers nothing when the policy cannot be resolved.
 EOF
   exit 2
 }
@@ -30,7 +33,51 @@ load_config() {
     die "need yq or python3+PyYAML to read $CONFIG"
   fi
   [ -n "${CFG:-}" ] || die "$CONFIG is empty or not valid YAML"
+  # `project.repo` names the repository, not this module's configuration, so it is read
+  # here; everything the policy itself needs comes through the cascade below.
   REPO=$(jq -r '.project.repo // empty' <<<"$CFG")
+}
+
+# The key this module is declared under: its own name, qualified by the repository it
+# claims (ADR-0021). Read from its own manifest rather than written as a literal, so a
+# fork resolves under the key a fork's configuration actually carries. Echoes nothing and
+# returns non-zero on failure — a `die` here would print its JSON into the caller's
+# variable and exit the subshell only.
+module_key() {
+  local manifest="$MODULE_ROOT/.claude-plugin/plugin.json" name src
+  [ -f "$manifest" ] || return 1
+  name=$(jq -r '.name // ""' "$manifest" 2>/dev/null)
+  src=$(jq -r '(.repository // .homepage // "")
+    | sub("^[a-z+]+://[^/]+/"; "") | sub("\\.git$"; "") | sub("/$"; "")' "$manifest" 2>/dev/null)
+  [ -n "$name" ] && [ -n "$src" ] || return 1
+  printf '%s:%s\n' "$src" "$name"
+}
+
+# The policy is resolved through the three layers rather than read out of `settings:`,
+# which would see layer 1 only and silently discard the per-machine layer
+# (`modular-composition` BR-15). Every failure below stops the tool: a model name computed
+# from built-in defaults is indistinguishable from one computed from the grid, so it is the
+# one wrong answer nobody has reason to check (`execution-policy` AC-22).
+load_policy() {
+  local key out
+  key=$(module_key) || die "cannot read $MODULE_ROOT/.claude-plugin/plugin.json — this module cannot name itself, so its execution policy cannot be resolved"
+
+  command -v scrumia-extends >/dev/null 2>&1 ||
+    die "scrumia-extends not found — enable scrumia-core and restart the session. No model is chosen: reading $CONFIG directly would resolve one layer of three and answer with a model nobody configured"
+  out=$(scrumia-extends --settings "$key") ||
+    die "scrumia-extends --settings $key failed — the execution policy is unresolved, and no model is chosen"
+  jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out" ||
+    die "scrumia-extends --settings $key returned no object — the execution policy is unresolved, and no model is chosen"
+
+  # ADR-0021 moves what `settings.team.execution` held into this module's own `params:`,
+  # so the resolved block carries `execution` at its top level. The retired nest is still
+  # read while projects migrate — the deprecation window release-versioning grants, not a
+  # permanent alternative — and it is read *second*: on a half-migrated project both
+  # shapes are present, and the layer the cascade ranks higher is the one that must win.
+  EXEC=$(jq -c 'if (.execution | type) == "object" then .execution
+                elif (.team.execution | type) == "object" then .team.execution
+                else empty end' <<<"$out")
+  [ -n "$EXEC" ] || die "no execution policy in the resolved settings for $key — looked for 'execution' and the retired 'team.execution', and no layer of the cascade carries either. Run scrumia-team-setup; no model is chosen, because one taken from defaults would read like one taken from the grid"
 }
 
 labels_of_issue() {
@@ -55,15 +102,16 @@ done
 
 command -v jq >/dev/null 2>&1 || die "jq not found"
 load_config
+load_policy
 
-SCOPE_PREFIX=$(jq -r '.settings.team.execution.labels.scope_prefix // "scope/"' <<<"$CFG")
-RISK_PREFIX=$(jq -r '.settings.team.execution.labels.risk_prefix // "risk/"' <<<"$CFG")
+SCOPE_PREFIX=$(jq -r '.labels.scope_prefix // "scope/"' <<<"$EXEC")
+RISK_PREFIX=$(jq -r '.labels.risk_prefix // "risk/"' <<<"$EXEC")
 
 # A project that already labels its tickets keeps its own words; the matrix
 # speaks S/M/L/XL and low/high, so the vocabularies are mapped, not imposed.
 alias_of() {
   jq -r --arg kind "$1" --arg v "$2" \
-    '.settings.team.execution.labels[$kind + "_aliases"][$v] // $v' <<<"$CFG"
+    '.labels[$kind + "_aliases"][$v] // $v' <<<"$EXEC"
 }
 
 if [ -n "$ISSUE" ]; then
@@ -77,8 +125,8 @@ fi
 [ -n "$SCOPE" ] && SCOPE=$(alias_of scope "$SCOPE")
 [ -n "$RISK" ] && RISK=$(alias_of risk "$RISK")
 
-DEFAULT_RISK=$(jq -r '.settings.team.execution.unrated_risk // "medium"' <<<"$CFG")
-UNLABELED=$(jq -r '.settings.team.execution.unlabeled // "sonnet"' <<<"$CFG")
+DEFAULT_RISK=$(jq -r '.unrated_risk // "medium"' <<<"$EXEC")
+UNLABELED=$(jq -r '.unlabeled // "sonnet"' <<<"$EXEC")
 
 SCOPE_RATED=true; RISK_RATED=true
 [ -n "$SCOPE" ] || { SCOPE_RATED=false; }
@@ -116,7 +164,7 @@ if [ "$SCOPE_RATED" = false ]; then
 fi
 
 CELL=$(jq -r --arg s "$SCOPE" --arg r "$RISK" \
-  '.settings.team.execution.matrix[$s][$r] // empty' <<<"$CFG")
+  '.matrix[$s][$r] // empty' <<<"$EXEC")
 
 if [ -z "$CELL" ]; then
   warn "no matrix cell for scope=$SCOPE risk=$RISK — falling back to execution.unlabeled"

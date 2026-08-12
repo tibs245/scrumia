@@ -8,6 +8,17 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
   register rather than from a list it maintained about modules it does not own.
 ### Changed
+- `scrumia-pick-model` resolves the execution policy through `scrumia-extends --settings`,
+  the composition's three-layer cascade, instead of reading `settings.team.execution` out of
+  `.scrumia/config.yaml`. A matrix cell overridden in `.scrumia/config.local.yaml` now
+  actually changes the answer, and a project that has moved the block into this module's
+  `params:` keeps working — both shapes are read while the migration is in flight, the
+  module's own `params:` first.
+- `scrumia-pick-model` answers **no model at all** when the policy cannot be resolved —
+  `scrumia-core` absent from the session, or no layer carrying an `execution` block —
+  instead of falling back to `unlabeled` and returning a plausible model name nobody
+  configured. A grid with a hole in one cell is unchanged: that is data, and it still
+  answers.
 - The execution-policy tool is published as the name `scrumia-pick-model`, which the harness
   puts on the session's PATH, and every skill and role runs that name instead of a path.
   Reaching it by path only ever worked in this module's own repository: installed, the module
