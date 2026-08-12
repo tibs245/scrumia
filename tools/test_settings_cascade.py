@@ -373,6 +373,25 @@ settings:
           code == 0 and "labels.risk_prefix=risk/" in err
           and "labels.scope_prefix" not in err, f"{code} {out} {err}")
 
+    # A key written bare is what migrating one key at a time actually produces: it exists,
+    # it holds nothing, and the tool is about to stand in for it.
+    bare = write("barelabels.yaml", BASE_PROJECT + """extends:
+  - scrumia-teams
+settings:
+  team:
+    execution:
+      unlabeled:
+      labels:
+        scope_prefix:
+        risk_prefix: "sev/"
+      matrix:
+        L: { medium: opus }
+""")
+    code, out, err = run(PICK, ["--scope", "L"], bare)
+    check("AC-22: a key written bare is named too — it exists, and it carries no value",
+          code == 0 and "unlabeled=sonnet" in err and "labels.scope_prefix=scope/" in err
+          and "labels.risk_prefix" not in err, f"{code} {out} {err}")
+
 
 def test_doctor_diagnoses_rather_than_dies() -> None:
     """The one command whose contract is "tell me what is broken" must survive it."""
