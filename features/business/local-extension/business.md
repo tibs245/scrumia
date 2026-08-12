@@ -55,13 +55,18 @@ Where a project-local directive sits relative to a module's, and which wins, is
 
 ## Declared by name, resolved by the environment
 
-A module and its origin are declared in the project's own configuration, by name. Where
-that origin sits on a given machine is not.
+A module's origin is part of its name. The configuration keys each module
+`<source>:<module>` — `<owner>/<repo>` for a marketplace, `shared`, or `local` — so the
+three locations above are the three sources, and there is no second field that could
+disagree with the first. The key's grammar is `modular-composition`'s
+([ADR-0021](../../../docs/adr/0021-modules-keyed-by-source.md)); which locations exist is
+this feature's.
+
+What the key does **not** carry is where a `shared` checkout sits on a given machine.
 
 | Declared, versioned, travels with the clone | Resolved per machine, never versioned |
 |---|---|
-| the module's name | the filesystem path a shared checkout lives at |
-| which of the three locations it comes from | |
+| `local:acme-docs-rules` — name and source in one key | the filesystem path `shared` resolves to |
 
 The split exists because both halves of the problem are real and they pull opposite ways.
 A configuration that names an absolute path outside the project puts one machine's layout
@@ -117,10 +122,10 @@ on one machine is a module the project cannot be handed to someone else with.
 - **BR-4** — A project with local material and no local module is correctly extended, and
   nothing reports it as carrying a malformed module.
 - **BR-5** — Resolution states the location each module came from.
-- **BR-6** — A module and the location it comes from are declared by name in the
-  project's configuration; the filesystem path a shared checkout sits at is resolved from
-  `.scrumia/.env.local`, which is never committed. No versioned file names a path outside
-  the project.
+- **BR-6** — A module's location is its declaration's source, carried in the key rather
+  than in a field beside it. Only the filesystem path a `shared` checkout resolves to is
+  per-machine, read from `.scrumia/.env.local`, which is never committed. No versioned
+  file names a path outside the project.
 - **BR-7** — Two modules answering to one name is a conflict, reported naming both
   locations. Nothing picks between them silently.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported

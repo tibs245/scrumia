@@ -94,8 +94,9 @@ Then the project is reported as correctly extended, the directives appear in the
 ```gherkin
 Given a project running a module from a shared checkout
 When every file the repository versions is read
-Then the module and the location it comes from are named, no filesystem path outside the
-  project appears in any of them, and the path resolves from `.scrumia/.env.local`
+Then the module is keyed `shared:<module>`, so its location is stated by its declaration
+  and by nothing beside it, no filesystem path outside the project appears in any
+  versioned file, and the path `shared` resolves to comes from `.scrumia/.env.local`
 And `.scrumia/.env.local` is excluded from version control
 ```
 
