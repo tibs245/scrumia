@@ -41,16 +41,20 @@ plus a detail true only of this repository, and those have different destination
 
 ## Step 2 — Ask whether it is already placed
 
-Look for the fact where it could already be, before choosing anywhere to put it. Grep the
-tokens that would survive someone else's phrasing — a command name, a flag, a number — not
-your own wording:
+Look for the fact where it could already be, before choosing anywhere to put it. Four
+places, and the composition says where each one sits — never assume a layout:
+
+- the modules this project runs, skills and references included;
+- the project's own rules — its `CLAUDE.md` and its configuration;
+- the specs root, as the specs contract in `CLAUDE.md` names it;
+- the tracker, for anything that reads like a debate.
+
+Grep the tokens that survive someone else's phrasing — a command name, a flag, a number —
+rather than your own sentence, which is the one wording certain not to be there:
 
 ```bash
-grep -rni "<token>" plugins/ features/ docs/ CLAUDE.md .scrumia/
+grep -rni "<token>" <those paths>
 ```
-
-Add the tracker for anything that reads like a debate, and widen to whatever holds this
-project's own rules if it is not in those paths.
 
 If it is there, **it is placed**: report where, and stop. What may still be added is a
 pointer from wherever you were about to write it — one line naming the authority, never a
