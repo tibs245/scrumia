@@ -1,6 +1,6 @@
 ---
 name: scrumia-author
-description: Brings a need from nothing to a ScrumIA module the anatomy check accepts on its first run — deciding whether a module is warranted at all, where it lives, and writing only what the module actually has. Use it to create a module, and before proposing one: two of its answers are that no module should exist.
+description: Brings a need to a ScrumIA module the anatomy check accepts on its first run — deciding whether a module is warranted at all, where it lives, and writing only what the module actually has. Use it to create a module, to change one, or to move one between locations, and before proposing one: two of its answers are that no module should exist.
 ---
 
 # Author a module
@@ -28,7 +28,9 @@ which is the failure the check exists to catch, arriving through the one door le
 
 What a change owes on top of that — the module's own findings read before anything is
 touched, and the type and scope its commit will carry — is `module-authoring`'s BR-4 and
-BR-5, and is not what the steps below instruct.
+BR-5, and it is Step 0's. A move owes the same reading and the same commit line: it is a
+change to a module that already exists, and the only thing distinguishing it is that it
+must leave every file byte-identical.
 
 ## This file carries the pass, not the standard
 
@@ -49,6 +51,82 @@ states, and a non-zero exit is not a finding.
 The name is published by the module this skill ships in, so it is on `PATH` whenever this
 skill is loaded. Nothing here composes a path into another module
 ([ADR-0018](https://github.com/tibs245/scrumia/blob/main/docs/adr/0018-modules-reach-by-name.md)).
+
+## Step 0 — The module already exists
+
+Runs only when there is a module to change or to move, and runs **before** anything is
+touched. Everything after it runs unchanged either way: a change is not a lighter path, and
+neither is a move.
+
+### Read its findings before you touch it
+
+```bash
+scrumia-module check <path-to-the-module>
+```
+
+Whatever it returns now belongs to the module, not to this pass. Report those findings
+first, and keep them apart from what Step 5's run returns: **the difference between the two
+runs is the only thing that says which findings this change introduced.** A pass that runs
+the check once, at the end, hands back a single list in which its own work and the module's
+existing state are indistinguishable — and the module's history gets quietly reattributed
+to whoever touched it last.
+
+Fixing a pre-existing finding is welcome and is a change like any other. Inheriting one in
+silence is what this reading forbids.
+
+### Moving it between locations rewrites nothing
+
+A module moves when the reach of its need turns out to be wider or narrower than where it
+sits — Step 3's table, read again on a module that already exists. The move changes two
+things, and both of them are outside the module:
+
+- **where its directory sits**, one of the three places
+  [`local-extension`](https://github.com/tibs245/scrumia/blob/main/features/business/local-extension/business.md)
+  states;
+- **what declares it** — the `<source>:<module>` key in the configuration of every project
+  that runs it and, where a marketplace is the destination, that marketplace's own
+  manifest. That entry is written *from* the module's manifest; the manifest is never
+  edited to agree with it.
+
+Everything the module ships comes out byte-identical, **its own manifest included**. A
+version, a homepage or a repository filled in on the way out is a rewrite however
+reasonable the moment looks: a field naming a publication the module does not have is
+absent rather than invented, and adding it later is an edit that runs this pass on its own
+terms.
+
+**Show that, rather than intending it.** Take the tree before, take it after, and compare:
+
+```bash
+diff -r <before> <after> && scrumia-module check <after>
+```
+
+An empty diff and a verdict identical to Step 0's first run are the evidence. "The move
+rewrote nothing" is not evidence, and it is what a move that rewrote something also says.
+
+Once it has moved, the declaration is the other half: `scrumia-extends --modules` reports
+where each declared module resolved from on this machine, so a rekeyed declaration that
+still resolves — to the new location, not the old — is what says the move landed. A module
+answered in its old location *and* its new one is `local-extension`'s to name, not this
+pass's to tidy away.
+
+The reverse direction is the same move and carries no extra ceremony. What it owes is owed
+to the projects that had adopted the module, and it is
+[`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)'s
+rather than invented here: a final release of the module carrying the breaking signal,
+whose changelog entry names where the module went. That release is the notice. Do not open
+an issue on an adopting project, message anyone, or add a field to the manifest saying
+where it moved.
+
+### Name the commit, and derive nothing from it
+
+Report the **type** and the **scope** the change's commit will carry, and stop there.
+
+What follows from them is
+[`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)'s,
+and the level is read off the commit rather than chosen here. **Do not announce one** — not
+"this is a minor", not "this is a major": it asserts a conclusion from inputs that are not
+written yet, and below `1.0.0`, where every module still sits, the word names two different
+things at once.
 
 ## Step 1 — Say what the need is, and count what it holds
 
@@ -214,3 +292,14 @@ Five lines, whether or not a module exists at the end of it:
 
 A pass that created nothing reports the same five lines and is a completed pass. An
 authoring pass that can only succeed by creating a module will always create one.
+
+Where the module already existed, three more, and they are the difference between a change
+reported and a change asserted:
+
+- the findings the module carried **before** Step 0 opened it, told apart from the verdict
+  above — without them the two arrive as one list, and this pass's work reads as the
+  module's history;
+- where it moved, the location it left and the one it went to, with the empty diff that
+  says nothing inside it changed;
+- the type and the scope its commit will carry — and no level, which is read off that
+  commit elsewhere.
