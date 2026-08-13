@@ -144,8 +144,16 @@ def test_ac17_the_migration_sources_rather_than_guesses() -> None:
     for retired in ("extends:", "composition:", "practices"):
         check(f"the retired `{retired}` is named as something to migrate from",
               retired in step3)
-    for source in ("extraKnownMarketplaces", ".scrumia/modules/", "shared"):
-        check(f"the migration knows how to reach a `{source}` name", source in step3)
+    check("the sourcing asks the resolver instead of searching the tiers by hand",
+          "scrumia-extends --modules" in step3, "the migration reimplements discovery")
+    check("the marketplace half is resolved through the alias table",
+          "extraKnownMarketplaces" in step3)
+    # A procedure answering only `absent` freezes a `shadow` — one machine's checkout.
+    for state in ("resolved", "shadow", "conflict", "absent"):
+        check(f"the `{state}` state has a stated answer", f"`{state}`" in step3)
+    check("an ambiguous name is not disambiguated by the migration",
+          "does not get to disambiguate" in step3,
+          "nothing stops a shadow being written as a key")
     check("a name it cannot source is reported rather than written",
           "reported, not written" in step3 or "reported, never written" in step3,
           "the refusal to guess a source is no longer stated")

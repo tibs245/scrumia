@@ -183,13 +183,24 @@ Two retired shapes exist, and both are still read for one more minor, with a war
 | `settings.<block>` read by exactly one module | that module's `params:`, with the nest kept as written |
 | `settings.<block>` several modules read | left in `settings:` |
 
-**Source each name; never guess one.** In order:
+**Source each name; never guess one.** Ask the resolver rather than searching the three tiers by hand — it already binds a bare name in any of them, and it is the only thing that can say *how many* answered:
 
-1. The name is enabled in `.claude/settings.json` or `.claude/settings.local.json` as `<module>@<alias>` → resolve `<alias>` through `extraKnownMarketplaces` to `<owner>/<repo>`, and that is the source.
-2. `.scrumia/modules/<module>/` exists → `local:<module>`.
-3. `scrumia-extends --modules` reports it resolving from the shared tier → `shared:<module>`.
+```bash
+scrumia-extends --modules --json     # run on the file as it still is, before the rewrite
+```
 
-**A name none of these answer is reported, not written.** Say which name, which of the three were tried, and leave it out of the migrated file until a person says where it comes from — a key guessed onto a marketplace is a file that resolves to whatever that marketplace happens to publish under that name, which is precisely what the source exists to prevent. The rest of the migration still lands; one unsourced name is a gap to close, not a reason to leave the whole file on a retired key.
+Each name comes back with a `state` and the `roots` that answered it. Only one state is safe to write:
+
+| `state` | What it means | What to write |
+|---|---|---|
+| `resolved` | exactly one directory answered | `local:` or `shared:` from `location`; for `marketplace`, the `<owner>/<repo>` its alias resolves to in `extraKnownMarketplaces` |
+| `shadow` | several tiers answered, and the narrowest is in use | **nothing** — report all of them |
+| `conflict` | two directories in one tier answered | **nothing** — report both |
+| `absent` | nothing answered | **nothing** — report where it would have come from |
+
+`shadow` is the case worth being slow about. The reader picks the narrowest tier and says so on every call, which is the right behaviour for something that resolves each time — but writing that choice into a versioned key freezes one machine's layout into the file, and the next machine to lose that local checkout reads a key that now names a module it never had. A name a person has not disambiguated is a name a migration does not get to disambiguate.
+
+**A name none of this sources is reported, not written.** Say which name, what its state was, and which directories answered; leave it out of the migrated file until a person says where it comes from. A key guessed onto a marketplace makes the file resolve to whatever that marketplace happens to publish under that name, which is precisely what the source exists to prevent. The rest of the migration still lands — one unsourced name is a gap to close, not a reason to leave the whole file on a retired key.
 
 **Migrate the whole file in one pass, `settings:` included.** A file carrying `modules:` beside an unmigrated `settings.<block>` still resolves — layer 1 is read whole — but the block then belongs to no module, and the next person to move it has to work out who read it. Where a module's own text still names a retired nest, that module passes it to the resolver as `--legacy <nest>`; that is the module's to say, and not something to write back into the config.
 
