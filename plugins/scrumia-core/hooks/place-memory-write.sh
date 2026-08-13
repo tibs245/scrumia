@@ -27,7 +27,7 @@ esac
 
 # The destinations are a composition's, so a session outside one has nothing to be told.
 project_dir=${CLAUDE_PROJECT_DIR:-${cwd:-$PWD}}
-while [ "$project_dir" != "/" ] && [ ! -f "$project_dir/.scrumia/config.yaml" ]; do
+while [ "$project_dir" != "/" ] && [ "$project_dir" != "." ] && [ ! -f "$project_dir/.scrumia/config.yaml" ]; do
   project_dir=$(dirname "$project_dir")
 done
 [ -f "$project_dir/.scrumia/config.yaml" ] || exit 0

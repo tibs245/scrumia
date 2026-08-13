@@ -134,6 +134,18 @@ out=$(write_payload "$ROLE_ENTRY" | PATH="$NO_JQ" "$BASH" "$HOOK"); status=$?
 check "without jq it disables itself rather than the session" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
 
+( cd "$WORKDIR" && jq -n '{tool_name: "Write", cwd: "a/relative/dir",
+    tool_input: {file_path: ".claude/agent-memory/x/y.md"}}' \
+  | env -u CLAUDE_PROJECT_DIR bash "$HOOK" > "$WORKDIR/walk.out" 2>&1 ) &
+walk=$!
+( sleep 5; kill -9 "$walk" 2>/dev/null ) >/dev/null 2>&1 &
+watchdog=$!
+wait "$walk"; status=$?
+kill "$watchdog" 2>/dev/null
+out=$(cat "$WORKDIR/walk.out")
+check "a relative directory ends the walk instead of running forever" \
+  "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
+
 out=$(printf 'not json at all' | run_hook); status=$?
 check "a payload it cannot read leaves the run alone" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
