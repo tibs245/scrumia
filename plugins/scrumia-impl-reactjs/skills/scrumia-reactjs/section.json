@@ -1,0 +1,6 @@
+{
+  "globs": ["src/**/*.tsx", "src/**/*.ts"],
+  "guideGlobs": {
+    "06-testing": ["src/**/*.test.tsx", "src/**/*.test.ts"]
+  }
+}

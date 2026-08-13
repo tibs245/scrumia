@@ -1,0 +1,10 @@
+{
+  "name": "scrumia-impl-reactjs",
+  "description": "Slot \"implementation\" — how we code in React 19: Server Components by default, Actions for mutations and forms, derived state calculated during render, behaviour-first component tests, feature-based structure. Plugs in app by app.",
+  "version": "0.1.0",
+  "author": { "name": "tibs245" },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": ["scrumia", "implementation", "react", "react19", "frontend"]
+}

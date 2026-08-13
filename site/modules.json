@@ -9,6 +9,7 @@
   "scrumia-discovery": { "emoji": "💡", "slot": "discovery" },
   "scrumia-impl-rust": { "emoji": "🦀", "slot": "implementation" },
   "scrumia-impl-solidjs": { "emoji": "⚛️", "slot": "implementation" },
+  "scrumia-impl-reactjs": { "emoji": "🔷", "slot": "implementation" },
   "scrumia-practice-tdd": { "emoji": "🔴", "slot": "practices" },
   "scrumia-practice-solid": { "emoji": "🧭", "slot": "practices" },
   "scrumia-practice-tanstack-query": { "emoji": "🔄", "slot": "practices" },

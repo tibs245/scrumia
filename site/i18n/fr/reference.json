@@ -60,6 +60,9 @@
   "solidjs_p": "Réactivité à grain fin sans réflexes React, tests de composants comportement-d'abord, structure par feature. <strong>Refuse</strong> les props destructurées, les effets utilisés comme dérivations, les composants qui récupèrent les données.",
   "solidjs_row1": "La référence, chargée avant d'écrire du SolidJS dans une application couverte",
   "solidjs_row2": "Mesure une application existante par rapport aux règles, constat par constat",
+  "reactjs_p": "Server Components par défaut, Actions pour les mutations, état dérivé au rendu, tests de composants comportement-d'abord. <strong>Refuse</strong> <code>useEffect</code> pour l'état dérivé, le DOM impératif, les effets là où un gestionnaire d'événement suffit, <code>\"use client\"</code> non nécessaire.",
+  "reactjs_row1": "La référence, chargée avant d'écrire du React 19 dans une application couverte",
+  "reactjs_row2": "Mesure une application existante par rapport aux règles, constat par constat",
 
   "tdd_p": "Affine un point du contrat d'implémentation : <strong>comment nous testons</strong>. Le cycle opérationnalisé pour un agent, la limite des mocks, la cartographie AC-to-test.",
   "tdd_row1": "La référence : cycle, limite des mocks, où TDD s'arrête",

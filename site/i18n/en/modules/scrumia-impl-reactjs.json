@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-impl-reactjs — ScrumIA",
+  "meta_description": "scrumia-impl-reactjs: the ScrumIA implementation slot for React 19 — Server Components by default, Actions for mutations, derived state during render, behaviour-first component tests.",
+  "og_title": "scrumia-impl-reactjs — ScrumIA",
+  "tagline": "Server Components by default, derived state during render, Actions for everything that was an effect.",
+  "responsibilities": "<p>Owns the <em>how</em> for a React 19 app: Server Components and the App Router treated as the default, derived state calculated during render rather than inside effects, mutations and forms written as Actions, and a structure organised by feature. Ships an audit skill for the React reflexes that creep back in.</p>",
+  "refusals": "<p>No <code>useEffect</code> for state that can be calculated during render, no imperative DOM escape hatch, no effect where an event handler answers the same question, no <code>\"use client\"</code> that ships a whole dependency tree to the browser for no reason.</p>",
+  "philosophy": "<p>Assumes React 19's mental model — server by default, render is pure, transitions are interruptible — is worth learning rather than carrying React 16 reflexes over. Costs the unlearning of patterns that compile but stop being idiomatic.</p>"
+}

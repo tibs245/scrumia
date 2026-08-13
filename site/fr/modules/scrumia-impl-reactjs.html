@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-impl-reactjs — ScrumIA</title>
+<meta name="description" content="scrumia-impl-reactjs : le slot implémentation de ScrumIA pour React 19 — Server Components par défaut, Actions pour les mutations, état dérivé au rendu, tests de composants axés sur le comportement.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-impl-reactjs.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-impl-reactjs.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-impl-reactjs.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-impl-reactjs.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-impl-reactjs — ScrumIA">
+<meta property="og:description" content="scrumia-impl-reactjs : le slot implémentation de ScrumIA pour React 19 — Server Components par défaut, Actions pour les mutations, état dérivé au rendu, tests de composants axés sur le comportement.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-impl-reactjs.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
+      only while something is running that can also un-hide, and never when the
+      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../../assets/theme.js"></script>
+<script defer src="../../assets/motion.js"></script>
+<script defer src="../../assets/header.js"></script>
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="../../modules/scrumia-impl-reactjs.html" lang="en">EN</a>
+        <a href="scrumia-impl-reactjs.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">🔷</span> <code>scrumia-impl-reactjs</code></h1>
+<p class="section-intro">Server Components par défaut, état dérivé au rendu, Actions pour tout ce qui était un effet.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · <code>implementation</code></span>
+  <span class="pill">version · 0.1.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Possède le <em>comment</em> d'une application React 19 : Server Components et App Router traités comme la valeur par défaut, état dérivé calculé au rendu plutôt qu'à l'intérieur d'effets, mutations et formulaires écrits comme des Actions, et une structure organisée par feature. Livre une compétence d'audit pour les réflexes React qui reviennent.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Pas de <code>useEffect</code> pour un état calculable au rendu, pas d'échappatoire vers le DOM impératif, pas d'effet là où un gestionnaire d'événement répond à la même question, pas de <code>"use client"</code> qui embarque tout un arbre de dépendances dans le navigateur sans raison.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume que le modèle mental de React 19 — serveur par défaut, rendu pur, transitions interruptibles — mérite d'être appris plutôt que de transporter les réflexes de React 16. Coûte le désapprentissage de motifs qui compilent mais cessent d'être idiomatiques.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>scrumia-reactjs</code></li><li><code>scrumia-reactjs-audit</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>implementation</li> <li>react</li> <li>react19</li> <li>frontend</li></ul>
+</section>
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-impl-reactjs@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-impl-reactjs">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+    <span>ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

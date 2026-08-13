@@ -79,6 +79,15 @@
       "author": { "name": "tibs245" }
     },
     {
+      "name": "scrumia-impl-reactjs",
+      "source": "./plugins/scrumia-impl-reactjs",
+      "description": "The implementation slot, for React 19 apps — Server Components by default, Actions and useActionState for mutations and forms, derived state calculated during render. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "implementation", "react", "react19", "frontend"],
+      "author": { "name": "tibs245" }
+    },
+    {
       "name": "scrumia-practice-tdd",
       "source": "./plugins/scrumia-practice-tdd",
       "description": "The practices slot — test-driven development, situated for an agent: the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills.",
