@@ -29,14 +29,17 @@ marketplace's own manifests on demand, rather than by memorizing a table that go
 | `scrumia-extend` | The extension protocol itself — what a register is, what the three data files a module may ship declare, and how a skill opens an extension point. |
 | `scrumia-extends` | Published on `PATH`. Prints, for one register, every directive the installed modules contribute — name, type, required or not, one line, the file to open. `--list` names every open register; `--modules` says where each declared module resolved from, of the three places one may live; `--check` reports a declared dependency nothing satisfies; `--claims` reconciles what `CLAUDE.md` says about the composition against what resolves for whoever runs it. |
 | `scrumia-module-audit` | Audits one module against the anatomy rules a program cannot decide from its tree — one concern per file, an index that carries content, and the README's optional sections against what the module actually reads and needs. Reports in the same finding shape as `scrumia-module check --json`. |
+| `scrumia-place` | Routes something learned during a run to exactly one destination — a module, this project, a feature, a ticket, the change itself, or agent memory — and bounds memory by the handover test. It names a destination; whatever owns it does the writing. |
 | `/next` | Reads the composition and the tracker, and recommends the next workflow step. Recommends; launches nothing. |
 
 It also installs one hook, `hooks/place-memory-write.sh`, on `PostToolUse` for `Write` and
-`Edit`. A write to an agent-memory directory answers with a reminder to run
-`scrumia-place` on the entry; every other write draws nothing. It runs after the write and
-refuses nothing — a project that does not install this module simply never sees it, and
-`scrumia-place` stays reachable by hand. It is silent without `jq`, and outside a
-directory holding `.scrumia/config.yaml`.
+`Edit`. A write under `.claude/agent-memory/` or under a `.claude/projects/<project>/memory/`
+directory answers with a reminder to run `scrumia-place` on the entry — those two shapes
+are its whole reach, and memory kept anywhere else is never asked about. An index file
+(`MEMORY.md`) is navigation rather than an entry, and draws nothing; neither does any
+other write. It runs after the write and refuses nothing — a project that does not install
+this module simply never sees it, and `scrumia-place` stays reachable by hand. It is
+silent without `jq`, and outside a directory holding `.scrumia/config.yaml`.
 
 ## Settings it reads
 

@@ -154,13 +154,23 @@ Then the tree reports it as already placed, names where, and proposes a pointer 
   than a second copy
 ```
 
-### AC-14 — The reminder does not block
+### AC-14 — The reminder does not block, and says enough to be acted on
 
 ```gherkin
 Given an agent writing something to its own memory mid-run
 When the write happens
 Then it completes, the run is not interrupted, and the question about placement arrives
-  afterwards
+  afterwards, naming the entry that was written and the tree that answers for it
+```
+
+The naming half is what makes this criterion able to fail. "A question arrives" is
+satisfied by any line at all, so a run that emitted noise would pass on the half the
+feature actually depends on, and only the non-blocking half would be tested.
+
+```gherkin
+Given the same write in a repository that has composed nothing
+When it happens
+Then nothing is said: there is no composition, so there is no destination to route to
 ```
 
 ### AC-15 — An absent destination is named, not improvised

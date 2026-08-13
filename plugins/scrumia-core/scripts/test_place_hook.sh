@@ -72,6 +72,13 @@ out=$(write_payload "$REL_ENTRY" | run_hook)
 check "a relative path is read against the run's own directory" \
   "$(echo "$out" | jq -r --arg p "$PROJECT/$REL_ENTRY" '(.hookSpecificOutput.additionalContext // "") | contains($p)' 2>/dev/null || echo false)" "$out"
 
+mkdir -p "$PROJECT/deep/dir"
+out=$(jq -n --arg p "$ROLE_ENTRY" --arg cwd "$PROJECT/deep/dir" \
+  '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
+  | env -u CLAUDE_PROJECT_DIR bash "$HOOK")
+check "with no project directory given, the composition is found by walking up" \
+  "$(echo "$out" | jq -r '(.hookSpecificOutput.additionalContext // "") | length > 0' 2>/dev/null || echo false)" "$out"
+
 echo "== it interrupts nothing =="
 
 out=$(write_payload "$ROLE_ENTRY" | run_hook)
@@ -86,7 +93,7 @@ event_keys=$(jq -r '.hooks | keys | join(",")' "$HOOKS_JSON")
 check "AC-14 the hook is registered after the write and on nothing before it" \
   "$([ "$event_keys" = "PostToolUse" ] && echo true || echo false)" "$event_keys"
 check "AC-14 it is registered on the tools that write an entry" \
-  "$(jq -r '[.hooks.PostToolUse[].matcher] | join(",") | test("Write") and test("Edit")' "$HOOKS_JSON" 2>/dev/null || echo false)" \
+  "$(jq -r '[.hooks.PostToolUse[].matcher] == ["Write|Edit"]' "$HOOKS_JSON" 2>/dev/null || echo false)" \
   "$(jq -r '[.hooks.PostToolUse[].matcher] | join(",")' "$HOOKS_JSON")"
 check "the registered command is this script" \
   "$(jq -r '[.hooks.PostToolUse[].hooks[].command] | join(",") | test("hooks/place-memory-write.sh")' "$HOOKS_JSON" 2>/dev/null || echo false)" \
@@ -102,12 +109,22 @@ out=$(write_payload "$PROJECT/docs/memory-of-a-meeting.md" | run_hook)
 check "a file merely named after memory draws none either" \
   "$([ -z "$out" ] && echo true || echo false)" "$out"
 
+out=$(write_payload "$PROJECT/.claude/agent-memory/scrumia-teams-scrumia-tech/MEMORY.md" | run_hook)
+check "the index is navigation, so it draws none" \
+  "$([ -z "$out" ] && echo true || echo false)" "$out"
+
 BARE="$WORKDIR/elsewhere"
 mkdir -p "$BARE/.claude/agent-memory/some-agent"
 out=$(jq -n --arg p "$BARE/.claude/agent-memory/some-agent/x.md" --arg cwd "$BARE" \
   '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
   | CLAUDE_PROJECT_DIR="$BARE" bash "$HOOK"); status=$?
 check "outside a ScrumIA composition it says nothing" \
+  "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
+
+out=$(jq -n --arg p "$BARE/.claude/agent-memory/some-agent/x.md" --arg cwd "$BARE" \
+  '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
+  | env -u CLAUDE_PROJECT_DIR bash "$HOOK"); status=$?
+check "with no project directory given and no composition above, it says nothing" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
 
 NO_JQ="$WORKDIR/no-jq"
