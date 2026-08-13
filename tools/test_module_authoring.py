@@ -12,22 +12,35 @@ destinations are *not* enumerated: the criterion says the pass chooses through a
 feature's tree and enumerates neither itself, and a copy of that list is exactly the
 regression worth catching.
 
-AC-3 and AC-4 sit in the first half on purpose. "Promotion rewrites nothing" is a claim
-about bytes, so the move is *performed* here — a module built in a project, moved to a
-shared checkout and back, its tree hashed on both sides and its declaration rekeyed and
-re-resolved through the real `scrumia-extends --modules`. A pass that asserted it instead
-would be asserting the thing under test.
+AC-3 and AC-4 perform the move rather than reading the pass, and it is worth being exact
+about which of their assertions carry weight. Comparing a tree to itself across a
+`shutil.move` proves a property of the standard library, not of promotion; what it does
+buy is a guard on the instrument, since a `digest()` returning nothing — or keying on
+absolute paths — passes that comparison and fails the paired case that completes the
+manifest on the way out. The two assertions that actually carry AC-3 are the ones about
+the world the move happens in: that `scrumia-module check` returns the same verdict from
+either location, findings and all, and that the rekeyed declaration re-resolves through
+the real `scrumia-extends --modules` to the new location.
 
 Every assertion is written so it can fail. The clean-check ones are paired with a mutation
 that must produce a finding, because a check that cannot go red proves nothing about the
-tree it was pointed at; the byte-identity ones are paired with a move that completes the
-manifest on the way out, which is the conformant-looking rewrite BR-3 forbids.
+tree it was pointed at.
 
-What is *not* covered, stated so it is not read as coverage: a substring assertion cannot
-catch a polarity flip. AC-6's guard reads that the pass forbids naming a bump level and
-that both level words appear only inside that prohibition — an instruction to name one,
-written *inside* the prohibition's own sentences, passes here. Neither can
-`scrumia-module check` be leaned on for the refusals: it accepts a one-concern module and
+What is *not* covered, stated so it is not read as coverage. A substring assertion cannot
+catch a polarity flip, and three of the guards below are substring assertions wearing a
+criterion's name:
+
+- **AC-6** — the level guard requires both level words to fall inside the prohibition's
+  own character range, so a level named in another step goes red. One written *into* the
+  prohibition's sentences does not.
+- **AC-4** — the refusal clause is matched by the phrases that state it. Appending an
+  instruction to open an issue on every adopting project leaves those phrases intact and
+  stays green.
+- **AC-5** — the ordering guard matches the heading and the preamble, not the operative
+  body. Rewriting that body to run the check *after* the edit stays green.
+
+Deleting any of the three goes red; inverting any of the three does not. Nor can
+`scrumia-module check` be leaned on for the refusals — it accepts a one-concern module and
 an invented slot without complaint, which is why AC-7 and AC-8 assert prose and nothing
 more.
 
@@ -412,6 +425,10 @@ step0_lower = " ".join(step0.lower().split())
 check("the pass carries a step for a module that already exists", bool(step0.strip()))
 check("AC-5 orders the check before anything is touched",
       "before you touch it" in step0_lower and "before** anything is touched" in step0_lower)
+check("the steps after it are scoped, so a move is never told to clear a finding it inherited",
+      "asked of what the change adds" in step0_lower
+      and "about what this pass wrote" in step0_lower
+      and "step 4 has nothing to do" in step0_lower)
 check("AC-5 keeps the two runs apart rather than merging them",
       "difference between the two" in step0_lower and "step 5" in step0_lower)
 check("AC-3 states the two things a move changes, and that both are outside the module",
@@ -420,9 +437,9 @@ check("AC-3 names the manifest as inside the boundary, on business.md's decision
       "manifest included" in step0_lower)
 check("AC-3 asks for the diff rather than for the claim",
       "diff -r" in step0_lower and "is not evidence" in step0_lower)
-check("AC-4 names release-versioning's mechanism for the withdrawal, and forbids inventing one",
-      "final release" in step0_lower and "breaking signal" in step0_lower
-      and "do not open" in step0_lower)
+check("AC-4 sends the withdrawal to release-versioning, names the gap, and invents nothing",
+      "release-versioning" in step0_lower and "today it does not" in step0_lower
+      and "do not open an issue" in step0_lower and "notify through" in step0_lower)
 check("AC-6 names the type and the scope and sends the level to release-versioning",
       "**type**" in step0_lower and "**scope**" in step0_lower
       and "features/business/release-versioning/" in step0)
@@ -438,6 +455,11 @@ levels = [m.start() for m in re.finditer(r"\bminor\b|\bmajor\b", pass_text, re.I
 stray = [pass_text[max(0, i - 70):i + 15] for i in levels if not opens < i < closes]
 check("and neither level word appears anywhere outside that prohibition",
       bool(levels) and not stray, stray)
+
+frontmatter = pass_text.partition("---")[2].partition("---")[0].lower()
+check("the description routes a change and a move here, or none of the above is reached",
+      "to change one" in frontmatter and "move one between locations" in frontmatter,
+      frontmatter.strip())
 
 report = " ".join(pass_text.partition("## What the pass reports")[2].lower().split())
 check("the report carries the pre-existing findings, the move and the commit signal",

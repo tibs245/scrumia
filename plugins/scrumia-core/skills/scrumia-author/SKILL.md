@@ -55,8 +55,22 @@ skill is loaded. Nothing here composes a path into another module
 ## Step 0 — The module already exists
 
 Runs only when there is a module to change or to move, and runs **before** anything is
-touched. Everything after it runs unchanged either way: a change is not a lighter path, and
-neither is a move.
+touched.
+
+A change is not a lighter path and neither is a move, but neither is a creation, and the
+steps below read differently once the module is already there. Two readings, and they are
+not optional:
+
+- **Step 2's refusals are asked of what the change adds** — a slot it would invent, a
+  capability that belongs somewhere below the threshold — never of the module that is
+  already there. Refusing an edit because the module it edits holds two concerns refuses
+  the wrong thing.
+- **Step 5's finishing condition is about what this pass wrote.** A finding the module
+  already carried is Step 0's to report, not this run's to clear. On a move it cannot be
+  cleared at all: fixing it rewrites a file, and a move that rewrites a file is not one.
+
+A move re-reads Step 3's table — the reach is exactly what a move re-decides — and writes
+nothing, so Step 4 has nothing to do and already says so.
 
 ### Read its findings before you touch it
 
@@ -110,12 +124,13 @@ answered in its old location *and* its new one is `local-extension`'s to name, n
 pass's to tidy away.
 
 The reverse direction is the same move and carries no extra ceremony. What it owes is owed
-to the projects that had adopted the module, and it is
+to the projects that had adopted the module, and that is
 [`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)'s
-rather than invented here: a final release of the module carrying the breaking signal,
-whose changelog entry names where the module went. That release is the notice. Do not open
-an issue on an adopting project, message anyone, or add a field to the manifest saying
-where it moved.
+to state — which today it does not: its window is counted on a published *name* a module
+renames, and a whole module leaving a marketplace is not that. **Say so, and notify through
+nothing of your own.** Do not open an issue on an adopting project, do not message anyone,
+and do not add a field to the manifest saying where the module went. A gap named is a
+finished report; a mechanism invented to fill it is the thing this refuses.
 
 ### Name the commit, and derive nothing from it
 

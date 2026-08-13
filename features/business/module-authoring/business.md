@@ -39,19 +39,17 @@ Promotion changes two things and nothing else: where the module sits, and what d
 it. What it contains is already correct or was never correct.
 
 **The module's own manifest is inside that boundary, not on it.** It is a file the module
-ships, so promotion leaves it byte-identical — its version included, and including the
-fields a published module often carries that a project-local one does not. What *declares*
-a module is outside the module's tree: the key each project's configuration uses, and, for
-a marketplace, that marketplace's own manifest. The marketplace entry is written **from**
-the module's manifest; the manifest is never edited to agree with it.
+ships, so promotion leaves it byte-identical, its version included. What *declares* a
+module is outside the module's tree: the key each project's configuration uses, and, for a
+marketplace, that marketplace's own manifest. The marketplace entry is written **from** the
+module's manifest; the manifest is never edited to agree with it.
 
-The cost of that is paid at creation rather than at promotion, and it is the same cost the
-missing local tier already implies: a module created inside a project carries the manifest
-it would carry in a marketplace, version and all. There is no reduced manifest for a local
-module. And a field naming a publication the module does not yet have — where it is
-hosted, where its source lives — is **absent rather than invented**, on BR-8. Promotion
-does not fill it in on the way out, however natural the moment looks: filling it in is an
-edit, and an edit is not what a move is.
+The cost of that is paid at creation rather than at promotion. A module created inside a
+project carries the same manifest it would carry anywhere else, minus only the fields that
+would be false there — a field naming a publication it does not have, where it is hosted or
+where its source lives, is **absent rather than invented**, on BR-8. A local manifest is
+honest, not reduced. Promotion does not complete it on the way out, however natural the
+moment looks: filling one of those fields in is an edit, and an edit is not what a move is.
 
 The reverse direction is legitimate and carries no ceremony. A module that turned out to
 serve one project moves back in, and the projects that had adopted it are told through
@@ -111,8 +109,10 @@ reads none of — it writes nothing, and the absence is the statement.
 - **BR-2** — A module is created in the location matching the reach of the need it
   answers, and the default is the narrowest one that covers it.
 - **BR-3** — Promotion changes a module's location and what declares it, and rewrites no
-  file it contains. Demotion is the same move in the other direction and carries no extra
-  ceremony.
+  file it contains. What declares a module lies outside its tree — each project's
+  configuration key, and a marketplace's own manifest — so the module's own manifest is a
+  file it contains and never a declaration. Demotion is the same move in the other
+  direction and carries no extra ceremony.
 - **BR-4** — Editing a module runs the same pass and the same check as creating one.
   There is no lighter path.
 - **BR-5** — An edit names the type and scope its commit carries. The level the bump takes
