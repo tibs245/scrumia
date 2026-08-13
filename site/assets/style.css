@@ -768,7 +768,8 @@ section > h2::before {
    treatment, rather than the faint bare text a "several modules contribute"
    claim would otherwise render as the section's least confident-looking fact. */
 .ext-contributes li code { font-size: var(--text-sm); }
-.ext-contributes-none { color: var(--text-faint); font-family: var(--font-mono); font-size: var(--text-sm); }
+/* .conn-none (AC-12's own empty case) draws the identical absence — one rule, not two. */
+.ext-contributes-none, .conn-none { color: var(--text-faint); font-family: var(--font-mono); font-size: var(--text-sm); }
 
 .ext-facts { margin: 0 0 var(--space-6); padding-left: var(--space-5); color: var(--text-soft); max-width: var(--measure); }
 .ext-facts li { margin: 0 0 var(--space-2); line-height: var(--leading-snug); }
@@ -860,15 +861,15 @@ th {
 }
 td { color: var(--text-soft); }
 tbody tr:last-child td { border-bottom: 0; }
-/* AC-12's own empty case: a real row, not an absence, so it stays plain text. */
-.conn-none { color: var(--text-faint); font-family: var(--font-mono); font-size: var(--text-sm); }
 
 /* A module name is text at rest here, not accent — one page can name up to seven
    others (AC-12) plus a pairs_with line, and accent on every one of them is the
-   pointing-inflation identity.md refuses. */
+   pointing-inflation identity.md refuses. `code`'s own `color` (above) beats
+   inheritance, so the child has to be told explicitly, same as .ext-declares. */
 #plugs-into a, #pairs-with a { color: var(--text); }
 #plugs-into a:hover, #plugs-into a:focus-visible,
 #pairs-with a:hover, #pairs-with a:focus-visible { color: var(--accent); }
+#plugs-into a code, #pairs-with a code { color: inherit; }
 
 /* ---------- Cards ---------- */
 

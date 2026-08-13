@@ -316,7 +316,7 @@ def module_pairs_html(lang: str, module: dict, page_strings: dict, labels: dict,
     return (
         '<section id="pairs-with">\n'
         f'  <h2>{html.escape(labels.get("mod_h_pairs", ""))}</h2>\n'
-        f'  <p>{situation} {links}</p>\n'
+        f'  <p>{situation} {links}.</p>\n'
         '</section>'
     ), {"pairs_with"}
 
