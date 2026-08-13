@@ -770,7 +770,12 @@ cmd_claims() {
       failed=$((failed + 1))
     fi
     rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
-  done < <(jq -r 'unique_by(.key)[] | [.key, .module, .state, .location] | @tsv' <<<"$all")
+  # A key the grammar does not admit carries no module name to look for, and an empty
+  # needle matches every file; load_config has already named it as no declaration. Dropped
+  # here rather than in the loop because a tab-separated empty field vanishes on `read`,
+  # which shifts every column after it.
+  done < <(jq -r 'map(select(.module != "")) | unique_by(.key)[]
+    | [.key, .module, .state, .location] | @tsv' <<<"$all")
 
   printf '# claims — %s against what resolves here\n\n' "$file"
   if [ -z "$rows" ]; then

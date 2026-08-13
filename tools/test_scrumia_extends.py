@@ -745,6 +745,21 @@ def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
     code, _, err = run(["--claims"], config)
     check("and a project with no such file has nothing to reconcile",
           code == 0 and "nothing to reconcile" in err, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
+
+    # A key the grammar refuses names no module to look for, and looking for nothing finds
+    # it everywhere — so it must leave the table rather than answer for a file it never read.
+    project = project_with("""
+project: { name: "Refused" }
+modules:
+  "foo:": {}
+  "tibs245/scrumia:scrumia-practice-tdd": {}
+""")
+    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests first. |\n",
+                                       encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a key that is not a declaration is not reconciled against anything",
+          code == 0 and "foo:" not in out, f"exit {code}: {out[:300]}")
 
     shutil.rmtree(project)
     shutil.rmtree(shared)
