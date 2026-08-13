@@ -380,12 +380,19 @@ def test_ac12_module_page_shows_what_it_plugs_into() -> None:
 
     core = (REPO / "site" / "modules" / "scrumia-core.html").read_text(encoding="utf-8")
     check("a module declaring neither file carries no plugs-into section",
-          '<section id="plugs-into">' not in core, )
+          '<section id="plugs-into">' not in core)
+
+    # Derived, not hand-enumerated: a name added here would go stale exactly the
+    # way #297's own review caught a hand-typed pairs_with list going stale.
     ghp = (REPO / "site" / "modules" / "scrumia-github-project.html").read_text(encoding="utf-8")
-    check("the module with the most contributors names all seven, each linked",
-          all(f'<a href="../modules/{n}.html">' in ghp for n in
-              ("scrumia-design", "scrumia-specs", "scrumia-impl-rust", "scrumia-impl-solidjs",
-               "scrumia-practice-solid", "scrumia-practice-tanstack-query", "scrumia-practice-tdd")))
+    market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+    real_map = bs.load_extends_map([p["name"] for p in market["plugins"]], plugins_root=REPO / "plugins")
+    ghp_registers = {reg for reg, info in real_map["registers"].items() if info["module"] == "scrumia-github-project"}
+    contributors = {d["module"] for reg in ghp_registers for d in real_map["directives"].get(reg, [])}
+    check("every real contributor to a register scrumia-github-project opens is named and linked",
+          bool(contributors) and all(f'<a href="../modules/{n}.html">' in ghp for n in contributors),
+          str(contributors))
+
     discovery = (REPO / "site" / "modules" / "scrumia-discovery.html").read_text(encoding="utf-8")
     check("an opened register with no contributor still shows, spelled out",
           discovery.count('<span class="conn-none">no contribution</span>') == 2, discovery)

@@ -307,7 +307,7 @@ def module_pairs_html(lang: str, module: dict, page_strings: dict, labels: dict,
     if not pairs_with:
         return "", set()
     situation = page_strings.get("pairs_with")
-    if situation is None:
+    if not situation:
         ERRORS.append(f"site/i18n/{lang}/modules/{module['name']}.json: missing 'pairs_with' — "
                        f"site/modules.json names a complement for this module")
         return "", set()
