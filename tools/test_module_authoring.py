@@ -430,12 +430,14 @@ check("AC-6 names the type and the scope and sends the level to release-versioni
 # named outside the prohibition, not one written into it.
 check("AC-6 forbids announcing a level rather than merely omitting one",
       "do not announce one" in step0_lower)
+# Offsets rather than membership: a level word named in another step is often a substring
+# of the prohibition too, so only its position tells the two apart.
+opens = pass_text.index("### Name the commit")
+closes = pass_text.index("## Step 1", opens)
 levels = [m.start() for m in re.finditer(r"\bminor\b|\bmajor\b", pass_text, re.I)]
-forbidding = pass_text.partition("### Name the commit")[2].partition("## Step 1")[0]
-check("and neither level word appears anywhere the pass could be read as instructing one",
-      levels and all(pass_text[i:i + 6].lower() in forbidding.lower() for i in levels),
-      [pass_text[max(0, i - 60):i + 20] for i in levels
-       if pass_text[i:i + 6].lower() not in forbidding.lower()])
+stray = [pass_text[max(0, i - 70):i + 15] for i in levels if not opens < i < closes]
+check("and neither level word appears anywhere outside that prohibition",
+      bool(levels) and not stray, stray)
 
 report = " ".join(pass_text.partition("## What the pass reports")[2].lower().split())
 check("the report carries the pre-existing findings, the move and the commit signal",
