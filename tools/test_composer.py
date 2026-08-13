@@ -348,8 +348,12 @@ def test_ac10_the_visitors_own_module_reaches_the_config_and_only_the_config() -
         check("the install block prints result.modules alone",
               "result.modules" in body.group(1) and "result.own" not in body.group(1),
               body.group(1).strip()[:120])
-    check("compute returns the own key beside the module list, not inside it",
-          re.search(r"return \{[^}]*own: ownKey\(\)[^}]*modules: dedupe", js, re.DOTALL) is not None)
+    compute = re.search(r"function compute\(\) \{(.*?)\n  \}", js, re.DOTALL)
+    check("compute is readable", bool(compute))
+    if compute:
+        check("compute returns the own key beside the module list, never inside it",
+              "own: ownEntry" in compute.group(1)
+              and not re.search(r"modules\.push\(\s*own", compute.group(1)))
 
 
 def test_ac10_a_key_with_no_source_is_refused() -> None:

@@ -29,7 +29,11 @@ knows no command that installs what it does not ship, and inventing one would be
 the promise `features/business/modular-composition/business.md`'s BR-3 forbids —
 so the emission says the omission rather than leaving it to be noticed. A key
 that does not match the grammar is refused rather than emitted, and a name with
-no source stated is one of those: an unsourced name is not assumed published.
+no source stated is one of those: an unsourced name is not assumed published. A
+key a chosen module already put in the mapping is emitted once — a duplicate
+mapping key is a silent overwrite in whatever parses the file, not a louder
+declaration. The same name under a different source is a different module and
+stands beside it.
 
 **An absent capability has no key to spell.** The mapping names what is
 present, so a slot the visitor leaves empty is emitted as a comment carrying

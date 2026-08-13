@@ -114,10 +114,17 @@
     apps.forEach(function (a) { if (a.impl) modules.push(a.impl); });
     practices.forEach(function (p) { modules.push(p.module); });
 
-    // `own` is deliberately absent from `modules`: that list is what the install
-    // block prints, and we ship no command for a module we do not ship.
+    modules = dedupe(modules);
+    // A key already standing is not emitted twice: a duplicate mapping key is a
+    // silent overwrite in whatever parses the file, not a louder declaration.
+    var mine = SOURCE + ':';
+    var ownEntry = ownKey();
+    if (ownEntry.slice(0, mine.length) === mine
+        && modules.indexOf(ownEntry.slice(mine.length)) !== -1) ownEntry = '';
+
+    // Absent from `modules`: that list is what the install block prints.
     return { slots: slots, apps: apps, practices: practices, stacks: stacks,
-             additions: additions, own: ownKey(), modules: dedupe(modules) };
+             additions: additions, own: ownEntry, modules: modules };
   }
 
   function dedupe(list) {
