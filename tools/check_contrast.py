@@ -47,6 +47,7 @@ PAIRS = [
     # The thinnest margin in key-entry: re-measure if --human-surface ever moves.
     ("text-faint", "human-surface", 4.5, ".key-entry-label, on a chosen option"),
     ("border-strong", "surface-sunken", 3.0, ".key-entry-field's own boundary"),
+    ("border-strong", "human-surface", 3.0, "that boundary's outer edge, on a chosen option"),
 ]
 
 # identity.md decision 4: the human blue lives a hue category off the accent

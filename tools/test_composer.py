@@ -407,6 +407,13 @@ def test_ac11_the_free_entry_is_the_only_thing_gated_on_script() -> None:
     check("nothing about the free entry is gated on the motion class instead",
           not re.search(r"\.js\s+[^{}]*(opt-free|key-entry)[^{}]*\{", css))
 
+    # (0,1,1) beats .key-entry-field's own width and renders the field as a stub.
+    loose = [s.strip() for chunk in re.split(r"[{}]", css)
+             for raw in chunk.split(",")
+             for s in [re.sub(r":(?:has|not|is|where)\([^()]*\)", "", raw)]
+             if re.search(r"\.opt[\w-]*\s+input\b", s)]
+    check("no rule styles an input inside .opt by descent", not loose, str(loose))
+
     check("the option is absent until then",
           bool(re.search(r"^\.opt-free \{[^{}]*display: none", css, re.MULTILINE)))
     check("and its field is revealed only by a checked box, never by script",

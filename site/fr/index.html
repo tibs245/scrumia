@@ -552,7 +552,7 @@
         <div class="opt opt-free">
           <input type="checkbox" name="c-free" id="add-free">
           <label class="opt-free-head" for="add-free">
-            <b>Un module à vous</b><span>Sa clé, la source d'abord — <code>local:</code>, <code>shared:</code>, ou <code>owner/repo:</code>. Un nom sans source est refusé : le site ne peut pas deviner où vit un module que vous avez écrit.</span>
+            <b>Un module à vous</b><span>Sa clé, la source d'abord — <code>local:</code>, <code>shared:</code> ou <code>owner/repo:</code>. Un nom sans source est refusé : le site ne peut pas deviner où vit un module que vous avez écrit.</span>
           </label>
           <div class="key-entry">
             <label class="key-entry-label" for="add-free-key">clé du module</label>
@@ -563,7 +563,7 @@
                    spellcheck="false" autocomplete="off"
                    autocapitalize="none" autocorrect="off"
                    aria-describedby="add-free-refused">
-            <p class="key-entry-refused" id="add-free-refused">non ajouté — une clé exige sa source : local:, shared: ou owner/repo:</p>
+            <p class="key-entry-refused" id="add-free-refused">non ajouté — une clé porte sa source : local:, shared: ou owner/repo:</p>
           </div>
         </div>
       </div>
@@ -652,7 +652,7 @@ apps:
        data-note-own-impl="Pas de module d'implémentation pour cette stack : l'app suit les conventions du code d'à côté. Comportement normal, pas un manque — et le contrat pour écrire le vôtre tient en une page."
        data-note-practices="Les pratiques s'appliquent app par app, et seulement aux types d'app dont elles parlent. Là où l'une contredit le module d'implémentation, c'est le module d'implémentation qui gagne."
        data-note-practices-noapp="Les pratiques s'attachent aux apps. Sans app déclarée, elles s'installent et n'activent rien tant qu'aucune app n'apparaît dans le fichier."
-       data-note-own-module="Votre module est dans la configuration et dans aucune des commandes d'installation. Le site n'embarque aucun moyen de l'installer, et une commande inventée pour lui rendrait les autres invérifiables — installez-le comme il est distribué, puis lancez scrumia-init."
+       data-note-own-module="Votre module est dans la configuration et n'apparaît dans aucune des commandes d'installation. Le site n'embarque aucun moyen de l'installer, et une commande inventée pour lui rendrait les autres invérifiables — installez-le comme il est distribué, puis lancez scrumia-init."
        data-app-empty="# aucun module pour cette app — les agents suivent le code voisin"></div>
 </section>
 

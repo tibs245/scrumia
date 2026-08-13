@@ -1039,7 +1039,9 @@ tbody tr:last-child td { border-bottom: 0; }
   transition: background var(--dur-1) var(--ease-move);
 }
 .opt:hover { background: var(--surface-raised); }
-.opt input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
+/* `> input`, not `input`: the free entry puts a text field inside an .opt, and a
+   descendant selector would hand it the checkbox's 16px box. */
+.opt > input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
 .opt b { font-size: var(--text-base); font-weight: var(--weight-body); color: var(--text); }
 .opt-1 b, .opt-2 b, .opt-3 b, .opt-add b { font-family: var(--font-mono); font-size: var(--text-sm); }
 .opt-empty b, .opt-3:not(.opt-mod) b, .opt-free b { font-family: var(--font-body); font-size: var(--text-base); }
@@ -1072,8 +1074,10 @@ tbody tr:last-child td { border-bottom: 0; }
  * A shelf without a row (AC-9): no sign, no leader, no fill, no <details>. The
  * modules that fill no slot are not a choice between alternatives, so they get
  * none of the anatomy that exists to frame one. The heading is what stops the
- * shelf reading as the seventh row's open body — and it wears .presets-label's
- * register, not slot-name's: borrowing the row's typography borrows the row.
+ * shelf reading as the seventh row's open body — and it wears the label register
+ * .presets-label already uses, not slot-name's: borrowing the row's typography
+ * borrows the row. It pulls its own weight down from an <h3>'s, which is the one
+ * thing it does not share with that span.
  */
 .additions { margin: var(--space-8) 0 0; padding-left: var(--shelf-indent); }
 .additions .shelf { padding-left: 0; margin-bottom: 0; }
@@ -1105,7 +1109,6 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .opt-free-head > span { grid-column: 1; }
 .opt-free > .key-entry { grid-column: 2; }
-.opt-free:not(:has(> input:checked)):hover { background: var(--surface-raised); }
 
 .key-entry { display: none; min-width: 0; }
 /* Revealed on demand is what keeps the section a composition rather than a form,

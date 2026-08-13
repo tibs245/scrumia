@@ -103,9 +103,12 @@ screenshot, and WCAG 1.4.1 with two channels to spare.
 - **`min-width: 0` on the wrapper and the field.** A text input's intrinsic
   min-content width is about 20ch; in a `1fr` grid track that overflows its
   parent below roughly 420px. This is the component's real overflow risk.
-- **`width: 100%` on the field must keep beating `.opt input`'s `16px`.** It
-  does today by specificity, not by source order — assert it if the selectors
-  are ever reorganised.
+- **The enclosing option's checkbox rule must stay a child selector.** A
+  `.opt input` written as a descendant selector is `(0,1,1)` and beats
+  `.key-entry-field { width: 100% }` at `(0,1,0)` — the field then takes the
+  checkbox's `16px` box and renders as an empty 26×18px stub with no room for
+  the placeholder. `.opt > input` is what keeps them apart, and no source
+  reorder rescues it if the `>` is dropped.
 - **`autocapitalize="none"`.** Without it iOS Safari turns `local:` into
   `Local:` and refuses a visitor who typed the right answer.
 - **A length cap** (`maxlength`), as plausibility rather than security. The
