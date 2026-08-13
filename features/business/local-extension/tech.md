@@ -95,6 +95,7 @@ Four outcomes, one per declaration:
 | a register's table | its rows, in scope order | absent from the table | the narrowest module's rows, named on stderr | absent from the table, named on stderr |
 | `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
 | `--check` | — | — | named, not counted | an unmet dependency; exit non-zero |
+| `--claims` | honoured where the file names it | the verdict below | as resolved — it binds | the verdict below |
 | `compose-status.sh` | the declaration as written, under a heading saying so | the same — it resolves nothing, so it distinguishes none of these | | |
 
 A conflict is credited with no location, where a resolved or shadowed declaration is
@@ -106,9 +107,39 @@ not CI: `tools/validate.py` reads that stderr only on a non-zero exit, so a gree
 discards it. It is still the right surface, because it is the one someone runs when asking
 what is wrong.
 
-Exit status still carries meaning only for `--check`. A register table is an answer whether
-it is long or short, and a conflict must not stop a skill that never needed that module —
-which is why the conflict is loud everywhere and fatal in exactly one place.
+Exit status carries meaning at two surfaces, and they fail on different things. A register
+table is an answer whether it is long or short, and a conflict must not stop a skill that
+never needed that module — which is why the conflict is loud everywhere and fatal only at
+`--check`. `--claims` fails on nothing about the composition at all: what it can refuse is
+a sentence written about it.
+
+## Reconciling what `CLAUDE.md` claims
+
+`--claims` takes a file — `CLAUDE.md` beside the configuration's own directory unless one
+is named — and reconciles it against the states above. One row per declaration, and the
+verdict is three-way:
+
+| The declaration | The file | Verdict |
+|---|---|---|
+| `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
+| `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
+| `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
+| `absent` or `conflict` | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
+
+**The match is on strings, never on the file's shape.** What shape the composition section
+takes is `modular-composition`'s and changes without this tool being told; a reconciliation
+that parsed a table would pass by accident the day the table moved. The declaration key is
+what separates the last two rows because it is the one string carrying the module *and* its
+source (BR-6) — so a file that names it has said where the capability would come from, in
+the words the configuration uses, and a file that names only the bare module has not. A key
+present anywhere in the file counts: which sentence it sits in is a human's judgement, and
+a tool grading English is a tool inventing findings.
+
+It is vacuous on the machine that wrote the file, by construction — everything resolves
+there — and it is the clone that gets the answer. That asymmetry is the point rather than a
+weakness: AC-7 is a claim about a reader who is not the author.
+
+A project with no such file claims nothing, which is reported and is not a failure.
 
 ## Two sets, and why they are not one
 

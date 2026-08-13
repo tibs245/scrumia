@@ -3,6 +3,16 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-13 — What `CLAUDE.md` claims is reconciled against what resolves, not asserted (BR-8, AC-7, tech.md)
+- Issue: #292
+- Category: Added
+- Breaking: no
+
+## 2026-08-13 — A rules section is a document a directive names, and a project holding no module is handed to no checker (BR-3, BR-4, AC-8)
+- Issue: #292
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-12 — A shadow, a conflict and an honest reader are three rules of their own (BR-5, BR-6, BR-7, BR-9, AC-11)
 - Issue: #291
 - Category: Added

@@ -113,11 +113,27 @@ Then the capability is reported as a declared absence, naming the module and the
 ### AC-7 — What `CLAUDE.md` claims survives a clone without the local material
 
 ```gherkin
-Given a project whose `CLAUDE.md` describes its composition
-When it is read on a clone that has none of the machine-local material
-Then every capability it claims is either present or reported as absent, and none is
-  claimed as present while being unreachable
+Given a project whose `CLAUDE.md` names a module by its bare name, resolving only from a
+  shared checkout on the machine that wrote the file
+When the claims that file makes are reconciled against resolution on a clone holding
+  none of that material
+Then that module is named with the state it resolved to and the origin its key states,
+  and the reconciliation exits non-zero — the file claims a capability this reader has
+  no way to reach
+Given instead a `CLAUDE.md` naming the same module by its declaration key, so the file
+  itself states where the module would come from
+When the same reconciliation runs on the same clone
+Then the claim is reported as an absence the file already states, and it exits zero
+Given a project every declared module of which resolves for the reader
+When the same reconciliation runs
+Then every claim is honoured and it exits zero, on any machine
+And in none of the three does any register fail to render, nor any other surface fail
 ```
+
+The surface is `scrumia-extends --claims`, named here for the same reason AC-3 names its
+own: *"`CLAUDE.md` is read"* has no actor, and a criterion whose subject is a file nobody
+runs can neither pass nor fail. What it compares is the file's text against the state each
+declaration resolved to — not the prose around it, which is the human's.
 
 This is the criterion the shared-checkout location is most likely to fail. It is stated
 so that choosing that location is a decision with a known cost rather than a convenience.
@@ -127,12 +143,18 @@ so that choosing that location is a decision with a known cost rather than a con
 ### AC-8 — Local material without a module is not a malformed module
 
 ```gherkin
-Given a project whose only local extension is a set of directives and a rules section,
-  with no module of its own anywhere
+Given a project whose only local extension is a set of directives and a rules section
+  those directives name, with no module of its own anywhere
 When the composition is checked and the anatomy checker runs
 Then the project is reported as correctly extended, the directives appear in their
   registers, and no finding claims a module is missing or malformed
 ```
+
+Constructible because both shapes have a stated home: the directives are the project's own
+`extends.json` beside its configuration, and the rules section is whatever document a
+directive's `read:` names. The anatomy checker is handed no tree here, because there is no
+module to hand it — and the directory the configuration sits in is not one, which is the
+answer it gives when asked.
 
 ### AC-9 — No versioned file names a path outside the project
 

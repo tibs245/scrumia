@@ -45,13 +45,17 @@ terms rather than as a stepping stone:
   skill that consults that register, and it is data — no skill, no version, no
   installation.
 - **A rules section** the project owns, when a topic has grown past what one file can
-  carry.
+  carry. It is an ordinary document kept wherever the project keeps its documents, and it
+  reaches an agent through the directive whose `read:` names it — so it needs no home of
+  its own, and one no directive names is a document rather than a defect.
 - **A skill** the project ships to itself, when the thing needed is a procedure and no
   register asks for it.
 
 None of these is a degraded module. A project whose entire local extension is four
 directives has extended ScrumIA correctly, and nothing may report that project as having a
-malformed module — there is no module there to be malformed.
+malformed module — there is no module there to be malformed. The anatomy standard is a
+property of a module's own tree, so a project holding none presents it nothing to judge:
+the directory the configuration sits in is not a module, and no surface reads it as one.
 
 This is the list `knowledge-placement` routes toward when its answer is "the project". It
 is stated here and nowhere else.
@@ -183,8 +187,28 @@ a directive travels with the project, a person's shared directory travels with n
 What follows is a rule about honesty rather than about mechanism: **what a project's
 `CLAUDE.md` claims must remain true for someone who clones it without any of it.** Where
 a capability comes from a location a clone cannot reach, the composition reports it as a
-declared absence, naming the module and where it would come from — the same treatment an
-empty slot already receives. It never reports it as present, and it never fails.
+declared absence, naming the module and the source its key states. It never reports it as
+present, and it never fails.
+
+Two comparisons carry that, and they answer different questions:
+
+| What is compared | Against | Answers |
+|---|---|---|
+| every declaration the configuration makes | the roots resolution found | which capabilities this machine actually has |
+| the text of `CLAUDE.md` | the state each declaration resolved to | whether that file's claims are true for whoever is reading it |
+
+The first is what makes a declared absence sayable at all. The second is what makes it
+sayable about the one file an agent reads before it knows anything else, and it is
+needed because `CLAUDE.md` resolves nothing — which puts it under BR-6's last sentence,
+where a row naming a capability by its bare name is phrasing a declaration as presence.
+Naming it by its declaration key instead states the module and its source at once, which
+is the same fact the absence report carries: the file then offers an origin the reader
+can check rather than a capability it cannot. A module that resolves wherever the project
+is cloned needs neither, because there the claim is simply true.
+
+Neither comparison reads English, and neither is asked to. One matches names, the other
+matches declarations against directories; the sentence a human writes around a module is
+the human's, and no tool is trusted to grade it.
 
 The consequence is worth stating plainly, because it is the argument against the shared
 directory and it should be readable by whoever is choosing it: a module that lives only
@@ -220,7 +244,11 @@ on one machine is a module the project cannot be handed to someone else with.
   narrowest and it is a conflict again.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
-  present and never causes a failure.
+  present and never causes a failure. `CLAUDE.md` is held to the same rule by comparison
+  rather than by prose: a module it names that does not resolve for the reader running it
+  is a claim that reader cannot check, and the file states that module's source — its
+  declaration key — or makes no claim about it. What may fail there is the reconciliation,
+  and the defect it reports belongs to the file, never to the absence.
 - **BR-9** — A conflict blocks the declaration it applies to and nothing else: that
   module contributes no directive anywhere, every other module still resolves, and the
   dependency check exits non-zero on it.
