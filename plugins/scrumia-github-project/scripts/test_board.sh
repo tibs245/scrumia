@@ -35,11 +35,12 @@ mkdir -p "$WORKDIR/.scrumia"
 cat > "$WORKDIR/.scrumia/config.yaml" <<'YAML'
 project:
   repo: "acme/widgets"
-settings:
-  tracker:
-    project_number: 1
-    board:
-      field_id: "FIELD"
+modules:
+  "acme/widgets:scrumia-github-project":
+    params:
+      project_number: 1
+      board:
+        field_id: "FIELD"
 YAML
 
 # 201: closed, stuck in "Ready for dev" (the AC-8 gap). 202: open, same
@@ -161,17 +162,7 @@ trap 'rm -rf "$WORKDIR" "$WORKDIR2" "$WORKDIR3"' EXIT
 
 cp "$WORKDIR/gh" "$WORKDIR3/gh"
 mkdir -p "$WORKDIR3/.scrumia"
-# The migrated shape (ADR-0021); the blocks above still cover the retired nest.
-cat > "$WORKDIR3/.scrumia/config.yaml" <<'YAML'
-project:
-  repo: "acme/widgets"
-modules:
-  "acme/widgets:scrumia-github-project":
-    params:
-      project_number: 1
-      board:
-        field_id: "FIELD"
-YAML
+cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR3/.scrumia/config.yaml"
 
 # 403 is closed: how a discussion normally ends, and it needs no PR to get there.
 cat > "$WORKDIR3/item-list.json" <<'JSON'

@@ -32,12 +32,12 @@ filed without a card, so the only ones reaching it are those someone carded by h
 
 **Within it, the `discussion` label is applied before the state split, and the order is the
 rule rather than an implementation preference.** A discussion is normally closed once it is
-settled, and it never had a pull request, so a state-first split files it under
-`closed_without_pr` — reported as a ticket abandoned mid-flight, which is the opposite of
-what it is. Splitting by state first would leave the backstop correct on open discussions
-and wrong on the settled ones, which are most of them.
+settled, and it never had a pull request, so a state-first split files any of them outside
+`Done` under `closed_without_pr` — reported as a ticket abandoned mid-flight, which is the
+opposite of what it is. Splitting by state first would leave the backstop correct on open
+discussions and wrong on the settled ones, which are most of them.
 
-A consumer reading only `columns` gets what is waiting to be started, which is what both
+A consumer reading only `columns` gets the work, discussions excluded — which is what both
 readings that owe the subtraction want. One reporting counts adds all three.
 
 ## The deviation search command

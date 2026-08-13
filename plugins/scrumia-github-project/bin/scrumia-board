@@ -486,10 +486,10 @@ case "$cmd" in
   read)    load_config; cmd_read "$@" ;;
   ready)   load_config; cmd_ready "$@" ;;
   epic)    load_config; cmd_epic "$@" ;;
-  # SOFT_SETTINGS downgrades an unresolved cascade to a warning, which is safe here and
-  # nowhere else: this command reads `project.repo` — loaded before the settings, and
-  # still fatal if missing — and touches no value the cascade carries, so there is no
-  # default for it to run on. The other commands answer from the board and must stop.
+  # SOFT_SETTINGS makes an unresolved cascade a non-event — not a warning, nothing is
+  # emitted — which is safe here and nowhere else: this command reads `project.repo`,
+  # loaded before the settings and still fatal if missing, and touches no value the
+  # cascade carries. The other commands answer from the board and must stop.
   issues)  SOFT_SETTINGS=yes; load_config; cmd_issues "$@" ;;
   *)       usage ;;
 esac

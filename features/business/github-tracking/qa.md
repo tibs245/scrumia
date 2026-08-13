@@ -144,26 +144,6 @@ Then every commit of that ticket is returned — a lookup that returns only some
   the failure the trailer exists to remove, because a partial answer reads as a complete one
 ```
 
-## Out of scope
-
-- Who reads the deviation records once they accumulate, and on what occasion — open.
-  This feature materialises the record and makes the search possible; it appoints nobody.
-- Creating the board's columns and the project itself (`scrumia-project-setup`) —
-  setup-time, not the ongoing reading and moving this feature specifies.
-- The code cycle's **process** — isolation per ticket, when work is committed, what a
-  commit must carry, what is reviewed when, what may merge.
-  `features/business/dev-flow/` owns those rules and
-  is where they are stated in full. What stays in scope here is their
-  **materialisation** on GitHub: that the reviewable proposal is a pull request,
-  opened and linked to its issue this way, and that its progress shows as a column
-  move. The module implements the cycle (`business.md`, per ADR-0013); it does not
-  specify it.
-- Composing a non-GitHub tracker with GitHub pull requests. Not a gap in this spec —
-  a gap in the slot, per ADR-0013, closed only when that ADR is reopened.
-- Authentication and reachability failures — `gh` not logged in, the `project` scope
-  missing, the board unreachable. `scrumia-board doctor` names which one; that is
-  operational resilience, not a tracking business rule.
-
 ### AC-13 — The `discussion` label is subtracted, not merely declared
 
 ```gherkin
@@ -185,3 +165,45 @@ The label's declaration is cheap; the exclusion is the work. Without it a backlo
 with issues nobody intends to start, and the readings that decide what to do next are the
 first casualty.
 
+Every scenario above opens on an issue that is already on the board, which is the
+exception — a human carded it. The ordinary path is next, and it needs its own criterion
+or nothing fails when a skill starts carding them.
+
+### AC-14 — A discussion issue is filed without a card
+
+```gherkin
+Given a discussion being routed to a new issue
+When the issue is created
+Then it is created without a project card, so it enters none of the six columns and
+  appears in no board read — the label's subtraction is the backstop for a card someone
+  added by hand, not the mechanism that keeps discussions out of the work
+Given instead the issue filed with a card
+When a board read runs
+Then this criterion fails, whether or not the label saved the readings downstream: a card
+  nobody placed is work someone has to triage, which is what filing the issue was meant
+  to avoid creating
+```
+
+This is the rule the ordinary path rests on, so it is the one that must be able to fail.
+An issue filed as work takes a card and an issue that is not work takes none, both from
+the single rule stated in the lifecycle section above.
+
+## Out of scope
+
+- Who reads the deviation records once they accumulate, and on what occasion — open.
+  This feature materialises the record and makes the search possible; it appoints nobody.
+- Creating the board's columns and the project itself (`scrumia-project-setup`) —
+  setup-time, not the ongoing reading and moving this feature specifies.
+- The code cycle's **process** — isolation per ticket, when work is committed, what a
+  commit must carry, what is reviewed when, what may merge.
+  `features/business/dev-flow/` owns those rules and
+  is where they are stated in full. What stays in scope here is their
+  **materialisation** on GitHub: that the reviewable proposal is a pull request,
+  opened and linked to its issue this way, and that its progress shows as a column
+  move. The module implements the cycle (`business.md`, per ADR-0013); it does not
+  specify it.
+- Composing a non-GitHub tracker with GitHub pull requests. Not a gap in this spec —
+  a gap in the slot, per ADR-0013, closed only when that ADR is reopened.
+- Authentication and reachability failures — `gh` not logged in, the `project` scope
+  missing, the board unreachable. `scrumia-board doctor` names which one; that is
+  operational resilience, not a tracking business rule.

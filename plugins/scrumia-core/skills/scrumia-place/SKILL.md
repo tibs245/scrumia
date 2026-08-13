@@ -235,9 +235,11 @@ waiting to be started can subtract it. The label's spelling, where it is declare
 reads it are
 [`github-tracking`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s
 — read it there, and do not invent a spelling: a label nothing queries is documentation
-rather than a filter, and one spelled freshly at filing time is queried by nothing. Whether
-the new issue takes a board card is that feature's too; read the answer there rather than
-from here, so that changing it changes one file.
+rather than a filter, and one spelled freshly at filing time is queried by nothing.
+
+Whether the issue is also placed on whatever the tracker uses to show work in flight — a
+board, with `scrumia-github-project` in the slot — is that feature's answer too. Read it
+there rather than from here, so that changing it changes one file.
 
 A fact that is simply **not a rule** is not unresolved. Nothing about it is open, and nobody
 has to settle it — it takes questions 5 and 6 like anything else. Reading "not a rule yet"

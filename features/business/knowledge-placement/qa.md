@@ -168,6 +168,10 @@ Then it completes, the run is not interrupted, and the question about placement 
 ```gherkin
 Given a composition with no module in the tracker slot
 When the tree routes a discussion
-Then it names the gap and the module that would fill it, creates nothing, and does not
-  write the discussion into a file in the repository
+Then it names the gap — the module that would fill it, or the empty slot itself where no
+  module can be named — creates nothing, and does not write the discussion into a file in
+  the repository
 ```
+
+Naming a module nobody can name would be inventing one, which is the improvisation this
+criterion refuses; the empty slot named is the gap, and it is a complete answer.

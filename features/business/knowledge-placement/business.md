@@ -69,10 +69,11 @@ about something that was closed than about something open. A search restricted t
 currently on the board will miss exactly the cases the tree was built for.
 
 Where nothing matching exists, a new issue is created, carrying a label that a query can
-exclude. The label earns its place by being something a query selects on, which here means
-something the status and next-step readings subtract: an issue holding a discussion is not
-work waiting to be refined, and counting it as such is how a backlog becomes unreadable.
-Which label, and where it is declared, is `github-tracking`'s.
+select on. That is what the label has to earn: an issue holding a discussion is not work
+waiting to be refined, and counting it as such is how a backlog becomes unreadable, so
+wherever the status and next-step readings meet one they subtract it. Whether they meet
+one at all — where such an issue is filed, and which of a tracker's surfaces enumerate it
+— is `github-tracking`'s, along with the label's spelling and its declaration.
 
 ## The tree reminds, it does not block
 
@@ -112,12 +113,14 @@ refuses everywhere else.
 - **BR-6** — A discussion searches issues in every state before creating one, and never
   searches the board — the board carries what is in flight, not what has been settled.
 - **BR-7** — A new issue holding a discussion carries a label the status and next-step
-  readings exclude. The label's spelling and declaration are `github-tracking`'s.
+  readings exclude wherever they enumerate it. The label's spelling and declaration are
+  `github-tracking`'s, as is whether such an issue is enumerated at all.
 - **BR-8** — The tree runs after the write, as a reminder. It intercepts nothing and
   refuses nothing.
 - **BR-9** — Where the destination's capability is absent from the composition, the tree
-  names the gap and the module that would fill it, and improvises no substitute. It never
-  writes project state into the repository to compensate.
+  names the gap — the module that would fill it, or the empty slot itself where no module
+  can be named — and improvises no substitute. It never writes project state into the
+  repository to compensate.
 
 ## Vocabulary
 
