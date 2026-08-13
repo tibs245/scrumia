@@ -13,13 +13,17 @@
 | [slot-index](app/site/slot-index/index.md) | app/site | active | The #slots section of the home page: the seven questions modular-composition defines, each row showing what currently answers it in this… |
 | [agent-team](business/agent-team/index.md) | business | active | Standing roles carry ScrumIA's execution: what each owns, what it explicitly refuses, when it activates, and what escalates to the human… |
 | [ceremonies](business/ceremonies/index.md) | business | active | Which occasions beside the ticket path this project keeps, and on what terms — as distinct from a gate, which decides on one change in… |
+| [compound-components](business/compound-components/index.md) | business | draft | The compound component pattern, framework-agnostic. |
 | [dev-flow](business/dev-flow/index.md) | business | active | Two paths, kept deliberately apart: brainstorming turns an idea into a scoped ticket, human-led and agent-challenged; execution turns a… |
 | [execution-policy](business/execution-policy/index.md) | business | active | Which model executes a ticket, decided from two labels the manager already sets at refinement: scope/ — how far the change reaches — and… |
 | [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
+| [form-management](business/form-management/index.md) | business | draft | Declarative form management for React implementations. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
+| [html-css-and-accessibility](business/html-css-and-accessibility/index.md) | business | draft | Modern HTML and CSS, with accessibility as a first-class concern, applicable to React and SolidJS implementations. |
 | [knowledge-placement](business/knowledge-placement/index.md) | business | draft | What happens to something an agent just learned. |
 | [local-extension](business/local-extension/index.md) | business | draft | The places a module may live besides a marketplace, and the material a project may add without a module at all. |
 | [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through modules, an unordered mapping in . |
 | [module-anatomy](business/module-anatomy/index.md) | business | draft | The shape a ScrumIA module takes inside itself, and what says whether a given module has it. |
 | [module-authoring](business/module-authoring/index.md) | business | draft | How a ScrumIA module comes into existence, changes, and moves — from nothing to a module that already meets the anatomy standard, and from… |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
+| [runtime-validation](business/runtime-validation/index.md) | business | draft | Type-safe runtime validation at trust boundaries, applicable to React and SolidJS implementations. |
