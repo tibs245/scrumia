@@ -15,6 +15,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   usefully?* — applied to what an entry says and never to the directory it sits in, so a
   committed memory directory exempts nothing in it. It reminds after the write; it
   intercepts nothing.
+- A `PostToolUse` hook on `Write` and `Edit` — a write to an agent-memory directory
+  answers with a reminder to run `scrumia-place` on the entry. Installed with the module,
+  it runs after the write and refuses nothing; it stays silent without `jq` and outside a
+  directory holding `.scrumia/config.yaml`.
 - `scrumia-extends` — prints the directives that extend one register, for this project:
   name, type, whether it is required, one line of what it says, and the file to open.
   It computes on demand and stores nothing, so there is no artefact to rebuild or to

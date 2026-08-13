@@ -31,6 +31,13 @@ marketplace's own manifests on demand, rather than by memorizing a table that go
 | `scrumia-module-audit` | Audits one module against the anatomy rules a program cannot decide from its tree — one concern per file, an index that carries content, and the README's optional sections against what the module actually reads and needs. Reports in the same finding shape as `scrumia-module check --json`. |
 | `/next` | Reads the composition and the tracker, and recommends the next workflow step. Recommends; launches nothing. |
 
+It also installs one hook, `hooks/place-memory-write.sh`, on `PostToolUse` for `Write` and
+`Edit`. A write to an agent-memory directory answers with a reminder to run
+`scrumia-place` on the entry; every other write draws nothing. It runs after the write and
+refuses nothing — a project that does not install this module simply never sees it, and
+`scrumia-place` stays reachable by hand. It is silent without `jq`, and outside a
+directory holding `.scrumia/config.yaml`.
+
 ## Settings it reads
 
 `.scrumia/config.yaml` itself — `project.name`, `project.repo`, `extends`, and each app's
