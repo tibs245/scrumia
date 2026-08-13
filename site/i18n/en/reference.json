@@ -58,8 +58,11 @@
   "rust_row2": "Measures an existing app against the rules, finding by finding",
 
   "solidjs_p": "Fine-grained reactivity without React reflexes, behaviour-first component tests, structure by feature. <strong>Refuses</strong> destructured props, effects used as derivations, components that fetch.",
+  "reactjs_p": "Server Components by default, Actions for mutations, derived state during render, behaviour-first component tests. <strong>Refuses</strong> <code>useEffect</code> for derived state, imperative DOM, effects where event handlers belong, unnecessary <code>\"use client\"</code>.",
   "solidjs_row1": "The reference, loaded before writing SolidJS in a covered app",
   "solidjs_row2": "Measures an existing app against the rules, finding by finding",
+  "reactjs_row1": "The reference, loaded before writing React 19 in a covered app",
+  "reactjs_row2": "Measures an existing app against the rules, finding by finding",
 
   "tdd_p": "Refines one point of the implementation contract: <strong>how we test</strong>. The cycle operationalized for an agent, the mock boundary, AC-to-test mapping.",
   "tdd_row1": "The reference: cycle, mock boundary, where TDD stops",

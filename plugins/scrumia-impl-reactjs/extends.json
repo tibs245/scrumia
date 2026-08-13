@@ -1,0 +1,44 @@
+{
+  "implement": [
+    { "name": "Project layout", "type": "norm", "when": "required",
+      "summary": "Server-first tree, by feature, the data boundary at the feature's api layer",
+      "read": "skills/scrumia-reactjs/guides/05-project-layout.md" },
+    { "name": "Components and props", "type": "norm", "when": "required",
+      "summary": "Function components, ref as a prop, Server-first with 'use client' only when needed",
+      "read": "skills/scrumia-reactjs/guides/01-components-and-props.md" },
+    { "name": "State and derivations", "type": "norm", "when": "required",
+      "summary": "Derive during render, use useActionState/useTransition/useOptimistic for mutations",
+      "read": "skills/scrumia-reactjs/guides/02-state-and-derivations.md" },
+    { "name": "Control flow", "type": "norm", "when": "required",
+      "summary": "Suspense for readiness, form action for submission, conditional rendering during render",
+      "read": "skills/scrumia-reactjs/guides/03-control-flow.md" },
+    { "name": "Data boundary", "type": "norm", "when": "required",
+      "summary": "Fetch in Server Components at the route segment; Client Components receive props or use(promise)",
+      "read": "skills/scrumia-reactjs/guides/04-data-boundary.md" },
+    { "name": "Testing", "type": "norm", "when": "required",
+      "summary": "Behaviour-first component tests, RSC test strategy, what tests must not reach for",
+      "read": "skills/scrumia-reactjs/guides/06-testing.md" },
+    { "name": "No useEffect for derived state", "type": "refusal", "when": "required",
+      "summary": "If a value can be calculated during render, an Effect is the expensive version",
+      "read": "skills/scrumia-reactjs/decisions/D-01-no-useeffect-for-derived-state.md" },
+    { "name": "No imperative DOM", "type": "refusal", "when": "required",
+      "summary": "Ref-based DOM mutation breaks the declarative contract — React owns the DOM",
+      "read": "skills/scrumia-reactjs/decisions/D-02-no-imperative-dom.md" },
+    { "name": "No effects where event handlers belong", "type": "refusal", "when": "required",
+      "summary": "Effects run because the component was displayed, handlers run because of an interaction",
+      "read": "skills/scrumia-reactjs/decisions/D-03-effects-where-event-handlers-belong.md" },
+    { "name": "No unnecessary 'use client'", "type": "refusal", "when": "required",
+      "summary": "Adding the directive ships a transitive dependency tree to the browser for nothing",
+      "read": "skills/scrumia-reactjs/decisions/D-04-no-unnecessary-client-components.md" }
+  ],
+  "review": [
+    { "name": "React 19 refusals", "type": "refusal", "when": "required",
+      "summary": "useEffect for derived state, imperative DOM, effects-where-handlers, unnecessary 'use client'",
+      "read": "skills/scrumia-reactjs/SKILL.md" }
+  ],
+  "audit": [
+    { "name": "React 19 audit", "type": "method", "when": "optional",
+      "summary": "Measure an existing React 19 app against these guides, finding by finding",
+      "read": "skills/scrumia-reactjs-audit/SKILL.md" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-impl-reactjs — ScrumIA",
+  "meta_description": "scrumia-impl-reactjs : le slot implémentation de ScrumIA pour React 19 — Server Components par défaut, Actions pour les mutations, état dérivé au rendu, tests de composants axés sur le comportement.",
+  "og_title": "scrumia-impl-reactjs — ScrumIA",
+  "tagline": "Server Components par défaut, état dérivé au rendu, Actions pour tout ce qui était un effet.",
+  "responsibilities": "<p>Possède le <em>comment</em> d'une application React 19 : Server Components et App Router traités comme la valeur par défaut, état dérivé calculé au rendu plutôt qu'à l'intérieur d'effets, mutations et formulaires écrits comme des Actions, et une structure organisée par feature. Livre une compétence d'audit pour les réflexes React qui reviennent.</p>",
+  "refusals": "<p>Pas de <code>useEffect</code> pour un état calculable au rendu, pas d'échappatoire vers le DOM impératif, pas d'effet là où un gestionnaire d'événement répond à la même question, pas de <code>\"use client\"</code> qui embarque tout un arbre de dépendances dans le navigateur sans raison.</p>",
+  "philosophy": "<p>Présume que le modèle mental de React 19 — serveur par défaut, rendu pur, transitions interruptibles — mérite d'être appris plutôt que de transporter les réflexes de React 16. Coûte le désapprentissage de motifs qui compilent mais cessent d'être idiomatiques.</p>"
+}
