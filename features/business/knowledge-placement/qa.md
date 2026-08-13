@@ -168,9 +168,10 @@ satisfied by any line at all, so a run that emitted noise would pass on the half
 feature actually depends on, and only the non-blocking half would be tested.
 
 ```gherkin
-Given the same write in a repository that has composed nothing
-When it happens
-Then nothing is said: there is no composition, so there is no destination to route to
+Given a memory directory's index rather than one of its entries
+When it is written
+Then nothing is asked about it: an index is navigation, and it states nothing that could
+  have been placed elsewhere
 ```
 
 ### AC-15 — An absent destination is named, not improvised
@@ -185,3 +186,19 @@ Then it names the gap — the module that would fill it, or the empty slot itsel
 
 Naming a module nobody can name would be inventing one, which is the improvisation this
 criterion refuses; the empty slot named is the gap, and it is a complete answer.
+
+### AC-16 — Unasked, the reminder stays quiet outside a composition
+
+```gherkin
+Given a repository that declares no composition
+When something is written to agent memory in it
+Then nothing arrives unasked
+Given the same repository
+When someone invokes the tree themselves
+Then it answers — what silence bounds is the reminder, never the tree
+```
+
+AC-15's gap and this one are opposite answers to adjacent situations: a declared
+composition missing a slot is told which one, and an undeclared composition is told
+nothing at all. A criterion that returned the gap here would make every repository on the
+machine an audience for this feature.

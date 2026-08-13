@@ -3,12 +3,12 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-14 — BR-10: the reminder speaks where a composition does
+## 2026-08-14 — BR-10: unasked, the reminder speaks only where a composition is declared
 - Issue: #295
 - Category: Added
 - Breaking: no
 
-## 2026-08-14 — BR-8 names what the reminder must say, and prices refusal against state rather than against nothing
+## 2026-08-14 — BR-8 names what the reminder must say, answers to an entry rather than an index, and prices refusal against repository state
 - Issue: #295
 - Category: Changed
 - Breaking: no
