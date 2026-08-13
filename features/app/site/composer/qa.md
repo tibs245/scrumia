@@ -159,6 +159,8 @@ And no install command is emitted for it — the site cannot know how to install
   it does not ship, and saying so is what keeps the other commands trustworthy
 And an entry whose key does not match `<source>:<module>` is refused rather than
   emitted
+And a key a chosen module already put in the mapping is emitted once, while the
+  same name under a different source stands beside it
 ```
 
 The location is not a second answer to collect: it is the `<source>:` half of the

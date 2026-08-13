@@ -354,6 +354,11 @@ def test_ac10_the_visitors_own_module_reaches_the_config_and_only_the_config() -
         check("compute returns the own key beside the module list, never inside it",
               "own: ownEntry" in compute.group(1)
               and not re.search(r"modules\.push\(\s*own", compute.group(1)))
+        # Structural: the emission only differs after an interaction, and this suite
+        # has no JS engine to drive one.
+        check("a key the mapping already carries is dropped rather than duplicated",
+              re.search(r"modules\.indexOf\(ownEntry.*?\)\s*!==\s*-1", compute.group(1))
+              is not None, compute.group(1)[-300:])
 
 
 def test_ac10_a_key_with_no_source_is_refused() -> None:
