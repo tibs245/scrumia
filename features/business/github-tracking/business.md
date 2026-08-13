@@ -67,6 +67,13 @@ Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
 and the post-merge move to `Done` currently have no skill that performs them —
 selecting a ticket into a sprint or merging its PR does not by itself move its card.
 
+**This table is the ticket's lifecycle, not every issue's.** A ticket is an issue filed as
+work to be done; an issue that is not work — one holding a discussion — is filed, takes no
+card, and enters this table nowhere. That is not a gap in the table: an issue nobody
+intends to start has no state to be in, and giving it one would mean answering "where is
+this up to?" about something nobody is doing. The two words are used precisely from here
+on, and where this file says *ticket* it means the first kind.
+
 ### Closed without a PR
 
 A ticket can also leave the flow sideways instead of reaching `Done`: closed as

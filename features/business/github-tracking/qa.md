@@ -179,9 +179,10 @@ Then it is created without a project card, so it enters none of the six columns 
   added by hand, not the mechanism that keeps discussions out of the work
 Given instead the issue filed with a card
 When a board read runs
-Then this criterion fails, whether or not the label saved the readings downstream: a card
-  nobody placed is work someone has to triage, which is what filing the issue was meant
-  to avoid creating
+Then the read returns it — under `discussions` if the label held, in a column if it did
+  not — and the criterion fails either way, whether or not the label saved the readings
+  downstream: a card is what makes an issue visible as work, and this issue is not work,
+  placed in a column or not
 ```
 
 This is the rule the ordinary path rests on, so it is the one that must be able to fail.
