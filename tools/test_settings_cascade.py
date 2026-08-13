@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Acceptance tests for the modules that consume the settings cascade (#315).
+"""Acceptance tests for the modules that consume the settings cascade.
 
-AC-18's consuming half and AC-19 of features/business/modular-composition/, and AC-22 of
+AC-18's consuming half, AC-19, AC-20 and AC-21 of
+features/business/modular-composition/, and AC-22 of
 features/business/execution-policy/: a module resolves its configuration through
-`scrumia-extends --settings` rather than out of the raw config, and one that cannot
-resolve it stops instead of answering from its own defaults.
+`scrumia-extends --settings` rather than out of the raw config, the layer decides which
+value answers and the shape never does, a key written bare is an absence at any depth, and
+a module that cannot resolve stops instead of answering from its own defaults.
 
 The two consumers under test are `plugins/scrumia-github-project/bin/scrumia-board` and
 `plugins/scrumia-teams/bin/scrumia-pick-model`. Neither is allowed to reach the network
@@ -27,6 +29,12 @@ ROOT = Path(__file__).resolve().parent.parent
 BOARD = ROOT / "plugins" / "scrumia-github-project" / "bin" / "scrumia-board"
 PICK = ROOT / "plugins" / "scrumia-teams" / "bin" / "scrumia-pick-model"
 EXTENDS_BIN = ROOT / "plugins" / "scrumia-core" / "bin"
+EXTENDS = EXTENDS_BIN / "scrumia-extends"
+
+# What each consumer passes as `--legacy`, kept here so a test asserting on the resolver
+# directly cannot drift from what the consumer actually asks for.
+TRACKER_NEST = "tracker"
+TEAMS_NEST = "team.execution=execution"
 
 FAILURES: list[str] = []
 TMP = Path(tempfile.mkdtemp(prefix="scrumia-cascade-"))
@@ -287,6 +295,143 @@ def test_a_partial_migration_keeps_both_halves() -> None:
           (as_json(out) or {}).get("field_id") == "FIELD_MIGRATED", f"{code} {out} {err}")
 
 
+# --------------------------------------------------------------- AC-20, the layer decides
+
+def test_a_stale_local_layer_outranks_a_migrated_repository() -> None:
+    """The window this ticket closes: layer 3 retired, layer 2 migrated.
+
+    `.scrumia/config.local.yaml` is never committed, so it is never migrated with the
+    repository. Both consumers must still answer the machine's value — and both would
+    answer the repository's if the two shapes were reconciled after the layers merged.
+    """
+    cfg = write("stale.yaml", MIGRATED_SHAPE)
+    local = write("stale.local.yaml", """settings:
+  tracker:
+    project_number: 42
+  team:
+    execution:
+      matrix:
+        L: { medium: sonnet }
+""")
+    code, out, err = run(BOARD, ["doctor"], cfg, local=local)
+    answer = as_json(out) or {}
+    check("AC-20: the local layer's retired nest beats the repository's migrated params:",
+          answer.get("project_number") == 42, f"{code} {out} {err}")
+
+    code, out, err = run(PICK, ["--scope", "L", "--risk", "medium"], cfg, local=local)
+    answer = as_json(out) or {}
+    check("AC-20: and the policy answers the machine's cell, not the repository's",
+          code == 0 and answer.get("model") == "sonnet", f"{code} {out} {err}")
+
+
+def test_the_rule_is_layer_order_not_a_shape_preference() -> None:
+    """The mirror image: retired in layer 2, current in layer 3. The later layer wins."""
+    cfg = write("mirror.yaml", BASE_PROJECT + f'''modules:
+  "{TRACKER_KEY}":
+    params:
+      tracker:
+        project_number: 7
+        board: {{ field_id: "FIELD_RETIRED_IN_L2" }}
+settings: {{}}
+''')
+    local = write("mirror.local.yaml", f'''modules:
+  "{TRACKER_KEY}":
+    params:
+      project_number: 42
+''')
+    code, out, err = run(BOARD, ["doctor"], cfg, local=local)
+    answer = as_json(out) or {}
+    check("AC-20: layer 3 in the current shape beats layer 2 in the retired one",
+          answer.get("project_number") == 42, f"{code} {out} {err}")
+    check("AC-20: and what only the retired nest carries still resolves",
+          answer.get("field_id") == "FIELD_RETIRED_IN_L2", f"{code} {out} {err}")
+
+
+def test_within_one_layer_the_current_shape_wins() -> None:
+    """Inside a single layer there is no order to read, so the shape decides — and only
+    there. This is the rule the consumers applied before, kept and moved."""
+    cfg = write("intra.yaml", BASE_PROJECT + f'''modules:
+  "{TRACKER_KEY}":
+    params:
+      project_number: 7
+      tracker:
+        project_number: 99
+        board: {{ field_id: "FIELD_FROM_NEST" }}
+settings: {{}}
+''')
+    code, out, err = run(BOARD, ["doctor"], cfg)
+    answer = as_json(out) or {}
+    check("AC-20: one layer carrying both shapes answers the current one, key by key",
+          answer.get("project_number") == 7, f"{code} {out} {err}")
+    check("AC-20: and the retired nest still fills what the current shape does not carry",
+          answer.get("field_id") == "FIELD_FROM_NEST", f"{code} {out} {err}")
+
+
+def test_a_retired_nest_no_layer_carries_resolves_clean() -> None:
+    """A finished migration must not be the state that stops every consumer."""
+    cfg = write("nonest.yaml", MIGRATED_SHAPE)
+    code, out, err = run(EXTENDS, ["--settings", TRACKER_KEY, "--legacy", TRACKER_NEST], cfg)
+    answer = as_json(out) or {}
+    check("AC-20: naming a nest nothing carries resolves, and exits 0",
+          code == 0 and answer.get("project_number") == 22, f"{code} {out} {err}")
+    check("AC-20: and it invents no key on that nest's account",
+          code == 0 and "tracker" not in answer, f"{code} {out} {err}")
+
+    code, out, err = run(BOARD, ["doctor"], cfg)
+    check("AC-19 still holds: doctor reports on a fully migrated project too",
+          (as_json(out) or {}).get("checks", {}).get("settings_resolved") is True,
+          f"{code} {out} {err}")
+
+
+# --------------------------------------------------------------- AC-21, bare keys
+
+def test_a_bare_key_below_the_top_level_does_not_erase_the_layer_beneath() -> None:
+    """A null one level down is the same absence as a null at the top.
+
+    A project migrating `execution` one key at a time writes `labels.scope_prefix` bare.
+    The configured prefix must survive it, or no ticket matches a scope label and every
+    one of them routes to `unlabeled`.
+    """
+    cfg = write("deepnull.yaml", BASE_PROJECT + f'''modules:
+  "{TEAMS_KEY}":
+    params:
+      execution:
+        labels:
+          scope_prefix:
+        matrix:
+          L: {{ medium: opus }}
+settings:
+  team:
+    execution:
+      unlabeled: sonnet
+      unrated_risk: medium
+      labels:
+        scope_prefix: "size/"
+        risk_prefix: "risk/"
+''')
+    code, out, err = run(PICK, ["--scope", "L"], cfg)
+    check("AC-21: a bare key nested inside a block defers to the layer beneath",
+          code == 0 and "labels.scope_prefix" not in err, f"{code} {out} {err}")
+    check("AC-21: and nothing else is quietly stood in for either",
+          "no layer carries" not in err, f"{code} {out} {err}")
+
+
+def test_a_layer_of_bare_keys_is_not_named_among_those_that_answered() -> None:
+    """The provenance names what resolved, never what merely exists."""
+    cfg = write("prov.yaml", MIGRATED_SHAPE)
+    local = write("prov.local.yaml", """settings:
+  tracker:
+    project_number:
+""")
+    code, out, err = run(EXTENDS, ["--settings", TRACKER_KEY, "--legacy", TRACKER_NEST],
+                         cfg, local=local)
+    answer = as_json(out) or {}
+    check("AC-21: a layer carrying only bare keys is not claimed as having answered",
+          code == 0 and str(local) not in err, f"{code} {err.strip()}")
+    check("AC-21: and the layer beneath is the one that answers",
+          answer.get("project_number") == 22, f"{code} {out} {err}")
+
+
 # --------------------------------------------------------------- AC-19 and AC-22
 
 def test_no_resolver_stops_both_tools() -> None:
@@ -484,13 +629,19 @@ def test_board_settings_gate_before_the_api() -> None:
 
 
 def main() -> int:
-    print("Settings cascade — the consuming half (#315)\n")
+    print("Settings cascade — the consuming half, and which layer decides\n")
     for test in (test_layer_three_reaches_the_policy,
                  test_layer_three_reaches_the_board,
                  test_layer_two_reaches_both,
                  test_params_outrank_settings_on_the_same_key,
                  test_a_local_source_resolves,
                  test_a_partial_migration_keeps_both_halves,
+                 test_a_stale_local_layer_outranks_a_migrated_repository,
+                 test_the_rule_is_layer_order_not_a_shape_preference,
+                 test_within_one_layer_the_current_shape_wins,
+                 test_a_retired_nest_no_layer_carries_resolves_clean,
+                 test_a_bare_key_below_the_top_level_does_not_erase_the_layer_beneath,
+                 test_a_layer_of_bare_keys_is_not_named_among_those_that_answered,
                  test_no_resolver_stops_both_tools,
                  test_no_policy_at_all_stops_the_tool,
                  test_an_empty_policy_block_is_not_a_policy,

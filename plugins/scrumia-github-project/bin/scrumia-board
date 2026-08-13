@@ -85,6 +85,13 @@ module_key() {
   printf '%s:%s\n' "$src" "$name"
 }
 
+# Where this module's configuration sat under `settings:` before ADR-0021 moved it into
+# `params:`. The resolver is told rather than left to guess: what a block is called is this
+# module's to say, and core naming it would be core reaching into a sibling (ADR-0018).
+# This is what closes the retired nest's reading window here — after core's, never before,
+# since core cannot drop the mapping while a module still passes one.
+LEGACY_NEST="tracker"
+
 # This module's configuration, resolved through the three layers rather than read out of
 # `settings:` — which would see layer 1 only and silently discard the per-machine layer
 # (`modular-composition` BR-15). The resolver is reached by the name scrumia-core publishes
@@ -105,24 +112,22 @@ load_settings() {
     SETTINGS_ERROR="scrumia-extends not found — enable scrumia-core and restart the session. Reading $CONFIG directly instead would resolve one layer of three and run this board on values nobody chose"
     return 1
   fi
-  if ! out=$(scrumia-extends --settings "$key"); then
-    SETTINGS_ERROR="scrumia-extends --settings $key failed — settings for $key are unresolved, and this command will not run on its own defaults. Run scrumia-extends --settings $key by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
+  if ! out=$(scrumia-extends --settings "$key" --legacy "$LEGACY_NEST"); then
+    SETTINGS_ERROR="scrumia-extends --settings $key --legacy $LEGACY_NEST failed — settings for $key are unresolved, and this command will not run on its own defaults. Run scrumia-extends --settings $key --legacy $LEGACY_NEST by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
     return 1
   fi
   if ! jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out"; then
-    SETTINGS_ERROR="scrumia-extends --settings $key returned no object — settings for $key are unresolved. Check that $CONFIG parses, then run scrumia-extends --settings $key by hand"
+    SETTINGS_ERROR="scrumia-extends --settings $key --legacy $LEGACY_NEST returned no object — settings for $key are unresolved. Check that $CONFIG parses, then run scrumia-extends --settings $key --legacy $LEGACY_NEST by hand"
     return 1
   fi
 
-  # ADR-0021 moves what `settings.tracker` held into this module's own `params:`, so the
-  # resolved block carries those keys at its top level. The retired nest is still read
-  # while projects migrate, and the two are *merged* rather than chosen between: picking
-  # one whole shape would drop every key the other still carries onto this script's own
-  # defaults, which is the failure the cascade exists to remove. The new shape wins key by
-  # key. `with_entries` is load-bearing — jq's `*` propagates an explicit null, so an
-  # unmigrated key would overwrite the nest it is meant to defer to.
-  TRACKER=$(jq -c '(.tracker // {})
-                   * ({owner, project_number, board} | with_entries(select(.value != null)))' <<<"$out")
+  # The resolved block is already in the current shape: `--legacy` told the resolver where
+  # this module's configuration used to sit, and it reconciled the two shapes inside each
+  # layer before the layers combined. Reconciling them here instead would let the shape
+  # decide what the layer decides, and discard a per-machine layer still written the old
+  # way (`modular-composition` AC-20). Narrowed to what this script reads, so the block
+  # says what it consumes.
+  TRACKER=$(jq -c '{owner, project_number, board}' <<<"$out")
 }
 
 need_project() {

@@ -40,7 +40,10 @@ column mapping `scrumia-board move` resolves through — historically under
 `settings.tracker`, and this module's own `params:` once a project has migrated.
 `scrumia-board` resolves them through the composition's settings cascade rather than
 reading the configuration file, so an override typed into `.scrumia/config.local.yaml`
-reaches it; when no layer carries the board's ids it says so and stops instead of guessing.
+reaches it — in either shape, because the module names its retired nest when it asks and
+the resolver reconciles the two inside each layer, leaving the cascade's order to decide
+between layers. When no layer carries the board's ids it says so and stops instead of
+guessing.
 The one value it does stand in for is `owner`, which falls back to the repository's owner —
 a board owned by someone other than the repository needs it named. `scrumia-refine`,
 `scrumia-review` and `scrumia-ticket` also read `settings.autonomy.level` and
