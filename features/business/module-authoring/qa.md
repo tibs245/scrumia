@@ -48,6 +48,14 @@ Then its location and the declarations naming it change, the content of every fi
 This is the criterion that keeps the anatomy standard free of a local tier. It fails the
 moment promotion needs to touch anything inside the module.
 
+The file the byte-identical check is really about is the module's own
+`.claude-plugin/plugin.json`, and a test diffs it byte for byte: it is the one file that is
+both shipped by the module and tempting to complete on the way out. A promotion that fills
+in a version, a homepage or a repository fails here, on `business.md`'s boundary. What
+changes instead is outside the tree — the declaration's source in each project's
+configuration, and the marketplace's own manifest — so a run that changed only those two
+and left the tree alone is what passing looks like.
+
 ### AC-4 — Demotion is the same move, unceremonious
 
 ```gherkin
@@ -57,6 +65,14 @@ Then the move succeeds with no file rewritten, and projects that had adopted it 
   through the mechanism `features/business/release-versioning/` owns rather than through
   anything this pass invents
 ```
+
+In the withdrawal case that mechanism is a **final release of the module carrying the
+breaking signal, whose changelog entry names where the module went**. That release is the
+notice, read at update, on the terms that feature states; the window it counts is counted
+there and not here. Naming it is what lets the second half of the Then fail: a run that
+notifies by opening an issue on an adopting project, by messaging anyone, or by adding a
+field to the manifest saying where the module moved has invented a notification, and fails
+this criterion even though the projects were, in some sense, told.
 
 ### AC-5 — Editing runs the same check as creating
 
