@@ -57,10 +57,13 @@ below `1.0.0` — where every module still sits — "minor" names two different 
 
 ## Two refusals
 
-**A module is never created for a single rule.** One rule is not a module; it is one of
-the shapes `features/business/local-extension/` lists, and `knowledge-placement`'s tree
-chooses between them. This feature enumerates neither — a list restated here is the one
-that drifts. A module built around one rule is a wrapper whose only content is the ceremony
+**A module is never created for a need below the threshold.** One standing rule is the
+clearest case and not the only one: everything between one rule and roughly three distinct
+concerns falls here too, and a two-concern need is the commonest input the pass gets. What
+is refused is not a module — it is one of the shapes
+`features/business/local-extension/` lists, and `knowledge-placement`'s tree chooses
+between them. This feature enumerates neither: a list restated here is the one that
+drifts. A module built below the threshold is a wrapper whose only content is the ceremony
 of being a module, and it will be installed, versioned and maintained for that.
 
 The threshold is the one the anatomy standard already implies: below roughly three
@@ -99,8 +102,9 @@ reads none of — it writes nothing, and the absence is the statement.
   There is no lighter path.
 - **BR-5** — An edit names the type and scope its commit carries. The level the bump takes
   is derived from them by `release-versioning`, never announced here.
-- **BR-6** — A module is not created for a single rule. The pass names the destination
-  that fits instead, and creates nothing.
+- **BR-6** — A module is not created for a need below the threshold: one standing rule,
+  and everything between that and roughly three distinct concerns. The pass names the
+  destination that fits instead, and creates nothing.
 - **BR-7** — A new slot is not invented to hold a new module. A module filling no slot is
   the accepted answer where a slot is not justified.
 - **BR-8** — The pass writes no placeholder. Where it has nothing to write, it writes

@@ -68,11 +68,11 @@ the decision agrees with it every time.
 
 Both run before anything is created, and either one can end the pass.
 
-### A module is not created for what is smaller than one
+### A module is not created for a need below the threshold
 
 Below roughly three distinct concerns, the structure costs more than it carries: a module
-built around one rule is a wrapper whose only content is the ceremony of being a module,
-and it will be installed, versioned and maintained for that.
+built below it is a wrapper whose only content is the ceremony of being a module, and it
+will be installed, versioned and maintained for that.
 
 One standing rule is the clearest case and it is not the only one. Everything between one
 rule and the threshold lands here too — two concerns, or a single procedure no register
@@ -104,8 +104,8 @@ Where you cannot, the slot is refused, and two answers are accepted in its place
   ships in is one.
 
 Creating the slot and noting the doubt is not among them. A slot nothing would fill
-differently is a register vocabulary that grew by one and answers nothing new; what a slot
-is, and when the vocabulary admits one, is
+differently is a question the composition already answers; what a slot is, and when one is
+justified, is
 [`modular-composition`](https://github.com/tibs245/scrumia/blob/main/features/business/modular-composition/business.md)'s.
 
 ## Step 3 — The reach decides the location
@@ -136,8 +136,7 @@ obligations publishing carries and have them accepted:
 - **a version**, whose bumps
   [`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)
   governs and which is read off the commit rather than chosen;
-- **a deprecation window** before a renamed thing disappears, counted in releases and
-  stated there.
+- **a deprecation window** before a renamed thing disappears, on the terms stated there.
 
 Neither obligation applies inside a project, which is what makes the narrow default cheap.
 And moving later is free: promotion changes a module's location and what declares it, and
@@ -160,23 +159,24 @@ In order:
 1. **The manifest**, at `.claude-plugin/plugin.json`. Write it first: the check refuses a
    target carrying no manifest rather than judging it, so until it exists nothing below is
    verifiable.
-2. **The README**, addressed to whoever has not adopted the module and is deciding whether
-   to. Its sections and their order are the standard's; the check names each one that is
-   missing or empty, so write what the module is for and let it name the rest.
+2. **The README**, whose reader and whose sections are both the standard's. The check names
+   each section that is missing or empty, so write what the module is for and let it name
+   the rest.
 3. **What the module actually does** — its skills, its commands, its agents, the names it
-   publishes. Run the check as you go rather than at the end: a name under `bin/` that was
-   never made executable, and a path built from a variable nothing substitutes, are both
-   findings a first draft routinely carries and neither is visible to a reader.
+   publishes. A knowledge skill that outgrew one file takes the rules hierarchy
+   [ADR-0011](https://github.com/tibs245/scrumia/blob/main/docs/adr/0011-rules-hierarchy.md)
+   describes, its routing table included: neither surface asks for that table, so a skill
+   that grew without one composes, checks clean, and applies to nothing.
 4. **The extension data, for what the module actually opens, contributes and runs** — and
-   for nothing else. Opening a register is itself the promise to consult it, so a
-   `registers.json` naming a register no skill it ships asks for is a finding: write the
-   declaration and the call that reads it together, or write neither. What each of the
-   three files declares is [`scrumia-extend`](../scrumia-extend/SKILL.md)'s.
+   for nothing else. Write a declaration and the call that reads it together, or write
+   neither: the check reports a register declared and never consulted, on
+   `modular-composition`'s BR-11. What each of the three files declares is
+   [`scrumia-extend`](../scrumia-extend/SKILL.md)'s.
 
-Everything a file inside the module points at resolves inside the module. A path climbing
-out of it is the finding this check exists for; another module is reached by the name it
-publishes on `PATH`, and a document belonging to no module is cited by absolute URL —
-`modular-composition`'s BR-7, which the check enforces.
+Run the check as you go rather than at the end. A name under `bin/` never made executable,
+a path built from a variable nothing substitutes, a reference climbing out of the module —
+each is a finding a first draft routinely carries, none is visible to a reader, and the
+check names the file and the fix for all three.
 
 ## Step 5 — The check decides when the pass is finished
 
@@ -192,11 +192,14 @@ it produced has a finding against it** — that is the measure this feature is j
 a pass reporting success alongside a list of findings has moved its own work to whoever
 reads the report.
 
-A clean check is not the whole standard. What has to be read to be judged — whether a file
-answers two questions, whether an index routes or carries, whether the README addresses
-someone who has not adopted the module — is outside what a program decides. Re-read the
-module against the standard once the check is clean, and where the composition ships a
-surface that asks those questions, run it too.
+A clean check is not the whole standard: what has to be read to be judged is outside what
+a program decides. Re-read the module against the standard once the check is clean, and
+where the composition ships a surface that asks those questions, run it too.
+
+The check is also not the whole gate. A project that ships modules usually has one of its
+own on top — a manifest listing what it publishes, a changelog shape, rules about the
+relationship between two modules, none of which one module's tree can answer. Run it
+before calling the pass finished, or the module is clean and the branch is red.
 
 ## What the pass reports
 
