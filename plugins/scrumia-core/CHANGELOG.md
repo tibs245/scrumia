@@ -81,7 +81,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   (`tibs245/scrumia:scrumia-specs`, `shared:…`, `local:…`). A bare name is reported as not
   a declaration and resolves to nothing, rather than matching whichever module of that
   name happens to be installed. `extends:` and the older `composition:`/`practices:` keys
-  are still read for one more minor, with a warning naming the migration.
+  are still read, with a warning naming the migration; see `Deprecated` below for the
+  window.
 - `scrumia-extends --settings [<key>]` answers what a module's configuration resolves to:
   `settings:`, then that module's `params:`, then `.scrumia/config.local.yaml`, which is
   per-machine and never committed. The layers that answered are named on stderr, so two
@@ -106,6 +107,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   a new issue carries the label the tracker declares so the readings that count work
   subtract it. With no tracker in the composition it names the gap and writes nothing.
   `/next` recommends on what is waiting to be started, discussions excluded.
+### Deprecated
+- `extends:` in `.scrumia/config.yaml`, and the older `composition:`/`practices:` keys,
+  in favour of `modules:` keyed `<source>:<module>`. Both spellings are read and the
+  retired ones warn on every call. **They are removed no earlier than the second release
+  after this one**; `scrumia-init` migrates a project when asked, and reports any name it
+  cannot source rather than guessing one.
 
 ## [0.4.0] - 2026-08-10
 ### Added

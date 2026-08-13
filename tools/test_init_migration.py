@@ -159,9 +159,16 @@ def test_ac17_the_migration_sources_rather_than_guesses() -> None:
           "the refusal to guess a source is no longer stated")
     check("the `settings:` half of the migration is stated too",
           "settings" in step3 and "params:" in step3)
-    check("a project is migrated when it asks, not in passing",
-          "not to migrate a file you have not been asked to" in step3.lower()
-          or "do not migrate a file you have not been asked to" in step3.lower())
+
+
+def test_the_skill_does_not_migrate_unasked() -> None:
+    # Consent about this skill's own behaviour, not a rule of the feature — so it carries
+    # no AC, and asserting it under one would credit a criterion that does not say it.
+    print("scrumia-init — a project is migrated when it asks, not in passing")
+    text = skill_text()
+    step3 = text[text.index("## Step 3"):text.index("## Step 4")]
+    check("the refusal to migrate unasked is stated",
+          "do not migrate a file you have not been asked to" in step3.lower())
 
 
 # ------------------------------------------------------------------ AC-18, writing side
@@ -261,6 +268,7 @@ def main() -> int:
     test_ac17_the_template_writes_sourced_keys()
     test_ac17_the_real_reader_accepts_the_template()
     test_ac17_the_migration_sources_rather_than_guesses()
+    test_the_skill_does_not_migrate_unasked()
     test_ac18_the_template_places_a_setting_by_its_reader()
     test_ac18_the_cascade_reaches_what_the_template_wrote()
     test_ac18_the_three_layers_are_stated_in_order()

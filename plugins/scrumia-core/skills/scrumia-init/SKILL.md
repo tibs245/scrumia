@@ -163,6 +163,8 @@ A module's configuration resolves from three layers, each overriding the one bef
 
 **A block one module reads goes in that module's `params:`.** The rule that every key here carry a comment naming its reader existed because `settings:` was one flat bag in which nothing said who read what; under `params:` the key above the block says it, and a comment restating it is one more thing to keep in sync. What still earns a comment is a value whose *meaning* is not obvious — a grid's capability order, an enum's spelling — and every key left in `settings:`, where the reader is genuinely not written down.
 
+Dropping those comments removes a copy, not the answer: what a module reads is declared in that module's own `README.md`, which is where a project looks it up (`features/business/modular-composition/`'s *Out of scope*, handing it to `features/business/module-anatomy/`). A comment in a consumer's config was a second answer free to drift from the first.
+
 The cost of layer 3 is stated rather than hidden: two machines resolve different values from one repository. A composition is reproducible in its **modules**, which the qualified key guarantees, and not necessarily in its **values**.
 
 `roles[].model` is gone, and its disappearance is the interesting one. A standing role's model lives in its agent's own frontmatter, which the platform reads at load time — no config key can change it at runtime, so the one that sat here only ever described the frontmatter without governing it. What replaces it is `execution.matrix`, which applies where a model is genuinely chosen at call time: the per-ticket executor `scrumia-sprint` launches. To change a standing role's model, edit its agent file; to change how tickets are executed, edit the matrix.
@@ -173,7 +175,7 @@ The cost of layer 3 is stated rather than hidden: two machines resolve different
 
 ### Migrating a configuration that predates this shape
 
-Two retired shapes exist, and both are still read for one more minor, with a warning on every call — which is why leaving a project on one is not a neutral choice: a warning that fires on every command is a warning nobody reads by the end of the week.
+Two retired shapes exist, and both are still read, with a warning on every call. How long that lasts is not this skill's to promise — the window is counted in releases by [`features/business/release-versioning/`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md) § *What a module owes to be upgradable*, and the module's own changelog names the release that removes them. What is worth saying here is that leaving a project on a retired shape is not a neutral choice in the meantime: a warning that fires on every command is a warning nobody reads by the end of the week.
 
 | What the file carries | What it becomes |
 |---|---|

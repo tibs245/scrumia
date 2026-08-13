@@ -5,9 +5,10 @@ This project is driven by a composition of modules. Each module has a scope.
 Before acting, check which module covers what you are about to do.
 
 ScrumIA is the composition it ships: this repo runs on its own plugins. Each is named
-below by the key it is declared under in `.scrumia/config.yaml`, `<source>:<module>` —
-every one of them from this repository's own marketplace, so a fresh clone that installs
-them has the whole composition and nothing here depends on machine-local material.
+below by the key it declares in `.scrumia/config.yaml`, `<source>:<module>` — every one
+of them from this repository's own marketplace, so nothing the table names depends on
+machine-local material: no `shared:` key, and no file outside version control to make one
+resolve.
 
 | Module | What to know |
 |---|---|

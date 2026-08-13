@@ -8,10 +8,16 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Changed
 - Breaking: no
 
-## 2026-08-13 — The writing side of `modules:`: what installs a project writes and migrates (BR-13, BR-14, AC-17, AC-18)
+## 2026-08-14 — A configuration is sourced when it is written, and an ambiguous name is refused (AC-17)
 - Issue: #303
 - Category: Added
 - Breaking: no
+
+## 2026-08-14 — `extends:` and the older `composition:`/`practices:` are retired in favour of `modules:`
+- Issue: #303
+- Category: Deprecated
+- Breaking: no — both spellings are read; `plugins/scrumia-core/CHANGELOG.md` names the
+  release that removes them
 
 ## 2026-08-13 — The layer decides and the shape never does, and a key written bare is an absence (BR-14, BR-15, AC-20, AC-21)
 - Issue: #328, closing #342
