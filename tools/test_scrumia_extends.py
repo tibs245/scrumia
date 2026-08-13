@@ -5,9 +5,12 @@ AC-17 and AC-18 of features/business/modular-composition/: a module is declared 
 source and a bare name is not a declaration; a setting resolves through three layers
 in a stated order.
 
-AC-1..AC-5, AC-9, AC-10 and AC-11 of features/business/local-extension/: each source
-resolves from its own location, resolution states which, one declaration answered by two
-distinct modules is a conflict that binds neither, and one naming no location is a shadow.
+AC-1..AC-11 of features/business/local-extension/: each source resolves from its own
+location, resolution states which, one declaration answered by two distinct modules is a
+conflict that binds neither, and one naming no location is a shadow. A declaration no
+location answers is an absence every surface survives (AC-6), what `CLAUDE.md` claims is
+reconciled against those states (AC-7), and a project extending itself without a module
+of its own is correctly extended rather than broken (AC-8).
 
 Run from the repo root: python3 tools/test_scrumia_extends.py
 Exit code 0 when everything passes, 1 otherwise. No dependencies beyond the YAML
@@ -25,6 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TOOL = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
 MODULE_TOOL = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
+STATUS_TOOL = ROOT / "plugins" / "scrumia-core" / "scripts" / "compose-status.sh"
 FAILURES: list[str] = []
 
 
@@ -637,6 +641,165 @@ def test_ac9_ac10_no_versioned_path_and_no_installation() -> None:
     shutil.rmtree(project)
 
 
+CLAIMED = """
+project: { name: "Claiming" }
+modules:
+  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "shared:acme-conventions": {}
+"""
+
+
+def compose_status(config: Path):
+    env = {**os.environ, "NO_COLOR": "1", "SCRUMIA_CONFIG": str(config),
+           "SCRUMIA_CONFIG_LOCAL": "/nonexistent/config.local.yaml"}
+    proc = subprocess.run([str(STATUS_TOOL)], cwd=ROOT, env=env,
+                          capture_output=True, text=True, timeout=60)
+    return proc.returncode, proc.stdout, proc.stderr
+
+
+def test_ac6_a_clone_that_cannot_reach_the_module_is_told_and_still_works() -> None:
+    print("AC-6 — the capability is a declared absence, every register renders, nothing fails")
+
+    project = project_with(CLAIMED)
+    config = project / ".scrumia" / "config.yaml"
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+
+    # The machine that has the checkout — the state the absence below has to be told apart
+    # from, or the test proves only that a name nothing ever answered stays unanswered.
+    _, out, _ = run(["implement", "--json"], config, shared=shared)
+    check("with the shared directory reachable, the module's directive is in the table",
+          "acme-conventions" in {r["module"] for r in json.loads(out)}, out[:200])
+
+    # Nothing else changes: no key removed, no file edited. Only the environment that
+    # resolved it is gone, which is what a clone arrives in.
+    code, out, err = run(["--modules", "--json"], config)
+    absent = [r for r in json.loads(out) if r["key"] == "shared:acme-conventions"][0]
+    check("without it, the declaration is an absence naming the kind of location",
+          absent["state"] == "absent" and absent["location"] == "shared", absent)
+    check("and it is credited with no root rather than with a wrong one",
+          absent["roots"] == [], absent)
+    check("reading the composition is not a failure", code == 0, code)
+    check("and nothing calls the project malformed",
+          "malformed" not in err and "not a module" not in err, err.strip())
+
+    code, out, _ = run(["implement", "--json"], config)
+    rows = json.loads(out)
+    check("the register renders without it", code == 0 and rows, code)
+    check("carrying the modules that did resolve, and not the one that did not",
+          {r["module"] for r in rows} == {"scrumia-practice-tdd"}, rows)
+
+    for args in (["--list"], ["--check"]):
+        code, _, err = run(args, config)
+        check(f"{' '.join(args)} still answers, and does not fail on the absence",
+              code == 0, f"exit {code}: {err.strip()}")
+
+    code, out, _ = compose_status(config)
+    check("the reader that resolves nothing still runs", code == 0, code)
+    check("and says it declares rather than that it runs",
+          "Modules this project declares" in out, out[:200])
+
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+
+def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
+    print("AC-7 — a claim the reader cannot reach is named, and one that states its source is not")
+
+    project = project_with(CLAIMED)
+    config = project / ".scrumia" / "config.yaml"
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    claude = project / "CLAUDE.md"
+    bare = ("## ScrumIA composition\n\n| Module | What to know |\n|---|---|\n"
+            "| `scrumia-practice-tdd` | Tests first. |\n"
+            "| `acme-conventions` | Tabs, not spaces. |\n")
+    claude.write_text(bare, encoding="utf-8")
+
+    code, out, _ = run(["--claims"], config, shared=shared)
+    check("on the machine that wrote it, every claim is honoured",
+          code == 0 and "honoured" in out and "claimed |" not in out, f"exit {code}: {out[:300]}")
+
+    code, out, err = run(["--claims"], config)
+    check("on a clone, the unreachable claim is named", code != 0, code)
+    check("with the module, its state and where it would have come from",
+          "acme-conventions" in err and "absent" in err and "shared:" in err, err.strip())
+    check("and the honoured one is not swept up with it",
+          "| `tibs245/scrumia:scrumia-practice-tdd` | marketplace | resolved | yes | honoured |"
+          in out, out[:400])
+
+    # The same file, saying where the module comes from. Nothing about the composition
+    # changed — only what the file claims about it.
+    claude.write_text(bare.replace("`acme-conventions`", "`shared:acme-conventions`"),
+                      encoding="utf-8")
+    code, out, _ = run(["--claims"], config)
+    check("naming the declaration key instead is an absence the file states, not a claim",
+          code == 0 and "named as absent" in out, f"exit {code}: {out[:300]}")
+
+    claude.write_text("## ScrumIA composition\n\nNothing to say.\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], config)
+    check("a file that claims nothing about it passes too",
+          code == 0 and "not claimed" in out, f"exit {code}: {out[:300]}")
+
+    claude.unlink()
+    code, _, err = run(["--claims"], config)
+    check("and a project with no such file has nothing to reconcile",
+          code == 0 and "nothing to reconcile" in err, f"exit {code}: {err.strip()}")
+
+    shutil.rmtree(project)
+    shutil.rmtree(shared)
+
+
+def test_ac8_local_material_without_a_module_is_not_a_malformed_module() -> None:
+    print("AC-8 — directives and a rules section are a correct extension, not a broken module")
+
+    project = project_with("""
+project: { name: "No module of its own" }
+modules:
+  "tibs245/scrumia:scrumia-practice-tdd": {}
+""")
+    config = project / ".scrumia" / "config.yaml"
+    rules = project / "docs" / "house-rules.md"
+    rules.parent.mkdir(parents=True, exist_ok=True)
+    rules.write_text("# House rules\n\nOne topic, grown past CLAUDE.md.\n", encoding="utf-8")
+    (project / ".scrumia" / "extends.json").write_text(json.dumps({"implement": [
+        {"name": "House rules", "type": "norm", "when": "required",
+         "summary": "what this project does differently", "read": "docs/house-rules.md"},
+        {"name": "Naming", "type": "norm", "when": "optional",
+         "summary": "one more, to make it a set", "read": "docs/house-rules.md"}]}),
+        encoding="utf-8")
+
+    code, out, err = run(["implement", "--json"], config)
+    rows = json.loads(out)
+    check("the directives appear in their register",
+          [r["name"] for r in rows][:2] == ["House rules", "Naming"], rows)
+    check("the rules section is reached through the directive that names it",
+          rows and rows[0]["read"] == "docs/house-rules.md", rows[:1])
+    check("reading it is not a failure", code == 0, code)
+    check("and nothing on the way calls anything malformed",
+          "malformed" not in err and "ignored" not in err, err.strip())
+
+    for args in (["--check"], ["--modules", "--json"]):
+        code, _, err = run(args, config)
+        check(f"{' '.join(args)} reports the project correctly extended", code == 0,
+              f"exit {code}: {err.strip()}")
+
+    code, out, _ = run(["--modules", "--json"], config)
+    check("no declaration is unaccounted for, so nothing is reported missing",
+          all(r["state"] == "resolved" for r in json.loads(out)), out[:200])
+
+    # There is no module tree here to hand the checker, and `not_a_module` rather than
+    # `findings` is the whole of the difference AC-8 turns on.
+    proc = subprocess.run([str(MODULE_TOOL), "check", str(project / ".scrumia")],
+                          cwd=ROOT, capture_output=True, text=True, timeout=60)
+    check("the checker refuses the project's own .scrumia/ rather than finding it broken",
+          proc.returncode == 4, f"exit {proc.returncode}: {proc.stdout[:200]}")
+    check("and says what it is, not what is wrong with it",
+          "not a module" in (proc.stdout + proc.stderr), (proc.stdout + proc.stderr)[:200])
+
+    shutil.rmtree(project)
+
+
 def main() -> int:
     if not os.access(TOOL, os.X_OK):
         print(f"error: {TOOL.relative_to(ROOT)} is not executable")
@@ -654,6 +817,9 @@ def main() -> int:
     test_ac5_identity_and_declaration_settle_the_other_two_cases()
     test_env_local_is_read_or_reported_never_silently_empty()
     test_ac9_ac10_no_versioned_path_and_no_installation()
+    test_ac6_a_clone_that_cannot_reach_the_module_is_told_and_still_works()
+    test_ac7_what_claude_md_claims_survives_a_clone()
+    test_ac8_local_material_without_a_module_is_not_a_malformed_module()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
 

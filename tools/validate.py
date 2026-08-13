@@ -349,6 +349,11 @@ def check_extends_tool_runs() -> None:
     answer, and which `scrumia-module` declines for exactly that reason. It is narrower
     than the check it replaced: a bare name found on the runner's own PATH satisfies the
     dependency unchecked, and a publisher declaring no repository only notes it.
+
+    `--claims` then holds this repository's own CLAUDE.md to AC-7 of
+    features/business/local-extension/. Green by construction while every module here
+    comes from this same repository — gated rather than reasoned about, because the day
+    one is declared `shared:` nothing else would notice the file still claiming it.
     """
     tool = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
     if not tool.exists():
@@ -364,6 +369,16 @@ def check_extends_tool_runs() -> None:
     if result.returncode != 0:
         for line in result.stderr.strip().splitlines():
             error(f"scrumia-extends --check: {line}")
+
+    try:
+        result = subprocess.run([str(tool), "--claims"], cwd=str(ROOT), env=env,
+                                capture_output=True, text=True, timeout=60)
+    except Exception as exc:  # noqa: BLE001 - reported, not raised
+        error(f"{tool.relative_to(ROOT)} --claims: failed to run — {exc}")
+        return
+    if result.returncode != 0:
+        for line in result.stderr.strip().splitlines():
+            error(f"scrumia-extends --claims: {line}")
 
 
 def check_feature_mandatory_files() -> None:

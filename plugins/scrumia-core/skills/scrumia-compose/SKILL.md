@@ -55,6 +55,28 @@ A capability that comes from `shared` is a capability the project cannot be hand
 someone else with. Say so when you plug one in — it is the cost of that location, and it
 is only visible at the moment of choosing.
 
+## What the composition claims, against what it resolves
+
+`CLAUDE.md` resolves nothing. It is written once, on one machine, and read on every other
+one — so a module it names by its bare name is a capability asserted to whoever cloned,
+whether or not that clone can reach it. One command reconciles the two:
+
+```bash
+scrumia-extends --claims             # CLAUDE.md against the states above
+```
+
+Every declaration comes back with a verdict. `honoured` and `not claimed` need nothing.
+`named as absent` means the file names the declaration key, so it states the source a
+reader cannot reach — correct, and the shape to aim for. `claimed` is the defect, and it
+exits non-zero: the file promises a capability this reader has no way to get. The fix is
+one of two, and the human picks — name the module by its key so the file says where it
+comes from, or say nothing about it there.
+
+Run it on a clone, not only where the composition was written: on the authoring machine
+everything resolves and the answer is vacuous. That asymmetry is the criterion, not a
+limitation of the command — the rule is
+`features/business/local-extension/`'s AC-7.
+
 ## Plug in or replace a module
 
 1. Check that the module is installed, **and reachable from the location its key names** —
@@ -73,7 +95,7 @@ is only visible at the moment of choosing.
 When something doesn't work, check in this order:
 
 1. **Did the declaration resolve, and to what?** `scrumia-extends --modules` is the first call, not a later one: a module present in the config but absent from `enabledPlugins` — or missing from the shared directory, or answered by two directories at once — is invisible to the agent, and every register renders shorter with nothing else said. Read the state before reading anything else, and read a conflict as a stop: that module contributes nothing until someone picks.
-2. **Does `CLAUDE.md` reflect the config?** If not, agents read a stale composition.
+2. **Does `CLAUDE.md` reflect the config, and does it survive a clone?** If not, agents read a stale composition. `scrumia-extends --claims` answers the second half, which staleness alone would miss: a file perfectly matching the config still lies to every clone when it names a module only one machine can reach.
 3. **Is the slot empty?** A missing capability is not a failure. Just say which module would provide it.
 4. **Does the app have an implementation module, and practices?** Without an implementation module, the agent follows the conventions of neighboring code; without practices, the implementation module's conventions suffice — acceptable behavior, not an error.
 5. **Does the app have a `path`, and does its per-app `CLAUDE.md` stub (if any) match it?** No `path` means no per-app activation — an agent editing a file there can't resolve which app it belongs to. A stub naming modules that were since replaced is the same failure as a stale root section, one level down.

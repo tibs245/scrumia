@@ -13,6 +13,7 @@
 #   scrumia-extends --list
 #   scrumia-extends --modules
 #   scrumia-extends --check
+#   scrumia-extends --claims [<file>]
 #   scrumia-extends --settings [<source>:<module>] [--legacy <nest>[=<key>]]
 
 set -uo pipefail
@@ -43,6 +44,7 @@ scrumia-extends <register> --json       # the same rows, unrendered
 scrumia-extends --list                  # every register opened here, and what reaches it
 scrumia-extends --modules [--json]      # every declared module, and where it resolved from
 scrumia-extends --check                 # declared dependencies that are not met
+scrumia-extends --claims [<file>]       # what CLAUDE.md claims, against what resolves here
 scrumia-extends --settings [<key>]      # a module's configuration, the cascade applied
 scrumia-extends --settings <key> --legacy <nest>[=<key>]
                                         # …reading the nest under `settings:` this module's
@@ -69,6 +71,11 @@ A declaration no root answers is a declared absence. One that two distinct roots
 is a conflict, named with both and bound to neither; --check exits non-zero on it. Only a
 bare name from the retired list can be answered in more than one place at once: there the
 narrowest wins and says so, so promoting a module never disables it.
+
+--claims reconciles what a file says about the composition against those states, so that
+a capability reachable only from one machine is not asserted to a reader who cloned
+without it. It exits non-zero where the file names a module that does not resolve here
+without naming that module's declaration key, which states where it would come from.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -722,15 +729,85 @@ cmd_check() {
   note "every declared dependency is met"
 }
 
+# AC-7's surface. --modules compares the declarations against the roots resolution found;
+# this compares what someone *wrote* about the composition against those same states, so
+# that a capability living on one machine is not asserted to whoever cloned without it.
+#
+# It matches strings and never the file's shape: which shape the composition section takes
+# is modular-composition's and moves without this tool being told, so a reconciliation that
+# parsed a table would start passing by accident the day the table changed.
+cmd_claims() {
+  local file=$1 all key mod state loc named keyed verdict failed=0 rows="" unbacked=""
+  # Beside the configuration's own directory, like everything else under .scrumia/: a
+  # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
+  [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
+  all=$(bindings)
+
+  if [ ! -f "$file" ]; then
+    note "$file does not exist — this composition is claimed nowhere, so there is nothing to reconcile"
+    return 0
+  fi
+
+  while IFS=$'\t' read -r key mod state loc; do
+    [ -n "$key" ] || continue
+    named=no; keyed=no
+    grep -qF -- "$mod" "$file" && named=yes
+    grep -qF -- "$key" "$file" && keyed=yes
+
+    if [ "$state" = resolved ] || [ "$state" = shadow ]; then
+      # It binds, so the claim is true for this reader whichever way the file words it.
+      [ "$named" = yes ] && verdict=honoured || verdict=unclaimed
+    elif [ "$named" = no ]; then
+      verdict="not claimed"
+    elif [ "$keyed" = yes ]; then
+      # The key is the one string carrying the module *and* its source (BR-6), so a file
+      # naming it has said where the capability would come from, in the configuration's
+      # own words. Which sentence it sits in is a human's judgement, not this tool's.
+      verdict="named as absent"
+    else
+      verdict=claimed
+      unbacked="$unbacked$file claims '$mod', which is $state here — a reader of that file is told it has a capability this checkout cannot reach. Name it '$key', so the file states the location it would come from, or make no claim about it."$'\n'
+      failed=$((failed + 1))
+    fi
+    rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
+  done < <(jq -r 'unique_by(.key)[] | [.key, .module, .state, .location] | @tsv' <<<"$all")
+
+  printf '# claims — %s against what resolves here\n\n' "$file"
+  if [ -z "$rows" ]; then
+    printf 'This project declares no module, so the file claims nothing about one.\n'
+    return 0
+  fi
+  printf '| Declared as | Location | State | Named in the file | Verdict |\n|---|---|---|---|---|\n'
+  printf '%s' "$rows"
+  printf '\nA claim is honoured when the module resolves for whoever runs this. Where it does\n'
+  printf 'not, the file states the declaration key — which carries the source — or says\n'
+  printf 'nothing about the module; a bare name there is a capability asserted to a reader\n'
+  printf 'who has no way to reach it.\n'
+
+  # After the table, not as they are found: the table is the answer, and a reader scanning
+  # a terminal reads the verdicts first and the remedy second.
+  if [ "$failed" -gt 0 ]; then
+    printf '%s' "$unbacked" >&2
+    die "$failed claim(s) this checkout cannot honour"
+  fi
+  return 0
+}
+
 # ---------------------------------------------------------------- argument handling
 
 [ $# -ge 1 ] || usage
-REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""; LEGACY="[]"
+REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""; LEGACY="[]"; CLAIMS_FILE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  MODE=list; shift ;;
     --modules) MODE=modules; shift ;;
     --check) MODE=check; shift ;;
+    # The file is optional, same idiom as --settings below: without one it is the CLAUDE.md
+    # beside the configuration, which is the file an agent reads before anything else.
+    --claims) MODE=claims; shift
+              if [ $# -ge 1 ]; then
+                [ "${1#-}" = "$1" ] && { CLAIMS_FILE=$1; shift; }
+              fi ;;
     # The key is optional: without one, the answer is the base layer a module inherits
     # before any `params:` of its own.
     --settings) MODE=settings; shift
@@ -775,6 +852,7 @@ case "$MODE" in
   list)     [ -z "$REGISTER" ] || usage; cmd_list ;;
   modules)  [ -z "$REGISTER" ] || usage; cmd_modules "$AS_JSON" ;;
   check)    [ -z "$REGISTER" ] || usage; cmd_check ;;
+  claims)   [ -z "$REGISTER" ] || usage; cmd_claims "$CLAIMS_FILE" ;;
   settings) [ -z "$REGISTER" ] || usage; cmd_settings "$MODULE_KEY" "$APP" ;;
   *)        [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;
 esac
