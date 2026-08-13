@@ -97,7 +97,7 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
-| `discussion` | the board read, which **subtracts** it for `scrumia-status` and the next-step reading; the status reading itself on its issue-list fallback; and any `--label discussion` issue query | an issue holding something unresolved that is not work waiting to be started |
+| `discussion` | `scrumia-status`, which **subtracts** it — through the board read on the ordinary path, and on the label itself when it falls back to an issue list; the next-step reading, through the same board read | an issue holding something unresolved that is not work waiting to be started |
 
 `discussion` is the only label read as a subtraction, and that is what earns it a place
 here rather than in a module's prose. An issue carrying it is not a ticket awaiting
@@ -132,10 +132,14 @@ filed to avoid creating. The subtraction in the board read is therefore a backst
 catches the issues a human carded by hand, which is the only way one arrives on the board.
 
 That leaves the label queried on the path it actually takes, not only on the exceptional
-one, which is the test it had to pass to be declared at all. Off the board it is read by
-the status reading's issue-list fallback, and by anyone — human or skill — asking
-`--label discussion` what is open and unsettled. A label whose only reader were the
-backstop would be the documentation this table refuses.
+one, which is the test it had to pass to be declared at all: off the board, `scrumia-status`
+reads it directly on its issue-list fallback. A label whose only reader were the board-read
+backstop would be the documentation this table refuses — it would be read only when someone
+had carded the issue by hand, which is the case the tree is built to avoid producing.
+
+That the label is also a filter anyone can hand `gh issue list` is a consequence of
+declaring it, not a reader that earns it its place. It is worth having and it is not the
+test.
 
 This is the opposite of what an issue filed for work owes — a reservation raised during a
 review, say, is not handled until its card exists, because a cardless ticket is exactly as

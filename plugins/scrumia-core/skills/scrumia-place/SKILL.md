@@ -190,8 +190,9 @@ create.
 **First, is there a tracker?** Read which module fills the `tracker` slot the same way you
 read any other slot in Step 2. Where the slot is empty, this branch stops: say that the
 destination is a ticket, that this composition has no module that holds one, and name the
-module that would fill it — the slot by name, and a module that fills it where the
-composition offers one to name. **Create nothing, and write nothing into the repository** —
+module that would fill it. Where you cannot name one, name the slot — `tracker` — and say
+that no module of this composition's fills it; an unfilled slot named is the gap, and that
+is the answer. **Create nothing, and write nothing into the repository** —
 not a file, not a list, not a line in a document that happens to be nearby. A discussion
 written into the repository because no tracker exists is project state in the repository,
 which is the thing the composition refuses everywhere else, and it is worse than no

@@ -129,9 +129,10 @@ it: a label nothing queries is documentation, not a filter.
 The second half needs its own Given because the first does not reach it. Where the tracker
 files a discussion outside what the readings enumerate, the exclusion passes by absence
 whatever the label says, and the criterion would be satisfied by a filter that does not
-exist. `features/business/github-tracking/` states where such an issue is filed and holds
-the criterion that puts one in front of the readings; this one covers the label being
-carried, and the exclusion holding when the issue is there to be counted.
+exist. `features/business/github-tracking/`'s AC-13 is the one that puts a labelled issue in
+front of the readings and fails if nothing subtracts it; this criterion covers the label
+being carried, and the exclusion holding once the issue is there to be counted. Where the
+tracker files such an issue is that feature's to state, and this one does not restate it.
 
 ### AC-12 — The board is never the search surface
 
