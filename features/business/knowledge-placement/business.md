@@ -89,16 +89,21 @@ paid by being specific.
 This is a deliberate limit and it has a known cost: a reminder can be ignored, and some
 will be. The alternative — refusing the write — buys compliance at a price this one is
 not worth, and it fails closed on every project that installed it. Refusing a write is a
-power the composition does grant, and it grants it over **state written into the
-repository**: what that state should have been instead is already decided, so the refusal
-carries its own answer. Knowledge is the other case. Where an entry belongs is exactly
-what has not been decided yet, and the tree is the thing that decides it — so a refusal
-would stop a run on a judgment made before the judgment exists. The reminder is chosen on
-the balance of those two, not because it works better.
+power a module may hold, and where one holds it, it holds it over **state written into the
+repository** ([ADR-0008](../../../docs/adr/0008-state-lives-in-github.md)): what that
+state should have been instead is already decided, so the refusal carries its own answer.
+Knowledge is the other case. Where an entry belongs is exactly what has not been decided
+yet, and the tree is the thing that decides it — so a refusal would stop a run on a
+judgment made before the judgment exists. The reminder is chosen on the balance of those
+two, not because it works better.
 
-The reminder also belongs to a composition, not to a machine. Where a repository has
-composed none, the tree has no destination to route to and says nothing there — a session
-that never asked for ScrumIA is not the place to be reminded of its tree.
+The reminder is unsolicited, and that is what bounds where it speaks: a project that
+declares a composition asked for this tree, and one that declares none did not. Elsewhere
+the tree still answers whoever invokes it — what it does not do is speak first.
+
+What it answers to is an **entry**. A memory directory also holds navigation — an index
+of the entries beside it — and an index states nothing that could have been placed
+somewhere else, so nothing is asked about one.
 
 ## An empty destination is named, never improvised
 
@@ -128,15 +133,17 @@ refuses everywhere else.
 - **BR-7** — A new issue holding a discussion carries a label the status and next-step
   readings exclude wherever they enumerate it. The label's spelling and declaration are
   `github-tracking`'s, as is whether such an issue is enumerated at all.
-- **BR-8** — The tree runs after the write, as a reminder. It intercepts nothing and
-  refuses nothing, and what it says names the entry written and the tree that answers for
-  it — a line naming neither is not this reminder.
+- **BR-8** — The tree runs after the write of an entry, as a reminder. It intercepts
+  nothing and refuses nothing, and what it says names the entry written and the tree that
+  answers for it — a line naming neither is not this reminder. An index is navigation, not
+  an entry, and nothing is asked about one.
 - **BR-9** — Where the destination's capability is absent from the composition, the tree
   names the gap — the module that would fill it, or the empty slot itself where no module
   can be named — and improvises no substitute. It never writes project state into the
   repository to compensate.
-- **BR-10** — The reminder speaks where a composition does. A repository that has composed
-  none has none of the destinations, and nothing is said there.
+- **BR-10** — The reminder is unsolicited, so it speaks only where a composition is
+  declared. Elsewhere the tree stays reachable to whoever invokes it and says nothing on
+  its own.
 
 ## Vocabulary
 
@@ -144,6 +151,8 @@ refuses everywhere else.
   writing is done by whatever owns the destination.
 - **The handover test** — whether a fact would usefully survive being handed to someone
   else with the repository. The single boundary of agent memory.
+- **Entry** — one thing an agent wrote down in its memory, as opposed to the index that
+  lists the entries beside it. The reminder answers to an entry; an index is navigation.
 - **Discussion** — something unresolved that is not yet a rule and may never become one: a
   disagreement, a thought, an event worth remembering. Its destination is a ticket
   because a ticket is the one place ScrumIA already keeps *why*.
