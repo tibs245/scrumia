@@ -15,7 +15,8 @@ separate question. The tree reminds; it does not block.
 
 - Implemented by: no App feature. What this feature describes is a skill in
   `scrumia-core`, reachable on its own and cited from the registers where learning
-  happens.
+  happens, and — for the write it does not intercept — a hook in the same module that
+  asks the question afterwards.
 - Defers to: `features/business/local-extension/` for what the destinations *are* when
   the answer is a module or local material, and which of them a project may write to.
 - Defers to: `features/business/module-authoring/` for what creating a module costs, and

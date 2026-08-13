@@ -41,8 +41,28 @@ edit_payload() {
       tool_input: {file_path: $p, old_string: "a", new_string: "b"}, tool_response: {}}'
 }
 
+# Every invocation goes through a deadline: the hook walks a directory tree, so a
+# regression that fails to terminate must fail this suite rather than hang CI.
+hook() {
+  cat > "$WORKDIR/hook.in"
+  "$@" < "$WORKDIR/hook.in" > "$WORKDIR/hook.out" 2> "$WORKDIR/hook.err" &
+  local pid=$! dog st
+  ( for _ in 1 2 3 4 5; do sleep 1; kill -0 "$pid" 2>/dev/null || exit 0; done
+    kill -9 "$pid" 2>/dev/null ) >/dev/null 2>&1 &
+  dog=$!
+  wait "$pid"; st=$?
+  kill "$dog" 2>/dev/null; wait "$dog" 2>/dev/null
+  cat "$WORKDIR/hook.out"
+  cat "$WORKDIR/hook.err" >&2
+  return $st
+}
+
 run_hook() {
-  CLAUDE_PROJECT_DIR="$PROJECT" bash "$HOOK"
+  hook env CLAUDE_PROJECT_DIR="$PROJECT" bash "$HOOK"
+}
+
+bare_hook() {
+  hook env -u CLAUDE_PROJECT_DIR bash "$HOOK"
 }
 
 echo "== the reminder arrives, on both memory surfaces =="
@@ -75,8 +95,21 @@ check "a relative path is read against the run's own directory" \
 mkdir -p "$PROJECT/deep/dir"
 out=$(jq -n --arg p "$ROLE_ENTRY" --arg cwd "$PROJECT/deep/dir" \
   '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
-  | env -u CLAUDE_PROJECT_DIR bash "$HOOK")
+  | bare_hook)
 check "with no project directory given, the composition is found by walking up" \
+  "$(echo "$out" | jq -r '(.hookSpecificOutput.additionalContext // "") | length > 0' 2>/dev/null || echo false)" "$out"
+
+out=$(cd "$PROJECT/deep" && jq -n --arg p "$ROLE_ENTRY" \
+  '{tool_name: "Write", cwd: "dir", tool_input: {file_path: $p}}' \
+  | bare_hook)
+check "a relative directory is read against the same base as the file path" \
+  "$(echo "$out" | jq -r '(.hookSpecificOutput.additionalContext // "") | length > 0' 2>/dev/null || echo false)" "$out"
+
+ln -s "$PROJECT/deep/dir" "$WORKDIR/link-to-dir"
+out=$(jq -n --arg p "$ROLE_ENTRY" --arg cwd "$WORKDIR/link-to-dir" \
+  '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
+  | bare_hook)
+check "a symlinked directory does not hide the composition above it" \
   "$(echo "$out" | jq -r '(.hookSpecificOutput.additionalContext // "") | length > 0' 2>/dev/null || echo false)" "$out"
 
 echo "== it interrupts nothing =="
@@ -110,39 +143,37 @@ check "a file merely named after memory draws none either" \
   "$([ -z "$out" ] && echo true || echo false)" "$out"
 
 out=$(write_payload "$PROJECT/.claude/agent-memory/scrumia-teams-scrumia-tech/MEMORY.md" | run_hook)
-check "the index is navigation, so it draws none" \
+check "AC-14 the index is navigation, so it draws none" \
+  "$([ -z "$out" ] && echo true || echo false)" "$out"
+
+out=$(write_payload "$HOME/.claude/projects/-Users-someone-widgets/memory/MEMORY.md" | run_hook)
+check "AC-14 the other surface's index draws none either" \
   "$([ -z "$out" ] && echo true || echo false)" "$out"
 
 BARE="$WORKDIR/elsewhere"
 mkdir -p "$BARE/.claude/agent-memory/some-agent"
 out=$(jq -n --arg p "$BARE/.claude/agent-memory/some-agent/x.md" --arg cwd "$BARE" \
   '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
-  | CLAUDE_PROJECT_DIR="$BARE" bash "$HOOK"); status=$?
-check "outside a ScrumIA composition it says nothing" \
-  "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
-
-out=$(jq -n --arg p "$BARE/.claude/agent-memory/some-agent/x.md" --arg cwd "$BARE" \
-  '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' \
-  | env -u CLAUDE_PROJECT_DIR bash "$HOOK"); status=$?
-check "with no project directory given and no composition above, it says nothing" \
+  | hook env CLAUDE_PROJECT_DIR="$BARE" bash "$HOOK"); status=$?
+check "AC-16 outside a ScrumIA composition it says nothing" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
 
 NO_JQ="$WORKDIR/no-jq"
 mkdir -p "$NO_JQ"
 for tool in cat dirname; do ln -s "$(command -v "$tool")" "$NO_JQ/$tool"; done
-out=$(write_payload "$ROLE_ENTRY" | PATH="$NO_JQ" "$BASH" "$HOOK"); status=$?
+out=$(write_payload "$ROLE_ENTRY" | hook env PATH="$NO_JQ" "$BASH" "$HOOK"); status=$?
 check "without jq it disables itself rather than the session" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
 
-( cd "$WORKDIR" && jq -n '{tool_name: "Write", cwd: "a/relative/dir",
-    tool_input: {file_path: ".claude/agent-memory/x/y.md"}}' \
-  | env -u CLAUDE_PROJECT_DIR bash "$HOOK" > "$WORKDIR/walk.out" 2>&1 ) &
-walk=$!
-( for _ in 1 2 3 4 5; do sleep 1; kill -0 "$walk" 2>/dev/null || exit 0; done
-  kill -9 "$walk" 2>/dev/null ) >/dev/null 2>&1 &
-wait "$walk"; status=$?
-out=$(cat "$WORKDIR/walk.out")
-check "a relative directory ends the walk instead of running forever" \
+mkdir -p "$BARE/deep/deeper"
+out=$(jq -n --arg p "$BARE/.claude/agent-memory/some-agent/x.md" --arg cwd "$BARE/deep/deeper" \
+  '{tool_name: "Write", cwd: $cwd, tool_input: {file_path: $p}}' | bare_hook); status=$?
+check "AC-16 the climb to the root ends instead of running forever" \
+  "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
+
+out=$(jq -n --arg p "$ROLE_ENTRY" '{tool_name: "Write", cwd: "/no/such/directory",
+  tool_input: {file_path: $p}}' | bare_hook); status=$?
+check "a directory it cannot enter leaves the run alone" \
   "$([ -z "$out" ] && [ $status -eq 0 ] && echo true || echo false)" "exit $status, out: $out"
 
 out=$(printf 'not json at all' | run_hook); status=$?
