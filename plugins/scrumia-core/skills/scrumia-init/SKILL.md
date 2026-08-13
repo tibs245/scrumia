@@ -91,7 +91,8 @@ modules:
         level: guided        # guided | assisted | autonomous — gates ticket-transition approval
         auto_merge: none     # none | docs-only | all — checked before a merge, defaults to none
       project: "<board name>"
-      project_number: 0      # written by scrumia-project-setup, which also fills `board:` below
+      # project_number, columns and board (field and option ids) are written here by
+      # scrumia-project-setup — it reads the board, so it is the only thing that can.
 
   "tibs245/scrumia:scrumia-teams":
     params:
@@ -120,6 +121,10 @@ modules:
         max_tickets: 5       # caps the batch — beyond it, human review saturates
 
   "tibs245/scrumia:scrumia-discovery": {}
+
+  "tibs245/scrumia:scrumia-design":
+    params:
+      root: "design"
 
   "local:<house-module>": {}   # one this project ships to itself, at .scrumia/modules/<house-module>/
 
@@ -243,6 +248,7 @@ it comes from, and a module named without one is not declared at all.
 | `tibs245/scrumia:scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 | `tibs245/scrumia:scrumia-teams` | Standing roles: manager, business, tech. |
 | `tibs245/scrumia:scrumia-discovery` | An idea goes through scoping before becoming a ticket. |
+| `tibs245/scrumia:scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 | `local:acme-house-rules` | This project's own module, at `.scrumia/modules/acme-house-rules/`. |
 
 ### Per app

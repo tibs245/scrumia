@@ -1,7 +1,11 @@
+# ScrumIA composition. Describes the project and its tooling, never its state.
 project:
   name: "ScrumIA"
   repo: "tibs245/scrumia"
 
+# A project adds its own directives in .scrumia/extends.json — same shape as a module's,
+# read first by scrumia-extends, which is how a house rule beats a module's without
+# forking it. This project has none: every rule it runs is a module's.
 modules:
   "tibs245/scrumia:scrumia-specs":
     params:
