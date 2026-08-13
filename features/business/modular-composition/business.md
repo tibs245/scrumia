@@ -60,6 +60,22 @@ module safe to install before deciding to use it, and it is why the mechanism ne
 `extends.json`, keyed by register. The two were deliberately not nested — ADR-0021 states
 why, and BR-9 below is the rule it protects.
 
+**A source is established, never chosen.** Whatever writes this file — an installer, a
+migration off a shape that carried bare names — takes each source from what actually makes
+the module resolvable: the repository the module's own manifest claims, the project's
+module directory, or the shared tier. The marketplace a person happened to install it
+through is a cross-check and not the answer; the two agree for a marketplace serving its
+own repository and part company for a fork, where sourcing from the wrong one writes a key
+that resolves to nothing while every table merely renders shorter.
+
+**Reading may settle an ambiguous name for the length of one call; writing may not settle
+it at all.** A bare name several tiers answer is a shadow: resolution picks the narrowest,
+uses it, and says so every time it runs, which is safe because it is recomputed and
+re-announced on the next call. Writing that same choice into a versioned key ends the
+recomputation — the file now asserts on every machine what one machine's layout happened to
+say. So an ambiguous name is reported and left out, and a person decides. This asymmetry
+between resolving and recording is what the retired shapes' migration turns on.
+
 ## A module's configuration cascades, in a stated order
 
 Three layers, each overriding the one before:
@@ -391,7 +407,14 @@ the composition.
   composition decision a person makes, not one a generator may make silently.
 - **BR-13** — A module is declared by a key of the form `<source>:<module>`, always. The
   source is a marketplace (`<owner>/<repo>`), `shared`, or `local`. A bare name is not a
-  declaration, and no field beside the key restates the origin.
+  declaration, and no field beside the key restates the origin. Whatever **writes** such a
+  key establishes the source from what makes the module resolvable — for a marketplace, the
+  repository the module's own manifest claims — never from the marketplace it was installed
+  through, and never from whichever module of that name happens to be installed. A name
+  nothing establishes, or one several tiers answer at once, is reported and left unwritten:
+  resolution may settle an ambiguous name for the length of one call, because it recomputes
+  and re-announces it on the next; a versioned key settles it for every machine and every
+  run, which is not the migration's to decide.
 - **BR-14** — A module's configuration resolves from three layers in a stated order:
   `settings:`, then the module's own `params:`, then `.scrumia/config.local.yaml`, which is
   never committed. A key one module reads belongs in that module's `params:`; `settings:`

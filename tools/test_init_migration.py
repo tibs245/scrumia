@@ -64,16 +64,30 @@ def template_yaml() -> str:
     return blocks[0]
 
 
-def run_extends(args: list[str], config: Path) -> tuple[int, str, str]:
+def run_extends(args: list[str], config: Path, marketplace: Path | None = None
+                ) -> tuple[int, str, str]:
     env = dict(os.environ)
     env["PATH"] = f"{EXTENDS_BIN}{os.pathsep}{env['PATH']}"
     env["SCRUMIA_CONFIG"] = str(config)
-    # Neither tier may leak a machine's real modules into an assertion about the template.
+    # All three tiers pinned, so no assertion here can be answered by a real module on the
+    # machine running the suite. SCRUMIA_MODULE_DIR replaces the PATH sweep entirely.
     env.pop("SCRUMIA_SHARED_DIR", None)
     env.pop("SCRUMIA_CONFIG_LOCAL", None)
+    if marketplace is not None:
+        env["SCRUMIA_MODULE_DIR"] = str(marketplace)
+    else:
+        env.pop("SCRUMIA_MODULE_DIR", None)
     p = subprocess.run([str(EXTENDS_BIN / "scrumia-extends"), *args],
                        capture_output=True, text=True, env=env, timeout=30)
     return p.returncode, p.stdout, p.stderr
+
+
+def state_of(out: str, key: str) -> str:
+    try:
+        rows = json.loads(out)
+    except json.JSONDecodeError:
+        return "unparseable"
+    return next((r.get("state", "?") for r in rows if r.get("key") == key), "not-listed")
 
 
 # ------------------------------------------------------------------ AC-17, writing side
@@ -146,19 +160,54 @@ def test_ac17_the_migration_sources_rather_than_guesses() -> None:
               retired in step3)
     check("the sourcing asks the resolver instead of searching the tiers by hand",
           "scrumia-extends --modules" in step3, "the migration reimplements discovery")
-    check("the marketplace half is resolved through the alias table",
-          "extraKnownMarketplaces" in step3)
-    # A procedure answering only `absent` freezes a `shadow` — one machine's checkout.
-    for state in ("resolved", "shadow", "conflict", "absent"):
-        check(f"the `{state}` state has a stated answer", f"`{state}`" in step3)
-    check("an ambiguous name is not disambiguated by the migration",
-          "does not get to disambiguate" in step3,
-          "nothing stops a shadow being written as a key")
+
+    # Answering `shadow` with anything but silence freezes one checkout into the file.
+    rows = dict(re.findall(r"^\|\s*`(resolved|shadow|conflict|absent)`\s*\|[^|]*\|([^|]*)\|",
+                           step3, re.M))
+    check("every state the resolver returns has a row", set(rows) ==
+          {"resolved", "shadow", "conflict", "absent"}, f"rows found: {sorted(rows)}")
+    for state in ("shadow", "conflict", "absent"):
+        check(f"`{state}` is answered with writing nothing",
+              "nothing" in rows.get(state, "").lower(), rows.get(state, "<no row>"))
+    check("`resolved` is the one row that produces a key",
+          "nothing" not in rows.get("resolved", "x").lower(), rows.get("resolved", "<no row>"))
     check("a name it cannot source is reported rather than written",
           "reported, not written" in step3 or "reported, never written" in step3,
           "the refusal to guess a source is no longer stated")
-    check("the `settings:` half of the migration is stated too",
-          "settings" in step3 and "params:" in step3)
+
+
+def test_ac17_a_marketplace_source_is_the_manifest_not_the_alias() -> None:
+    print("AC-17 — the marketplace half of a key is what the resolver actually binds")
+    with tempfile.TemporaryDirectory(prefix="scrumia-src-") as tmp:
+        tmp = Path(tmp)
+        # A fork: the alias names acme/fork, the manifest still claims the upstream.
+        mod = tmp / "market" / "acme-thing" / ".claude-plugin"
+        mod.mkdir(parents=True)
+        (mod / "plugin.json").write_text(json.dumps(
+            {"name": "acme-thing", "repository": "https://github.com/tibs245/scrumia.git"}),
+            encoding="utf-8")
+
+        def declared_as(key: str) -> str:
+            cfg = tmp / f"{key.replace('/', '_').replace(':', '-')}.yaml"
+            cfg.write_text(f'project:\n  name: t\nmodules:\n  "{key}": {{}}\napps: []\n',
+                           encoding="utf-8")
+            _, out, _ = run_extends(["--modules", "--json"], cfg, marketplace=tmp / "market")
+            return state_of(out, key)
+
+        check("the manifest's repository is what binds",
+              declared_as("tibs245/scrumia:acme-thing") == "resolved",
+              declared_as("tibs245/scrumia:acme-thing"))
+        check("the marketplace it was installed through does not",
+              declared_as("acme/fork:acme-thing") == "absent",
+              declared_as("acme/fork:acme-thing"))
+
+    step3 = skill_text()[skill_text().index("## Step 3"):skill_text().index("## Step 4")]
+    check("and the skill sources from the manifest, not the alias table",
+          "`.claude-plugin/plugin.json`" in step3 and "cross-check, not the source" in step3,
+          "the sourcing rule no longer names the manifest as the authority")
+    check("the migration verifies the rewrite against the run it started from",
+          "must resolve to the same root" in step3,
+          "nothing tells the migration to re-resolve after writing")
 
 
 def test_the_skill_does_not_migrate_unasked() -> None:
@@ -223,19 +272,34 @@ def test_ac18_the_three_layers_are_stated_in_order() -> None:
     print("AC-18 — the order is stated where the layers are, not only applied")
     text = skill_text()
     step3 = text[text.index("## Step 3"):text.index("## Step 4")]
-    positions = [step3.find(needle) for needle in
-                 ("settings:", "params:", "config.local.yaml")]
-    check("all three layers are named", all(p >= 0 for p in positions), str(positions))
-    ordered = step3[step3.index("1. `settings:`"):] if "1. `settings:`" in step3 else ""
-    check("they are numbered in the order that decides",
-          ordered.index("2. `modules[") < ordered.index("3. `.scrumia/config.local.yaml`")
-          if ordered else False,
-          "the numbered list of layers is gone or out of order")
-    check("layer 3's cost is stated rather than hidden",
-          "never committed" in step3 and "reproducible in its **modules**" in step3)
+    layers = re.findall(r"^(\d)\. `([^`]+)`", step3, re.M)
+    check("the three layers are a numbered list, in the order that decides",
+          [n for n, _ in layers] == ["1", "2", "3"]
+          and layers[0][1] == "settings:"
+          and layers[1][1].startswith("modules[")
+          and "config.local.yaml" in layers[2][1],
+          f"found: {layers}")
+    check("layer 3 is marked as the one that is never committed",
+          "never committed" in step3)
 
 
 # --------------------------------------------------- this repository, the first adopter
+
+def test_the_writing_rule_has_a_rule_upstream_of_its_criterion() -> None:
+    # qa.md carries one scenario per rule in business.md, never a rule of its own.
+    print("AC-17 — the writer-side scenario has a business rule above it")
+    business = (ROOT / "features" / "business" / "modular-composition"
+                / "business.md").read_text(encoding="utf-8")
+    br13 = business[business.index("- **BR-13**"):business.index("- **BR-14**")]
+    check("BR-13 governs writing a key and not only reading one",
+          "writes" in br13 or "written" in br13, br13[:200])
+    check("it names the manifest as the marketplace source",
+          "manifest" in br13, br13[:200])
+    check("and it refuses to settle an ambiguous name when writing",
+          "reported and left unwritten" in br13, br13[:300])
+    check("the asymmetry between resolving and recording is stated in prose too",
+          "may settle an ambiguous name for the length of one call" in business)
+
 
 def test_claude_md_names_the_keys_its_config_declares() -> None:
     print("AC-17 — this repository's CLAUDE.md names modules by the key it declares them by")
@@ -268,6 +332,8 @@ def main() -> int:
     test_ac17_the_template_writes_sourced_keys()
     test_ac17_the_real_reader_accepts_the_template()
     test_ac17_the_migration_sources_rather_than_guesses()
+    test_ac17_a_marketplace_source_is_the_manifest_not_the_alias()
+    test_the_writing_rule_has_a_rule_upstream_of_its_criterion()
     test_the_skill_does_not_migrate_unasked()
     test_ac18_the_template_places_a_setting_by_its_reader()
     test_ac18_the_cascade_reaches_what_the_template_wrote()

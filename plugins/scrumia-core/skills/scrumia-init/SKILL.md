@@ -91,8 +91,9 @@ modules:
         level: guided        # guided | assisted | autonomous — gates ticket-transition approval
         auto_merge: none     # none | docs-only | all — checked before a merge, defaults to none
       project: "<board name>"
-      # project_number, columns and board (field and option ids) are written here by
-      # scrumia-project-setup — it reads the board, so it is the only thing that can.
+      # The board's number, columns and field/option ids are the tracker module's to add
+      # in Step 4 — it reads the board, so it is the only thing that can. Where it writes
+      # them is its own to say; do not seed them here.
 
   "tibs245/scrumia:scrumia-teams":
     params:
@@ -126,7 +127,9 @@ modules:
     params:
       root: "design"
 
-  "local:<house-module>": {}   # one this project ships to itself, at .scrumia/modules/<house-module>/
+  # Delete this line unless the project ships a module to itself. Copied through as-is it
+  # is a declared absence under a placeholder name, which resolves to nothing forever.
+  "local:<house-module>": {}   # at .scrumia/modules/<house-module>/, travels with the clone
 
 apps:
   - name: "<app>"
@@ -195,14 +198,20 @@ Each name comes back with a `state` and the `roots` that answered it. Only one s
 
 | `state` | What it means | What to write |
 |---|---|---|
-| `resolved` | exactly one directory answered | `local:` or `shared:` from `location`; for `marketplace`, the `<owner>/<repo>` its alias resolves to in `extraKnownMarketplaces` |
+| `resolved` | exactly one directory answered | `local:` or `shared:` straight from `location`; for `marketplace`, the source below |
 | `shadow` | several tiers answered, and the narrowest is in use | **nothing** — report all of them |
 | `conflict` | two directories in one tier answered | **nothing** — report both |
 | `absent` | nothing answered | **nothing** — report where it would have come from |
 
-`shadow` is the case worth being slow about. The reader picks the narrowest tier and says so on every call, which is the right behaviour for something that resolves each time — but writing that choice into a versioned key freezes one machine's layout into the file, and the next machine to lose that local checkout reads a key that now names a module it never had. A name a person has not disambiguated is a name a migration does not get to disambiguate.
+**A marketplace source is the module's own claim, not the marketplace you installed it from.** Take `<owner>/<repo>` from `repository` — or `homepage` — in the resolved root's `.claude-plugin/plugin.json`, stripped of scheme, host and any `.git`. That is the value the resolver matches a marketplace key against, so it is the only one that binds.
+
+The alias in `extraKnownMarketplaces` is a **cross-check, not the source**. The two agree for a marketplace serving its own single repository and part company for a fork or an aggregator: fork `tibs245/scrumia` to `acme/scrumia`, install it under the alias `acme`, and the manifest still says `tibs245/scrumia` because forking does not rewrite it. Source from the alias there and every migrated key becomes a declared absence — the module stops contributing, every register renders shorter, and nothing fails, because `--check` inspects the modules it discovered and never the declarations. Where the two disagree, report it and let a person choose; a module whose manifest claims no repository at all cannot be sourced as a marketplace key, and is reported like an `absent` one.
 
 **A name none of this sources is reported, not written.** Say which name, what its state was, and which directories answered; leave it out of the migrated file until a person says where it comes from. A key guessed onto a marketplace makes the file resolve to whatever that marketplace happens to publish under that name, which is precisely what the source exists to prevent. The rest of the migration still lands — one unsourced name is a gap to close, not a reason to leave the whole file on a retired key.
+
+`shadow` is the other case worth being slow about. The reader picks the narrowest tier and says so on every call, which is right for something that resolves each time — but writing that choice into a versioned key freezes one machine's layout into the file, and the next machine to lose that local checkout reads a key that now names a module it never had. A name a person has not disambiguated is a name a migration does not get to disambiguate.
+
+**Check the rewrite before you hand it over.** Run `scrumia-extends --modules` again on the migrated file and compare, name by name, against the run you started from: every key must resolve to the same root it resolved to before. A key that now reads `absent` was sourced wrong. Nothing else catches this — `--check` will not, and the tables will simply render shorter.
 
 **Migrate the whole file in one pass, `settings:` included.** A file carrying `modules:` beside an unmigrated `settings.<block>` still resolves — layer 1 is read whole — but the block then belongs to no module, and the next person to move it has to work out who read it. Where a module's own text still names a retired nest, that module passes it to the resolver as `--legacy <nest>`; that is the module's to say, and not something to write back into the config.
 
@@ -269,7 +278,7 @@ it comes from, and a module named without one is not declared at all.
 | App | Path | Modules |
 |---|---|---|
 | `web` | `apps/web` | `tibs245/scrumia:scrumia-impl-solidjs`, `tibs245/scrumia:scrumia-practice-tdd` |
-| `api` | `apps/api` | `tibs245/scrumia:scrumia-impl-rust`, `tibs245/scrumia:scrumia-practice-solid` |
+| `api` | `apps/api` | `tibs245/scrumia:scrumia-impl-rust`, `tibs245/scrumia:scrumia-practice-tdd`, `tibs245/scrumia:scrumia-practice-solid` |
 
 ### What rules apply, and where they are written
 
@@ -345,7 +354,7 @@ Write only the lines of modules actually plugged in. A table naming an absent mo
 
 **The `## Design contract` block follows the same rule**, copied from the plugged design module's `## Composition block` (`scrumia-design`: `skills/scrumia-design-system/SKILL.md`). Same reason, same discipline — and same omission when the slot is empty.
 
-If no module in `modules:` answers the `specs` question, write no `## Specs contract` section at all, and note its absence in the Step 8 report — a section with nothing to copy would either be blank or invented, and both are worse than omitted. On re-run, compare the block on disk against the plugged module's current `## Composition block` and report drift instead of silently overwriting — same discipline as every other marker section.
+If the `specs` slot is empty — no module in `modules:` answers that question — write no `## Specs contract` section at all, and note its absence in the Step 8 report — a section with nothing to copy would either be blank or invented, and both are worse than omitted. On re-run, compare the block on disk against the plugged module's current `## Composition block` and report drift instead of silently overwriting — same discipline as every other marker section.
 
 ## Step 6 — Offer per-app `CLAUDE.md` stubs (optional)
 
@@ -405,7 +414,7 @@ to a register nobody opens. There is nothing to build and nothing to commit — 
 directive table is computed on demand. A name reported missing usually means the plugin is
 enabled but the session has not restarted since; say so rather than working around it.
 
-Its output *is* the closing summary — the slot table, the slots left empty on purpose, the apps carrying no implementation module. Don't paraphrase it afterwards. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
+Its output *is* the closing summary — every module the project declares, under its key with its `params:`, and the apps with their own. Don't paraphrase it afterwards, and don't announce a section it did not print. A composition an agent retypes from memory drifts from `.scrumia/config.yaml` the moment one is edited and the other isn't, and the drift is invisible precisely because the prose still reads plausibly; the script re-reads the file on every run, so the user sees what the project is configured to do rather than what this session recalled.
 
 If `--check` reports an unmet edge, that is a finding to report, not something to write back into the config: `modules` names the modules this project runs, and a gap it exposes is answered by plugging a module in or by accepting the gap — never by a placeholder that makes the check pass.
 

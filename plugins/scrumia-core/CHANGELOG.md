@@ -53,9 +53,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 ### Changed
 - `scrumia-init` writes `modules:` keyed `<source>:<module>` with each module's own
   configuration under its `params:`, and migrates a project off `extends:` or the older
-  `composition:`/`practices:` — sourcing every name from what enables it, and reporting one
-  it cannot source instead of guessing a marketplace for it. The `CLAUDE.md` tables it
-  writes name modules by that key too. A project is migrated when it asks, never in passing.
+  `composition:`/`practices:` — asking the resolver where each name comes from, taking a
+  marketplace source from the module's own manifest rather than the marketplace it was
+  installed through, and reporting a name it cannot source or one several tiers answer
+  instead of picking for you. The `CLAUDE.md` tables it writes name modules by that key
+  too. A project is migrated when it asks, never in passing.
 - `scrumia-extends --settings` normalises each layer to the current shape before the layers
   combine, so the cascade's order decides which value answers and the shape never does. A
   machine whose `.scrumia/config.local.yaml` still writes `settings.<nest>` now outranks a
