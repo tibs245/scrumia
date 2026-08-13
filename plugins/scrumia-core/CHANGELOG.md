@@ -11,9 +11,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `scrumia-extends --claims [<file>]` — reconciles what `CLAUDE.md` says about the
   composition against what actually resolves for whoever runs it — one file per run, so an
   app's own stub is checked by naming it. It exits non-zero on one case: the file names, by
-  its bare name, a `shared:` module nothing here answers and no other key binds. Elsewhere
-  what is missing is the module rather than the sentence, and a file naming the declaration
-  key has already said where the capability would come from. `scrumia-init` writes a
+  its bare name, a `shared:` module that does not resolve here and no other key binds.
+  Elsewhere what is missing is the module rather than the sentence, and a file naming the
+  declaration key has already said where the capability would come from. `scrumia-init` writes a
   `shared:` module by its key, and `scrumia-compose` diagnoses with it — a section matching
   the config exactly still misleads every clone when the capability lives on one machine.
 

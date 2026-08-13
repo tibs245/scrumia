@@ -93,7 +93,7 @@ Four outcomes, one per declaration:
 | Surface | Resolved | Absent | Shadow | Conflict |
 |---|---|---|---|---|
 | a register's table | its rows, in scope order | absent from the table | the narrowest module's rows, named on stderr | absent from the table, named on stderr |
-| `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
+| `--modules` | key, module, location, root | state `absent`, the location it would come from — none, where the key states no source the grammar admits | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
 | `--check` | — | — | named, not counted | an unmet dependency; exit non-zero |
 | `--claims` | honoured where the file names it | the verdict below | as resolved — it binds | the verdict below |
 | `compose-status.sh` | the declaration as written, under a heading saying so | the same — it resolves nothing, so it distinguishes none of these | | |
@@ -124,7 +124,7 @@ row per declaration, and one verdict each:
 |---|---|---|
 | `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
 | `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
-| `absent` or `conflict`, keyed by no source | names only the module | `unsourced` — the declaration states no origin for the file to repeat |
+| `absent` or `conflict`, stating no source the grammar admits | names only the module | `unsourced` — the declaration states no origin for the file to repeat |
 | `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
 | `absent` or `conflict`, from a marketplace or from inside the project, or bound under another key | names only the module | `reachable` — what is missing is the module, not the sentence |
 | `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
@@ -151,12 +151,13 @@ the words the configuration uses, and a file that names only the bare module has
 present anywhere in the file counts: which sentence it sits in is a human's judgement, and
 a tool grading English is a tool inventing findings.
 
-A declaration whose key carries no source — one from the retired list, or one the grammar
-refuses — is its own module name, so naming the module and naming the key are one act and
-neither `named as absent` nor `claimed` would be true of it. It gets `unsourced` instead,
-which says what is actually wrong: the configuration states no origin, so no wording of the
-file could have stated one, and keying the declaration by source is what makes it
-answerable. That is the fix the shadow and conflict reports already name.
+A declaration stating no source the grammar admits — one from the retired list, one with no
+source at all, one whose source is a fourth thing — gets `unsourced`, and neither `named as
+absent` nor `claimed` would be true of it. The configuration states no origin, so no wording
+of the file could have repeated one, and keying the declaration by source is what makes it
+answerable at all. That is the fix the shadow report and the grammar's own notice already
+name. The test is the source rather than the key's shape: a key that is its own module name
+is one way to state no origin, and `foo:x` is another.
 
 A name matches at its edges, not as a substring, and the boundary alphabet treats a path as
 one token: without that, a module named `tools` is found inside `tools/validate.py` and a

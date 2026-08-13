@@ -73,7 +73,7 @@ Every declaration comes back with a verdict:
 - `named as absent` — the file names the declaration key, so it states a source the reader cannot reach. Correct, and the shape to aim for.
 - `reachable` — it does not resolve, but from a location any clone gets to, or another key already binds it. The module is what is missing, not the sentence: restore it.
 - `unsourced` — the declaration names no origin, so the file has none to repeat. Key it `<source>:<module>` and it becomes answerable.
-- `claimed` — the defect, and the only one that exits non-zero: the file promises, by bare name, a capability that lives in a shared checkout this reader has no path to. The fix is one of two and the human picks — name the module by its key so the file says where it comes from, or say nothing about it there.
+- `claimed` — the defect, and the only one that exits non-zero: the file promises, by bare name, a module from a shared checkout that does not resolve here and that no other key binds. The fix is one of two and the human picks — name the module by its key so the file says where it comes from, or say nothing about it there.
 
 **It reads one file per run.** A per-app stub is a second composition claim in a second
 file, and the root run says nothing about it — check each `apps[].path/CLAUDE.md` that

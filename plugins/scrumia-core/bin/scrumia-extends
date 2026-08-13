@@ -75,9 +75,9 @@ narrowest wins and says so, so promoting a module never disables it.
 --claims reconciles what a file says about the composition against those states, so that
 a capability reachable only from one machine is not asserted to a reader who cloned
 without it. It reads one file, and exits non-zero on one case only: the file names, by its
-bare name, a `shared:` module nothing here answers and nothing else binds. Absent from a
-marketplace or from inside the project, the module is what is missing rather than the
-sentence; naming the declaration key states the source and settles it either way.
+bare name, a `shared:` module that does not resolve here and nothing else binds. Absent
+from a marketplace or from inside the project, the module is what is missing rather than
+the sentence; naming the declaration key states the source and settles it either way.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -156,7 +156,9 @@ load_config() {
                  elif $shape == "legacy" then
                    ((.composition // {}) | to_entries | map(select(.value != null) | .value) | from_list)
                  else [] end )
-    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG")
+    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG") &&
+    [ -n "${SCOPES:-}" ] ||
+    die "$CONFIG: could not be read as a composition — '$KEY_READ:' must be a mapping keyed <source>:<module>, and each app's must too (ADR-0021)"
 
   # A key the grammar does not admit would make the file mean whatever happens to be
   # installed, which is the failure the qualified source removes — so it is named and
@@ -406,7 +408,10 @@ bindings() {
     # An absent declaration still states where it would have come from — that is the whole
     # content of a declared absence (BR-8). A bare name from the retired list states none,
     # which is what the grammar replaced it for.
-    def tier: if . == "local" or . == "shared" then . else "marketplace" end;
+    # A source outside the three is no location either: crediting it to the marketplace
+    # would state an origin for a key the grammar has just refused to read as one.
+    def tier: if . == "local" or . == "shared" then .
+              elif test("^[^/]+/[^/]+$") then "marketplace" else "(none)" end;
     . as $mods
     | [ bound(($scopes.project // []); $mods)[] | . + {scope: "project-wide"} ]
       + [ $scopes.apps[] | .name as $a | bound(.modules; $mods)[] | . + {scope: $a} ]
@@ -755,7 +760,7 @@ cmd_claims() {
   # Beside the configuration's own directory, like everything else under .scrumia/: a
   # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
   [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
-  all=$(bindings)
+  all=$(bindings) || die "could not resolve this project's declarations"
 
   # A file the caller named is an assertion that it is there; only the default may be
   # missing, because a project that claims nothing is a project with nothing to reconcile.
@@ -779,10 +784,12 @@ cmd_claims() {
     | map(select(.module != "")) | unique_by(.key)[] | . as $r
     | [$r.key, $r.module, $r.state, $r.location,
        (if $r.source == "shared" then "shared" else "everyone" end),
-       (if ($bound | index($r.module)) then "bound" else "unbound" end)] | @tsv' <<<"$all") ||
+       (if ($bound | index($r.module)) then "bound" else "unbound" end),
+       (if $r.source == "shared" or $r.source == "local"
+           or ($r.source | test("^[^/]+/[^/]+$")) then "stated" else "none" end)] | @tsv' <<<"$all") ||
     die "could not reconcile the declarations"
 
-  while IFS=$'\t' read -r key mod state loc reach elsewhere; do
+  while IFS=$'\t' read -r key mod state loc reach elsewhere origin; do
     [ -n "$key" ] || continue
     named=no; keyed=no
     names_it "$file" "$mod" && named=yes
@@ -793,10 +800,11 @@ cmd_claims() {
       [ "$named" = yes ] && verdict=honoured || verdict=unclaimed
     elif [ "$named" = no ]; then
       verdict="not claimed"
-    elif [ "$key" = "$mod" ]; then
-      # The declaration states no origin, so there is nothing for the file to repeat and no
-      # wording that would have been better. Keying it by source is the fix, and the shadow
-      # and conflict reports already name it.
+    elif [ "$origin" = none ]; then
+      # No location this tool can use — a name from the retired list, or a source the
+      # grammar refuses. The configuration states no origin, so there is nothing for the
+      # file to repeat and no wording that would have been better; keying it by source is
+      # the fix, and load_config and the shadow report already name it.
       verdict=unsourced
     elif [ "$keyed" = yes ]; then
       # The key is the one string carrying the module *and* its source, so a file naming it

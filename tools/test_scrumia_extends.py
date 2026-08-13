@@ -245,6 +245,11 @@ def test_ac17_a_bare_name_is_not_a_declaration() -> None:
           "is not a declaration" in err and "<source>:<module>" in err, err.strip())
     check("a key whose source half is missing is refused too",
           "':scrumia-specs' is not a declaration" in err, err.strip())
+    _, out, _ = run(["--modules", "--json"], bare)
+    check("and it is credited with no location, not with the marketplace",
+          all(r["location"] == "(none)" for r in json.loads(out)
+              if r["key"] in (":scrumia-specs", "github:scrumia-teams", "scrumia-practice-tdd")),
+          [(r["key"], r["location"]) for r in json.loads(out)])
     check("a source outside the three BR-13 enumerates is refused",
           "'github:scrumia-teams' is not a declaration" in err, err.strip())
     check("an unresolved declaration is not a failure", code == 0, code)
@@ -826,18 +831,38 @@ modules:
           code == 0 and "| claimed |" not in out, f"exit {code}: {out[:400]}")
     shutil.rmtree(project)
 
-    # A declaration stating no origin leaves the file nothing to repeat, so neither the
-    # remedy nor the verdict that carries it can be true of it.
+    # Three keys state no origin the tool can use, so no wording of the file could have
+    # repeated one.
+    for label, body in [
+        ("from the retired list", 'extends:\n  - acme-conventions\n'),
+        ("with no source at all", 'modules:\n  ":acme-conventions": {}\n'),
+        ("with a source the grammar refuses", 'modules:\n  "foo:acme-conventions": {}\n'),
+    ]:
+        project = project_with(f'project: {{ name: "Unsourced" }}\n{body}')
+        (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n",
+                                           encoding="utf-8")
+        code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+        check(f"a declaration {label} is unsourced, not an absence the file stated",
+              code == 0 and "| unsourced |" in out, f"exit {code}: {out[:400]}")
+        shutil.rmtree(project)
+
+    # A shadow binds, so it makes the module present for a stale key beside it — the same
+    # carve-out a resolved declaration gets, and the one a narrower `$bound` would drop.
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
     project = project_with("""
-project: { name: "Unsourced" }
+project: { name: "Shadowed and stale" }
 extends:
   - acme-conventions
+  - "shared:acme-conventions"
 """)
+    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
     (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
-    check("a declaration with no source is unsourced, not an absence the file stated",
-          code == 0 and "| unsourced |" in out, f"exit {code}: {out[:400]}")
+    check("a module a shadow bound is reachable for the stale key beside it",
+          code == 0 and "| claimed |" not in out, f"exit {code}: {out[:400]}")
     shutil.rmtree(project)
+    shutil.rmtree(shared)
 
     project = project_with(MARKETPLACE)
     (project / "CLAUDE.md").write_text("Nothing about the composition.\n", encoding="utf-8")
@@ -845,6 +870,34 @@ extends:
     check("a module the file never names, that resolves, is unclaimed",
           code == 0 and "| unclaimed |" in out, f"exit {code}: {out[:400]}")
     shutil.rmtree(project)
+
+
+def test_claims_refuses_to_answer_when_it_could_not_read() -> None:
+    print("AC-7 — a read that failed never reports as a composition claiming nothing")
+
+    # A half-migration makes the query fail, and read as an empty composition it would clear
+    # a live claim and exit 0.
+    project = project_with("""
+project: { name: "Half migrated" }
+modules:
+  - "shared:acme-conventions"
+""")
+    (project / "CLAUDE.md").write_text("We run `acme-conventions` here.\n", encoding="utf-8")
+    config = project / ".scrumia" / "config.yaml"
+    for args in (["--claims"], ["--check"], ["--modules"], ["implement"]):
+        code, out, err = run(args, config)
+        check(f"{' '.join(args)} refuses the config rather than reading it as empty",
+              code != 0 and "could not be read as a composition" in err,
+              f"exit {code}: {err.strip()[:200] or out[:200]}")
+
+    # The default file being a directory is not the default file being absent.
+    project2 = project_with(MARKETPLACE)
+    (project2 / "CLAUDE.md").mkdir()
+    code, _, err = run(["--claims"], project2 / ".scrumia" / "config.yaml")
+    check("a directory at the default path is an error, not a file claiming nothing",
+          code != 0 and "is not a file" in err, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
+    shutil.rmtree(project2)
 
 
 def test_claims_answers_for_a_shadow_a_conflict_and_a_named_file() -> None:
@@ -978,6 +1031,7 @@ def main() -> int:
     test_ac7_what_claude_md_claims_survives_a_clone()
     test_claims_matches_a_name_at_its_edges_and_only_where_reach_is_at_stake()
     test_claims_answers_for_a_shadow_a_conflict_and_a_named_file()
+    test_claims_refuses_to_answer_when_it_could_not_read()
     test_ac8_local_material_without_a_module_is_not_a_malformed_module()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
