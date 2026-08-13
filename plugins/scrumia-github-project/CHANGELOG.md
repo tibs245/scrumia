@@ -21,7 +21,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `.scrumia/config.yaml`. A value set in `.scrumia/config.local.yaml` now actually reaches
   it, and a project that has moved those keys into this module's `params:` keeps working —
   both shapes are read and merged key by key while the migration is in flight, the migrated
-  key winning. The key its `params:` sit under comes from the project's own declaration, so
+  key winning **within a layer**; across layers the cascade's order decides, so a machine
+  still writing `settings.tracker` outranks a repository that has migrated. This module
+  names that nest when it asks rather than leaving `scrumia-core` to guess it.
+  The key its `params:` sit under comes from the project's own declaration, so
   a `local:` or `shared:` source resolves like a marketplace one.
 - `scrumia-board` stops with a named error when its settings cannot be resolved at all —
   `scrumia-core` absent from the session, or no layer carrying the board's ids — rather
@@ -68,7 +71,8 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `settings.tracker` in `.scrumia/config.yaml` — this module's keys move into its own
   `params:` under the `modules:` mapping (ADR-0021). Both shapes are read and merged key by
   key, so a project migrates one key at a time; the retired nest is removed at the second
-  release after the one shipping this. `settings.autonomy` descends under the same decision
+  release after the one shipping this, and this module stops naming it before `scrumia-core`
+  stops accepting the name. `settings.autonomy` descends under the same decision
   and is **not** deprecated yet: its readers are this module's skills, which are not ported,
   and it carries its own entry — and its own window — when they are.
 - `scripts/board.sh` — kept as a shim that warns and delegates. It is removed at the second

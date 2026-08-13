@@ -13,7 +13,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `.scrumia/config.yaml`. A matrix cell overridden in `.scrumia/config.local.yaml` now
   actually changes the answer, and a project that has moved the block into this module's
   `params:` keeps working — both shapes are read and merged key by key while the migration
-  is in flight, the migrated key winning. The key its `params:` sit under comes from the
+  is in flight, the migrated key winning **within a layer**; across layers the cascade's
+  order decides, so a machine still writing `settings.team.execution` outranks a repository
+  that has migrated. This module names that nest when it asks rather than leaving
+  `scrumia-core` to guess it. The key its `params:` sit under comes from the
   project's own declaration, so a `local:` or `shared:` source resolves like a marketplace
   one.
 - `scrumia-pick-model` answers **no model at all** when no layer carries a grid — including
@@ -41,8 +44,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `settings.team.execution` in `.scrumia/config.yaml` — this module's policy moves into its
   own `params:` under the `modules:` mapping (ADR-0021). Both shapes are read and merged key
   by key, so a project migrates one key at a time; the retired nest is removed at the second
-  release after the one shipping this. `settings.team.roles` is unaffected — it declares the
-  team, not this module's configuration.
+  release after the one shipping this, and this module stops naming it before `scrumia-core`
+  stops accepting the name. `settings.team.roles` is unaffected — it declares the team, not
+  this module's configuration.
 - `scripts/pick-model.sh` — kept as a shim that warns and delegates. It is removed at the
   second release after the one shipping this; run `scrumia-pick-model`.
 

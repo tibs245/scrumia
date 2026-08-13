@@ -68,6 +68,12 @@ module_key() {
   printf '%s:%s\n' "$src" "$name"
 }
 
+# Where this module's configuration sat under `settings:` before ADR-0021 moved it into
+# `params:`, and the key it is written under now. The resolver is told rather than left to
+# guess: `settings.team` also holds `roles`, which is no module's, so nothing but this
+# module can say which half of that nest was ever its own.
+LEGACY_NEST="team.execution=execution"
+
 # The policy is resolved through the three layers rather than read out of `settings:`,
 # which would see layer 1 only and silently discard the per-machine layer
 # (`modular-composition` BR-15). Every failure below stops the tool: a model name computed
@@ -84,31 +90,27 @@ load_policy() {
 
   command -v scrumia-extends >/dev/null 2>&1 ||
     die "scrumia-extends not found — enable scrumia-core and restart the session. No model is chosen: reading $CONFIG directly would resolve one layer of three and answer with a model nobody configured"
-  out=$(scrumia-extends --settings "$key") ||
-    die "scrumia-extends --settings $key failed — the execution policy is unresolved, and no model is chosen. Run scrumia-extends --settings $key by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
+  out=$(scrumia-extends --settings "$key" --legacy "$LEGACY_NEST") ||
+    die "scrumia-extends --settings $key --legacy $LEGACY_NEST failed — the execution policy is unresolved, and no model is chosen. Run scrumia-extends --settings $key --legacy $LEGACY_NEST by hand to see what it reports, or scrumia-extends --check for an unmet dependency"
   jq -e 'type == "object"' >/dev/null 2>&1 <<<"$out" ||
-    die "scrumia-extends --settings $key returned no object — the execution policy is unresolved, and no model is chosen. Check that $CONFIG parses, then run scrumia-extends --settings $key by hand"
+    die "scrumia-extends --settings $key --legacy $LEGACY_NEST returned no object — the execution policy is unresolved, and no model is chosen. Check that $CONFIG parses, then run scrumia-extends --settings $key --legacy $LEGACY_NEST by hand"
 
-  # ADR-0021 moves what `settings.team.execution` held into this module's own `params:`,
-  # so the resolved block carries `execution` at its top level. The retired nest is still
-  # read while projects migrate, and the two are *merged* rather than chosen between:
-  # picking one whole shape would drop every key the other still carries onto this
-  # script's own literals — a project that has migrated its matrix but not its label
-  # prefixes would match no ticket and route every one of them to `unlabeled`. The new
-  # shape wins key by key.
-  # `with_entries` is load-bearing — jq's `*` propagates an explicit null, so a key
-  # written bare mid-migration would overwrite the value the base layer still carries.
-  # It filters the top level only: a null nested deeper, inside `labels`, still wins the
-  # merge and erases the base layer's value. #342 owns that; the warning below at least
-  # names every literal that ends up standing in.
-  EXEC=$(jq -c '(.team.execution // {})
-                * ((.execution // {}) | with_entries(select(.value != null)))' <<<"$out")
+  # The resolved block is already in the current shape: `--legacy` told the resolver which
+  # nest this module's configuration used to sit in, and it reconciled the two shapes
+  # inside each layer before the layers combined — so a machine still writing the retired
+  # nest in its local file outranks a repository that has migrated, which is what the
+  # cascade's order says and what reconciling here would have inverted
+  # (`modular-composition` AC-20). Nulls are dropped there too, at every depth, so a key
+  # written bare mid-migration defers to the layer beneath instead of erasing it (AC-21).
+  EXEC=$(jq -c '.execution // {}' <<<"$out")
 
   # The grid is the policy. Its absence is a broken installation, not a hole in a table
   # (`execution-policy` AC-22 vs AC-10), and answering it from this script's literals
-  # would run every ticket in the project on a default nobody chose.
+  # would run every ticket in the project on a default nobody chose. Both spellings are
+  # named, and the retired one comes from the mapping actually passed, so the message
+  # cannot drift from what was resolved: a project's file still says `team.execution`.
   jq -e '(.matrix | type) == "object" and (.matrix | length) > 0' >/dev/null 2>&1 <<<"$EXEC" ||
-    die "no execution grid in the resolved settings for ${key:-this module} — looked for 'execution.matrix' and the retired 'team.execution.matrix', and no layer of the cascade carries either. Run scrumia-team-setup; no model is chosen, because one taken from this tool's defaults would read like one taken from the grid"
+    die "no execution grid in the resolved settings for ${key:-this module} — looked for 'execution.matrix' and the retired '${LEGACY_NEST%%=*}.matrix', and no layer of the cascade carries either. Run scrumia-team-setup; no model is chosen, because one taken from this tool's defaults would read like one taken from the grid"
 
   # Beyond the grid the tool carries literals, and a literal standing in for a value
   # nobody configured is the same failure one size smaller. Not fatal — the grid still

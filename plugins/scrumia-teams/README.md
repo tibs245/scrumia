@@ -39,8 +39,9 @@ matrix by scope × risk, plus label prefixes and aliases), `escalation.to_human`
 
 `scrumia-pick-model` resolves `execution` through the composition's settings cascade rather
 than reading the configuration file, so an override typed into `.scrumia/config.local.yaml`
-reaches it, and it finds the key in this module's own `params:` once a project has migrated
-there.
+reaches it — in either shape, because the module names its retired nest when it asks and the
+resolver reconciles the two inside each layer, leaving the cascade's order to decide between
+layers. It finds the key in this module's own `params:` once a project has migrated there.
 
 **The grid is the one setting it will not stand in for.** When no layer carries a matrix it
 answers no model at all and says so — a model name taken from a built-in default is

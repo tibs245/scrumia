@@ -34,6 +34,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   whose; `--check` resolves the name and compares the publisher's own declared source
   against the claim. What a skill invokes stays the bare name.
 ### Changed
+- `scrumia-extends --settings` normalises each layer to the current shape before the layers
+  combine, so the cascade's order decides which value answers and the shape never does. A
+  machine whose `.scrumia/config.local.yaml` still writes `settings.<nest>` now outranks a
+  repository that has migrated to `params:`, instead of being silently discarded while the
+  provenance line named it. A module says which nest was its own with the new repeatable
+  `--legacy <nest>[=<key>]`; a nest no layer carries resolves clean. Nulls are dropped from
+  every layer at every depth, so a key written bare mid-migration defers to the layer
+  beneath rather than erasing it — and a layer left carrying nothing is no longer named
+  among those that answered.
 - **Breaking.** `scrumia-extends` now looks for each source in its own place, all three in
   one pass: `<owner>/<repo>` through the harness's PATH, `shared` under the directory
   `SCRUMIA_SHARED_DIR` names in `.scrumia/.env.local`, `local` at

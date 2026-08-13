@@ -13,7 +13,7 @@
 #   scrumia-extends --list
 #   scrumia-extends --modules
 #   scrumia-extends --check
-#   scrumia-extends --settings [<source>:<module>]
+#   scrumia-extends --settings [<source>:<module>] [--legacy <nest>[=<key>]]
 
 set -uo pipefail
 
@@ -44,6 +44,11 @@ scrumia-extends --list                  # every register opened here, and what r
 scrumia-extends --modules [--json]      # every declared module, and where it resolved from
 scrumia-extends --check                 # declared dependencies that are not met
 scrumia-extends --settings [<key>]      # a module's configuration, the cascade applied
+scrumia-extends --settings <key> --legacy <nest>[=<key>]
+                                        # …reading the nest under `settings:` this module's
+                                        # configuration used to sit in, as the key it is
+                                        # now written under. Repeatable; a nest no layer
+                                        # carries resolves clean.
 
 A project declares the modules it runs under `modules:`, a mapping keyed
 <source>:<module> — <owner>/<repo> for a marketplace, `shared`, or `local`. A bare name
@@ -553,6 +558,14 @@ cmd_list() {
 # which holds what is no module's; the module's own `params:`; and the per-machine local
 # layer, which is never committed and overrides both in either shape it may use. The order
 # is written here because an order only applied can invert without anything failing.
+#
+# Each layer is normalised to the current shape *before* the layers combine, so the merge
+# order is the only thing left that can decide. Reconciled afterwards instead, the shape
+# would decide where BR-14 says the layer does — and the layer it would discard is the
+# per-machine one, which is never committed and so is never the one a migration carries
+# forward (`modular-composition`'s tech.md, § *Which shape a module's own settings are read
+# in*). What the retired nest is called is the asking module's to say, not this tool's:
+# core naming another module's block is the reach into a sibling that ADR-0018 refuses.
 cmd_settings() {
   local key=$1 app=$2 answer
   if [ -n "$key" ] &&
@@ -560,22 +573,50 @@ cmd_settings() {
     note "no module is declared under '$key' in $CONFIG — resolving the layers that do not depend on it"
   fi
 
+  # Said rather than assumed: without a mapping this answer is the cascade as written, and
+  # a module still reading a retired nest resolves it somewhere this table does not show.
+  # A caller that passes one is told nothing — the two agree, so there is nothing to warn.
+  [ -n "$key" ] && [ "$LEGACY" = "[]" ] &&
+    note "resolved with no retired-nest mapping: if this module still reads keys under a 'settings.<nest>' block, pass --legacy <nest> to resolve them where it reads them"
+
   # The provenance is derived from the layers that carried something, never from the
   # layers that exist: a line naming a layer that did not answer is worse than no line,
   # because it is the one output whose whole job is to make the cascade checkable.
-  answer=$(jq -c -n --argjson s "$SCOPES" --argjson l "$CFG_LOCAL" \
+  answer=$(jq -c -n --argjson s "$SCOPES" --argjson l "$CFG_LOCAL" --argjson legacy "$LEGACY" \
     --arg k "$key" --arg app "$app" --arg lf "$CONFIG_LOCAL" '
     def params_of($set): ($set | map(select(.key == $k and $k != "")) | first | .params) // {};
-    ($s.settings // {}) as $base
-    | params_of($s.project) as $proj
-    | params_of([$s.apps[] | select(.name == $app) | .modules[]]) as $app_params
-    | ($l.settings // {}) as $local_base
-    | (if $k == "" then {} else ((($l.modules // {})[$k] // {}).params // {}) end) as $local_params
+
+    # A key written bare is a key not yet migrated, and `*` propagates an explicit null —
+    # so without this it erases the layer it defers to. Recursive, because the two shapes
+    # put a module block at different depths and a depth is not a thing to hard-code.
+    def strip: walk(if type == "object" then with_entries(select(.value != null)) else . end);
+
+    # The retired nest of this layer, moved to where the current shape reads it. `getpath` is
+    # given a key sequence, never a string spliced into this program: a path from the
+    # command line is data.
+    def hoist: . as $h
+      | reduce $legacy[] as $m ({};
+          (try ($h | getpath($m.path)) catch null) as $v
+          | if ($v | type) != "object" then .
+            elif $m.key == "" then . * $v
+            else . * { ($m.key): $v } end);
+    # Hoisted first, so the current shape still wins key by key inside one layer.
+    def norm: strip | (hoist * .);
+    # A layer of empty blocks and bare keys resolved to nothing, whatever it was written
+    # with, so it did not answer and is not claimed. Arrays count: an empty list replaces
+    # rather than merges, so writing one is an answer even though it holds no scalar.
+    def carries: ([paths(scalars)] + [paths(arrays)]) | length > 0;
+
+    (($s.settings // {}) | norm) as $base
+    | (params_of($s.project) | norm) as $proj
+    | (params_of([$s.apps[] | select(.name == $app) | .modules[]]) | norm) as $app_params
+    | (($l.settings // {}) | norm) as $local_base
+    | ((if $k == "" then {} else ((($l.modules // {})[$k] // {}).params // {}) end) | norm) as $local_params
     | { resolved: ($base * $proj * $app_params * $local_base * $local_params)
-      , layers: [ (if $base != {} then "settings:" else empty end)
-                , (if $proj != {} then "params: of " + $k else empty end)
-                , (if $app_params != {} then "params: of " + $k + " in app " + $app else empty end)
-                , (if ($local_base != {} or $local_params != {}) then $lf else empty end) ] }')
+      , layers: [ (if ($base | carries) then "settings:" else empty end)
+                , (if ($proj | carries) then "params: of " + $k else empty end)
+                , (if ($app_params | carries) then "params: of " + $k + " in app " + $app else empty end)
+                , (if (($local_base | carries) or ($local_params | carries)) then $lf else empty end) ] }')
 
   note "resolved from $(jq -r 'if (.layers | length) == 0 then "nothing: no layer carries a value"
                                else (.layers | join(", ")) end' <<<"$answer")"
@@ -676,7 +717,7 @@ cmd_check() {
 # ---------------------------------------------------------------- argument handling
 
 [ $# -ge 1 ] || usage
-REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""
+REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""; LEGACY="[]"
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  MODE=list; shift ;;
@@ -689,6 +730,17 @@ while [ $# -gt 0 ]; do
                   # `-*` is the next option, not this one's argument.
                   [ "${1#-}" = "$1" ] && { MODULE_KEY=$1; shift; }
                 fi ;;
+    # `<path>` or `<path>=<key>`: where this module's configuration used to sit under
+    # `settings:`, and the current-shape key it becomes. Split at the *last* `=` so a key
+    # containing one is still addressable, and repeatable for a module with several.
+    --legacy) [ $# -ge 2 ] || usage
+              case "$2" in ""|=*) die "--legacy needs a path: --legacy <nest>[=<key>]" ;; esac
+              LEGACY=$(jq -c --arg spec "$2" '
+                ($spec | if test("=") then {p: sub("=[^=]*$"; ""), k: sub("^.*="; "")}
+                         else {p: ., k: ""} end) as $m
+                | . + [{path: ($m.p | split(".")), key: $m.k}]' <<<"$LEGACY") ||
+                die "--legacy '$2' could not be parsed"
+              shift 2 ;;
     --json)  AS_JSON=yes; shift ;;
     --app)   [ $# -ge 2 ] || usage; APP=$2; shift 2 ;;
     --path)  [ $# -ge 2 ] || usage; APP_PATH=$2; shift 2 ;;
@@ -697,6 +749,10 @@ while [ $# -gt 0 ]; do
     *)       [ -z "$REGISTER" ] || usage; REGISTER=$1; shift ;;
   esac
 done
+
+# Checked here, not at dispatch: the flags are order-independent, so this is the first
+# point both are known — and an argument error must not cost a full discovery pass first.
+[ "$LEGACY" = "[]" ] || [ "$MODE" = settings ] || die "--legacy applies to --settings only"
 
 load_config
 discover_roots
