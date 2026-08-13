@@ -36,7 +36,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   its first run. It refuses before it creates: nothing below roughly three distinct
   concerns becomes a module, and no slot is invented that no real project would fill
   differently. It writes nothing for what the module does not have, and a pass concluding
-  that no module is warranted is a completed pass.
+  that no module is warranted is a completed pass. It runs on a module that already
+  exists too: changing one takes the same check, read once before the first edit so the
+  module's own findings are not inherited as the pass's, and moving one between locations
+  changes only where it sits and what declares it — every file it ships, its manifest
+  included, comes out byte-identical.
 - `dependencies.jsonl` — this module declares the published names it runs, each qualified
   by the source that publishes it (`tibs245/scrumia:scrumia-board`). PATH is one flat
   namespace shared with every enabled plugin, so a bare name says which command and never

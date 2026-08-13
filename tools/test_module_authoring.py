@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Acceptance tests for the authoring pass (#289).
+"""Acceptance tests for the authoring pass (#289, #290).
 
-AC-1, AC-2, AC-7, AC-8, AC-9 and AC-10 of features/business/module-authoring/.
+AC-1 through AC-10 of features/business/module-authoring/.
 
 Two halves, because the pass has two halves. AC-1 and AC-9 assert something about an
 artefact — a module built the way `scrumia-author` Step 4 orders it is accepted by
@@ -12,15 +12,32 @@ destinations are *not* enumerated: the criterion says the pass chooses through a
 feature's tree and enumerates neither itself, and a copy of that list is exactly the
 regression worth catching.
 
+AC-3 and AC-4 sit in the first half on purpose. "Promotion rewrites nothing" is a claim
+about bytes, so the move is *performed* here — a module built in a project, moved to a
+shared checkout and back, its tree hashed on both sides and its declaration rekeyed and
+re-resolved through the real `scrumia-extends --modules`. A pass that asserted it instead
+would be asserting the thing under test.
+
 Every assertion is written so it can fail. The clean-check ones are paired with a mutation
 that must produce a finding, because a check that cannot go red proves nothing about the
-tree it was pointed at.
+tree it was pointed at; the byte-identity ones are paired with a move that completes the
+manifest on the way out, which is the conformant-looking rewrite BR-3 forbids.
+
+What is *not* covered, stated so it is not read as coverage: a substring assertion cannot
+catch a polarity flip. AC-6's guard reads that the pass forbids naming a bump level and
+that both level words appear only inside that prohibition — an instruction to name one,
+written *inside* the prohibition's own sentences, passes here. Neither can
+`scrumia-module check` be leaned on for the refusals: it accepts a one-concern module and
+an invented slot without complaint, which is why AC-7 and AC-8 assert prose and nothing
+more.
 
 Run from the repo root: python3 tools/test_module_authoring.py
 Exit code 0 when everything passes, 1 otherwise.
 """
 
+import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -30,6 +47,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHECKER = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-module"
+RESOLVER = ROOT / "plugins" / "scrumia-core" / "bin" / "scrumia-extends"
 SKILL = ROOT / "plugins" / "scrumia-core" / "skills" / "scrumia-author" / "SKILL.md"
 
 FAILURES: list[str] = []
@@ -111,6 +129,45 @@ An item carried through two handovers is not being handled, and saying so is the
 """
 
 
+def digest(root: Path) -> dict[str, str]:
+    """Every file the module ships, keyed by its path inside the module.
+
+    Keyed relatively on purpose: an absolute path changes with every move, and comparing
+    those would make the criterion fail on the one thing it is supposed to allow.
+    """
+    return {
+        str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(root.rglob("*")) if p.is_file()
+    }
+
+
+def declare(project: Path, key: str) -> Path:
+    """A project declaring exactly one module, by the source it comes from."""
+    (project / ".scrumia").mkdir(parents=True, exist_ok=True)
+    config = project / ".scrumia" / "config.yaml"
+    config.write_text(
+        f'project:\n  name: "acme"\n\nmodules:\n  "{key}": {{}}\n', encoding="utf-8")
+    return config
+
+
+def resolved(config: Path, shared: Path | None = None) -> dict:
+    """The one row `scrumia-extends --modules` returns for that declaration.
+
+    $SCRUMIA_SHARED_DIR is pinned on every call, empty unless a test names one: a
+    developer's own machine may carry it, and a test that inherited it would pass or fail
+    on whose machine it ran.
+    """
+    env = {**os.environ, "NO_COLOR": "1", "SCRUMIA_MODULE_DIR": "plugins",
+           "SCRUMIA_CONFIG": str(config), "SCRUMIA_SHARED_DIR": str(shared or ""),
+           "SCRUMIA_CONFIG_LOCAL": "/nonexistent/config.local.yaml"}
+    run = subprocess.run([str(RESOLVER), "--modules", "--json"],
+                         cwd=ROOT, env=env, capture_output=True, text=True, timeout=60)
+    try:
+        return json.loads(run.stdout)[0]
+    except (json.JSONDecodeError, IndexError):
+        return {"state": "unparseable", "stdout": run.stdout, "stderr": run.stderr}
+
+
 def produce(root: Path) -> Path:
     """The module `scrumia-author` Step 4 produces for a need that opens no register,
     reads no setting and publishes no name: the manifest, the README, and what the module
@@ -139,6 +196,103 @@ stripped = produce(TMP / "ac1-red")
 code, envelope = verdict(stripped)
 check("…and the same check reports findings on a module missing a required part",
       code == 3 and envelope["state"] == "findings" and envelope["findings"], envelope)
+
+# ------------------------------------------------------------------------------- AC-3
+
+print("AC-3 — promotion changes the location and the declaration, and rewrites no file")
+
+project = TMP / "ac3"
+inside = project / ".scrumia" / "modules" / "acme-oncall"
+produce(inside)
+config = declare(project, "local:acme-oncall")
+
+before_files, before_verdict = digest(inside), verdict(inside)
+row = resolved(config)
+check("before the move, the declaration resolves from inside the project",
+      row["state"] == "resolved" and row["location"] == "local", row)
+
+checkout = TMP / "ac3-checkout"
+checkout.mkdir()
+outside = checkout / "acme-oncall"
+shutil.move(str(inside), str(outside))
+declare(project, "shared:acme-oncall")
+
+after_files = digest(outside)
+check("every file the module ships is byte-identical after the promotion",
+      before_files == after_files,
+      {k: (before_files.get(k), after_files.get(k)) for k in before_files.keys() | after_files.keys()
+       if before_files.get(k) != after_files.get(k)})
+check("its own manifest included — the one file both shipped and tempting to complete",
+      before_files.get(".claude-plugin/plugin.json") == after_files.get(".claude-plugin/plugin.json"))
+check("and the checker's verdict is the same after as before",
+      verdict(outside) == before_verdict, verdict(outside))
+row = resolved(config, shared=checkout)
+check("what changed instead is the declaration, which now resolves from the checkout",
+      row["state"] == "resolved" and row["location"] == "shared"
+      and row["roots"][0]["root"].startswith(str(checkout.resolve())), row)
+
+# Without this pairing the criterion above would also pass on a promotion that reshaped
+# the module, which is the failure BR-3 names.
+red_project = TMP / "ac3-red"
+red_inside = red_project / ".scrumia" / "modules" / "acme-oncall"
+produce(red_inside)
+red_before = digest(red_inside)
+red_outside = TMP / "ac3-red-checkout" / "acme-oncall"
+red_outside.parent.mkdir()
+shutil.move(str(red_inside), str(red_outside))
+completed = json.loads((red_outside / ".claude-plugin" / "plugin.json").read_text())
+completed["homepage"] = "https://github.com/acme/acme-oncall"
+completed["repository"] = "https://github.com/acme/acme-oncall"
+(red_outside / ".claude-plugin" / "plugin.json").write_text(json.dumps(completed, indent=2))
+red_after = digest(red_outside)
+check("a promotion that completes the manifest on the way out fails the same comparison",
+      red_before != red_after
+      and red_before[".claude-plugin/plugin.json"] != red_after[".claude-plugin/plugin.json"])
+check("…while the checker still calls it clean, so the verdict alone would not catch it",
+      verdict(red_outside)[1]["state"] == "clean", verdict(red_outside))
+
+# ------------------------------------------------------------------------------- AC-4
+
+print("AC-4 — demotion is the same move, unceremonious")
+
+back = project / ".scrumia" / "modules" / "acme-oncall"
+back.parent.mkdir(parents=True, exist_ok=True)
+shutil.move(str(outside), str(back))
+declare(project, "local:acme-oncall")
+
+check("moving back rewrites nothing either", digest(back) == before_files)
+check("and the verdict is still the one the module had before it ever moved",
+      verdict(back) == before_verdict, verdict(back))
+row = resolved(config)
+check("the declaration resolves from inside the project again",
+      row["state"] == "resolved" and row["location"] == "local", row)
+
+# ------------------------------------------------------------------------------- AC-5
+
+print("AC-5 — editing runs the same check as creating")
+
+edited = produce(TMP / "ac5")
+check("a module that currently passes the checker", verdict(edited)[1]["state"] == "clean")
+readme = edited / "README.md"
+readme.write_text(readme.read_text().replace("## What it refuses", "## What it declines"))
+code, envelope = verdict(edited)
+check("a change that introduces a finding is reported by the same check",
+      code == 3 and envelope["findings"], envelope)
+
+# Only a run taken before the edit tells a module's own findings from the pass's.
+inherited = produce(TMP / "ac5-inherited")
+(inherited / "README.md").write_text("# acme-oncall\n\nWhat it is, and nothing else yet.\n")
+pre_existing = {f["message"] for f in verdict(inherited)[1]["findings"]}
+check("the module carries findings before the pass opens it", bool(pre_existing))
+
+(inherited / "registers.json").write_text(
+    '{"handover": {"skill": "acme-handover", "purpose": "Run one handover"}}')
+after_edit = {f["message"] for f in verdict(inherited)[1]["findings"]}
+check("the edit's own finding is isolated by subtracting the run taken first",
+      pre_existing < after_edit and len(after_edit - pre_existing) >= 1,
+      sorted(after_edit - pre_existing))
+check("…and reporting only the second run would attribute the module's own findings to the pass",
+      len(after_edit) > len(after_edit - pre_existing))
 
 # ------------------------------------------------------------------------------- AC-9
 
@@ -246,6 +400,47 @@ check("AC-1 counts the concerns before the refusal reads the count",
 check("the fixture is built on the manifest path Step 4 names",
       ".claude-plugin/plugin.json" in pass_text
       and (TMP / "ac1" / ".claude-plugin" / "plugin.json").exists())
+
+# ------------------------------------------------------ the pass, on a module that exists
+
+print("Step 0 — what a change and a move owe, as the pass states them")
+
+step0 = pass_text.partition("## Step 0")[2].partition("## Step 1")[0]
+# Prose wraps, so every phrase below is matched against the text with its line breaks
+# collapsed — otherwise a reflow breaks an assertion that nothing about the rule changed.
+step0_lower = " ".join(step0.lower().split())
+check("the pass carries a step for a module that already exists", bool(step0.strip()))
+check("AC-5 orders the check before anything is touched",
+      "before you touch it" in step0_lower and "before** anything is touched" in step0_lower)
+check("AC-5 keeps the two runs apart rather than merging them",
+      "difference between the two" in step0_lower and "step 5" in step0_lower)
+check("AC-3 states the two things a move changes, and that both are outside the module",
+      "outside the module" in step0_lower and "byte-identical" in step0_lower)
+check("AC-3 names the manifest as inside the boundary, on business.md's decision",
+      "manifest included" in step0_lower)
+check("AC-3 asks for the diff rather than for the claim",
+      "diff -r" in step0_lower and "is not evidence" in step0_lower)
+check("AC-4 names release-versioning's mechanism for the withdrawal, and forbids inventing one",
+      "final release" in step0_lower and "breaking signal" in step0_lower
+      and "do not open" in step0_lower)
+check("AC-6 names the type and the scope and sends the level to release-versioning",
+      "**type**" in step0_lower and "**scope**" in step0_lower
+      and "features/business/release-versioning/" in step0)
+# The polarity guard, and the limit named in this file's docstring: it catches a level
+# named outside the prohibition, not one written into it.
+check("AC-6 forbids announcing a level rather than merely omitting one",
+      "do not announce one" in step0_lower)
+levels = [m.start() for m in re.finditer(r"\bminor\b|\bmajor\b", pass_text, re.I)]
+forbidding = pass_text.partition("### Name the commit")[2].partition("## Step 1")[0]
+check("and neither level word appears anywhere the pass could be read as instructing one",
+      levels and all(pass_text[i:i + 6].lower() in forbidding.lower() for i in levels),
+      [pass_text[max(0, i - 60):i + 20] for i in levels
+       if pass_text[i:i + 6].lower() not in forbidding.lower()])
+
+report = " ".join(pass_text.partition("## What the pass reports")[2].lower().split())
+check("the report carries the pre-existing findings, the move and the commit signal",
+      "before** step 0" in report and "the location it left" in report
+      and "type and the scope" in report and "no level" in report)
 
 shutil.rmtree(TMP, ignore_errors=True)
 
