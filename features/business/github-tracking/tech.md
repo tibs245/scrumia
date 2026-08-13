@@ -27,12 +27,15 @@ reported as usual.
 every item the read returned — `count` and `total_matching` are unchanged by the split,
 which is what makes it a subtraction rather than a drop.
 
-**The `discussion` label is applied before the state split, and the order is the rule
-rather than an implementation preference.** A discussion is normally closed once it is
+This split is the backstop `business.md` describes, not the mechanism: a discussion issue is
+filed without a card, so the only ones reaching it are those someone carded by hand.
+
+**Within it, the `discussion` label is applied before the state split, and the order is the
+rule rather than an implementation preference.** A discussion is normally closed once it is
 settled, and it never had a pull request, so a state-first split files it under
 `closed_without_pr` — reported as a ticket abandoned mid-flight, which is the opposite of
-what it is, and precisely the item the label exists to set aside. Splitting by state first
-would therefore leave the backstop correct on open discussions and wrong on the majority.
+what it is. Splitting by state first would leave the backstop correct on open discussions
+and wrong on the settled ones, which are most of them.
 
 A consumer reading only `columns` gets what is waiting to be started, which is what both
 readings that owe the subtraction want. One reporting counts adds all three.

@@ -161,7 +161,17 @@ trap 'rm -rf "$WORKDIR" "$WORKDIR2" "$WORKDIR3"' EXIT
 
 cp "$WORKDIR/gh" "$WORKDIR3/gh"
 mkdir -p "$WORKDIR3/.scrumia"
-cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR3/.scrumia/config.yaml"
+# The migrated shape (ADR-0021); the blocks above still cover the retired nest.
+cat > "$WORKDIR3/.scrumia/config.yaml" <<'YAML'
+project:
+  repo: "acme/widgets"
+modules:
+  "acme/widgets:scrumia-github-project":
+    params:
+      project_number: 1
+      board:
+        field_id: "FIELD"
+YAML
 
 # 403 is closed: how a discussion normally ends, and it needs no PR to get there.
 cat > "$WORKDIR3/item-list.json" <<'JSON'
@@ -204,9 +214,19 @@ totals=$(jq -r '"\(.count)/\(.total_matching)"' <<<"$OUT3")
 check "AC-13: the read's own totals still account for them — a subtraction is not a drop" \
   "$([ "$totals" = "3/3" ] && echo true || echo false)" "got: $totals"
 
-partition=$(jq -r 'if .count == (([.columns[].count] | add // 0) + .closed_without_pr_count + .discussion_count) then "balanced" else "lost" end' <<<"$OUT3")
-check "AC-13: the three groups partition the read — nothing is counted twice or lost" \
-  "$([ "$partition" = "balanced" ] && echo true || echo false)" "got: $partition"
+# On numbers, not counts: a count-only invariant balances even when an item is filed in
+# the wrong group, which is exactly the bug this block exists for.
+partition=$(jq -r '
+  ([.columns[].items[].number] + [.closed_without_pr[].number] + [.discussions[].number]) as $all
+  | if ($all | length) == ($all | unique | length) and ($all | sort) == [401,402,403]
+    then "partitioned" else "not a partition: \($all|sort)" end' <<<"$OUT3")
+check "AC-13: the three groups partition the read — every item in exactly one" \
+  "$([ "$partition" = "partitioned" ] && echo true || echo false)" "got: $partition"
+
+placement=$(jq -r '[.discussions[].number] as $d
+  | if ($d | sort) == [402,403] then "right group" else "wrong group: \($d|sort)" end' <<<"$OUT3")
+check "AC-13: and the labelled ones are the two in discussions, whatever their state" \
+  "$([ "$placement" = "right group" ] && echo true || echo false)" "got: $placement"
 
 # --- AC-10/AC-12 (knowledge-placement): the search is issues, in every state ---
 WORKDIR4=$(mktemp -d)
