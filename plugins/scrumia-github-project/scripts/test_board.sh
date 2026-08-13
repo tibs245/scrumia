@@ -163,18 +163,19 @@ cp "$WORKDIR/gh" "$WORKDIR3/gh"
 mkdir -p "$WORKDIR3/.scrumia"
 cp "$WORKDIR/.scrumia/config.yaml" "$WORKDIR3/.scrumia/config.yaml"
 
-# 401 is ordinary work; 402 holds a discussion and sits in the same column, which is how
-# one reaches the board at all — the tree files its issues without a card.
+# 403 is closed: how a discussion normally ends, and it needs no PR to get there.
 cat > "$WORKDIR3/item-list.json" <<'JSON'
-{"totalCount": 2, "items": [
+{"totalCount": 3, "items": [
   {"content": {"number": 401, "type": "Issue"}, "title": "Real ticket", "status": "Backlog", "labels": ["scrumia"]},
-  {"content": {"number": 402, "type": "Issue"}, "title": "A debate", "status": "Backlog", "labels": ["discussion"]}
+  {"content": {"number": 402, "type": "Issue"}, "title": "A debate", "status": "Backlog", "labels": ["discussion"]},
+  {"content": {"number": 403, "type": "Issue"}, "title": "A settled debate", "status": "Backlog", "labels": ["discussion"]}
 ]}
 JSON
 cat > "$WORKDIR3/states.json" <<'JSON'
 {"data": {"repository": {
   "n401": {"number": 401, "state": "OPEN"},
-  "n402": {"number": 402, "state": "OPEN"}
+  "n402": {"number": 402, "state": "OPEN"},
+  "n403": {"number": 403, "state": "CLOSED"}
 }}}
 JSON
 
@@ -189,15 +190,23 @@ work_kept=$(jq '[.columns[].items[].number] | contains([401])' <<<"$OUT3")
 check "AC-13: the ticket beside it is untouched — the filter subtracts only its label" \
   "$([ "$work_kept" = "true" ] && echo true || echo false)"
 
-disc_number=$(jq -r '.discussions[0].number' <<<"$OUT3")
+disc_numbers=$(jq -r '[.discussions[].number] | sort | join(",")' <<<"$OUT3")
 disc_count=$(jq -r '.discussion_count' <<<"$OUT3")
-check "AC-13: it is returned in a group of its own, named and counted" \
-  "$([ "$disc_number" = "402" ] && [ "$disc_count" = "1" ] && echo true || echo false)" \
-  "got: number=$disc_number count=$disc_count"
+check "AC-13: both are returned in a group of their own, named and counted" \
+  "$([ "$disc_numbers" = "402,403" ] && [ "$disc_count" = "2" ] && echo true || echo false)" \
+  "got: numbers=$disc_numbers count=$disc_count"
+
+stale_count=$(jq -r '.closed_without_pr_count' <<<"$OUT3")
+check "AC-13: a settled discussion is not reported as a ticket abandoned without a PR" \
+  "$([ "$stale_count" = "0" ] && echo true || echo false)" "got: $stale_count"
 
 totals=$(jq -r '"\(.count)/\(.total_matching)"' <<<"$OUT3")
-check "AC-13: the read's own totals still account for it — a subtraction is not a drop" \
-  "$([ "$totals" = "2/2" ] && echo true || echo false)" "got: $totals"
+check "AC-13: the read's own totals still account for them — a subtraction is not a drop" \
+  "$([ "$totals" = "3/3" ] && echo true || echo false)" "got: $totals"
+
+partition=$(jq -r 'if .count == (([.columns[].count] | add // 0) + .closed_without_pr_count + .discussion_count) then "balanced" else "lost" end' <<<"$OUT3")
+check "AC-13: the three groups partition the read — nothing is counted twice or lost" \
+  "$([ "$partition" = "balanced" ] && echo true || echo false)" "got: $partition"
 
 # --- AC-10/AC-12 (knowledge-placement): the search is issues, in every state ---
 WORKDIR4=$(mktemp -d)

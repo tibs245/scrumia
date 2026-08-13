@@ -33,11 +33,13 @@ scrumia-board <command> [args]
   read [--query Q] [--limit N]  Read the board, grouped by status
   ready [--milestone M]         Tickets ready for dev, optionally one sprint
   epic <issue>                  An epic and its native sub-issues
-  issues --search <terms>       Search issues in every state — not the board
+  issues --search <terms> [--limit N]
+                                Search issues in every state — not the board
 
 `read` defaults to "-status:Done"; pass --all to lift it.
-`issues` searches issues, never the board: something already settled has left the board,
-which is why it takes no --state flag and always covers open and closed alike.
+`issues` searches issues, never the board: a board read is scoped to live work, which is
+why it takes no --state flag and always covers open and closed alike. --limit defaults to
+30 and the answer reports truncated when it is reached.
 `read` lifts items labelled "discussion" out of `columns` into `discussions`: they are
 not work waiting to be started. They are still returned and still counted.
 EOF
@@ -373,21 +375,21 @@ cmd_read() {
      --argjson states "$states" --arg done_col "$done_column" --arg disc "$DISCUSSION_LABEL" '
     (reduce $states[] as $s ({}; .[$s.number|tostring] = $s.state)) as $by_number
     | (.items | map(. + {state: ($by_number[(.content.number|tostring)] // null)})) as $items
+    # The label partitions first: a settled discussion is normally closed and never had a
+    # PR, so splitting by state first would file it as an abandoned ticket — the case the
+    # backstop exists for, reported as the opposite of what it is.
+    | ($items | map(select([.labels[]?] | index($disc)))) as $discussions
+    | ($items | map(select([.labels[]?] | index($disc) | not))) as $rest
     # Closed-in-Done is a normal merge, not the AC-8 gap.
-    | ($items | map(select(.state != "CLOSED" or .status == $done_col))) as $live
-    | ($items | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
-    # The subtraction happens here so neither reading that owes it can forget it, and it
-    # separates rather than drops: a read returning fewer items than the board holds is
-    # the filtered read that lies (business.md, "Labels and their consumers").
-    | ($live | map(select([.labels[]?] | index($disc) | not))) as $work
-    | ($live | map(select([.labels[]?] | index($disc)))) as $discussions
+    | ($rest | map(select(.state != "CLOSED" or .status == $done_col))) as $live
+    | ($rest | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
     | {ok: true, query: (if $q == "" then null else $q end),
        query_was_explicit: $explicit, count: (.items|length),
        total_matching: $matching,
        truncated: $trunc, filter_suspect: $suspect,
        closed_without_pr_count: ($stale|length),
        discussion_count: ($discussions|length),
-       columns: ($work | group_by(.status) | map({
+       columns: ($live | group_by(.status) | map({
          status: (.[0].status // "(no status)"),
          count: length,
          items: map({number: .content.number, title: .title,
@@ -450,9 +452,12 @@ cmd_epic() {
 cmd_issues() {
   local terms="" limit=30
   while [ $# -gt 0 ]; do
+    # `shift 2` on a trailing flag shifts nothing and returns non-zero, so the loop spins
+    # forever on `--search` with no value. Guarded here; #358 carries the same shape in
+    # read, ready and epic.
     case "$1" in
-      --search) terms="${2:-}"; shift 2 ;;
-      --limit)  limit="${2:-}"; shift 2 ;;
+      --search) [ $# -ge 2 ] || die "issues: --search needs a value"; terms="$2"; shift 2 ;;
+      --limit)  [ $# -ge 2 ] || die "issues: --limit needs a value"; limit="$2"; shift 2 ;;
       *) usage ;;
     esac
   done
@@ -481,9 +486,10 @@ case "$cmd" in
   read)    load_config; cmd_read "$@" ;;
   ready)   load_config; cmd_ready "$@" ;;
   epic)    load_config; cmd_epic "$@" ;;
-  # Searches issues, so it needs `project.repo` and nothing the board contributes. Gating
-  # it on resolved board settings would take the search down with a misconfigured board,
-  # and an issue exists whether or not anyone made a card for it.
+  # SOFT_SETTINGS downgrades an unresolved cascade to a warning, which is safe here and
+  # nowhere else: this command reads `project.repo` — loaded before the settings, and
+  # still fatal if missing — and touches no value the cascade carries, so there is no
+  # default for it to run on. The other commands answer from the board and must stop.
   issues)  SOFT_SETTINGS=yes; load_config; cmd_issues "$@" ;;
   *)       usage ;;
 esac
