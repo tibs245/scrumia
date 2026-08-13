@@ -8,7 +8,9 @@ The `#composer` section of the home page: the same seven slots the `slot-index`
 feature *reports*, offered as choices. The visitor answers each slot — or leaves
 it empty on purpose — and takes away two artifacts: the install commands for the
 modules they picked, and the `.scrumia/config.yaml` that declares the
-composition.
+composition. Past the seven, a shelf of the modules that fill no slot, and a
+field where a visitor names one of their own — which reaches the config and
+never the install commands.
 
 It is the only place on the site where a visitor does something rather than
 reads, which is why it is drawn as a composition assembling rather than as a
