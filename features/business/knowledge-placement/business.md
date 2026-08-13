@@ -87,11 +87,12 @@ the failure this shape is most exposed to — it is the price of not blocking, a
 paid by being specific.
 
 This is a deliberate limit and it has a known cost: a reminder can be ignored, and some
-will be. The alternative — refusing the write — buys compliance at a price this one is
-not worth, and it fails closed on every project that installed it. Refusing a write is a
-power a module may hold, and where one holds it, it holds it over **state written into the
-repository** ([ADR-0008](../../../docs/adr/0008-state-lives-in-github.md)): what that
-state should have been instead is already decided, so the refusal carries its own answer.
+will be. The alternative — refusing the write — buys compliance by stopping a session over
+something someone has just learned, and it fails closed on every project that installed
+it. Refusing a write is a power a module may hold, and where one holds it, it holds it
+over **state written into the repository**
+([ADR-0008](../../../docs/adr/0008-state-lives-in-github.md)): what that state should have
+been instead is already decided, so the refusal carries its own answer.
 Knowledge is the other case. Where an entry belongs is exactly what has not been decided
 yet, and the tree is the thing that decides it — so a refusal would stop a run on a
 judgment made before the judgment exists. The reminder is chosen on the balance of those
