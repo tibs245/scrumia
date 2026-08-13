@@ -3,7 +3,12 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-13 — The module's own manifest is inside promotion's byte-identical boundary (BR-3, AC-3, AC-4)
+## 2026-08-14 — A withdrawal's notice is a gap named, not a mechanism (AC-4)
+- Issue: #290
+- Category: Changed
+- Breaking: no
+
+## 2026-08-13 — The module's own manifest is inside promotion's byte-identical boundary (BR-3, AC-3)
 - Issue: #290
 - Category: Changed
 - Breaking: no

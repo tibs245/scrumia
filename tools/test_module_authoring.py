@@ -33,11 +33,13 @@ criterion's name:
 - **AC-6** — the level guard requires both level words to fall inside the prohibition's
   own character range, so a level named in another step goes red. One written *into* the
   prohibition's sentences does not.
-- **AC-4** — the refusal clause is matched by the phrases that state it. Appending an
-  instruction to open an issue on every adopting project leaves those phrases intact and
-  stays green.
+- **AC-4** — each of the three refusals is pinned, so dropping one goes red. Appending a
+  fourth instruction that notifies anyway leaves all three intact and stays green.
 - **AC-5** — the ordering guard matches the heading and the preamble, not the operative
   body. Rewriting that body to run the check *after* the edit stays green.
+- **Step 0's scoping** — the guard pins the three phrases that scope Steps 2, 4 and 5.
+  Rewriting the bullet they sit in to demand every inherited finding be cleared, while
+  keeping the phrases, stays green.
 
 Deleting any of the three goes red; inverting any of the three does not. Nor can
 `scrumia-module check` be leaned on for the refusals — it accepts a one-concern module and
@@ -264,6 +266,20 @@ check("a promotion that completes the manifest on the way out fails the same com
 check("…while the checker still calls it clean, so the verdict alone would not catch it",
       verdict(red_outside)[1]["state"] == "clean", verdict(red_outside))
 
+# The verdict above was taken on a clean module, so it compares two empty finding lists.
+# Step 0's evidence test is a move on a module that still carries findings.
+carrying = produce(TMP / "ac3-carrying" / ".scrumia" / "modules" / "acme-oncall")
+readme = carrying / "README.md"
+readme.write_text(readme.read_text().replace("## What it refuses", "## What it declines"))
+code, envelope = verdict(carrying)
+check("a module carrying a finding, which is what Step 0's evidence test is taken on",
+      code == 3 and envelope["state"] == "findings", envelope)
+moved = TMP / "ac3-carrying-checkout" / "acme-oncall"
+moved.parent.mkdir(parents=True)
+shutil.move(str(carrying), str(moved))
+check("the checker's verdict survives the move findings and all, so the evidence is obtainable",
+      verdict(moved) == (code, envelope), verdict(moved))
+
 # ------------------------------------------------------------------------------- AC-4
 
 print("AC-4 — demotion is the same move, unceremonious")
@@ -437,9 +453,10 @@ check("AC-3 names the manifest as inside the boundary, on business.md's decision
       "manifest included" in step0_lower)
 check("AC-3 asks for the diff rather than for the claim",
       "diff -r" in step0_lower and "is not evidence" in step0_lower)
-check("AC-4 sends the withdrawal to release-versioning, names the gap, and invents nothing",
-      "release-versioning" in step0_lower and "today it does not" in step0_lower
-      and "do not open an issue" in step0_lower and "notify through" in step0_lower)
+check("AC-4 sends the withdrawal to release-versioning and invents nothing in its place",
+      "release-versioning" in step0_lower and "states none for this case" in step0_lower
+      and all(refusal in step0_lower for refusal in
+              ("do not open an issue", "do not message anyone", "do not add a field")))
 check("AC-6 names the type and the scope and sends the level to release-versioning",
       "**type**" in step0_lower and "**scope**" in step0_lower
       and "features/business/release-versioning/" in step0)
