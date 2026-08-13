@@ -205,8 +205,8 @@ totals=$(jq -r '"\(.count)/\(.total_matching)"' <<<"$OUT3")
 check "AC-13: the read's own totals still account for them — a subtraction is not a drop" \
   "$([ "$totals" = "3/3" ] && echo true || echo false)" "got: $totals"
 
-# On numbers, not counts: a count-only invariant balances even when an item is filed in
-# the wrong group, which is exactly the bug this block exists for.
+# Numbers, not counts, so a substituted item cannot be absorbed by a balancing sum. Which
+# group each lands in is `placement` below: this passes state-first too, by construction.
 partition=$(jq -r '
   ([.columns[].items[].number] + [.closed_without_pr[].number] + [.discussions[].number]) as $all
   | if ($all | length) == ($all | unique | length) and ($all | sort) == [401,402,403]
