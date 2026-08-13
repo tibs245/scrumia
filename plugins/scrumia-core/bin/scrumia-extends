@@ -158,7 +158,7 @@ load_config() {
                  else [] end )
     , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG") &&
     [ -n "${SCOPES:-}" ] ||
-    die "$CONFIG: could not be read as a composition — '$KEY_READ:' must be a mapping keyed <source>:<module>, and each app's must too (ADR-0021)"
+    die "$CONFIG: could not be read as a composition — '$KEY_READ:' is not in a shape this reads, here or under an app. 'modules:' is a mapping keyed <source>:<module> (ADR-0021); the retired 'extends:' is a list of names; 'composition:' maps a slot to a name. Checked here rather than left to yield nothing: an unreadable file would otherwise answer as the empty composition, which is a legitimate one."
 
   # A key the grammar does not admit would make the file mean whatever happens to be
   # installed, which is the failure the qualified source removes — so it is named and
@@ -760,6 +760,9 @@ cmd_claims() {
   # Beside the configuration's own directory, like everything else under .scrumia/: a
   # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
   [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
+  # Unreachable while load_config guards the only query a configuration can break, and kept
+  # because the sentence below is what an unchecked read prints: that this project declares
+  # no module, which is also what a correct empty composition says.
   all=$(bindings) || die "could not resolve this project's declarations"
 
   # A file the caller named is an assertion that it is there; only the default may be

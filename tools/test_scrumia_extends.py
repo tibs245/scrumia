@@ -127,8 +127,14 @@ modules:
   "scrumia-practice-tdd": {}
   ":scrumia-specs": {}
   "github:scrumia-teams": {}
+  "a/b/c:scrumia-discovery": {}
   "tibs245/scrumia:scrumia-design": {}
 """
+
+# The four keys BARE_NAME's grammar refuses. Named once: the pattern is written in three
+# places, and a copy loosened on its own contradicts the notice printed beside it.
+REFUSED = ["scrumia-practice-tdd", ":scrumia-specs", "github:scrumia-teams",
+           "a/b/c:scrumia-discovery"]
 
 EMPTY_MAPPING = """
 project: { name: "Declared nothing" }
@@ -246,10 +252,14 @@ def test_ac17_a_bare_name_is_not_a_declaration() -> None:
     check("a key whose source half is missing is refused too",
           "':scrumia-specs' is not a declaration" in err, err.strip())
     _, out, _ = run(["--modules", "--json"], bare)
+    located = {r["key"]: r["location"] for r in json.loads(out)}
     check("and it is credited with no location, not with the marketplace",
-          all(r["location"] == "(none)" for r in json.loads(out)
-              if r["key"] in (":scrumia-specs", "github:scrumia-teams", "scrumia-practice-tdd")),
-          [(r["key"], r["location"]) for r in json.loads(out)])
+          all(located.get(k) == "(none)" for k in REFUSED), located)
+    (Path(bare).parent / "CLAUDE.md").write_text(
+        "".join(f"| `{k.split(':')[-1]}` | x |\n" for k in REFUSED), encoding="utf-8")
+    code, out, _ = run(["--claims", str(Path(bare).parent / "CLAUDE.md")], bare)
+    check("and the reconciliation calls every one of them unsourced, as the notice does",
+          code == 0 and out.count("| unsourced |") == len(REFUSED), out[:500])
     check("a source outside the three BR-13 enumerates is refused",
           "'github:scrumia-teams' is not a declaration" in err, err.strip())
     check("an unresolved declaration is not a failure", code == 0, code)
@@ -846,21 +856,38 @@ modules:
               code == 0 and "| unsourced |" in out, f"exit {code}: {out[:400]}")
         shutil.rmtree(project)
 
-    # A shadow binds, so it makes the module present for a stale key beside it — the same
-    # carve-out a resolved declaration gets, and the one a narrower `$bound` would drop.
-    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
-    make_module(shared / "acme-conventions", "acme-conventions")
+    # A shadow binds, so it makes the module present for a stale key beside it. The two
+    # shapes have to differ, or both declarations shadow and neither exercises the carve-out.
     project = project_with("""
 project: { name: "Shadowed and stale" }
 extends:
-  - acme-conventions
-  - "shared:acme-conventions"
+  - scrumia-practice-tdd
+apps:
+  - name: "web"
+    path: "apps/web"
+    modules:
+      "shared:scrumia-practice-tdd": {}
 """)
-    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
-    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    make_module(project / ".scrumia" / "modules" / "scrumia-practice-tdd",
+                "scrumia-practice-tdd")
+    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests first. |\n",
+                                       encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    stale = [line for line in out.splitlines()
+             if line.startswith("| `shared:scrumia-practice-tdd`")]
     check("a module a shadow bound is reachable for the stale key beside it",
-          code == 0 and "| claimed |" not in out, f"exit {code}: {out[:400]}")
+          code == 0 and len(stale) == 1 and stale[0].endswith("| reachable |"),
+          f"exit {code}: {stale or out[:400]}")
+    shutil.rmtree(project)
+
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(shared / "acme-conventions-fork", "acme-conventions")
+    project = project_with(SHADOWING)
+    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml", shared=shared)
+    check("a conflicted declaration stating no origin is unsourced, not claimed",
+          code == 0 and "| unsourced |" in out and "conflict" in out, f"exit {code}: {out[:400]}")
     shutil.rmtree(project)
     shutil.rmtree(shared)
 

@@ -107,11 +107,18 @@ not CI: `tools/validate.py` reads that stderr only on a non-zero exit, so a gree
 discards it. It is still the right surface, because it is the one someone runs when asking
 what is wrong.
 
-Exit status carries meaning at two surfaces, and they fail on different things. A register
+Two surfaces judge what the composition holds, and they judge different things. A register
 table is an answer whether it is long or short, and a conflict must not stop a skill that
 never needed that module — which is why the conflict is loud everywhere and fatal only at
-`--check`. `--claims` fails on nothing about the composition at all: what it can refuse is
-a sentence written about it.
+`--check`. `--claims` refuses nothing the composition holds at all: what it can refuse is a
+sentence written about it.
+
+Beneath both sits the one failure every surface shares — a configuration that cannot be
+read as a composition. That is not an empty composition, and the two must never arrive at
+the same answer: an empty composition is legitimate and says so, while a failed read that
+yielded one would clear every claim and meet every dependency, silently. So the read is
+checked where it happens and the tool stops there, rather than each surface reporting
+nothing with nothing said.
 
 ## Reconciling what `CLAUDE.md` claims
 
