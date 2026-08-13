@@ -28,9 +28,22 @@ agents break. A slot the visitor was never asked must not be emitted as a
 decided absence — which is why `design` is a question here and not a silent
 default.
 
+**An addition is offered, never asked.** The modules that fill no slot are
+offered past the seven, and picking none of them is a complete composition
+rather than an unanswered question — which is the whole difference between an
+addition and a slot. The kernel is not among them: it is installed
+unconditionally, and offering a choice that cannot be declined would misstate
+what the block is.
+
 **The install claim is the real one.** No one-liner consumes a generated
 config; claiming one would be the promise `modular-composition`'s BR-3
 forbids modules from making, and the site gets no exemption. What the
 composer claims is what is true: commit the file, install the modules, run
 `scrumia-init` — which finds an existing `.scrumia/config.yaml` and verifies
 it instead of proposing one.
+
+The same rule is what keeps a module this site has never heard of out of the
+install block entirely. Emitting a command for it would claim knowledge of how
+to install something we do not ship, and one fabricated line is enough to make
+the nine true ones unverifiable. The composition still carries it; the
+instructions do not pretend to.

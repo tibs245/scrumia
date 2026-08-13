@@ -9,7 +9,7 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Breaking: yes — a composition the composer emitted before this reads under the
   retired `composition:` keys, which `scrumia-extends` reads with a warning
 
-## 2026-08-12 — Additions past the seven slots, ours and the visitor's own (AC-9, AC-10)
+## 2026-08-12 — Additions past the seven slots, ours and the visitor's own (AC-9, AC-10, AC-11)
 - Issue: #298
 - Category: Added
 - Breaking: no

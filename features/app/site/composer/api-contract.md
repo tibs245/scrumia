@@ -17,6 +17,20 @@ spelling of it but a key nothing resolves. Each value is an empty mapping:
 `params:` belongs to whoever configures the module, and the composer knows no
 value to put there.
 
+**A module filling no slot is an ordinary key.** The `modules:` mapping declares
+what the project runs, and nothing in it records which slot — if any — a module
+answers. An addition is therefore one more entry beside the seven slots' own,
+indistinguishable from them in the file, which is why it costs no mechanism.
+
+**A module this site does not ship reaches the config and nothing else.** The
+visitor names it as a whole `<source>:<module>` key, and it is emitted among the
+others under the same grammar. No install command is emitted for it: the site
+knows no command that installs what it does not ship, and inventing one would be
+the promise `features/business/modular-composition/business.md`'s BR-3 forbids —
+so the emission says the omission rather than leaving it to be noticed. A key
+that does not match the grammar is refused rather than emitted, and a name with
+no source stated is one of those: an unsourced name is not assumed published.
+
 **An absent capability has no key to spell.** The mapping names what is
 present, so a slot the visitor leaves empty is emitted as a comment carrying
 the consequence its row stated, and an app left with no module of its own

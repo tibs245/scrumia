@@ -17,6 +17,13 @@
   var configPre = document.getElementById('composer-config');
   var notes = document.getElementById('composer-note');
   var live = document.getElementById('composer-live');
+  var own = document.getElementById('c-own');
+  var ownField = document.getElementById('c-own-key');
+
+  /* The free entry exists only where this file runs. Its own marker rather than the
+     root `.js` class, which head.html also withholds under reduced motion: a reader
+     who asked for less movement must not lose a capability with it. */
+  choices.classList.add('has-script');
 
   /* The five slots that take one module. Order is the order of the rows, of the
      install lines and of the modules: mapping — one sequence, said three times. */
@@ -25,6 +32,11 @@
   /* The source half of every key emitted, per ADR-0021 — the marketplace the
      install block adds. A bare name is not a shorter spelling: nothing resolves it. */
   var SOURCE = 'tibs245/scrumia';
+
+  /* A whole key, ADR-0021's grammar: `local:`, `shared:` or `<owner>/<repo>:`, then
+     the module. A name typed with no source is refused rather than assumed published
+     — that assumption is what would put a key nothing resolves in a visitor's repo. */
+  var KEY = /^(?:local|shared|[^\s:/]+\/[^\s:/]+):[A-Za-z0-9._-]+$/;
 
   var APPS = {
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
@@ -58,12 +70,25 @@
     return input && input.dataset.note ? input.dataset.note : '';
   }
 
+  /* The visitor's own module, as one whole key. Unchecked, blank or malformed emits
+     nothing: half a key pasted into a repository is worse than no key at all. */
+  function ownKey() {
+    if (!own || !own.checked || !ownField) return '';
+    var value = ownField.value.trim();
+    var valid = KEY.test(value);
+    ownField.setAttribute('aria-invalid', value && !valid ? 'true' : 'false');
+    return valid ? value : '';
+  }
+
   function compute() {
     var slots = {};
     SINGLE.forEach(function (s) { slots[s] = picked(s); });
 
     var stacks = pickedAll('impl');
     var practices = pickedAll('practice').map(function (i) { return PRACTICES[i.value]; });
+    // Each option's value is the module's own name, so no table of the additions
+    // lives here: build_site.py derives them, and nothing here can fall behind it.
+    var additions = pickedAll('add').map(function (i) { return i.value; });
 
     var apps = stacks.map(function (input) {
       var a = APPS[input.value];
@@ -80,10 +105,14 @@
       // `other` names a tracker the reader will write: a module, but not ours.
       if (v && v !== 'other') modules.push(v);
     });
+    additions.forEach(function (m) { modules.push(m); });
     apps.forEach(function (a) { if (a.impl) modules.push(a.impl); });
     practices.forEach(function (p) { modules.push(p.module); });
 
-    return { slots: slots, apps: apps, practices: practices, stacks: stacks, modules: dedupe(modules) };
+    // `own` is deliberately absent from `modules`: that list is what the install
+    // block prints, and we ship no command for a module we do not ship.
+    return { slots: slots, apps: apps, practices: practices, stacks: stacks,
+             additions: additions, own: ownKey(), modules: dedupe(modules) };
   }
 
   function dedupe(list) {
@@ -117,10 +146,11 @@
 
   // Only the module name is coloured: the source repeats on every line, so
   // painting it too spends the emphasis on the half nobody chose.
-  function entry(parts, depth, module) {
+  function keyed(parts, depth, source, module) {
     var pad = new Array(depth + 1).join(' ');
-    parts.push(pad + '"' + SOURCE + ':', { t: module, c: 'm' }, '": {}');
+    parts.push(pad + '"' + source + ':', { t: module, c: 'm' }, '": {}');
   }
+  function entry(parts, depth, module) { keyed(parts, depth, SOURCE, module); }
 
   function configParts(result) {
     var parts = [{ t: S.config, c: 'c' },
@@ -141,6 +171,18 @@
       }
       parts.push('\n');
     });
+
+    result.additions.forEach(function (module) {
+      entry(parts, 2, module);
+      parts.push('\n');
+    });
+
+    // Keyed like every other entry, and installed by none of the commands above.
+    if (result.own) {
+      var cut = result.own.lastIndexOf(':');
+      keyed(parts, 2, result.own.slice(0, cut), result.own.slice(cut + 1));
+      parts.push('\n');
+    }
 
     if (result.apps.length) {
       parts.push('\napps:\n');
@@ -165,6 +207,9 @@
     var lines = [];
     var tracker = result.slots.tracker;
     if (tracker && tracker.value === 'other') lines.push(S.noteOwnTracker);
+    // Said, not left to be noticed: the install block's silence about this module is
+    // what the other commands' trustworthiness rests on.
+    if (result.own) lines.push(S.noteOwnModule);
     if (result.stacks.some(function (i) { return i.value === 'other'; })) lines.push(S.noteOwnImpl);
     if (result.practices.length) {
       lines.push(result.apps.length ? S.notePractices : S.notePracticesNoapp);
@@ -190,7 +235,12 @@
   function announce(input) {
     if (!live) return;
     var row = input.closest('.slot');
-    if (!row) return;
+    if (!row) {
+      // An addition has no row restating it, so the option's own name is the fact.
+      var opt = input.closest('.opt');
+      if (opt && opt.querySelector('b')) live.textContent = opt.querySelector('b').textContent;
+      return;
+    }
     var shown = [].filter.call(row.querySelectorAll('.slot-fill > span'), function (span) {
       return span.offsetParent !== null;
     }).map(function (span) { return span.textContent; });
@@ -200,6 +250,11 @@
   choices.addEventListener('change', function (event) {
     render();
     if (event.target.name) announce(event.target);
+  });
+
+  // A text field only fires `change` on blur, and the two files must follow the typing.
+  choices.addEventListener('input', function (event) {
+    if (event.target === ownField) render();
   });
 
   choices.addEventListener('click', function (event) {
