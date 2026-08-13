@@ -74,7 +74,7 @@ that is reaching for the most expensive container available.
 real project would fill it differently; otherwise what is being described is one more
 capability in an existing module, or a module that fills no slot at all — which is
 permitted and is what `scrumia-core` and `scrumia-rules` already do. What a slot is, and
-when the register vocabulary admits one, is `modular-composition`'s.
+when a new one is justified, is `modular-composition`'s.
 
 Both refusals are stated as refusals rather than as guidance because the pass is run by
 an agent, and an agent asked to create a module will create one.
