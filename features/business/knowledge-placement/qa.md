@@ -117,12 +117,22 @@ Then the closed issue is found and proposed, because the search covers every sta
 ```gherkin
 Given no existing issue matching a discussion
 When a new one is created for it
-Then it carries the label `features/business/github-tracking/` declares for that purpose,
-  and the status and next-step readings do not count it as a ticket awaiting refinement
+Then it carries the label `features/business/github-tracking/` declares for that purpose
+Given that issue placed where the readings would otherwise count it
+When the status and next-step readings run
+Then neither counts it as a ticket awaiting refinement
 ```
 
 This criterion fails in the way that matters if the label is created and nothing subtracts
 it: a label nothing queries is documentation, not a filter.
+
+The second half needs its own Given because the first does not reach it. Where the tracker
+files a discussion outside what the readings enumerate, the exclusion passes by absence
+whatever the label says, and the criterion would be satisfied by a filter that does not
+exist. `features/business/github-tracking/`'s AC-13 is the one that puts a labelled issue in
+front of the readings and fails if nothing subtracts it; this criterion covers the label
+being carried, and the exclusion holding once the issue is there to be counted. Where the
+tracker files such an issue is that feature's to state, and this one does not restate it.
 
 ### AC-12 — The board is never the search surface
 
@@ -158,6 +168,10 @@ Then it completes, the run is not interrupted, and the question about placement 
 ```gherkin
 Given a composition with no module in the tracker slot
 When the tree routes a discussion
-Then it names the gap and the module that would fill it, creates nothing, and does not
-  write the discussion into a file in the repository
+Then it names the gap — the module that would fill it, or the empty slot itself where no
+  module can be named — creates nothing, and does not write the discussion into a file in
+  the repository
 ```
+
+Naming a module nobody can name would be inventing one, which is the improvisation this
+criterion refuses; the empty slot named is the gap, and it is a complete answer.

@@ -144,6 +144,51 @@ Then every commit of that ticket is returned — a lookup that returns only some
   the failure the trailer exists to remove, because a partial answer reads as a complete one
 ```
 
+### AC-13 — The `discussion` label is subtracted, not merely declared
+
+```gherkin
+Given issues on the board, one of them carrying `discussion`
+When the status reading and the next-step reading count what is waiting to be started
+Then the labelled issue is not among them, and neither reading recommends refining it
+Given instead the label declared and no reading subtracting it
+When the same readings run
+Then this criterion fails — a label nothing queries is documentation, not a filter, and
+  this feature admits a label only on that test
+Given the same board and a reader looking for the discussion issue itself
+When the board is read
+Then the item is still returned, in a group of its own and counted there, and the read's
+  own totals still account for it — a subtraction that removes the item from the answer
+  is the filtered read that lies, and fails this criterion as surely as no subtraction
+```
+
+The label's declaration is cheap; the exclusion is the work. Without it a backlog fills
+with issues nobody intends to start, and the readings that decide what to do next are the
+first casualty.
+
+Every scenario above opens on an issue that is already on the board, which is the
+exception — a human carded it. The ordinary path is next, and it needs its own criterion
+or nothing fails when a skill starts carding them.
+
+### AC-14 — A discussion issue is filed without a card
+
+```gherkin
+Given a discussion being routed to a new issue
+When the issue is created
+Then it is created without a project card, so it enters none of the six columns and
+  appears in no board read — the label's subtraction is the backstop for a card someone
+  added by hand, not the mechanism that keeps discussions out of the work
+Given instead the issue filed with a card
+When a board read runs
+Then the read returns it — under `discussions` if the label held, in a column if it did
+  not — and the criterion fails either way, whether or not the label saved the readings
+  downstream: a card is what makes an issue visible as work, and this issue is not work,
+  placed in a column or not
+```
+
+This is the rule the ordinary path rests on, so it is the one that must be able to fail.
+An issue filed as work takes a card and an issue that is not work takes none, both from
+the single rule stated in the lifecycle section above.
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.
@@ -163,20 +208,3 @@ Then every commit of that ticket is returned — a lookup that returns only some
 - Authentication and reachability failures — `gh` not logged in, the `project` scope
   missing, the board unreachable. `scrumia-board doctor` names which one; that is
   operational resilience, not a tracking business rule.
-
-### AC-13 — The `discussion` label is subtracted, not merely declared
-
-```gherkin
-Given issues on the board, one of them carrying `discussion`
-When the status reading and the next-step reading count what is waiting to be started
-Then the labelled issue is not among them, and neither reading recommends refining it
-Given instead the label declared and no reading subtracting it
-When the same readings run
-Then this criterion fails — a label nothing queries is documentation, not a filter, and
-  this feature admits a label only on that test
-```
-
-The label's declaration is cheap; the exclusion is the work. Without it a backlog fills
-with issues nobody intends to start, and the readings that decide what to do next are the
-first casualty.
-

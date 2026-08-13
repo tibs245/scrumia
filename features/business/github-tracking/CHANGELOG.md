@@ -3,6 +3,16 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-12 — The board and the issues are two surfaces, and the module publishes both
+- Issue: #294
+- Category: Added
+- Breaking: no
+
+## 2026-08-12 — A discussion issue is filed off the board, and takes no card
+- Issue: #294
+- Category: Added
+- Breaking: no
+
 ## 2026-08-12 — The `discussion` label, read as a subtraction
 - Issue: #294
 - Category: Added

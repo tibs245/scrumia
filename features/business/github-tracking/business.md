@@ -37,6 +37,16 @@ places it. `scrumia-board read` reports that as its own `(no status)` group rath
 folding it into `Backlog`, because a card nobody placed is worth seeing, not papering
 over.
 
+**A card is what makes an issue visible as work, so an issue that is work takes one and an
+issue that is not takes none.** Both halves bite. A ticket filed without a card is exactly
+as forgotten as no ticket — `scrumia-board read` and `ready` only see cards, so it reaches
+no status reading, no sprint and no reviewer, whatever its body says. And an issue that
+nobody intends to start does not take a card, because a card with no Status is work
+someone has to triage, which is the cost the filing was meant to avoid. This is one rule
+with two consequences, not two conventions that happen to point opposite ways; the
+`discussion` label below is where the second consequence is worked out, and a reservation's
+ticket is where the first one is.
+
 Skills never move a card by naming a column directly, except for that first placement.
 They name a **flow step**, and `settings.tracker.board.flow` in `.scrumia/config.yaml`
 maps each step to this board's actual column name. That indirection is what lets
@@ -56,6 +66,13 @@ Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
 `done`). `Backlog` is entered by its literal column name, once, at filing. `To dev`
 and the post-merge move to `Done` currently have no skill that performs them —
 selecting a ticket into a sprint or merging its PR does not by itself move its card.
+
+**This table is the ticket's lifecycle, not every issue's.** A ticket is an issue filed as
+work to be done; an issue that is not work — one holding a discussion — is filed, takes no
+card, and enters this table nowhere. That is not a gap in the table: an issue nobody
+intends to start has no state to be in, and giving it one would mean answering "where is
+this up to?" about something nobody is doing. The two words are used precisely from here
+on, and where this file says *ticket* it means the first kind.
 
 ### Closed without a PR
 
@@ -97,7 +114,7 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
-| `discussion` | `scrumia-status` and the next-step reading, which **subtract** it | an issue holding something unresolved that is not work waiting to be started |
+| `discussion` | `scrumia-board issues --search "label:discussion"`, which finds them; `scrumia-status` and the next-step reading, which **subtract** them — through the board read where one was carded, and on the label itself where the status reading falls back to an issue list | an issue holding something unresolved that is not work waiting to be started |
 
 `discussion` is the only label read as a subtraction, and that is what earns it a place
 here rather than in a module's prose. An issue carrying it is not a ticket awaiting
@@ -105,6 +122,56 @@ refinement: counting it as one is how a backlog becomes unreadable, and a label 
 queries would be documentation rather than a filter. What sends an issue there is
 `features/business/knowledge-placement/`'s; that it is queryable, and by whom, is this
 feature's.
+
+**The subtraction is performed once, in the board read, not in each reading.** Both
+readings that owe it reach the board through the same tool on the ordinary path, so a
+subtraction written into their prose is a subtraction each of them can forget
+independently — and the one that forgets is indistinguishable, in its output, from the one
+that did not. Doing it in the read makes it unforgettable for both, and for any third
+reading added later.
+
+Where a reading cannot reach the board read at all — the status reading falls back to a
+plain issue list when the board is unreachable or unconfigured — the exclusion falls back
+to that reading, which applies it on the label itself and says in its report that it did.
+That is the one place the subtraction is a reader's own, and it is stated rather than left
+to be noticed.
+
+**Subtracting is not dropping.** A discussion-labelled item leaves the columns and arrives
+in a group of its own, named and counted — the same treatment this file already gives an
+issue closed without a PR. A read that silently returned fewer items than the board holds
+would be the filtered read that lies, which is the one failure the reading discipline
+below exists to prevent; a reader looking for their own discussion issue still finds it.
+
+**Its own group, and not the one for a ticket closed without a PR.** A discussion is
+normally closed once it is settled and never had a pull request, so it matches that
+group's shape exactly while being the opposite of what that group means — an abandoned
+ticket is a question about someone's unfinished work, and a settled discussion is nobody's.
+The label decides first, and what that costs to get wrong is a report claiming abandoned
+work that never existed.
+
+**A discussion issue is filed off the board** — created without `--project`, so it takes
+no card. The board carries what is in flight, and something nobody intends to start is
+not; a card with no Status is a card someone has to place, which is work the issue was
+filed to avoid creating. The subtraction in the board read is therefore a backstop: it
+catches the issues a human carded by hand, which is the only way one arrives on the board.
+
+So on the ordinary path the label is not what removes the issue from the readings — being
+uncarded already did that. What the label buys there is that the issue stays **findable**:
+`scrumia-board issues --search "label:discussion"` returns every one of them, open and
+closed, which is the only way to see what has been left unresolved. The subtraction is the
+backstop for the carded exception, and the search is the ordinary reader.
+
+That is what the declaration test asks for and it is worth stating exactly, because the
+weaker claim is the tempting one: this label is not queried on every path by a skill that
+runs unprompted. It is queried by a published command with a documented argument, and by
+`scrumia-status` directly when it falls back to an issue list. A label whose only reader
+were the board-read backstop would be read only when someone had carded the issue by hand
+— the case the tree exists to avoid producing — and that would be the documentation this
+table refuses.
+
+That is the second consequence of the card rule stated in the lifecycle section above, and
+a reservation raised during a review — not handled until its card exists — is the first.
+Neither is a convention of its own.
 
 `scope/*` has exactly one programmatic reader, `scrumia-pick-model`, and what its cell means
 is specified once, in `features/business/execution-policy/`. Gate 2 — the agent review —
@@ -226,6 +293,20 @@ will outgrow again.
 
 The corollary trap — an invalid or stale filter reading as legitimately empty — is
 specified in `qa.md`.
+
+**The board and the issues are two surfaces, and looking for something already settled
+reaches only the second.** Settled work is out of every ordinary board read — `Done` is
+filtered by default, and a discussion issue was never carded at all — so a board search
+for it comes back empty and reads as "nothing like this was ever raised": wrong, silently,
+and in the one direction that matters to anyone checking whether a question has been asked
+before. The card itself survives the close, per § *Closed without a PR* above; what does
+not survive is its reachability through a read that exists to show live work. The module
+therefore publishes an issue search alongside
+the board read, covering open and closed together, and it is not a board read with a wider
+filter: the surfaces differ, and the answer names which one it read so the two can never
+be mistaken for each other. What sends a reader there is
+`features/business/knowledge-placement/`'s BR-6; that the two surfaces are distinct, and
+that the issue one exists, is this feature's.
 
 ## Scope of this slot
 

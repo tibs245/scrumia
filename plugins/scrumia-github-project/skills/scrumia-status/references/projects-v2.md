@@ -15,8 +15,13 @@ Read by: whoever maintains `scrumia-board`. Called by: `scrumia-ticket`, `scrumi
 | `scrumia-board read [--query Q] [--limit N]` | The board, grouped by status, filtered |
 | `scrumia-board ready [--milestone M]` | What is ready to start, optionally for one sprint |
 | `scrumia-board epic <issue>` | An epic and its native sub-issues |
+| `scrumia-board issues --search <terms>` | Issues in every state — **not** the board |
 
 Every command prints JSON on stdout and diagnostics on stderr. `SCRUMIA_CONFIG` overrides the config path.
+
+`issues` is the one command here that leaves Projects v2 alone, and the distinction is the point rather than an implementation detail: a board read is scoped to live work — `Done` filtered out by default, and a discussion issue never carded at all — so a board search for something already settled comes back empty and reads as "never raised". It takes no `--state` flag — a search reaching only what is open cannot answer the question it exists for — and its answer carries `surface` and `states` so a board read can never be mistaken for it. It needs `project.repo` and nothing the board contributes, so it still answers on a project whose board ids are unresolved.
+
+`read` lifts items labelled `discussion` out of `columns` into a `discussions` group, counted in `discussion_count`: an issue holding something unresolved is not work waiting to be started. It is separated, never dropped — `count` and `total_matching` still include it, and it is listed — because a read returning fewer items than the board holds is the filtered read that lies. The subtraction sits here rather than in each reading's prose so that neither the status nor the next-step reading can forget it on its own.
 
 ## Flow steps, not column names
 

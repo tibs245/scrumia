@@ -14,6 +14,10 @@ SOFT_SETTINGS=no
 # Bounds for cmd_read's confirm-retry (AC-4); overridable so tests don't sleep for real.
 DEFAULT_RETRY_MAX=2
 DEFAULT_RETRY_DELAY=1
+# The one label read as a subtraction — features/business/github-tracking/, "Labels and
+# their consumers". Spelled once here so the two readings that owe it cannot each spell
+# it differently.
+DISCUSSION_LABEL="discussion"
 
 die() { printf '{"ok":false,"error":%s}\n' "$(jq -Rn --arg m "$1" '$m')"; exit 1; }
 warn() { echo "scrumia-board: $1" >&2; }
@@ -29,8 +33,15 @@ scrumia-board <command> [args]
   read [--query Q] [--limit N]  Read the board, grouped by status
   ready [--milestone M]         Tickets ready for dev, optionally one sprint
   epic <issue>                  An epic and its native sub-issues
+  issues --search <terms> [--limit N]
+                                Search issues in every state — not the board
 
 `read` defaults to "-status:Done"; pass --all to lift it.
+`issues` searches issues, never the board: a board read is scoped to live work, which is
+why it takes no --state flag and always covers open and closed alike. --limit defaults to
+30 and the answer reports truncated when it is reached.
+`read` lifts items labelled "discussion" out of `columns` into `discussions`: they are
+not work waiting to be started. They are still returned and still counted.
 EOF
   exit 2
 }
@@ -366,23 +377,32 @@ cmd_read() {
 
   jq --arg q "$query" --argjson trunc "$truncated" --argjson suspect "$suspect" \
      --argjson explicit "$explicit_query" --argjson matching "$matching" \
-     --argjson states "$states" --arg done_col "$done_column" '
+     --argjson states "$states" --arg done_col "$done_column" --arg disc "$DISCUSSION_LABEL" '
     (reduce $states[] as $s ({}; .[$s.number|tostring] = $s.state)) as $by_number
     | (.items | map(. + {state: ($by_number[(.content.number|tostring)] // null)})) as $items
+    # The label partitions first: a settled discussion is normally closed and never had a
+    # PR, so splitting by state first would file it as an abandoned ticket — the case the
+    # backstop exists for, reported as the opposite of what it is.
+    | ($items | map(select([.labels[]?] | index($disc)))) as $discussions
+    | ($items | map(select([.labels[]?] | index($disc) | not))) as $rest
     # Closed-in-Done is a normal merge, not the AC-8 gap.
-    | ($items | map(select(.state != "CLOSED" or .status == $done_col))) as $live
-    | ($items | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
+    | ($rest | map(select(.state != "CLOSED" or .status == $done_col))) as $live
+    | ($rest | map(select(.state == "CLOSED" and .status != $done_col))) as $stale
     | {ok: true, query: (if $q == "" then null else $q end),
        query_was_explicit: $explicit, count: (.items|length),
        total_matching: $matching,
        truncated: $trunc, filter_suspect: $suspect,
        closed_without_pr_count: ($stale|length),
+       discussion_count: ($discussions|length),
        columns: ($live | group_by(.status) | map({
          status: (.[0].status // "(no status)"),
          count: length,
          items: map({number: .content.number, title: .title,
                      type: .content.type, labels: [.labels[]?], state})
        })),
+       discussions: ($discussions | map({number: .content.number, title: .title,
+         status: (.status // "(no status)"), type: .content.type,
+         labels: [.labels[]?], state})),
        closed_without_pr: ($stale | map({number: .content.number, title: .title,
          status: (.status // "(no status)"), type: .content.type,
          labels: [.labels[]?], state}))}' <<<"$out"
@@ -430,6 +450,35 @@ cmd_epic() {
      sub_issues: $kids}' <<<"$out"
 }
 
+# Deliberately leaves Projects v2 alone: a board read is scoped to live work, so it answers
+# "never raised" for anything settled — the one answer this search must not give (BR-6,
+# features/business/knowledge-placement/). No `--state` flag for the same reason: making it
+# overridable would make the failure a caller's to avoid rather than impossible.
+cmd_issues() {
+  local terms="" limit=30
+  while [ $# -gt 0 ]; do
+    # `shift 2` on a trailing flag shifts nothing and returns non-zero, so the loop spins
+    # forever on `--search` with no value. Guarded here; #358 carries the same shape in
+    # read, ready and epic.
+    case "$1" in
+      --search) [ $# -ge 2 ] || die "issues: --search needs a value"; terms="$2"; shift 2 ;;
+      --limit)  [ $# -ge 2 ] || die "issues: --limit needs a value"; limit="$2"; shift 2 ;;
+      *) usage ;;
+    esac
+  done
+  [ -n "$terms" ] || die "issues: --search <terms> is required — an unfiltered issue list is not a search"
+
+  local out
+  out=$(gh issue list --repo "$REPO" --state all --search "$terms" --limit "$limit" \
+          --json number,title,state,url,labels 2>&1)
+  [ $? -eq 0 ] || die "issue list failed: $out"
+
+  jq --arg t "$terms" --argjson lim "$limit" '
+    {ok: true, surface: "issues", states: "all", search: $t,
+     count: length, limit: $lim, truncated: (length >= $lim),
+     issues: map({number, title, state, url, labels: [.labels[].name]})}' <<<"$out"
+}
+
 command -v gh >/dev/null 2>&1 || die "gh not found — install the GitHub CLI"
 command -v jq >/dev/null 2>&1 || die "jq not found"
 
@@ -442,5 +491,10 @@ case "$cmd" in
   read)    load_config; cmd_read "$@" ;;
   ready)   load_config; cmd_ready "$@" ;;
   epic)    load_config; cmd_epic "$@" ;;
+  # SOFT_SETTINGS makes an unresolved cascade a non-event — not a warning, nothing is
+  # emitted — which is safe here and nowhere else: this command reads `project.repo`,
+  # loaded before the settings and still fatal if missing, and touches no value the
+  # cascade carries. The other commands answer from the board and must stop.
+  issues)  SOFT_SETTINGS=yes; load_config; cmd_issues "$@" ;;
   *)       usage ;;
 esac

@@ -21,6 +21,25 @@ work and returned instead under `closed_without_pr`, with a `closed_without_pr_c
 at the top level; a closed card sitting in `Done` is a normal merge and stays
 reported as usual.
 
+## The read partitions into three groups, label first (AC-8, AC-13)
+
+`columns`, `closed_without_pr` and `discussions` are disjoint and together account for
+every item the read returned — `count` and `total_matching` are unchanged by the split,
+which is what makes it a subtraction rather than a drop.
+
+This split is the backstop `business.md` describes, not the mechanism: a discussion issue is
+filed without a card, so the only ones reaching it are those someone carded by hand.
+
+**Within it, the `discussion` label is applied before the state split, and the order is the
+rule rather than an implementation preference.** A discussion is normally closed once it is
+settled, and it never had a pull request, so a state-first split files any of them outside
+`Done` under `closed_without_pr` — reported as a ticket abandoned mid-flight, which is the
+opposite of what it is. Splitting by state first would leave the backstop correct on open
+discussions and wrong on the settled ones, which are most of them.
+
+A consumer reading only `columns` gets the work, discussions excluded — which is what both
+readings that owe the subtraction want. One reporting counts adds all three.
+
 ## The deviation search command
 
 Reading one ticket's record uses `gh issue view <n> --json comments`. Reading across
