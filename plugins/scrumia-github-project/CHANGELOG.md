@@ -23,7 +23,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   both shapes are read and merged key by key while the migration is in flight, the migrated
   key winning **within a layer**; across layers the cascade's order decides, so a machine
   still writing `settings.tracker` outranks a repository that has migrated. This module
-  names that nest when it asks rather than leaving `scrumia-core` to guess it.
+  names that nest when it asks rather than leaving `scrumia-core` to guess it — through
+  `scrumia-extends --legacy`, so **this release requires the `scrumia-core` that ships it**;
+  against an older one every command but `doctor` stops, naming what it could not resolve.
   The key its `params:` sit under comes from the project's own declaration, so
   a `local:` or `shared:` source resolves like a marketplace one.
 - `scrumia-board` stops with a named error when its settings cannot be resolved at all —

@@ -325,7 +325,14 @@ def test_a_stale_local_layer_outranks_a_migrated_repository() -> None:
 
 
 def test_the_rule_is_layer_order_not_a_shape_preference() -> None:
-    """The mirror image: retired in layer 2, current in layer 3. The later layer wins."""
+    """The mirror image: retired in layer 2, current in layer 3. The later layer wins.
+
+    A regression guard, not a defect this pins: here the shape rule and the layer order
+    happen to agree, so this case resolved correctly before the normalisation too. It is
+    what says the rule is layer order and not "the retired shape always wins" — the
+    plausible over-correction, which this case would catch and the stale-local one would
+    not.
+    """
     cfg = write("mirror.yaml", BASE_PROJECT + f'''modules:
   "{TRACKER_KEY}":
     params:
@@ -409,11 +416,20 @@ settings:
         scope_prefix: "size/"
         risk_prefix: "risk/"
 ''')
-    code, out, err = run(PICK, ["--scope", "L"], cfg)
+    # Asserted on the value, at the resolver, because that is where the rule now lives —
+    # a consumer's warning vocabulary is a side effect of it, not the criterion.
+    code, out, err = run(EXTENDS, ["--settings", TEAMS_KEY, "--legacy", TEAMS_NEST], cfg)
+    answer = as_json(out) or {}
     check("AC-21: a bare key nested inside a block defers to the layer beneath",
+          code == 0
+          and (answer.get("execution") or {}).get("labels", {}).get("scope_prefix") == "size/",
+          f"{code} {out} {err}")
+
+    code, out, err = run(PICK, ["--scope", "L"], cfg)
+    check("AC-21: so the consumer never stands in for it",
           code == 0 and "labels.scope_prefix" not in err, f"{code} {out} {err}")
     check("AC-21: and nothing else is quietly stood in for either",
-          "no layer carries" not in err, f"{code} {out} {err}")
+          code == 0 and "no layer carries" not in err, f"{code} {out} {err}")
 
 
 def test_a_layer_of_bare_keys_is_not_named_among_those_that_answered() -> None:

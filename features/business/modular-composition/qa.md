@@ -306,6 +306,12 @@ When the same read runs
 Then that layer is not named among the layers that answered — naming a layer whose value
   is discarded is worse than naming none, on the one output whose whole job is to make the
   cascade checkable
+Given a table a module reads by cell, one cell written bare in the layer above the one
+  carrying the table
+When the module reads that cell
+Then the lower layer's cell answers, so a table has a hole where a layer leaves the cell
+  out and never where a layer writes it empty — the two look alike in a file and mean
+  opposite things
 ```
 
 ## Out of scope
