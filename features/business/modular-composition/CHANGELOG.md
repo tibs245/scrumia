@@ -8,6 +8,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Changed
 - Breaking: no
 
+## 2026-08-13 — The writing side of `modules:`: what installs a project writes and migrates (BR-13, BR-14, AC-17, AC-18)
+- Issue: #303
+- Category: Added
+- Breaking: no
+
 ## 2026-08-13 — The layer decides and the shape never does, and a key written bare is an absence (BR-14, BR-15, AC-20, AC-21)
 - Issue: #328, closing #342
 - Category: Changed
