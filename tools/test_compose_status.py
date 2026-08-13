@@ -277,9 +277,7 @@ def test_ac3_read_only_and_no_argument() -> None:
 
     check("exits 0 with no argument in a configured repo", code == 0, f"exit {code}, {err.strip()}")
     check("prints something to stdout", len(out.strip()) > 0)
-    check("stderr carries the migration notice and nothing else",
-          err.startswith("compose-status.sh:") and "migrate to 'modules:'" in err,
-          err.strip())
+    check("stderr says nothing on this repository's own config", err == "", err.strip())
     check("no file created, changed or touched", before == after,
           str(set(before) ^ set(after))[:200])
 
@@ -289,6 +287,13 @@ def test_ac3_read_only_and_no_argument() -> None:
     check("a config on modules: says nothing on stderr", err == "", err.strip())
     check("and still prints its composition", "Demo" in out, out[:120])
     os.unlink(migrated)
+
+    retired = config_with(PROJECT_CONFIG)
+    _, _, err = run_piped(env_for(retired))
+    check("a config still on the retired extends: is told to migrate",
+          err.startswith("compose-status.sh:") and "migrate to 'modules:'" in err,
+          err.strip())
+    os.unlink(retired)
 
     code, _, err = run_piped(env_for(), ["--help"])
     check("--help documents the call", code == 2 and "compose-status.sh" in err)
