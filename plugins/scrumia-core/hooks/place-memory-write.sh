@@ -19,18 +19,21 @@ fi
 # The path decides only whether to ask — the entry's worth is the tree's answer, on its
 # content (BR-4). Both surfaces carry entries; an index is navigation, routed nowhere.
 case "$file_path" in
-  */MEMORY.md) exit 0 ;;
+  */.claude/agent-memory/MEMORY.md | */.claude/agent-memory/*/MEMORY.md) exit 0 ;;
+  */.claude/projects/*/memory/MEMORY.md) exit 0 ;;
   */.claude/agent-memory/*) ;;
   */.claude/projects/*/memory/*) ;;
   *) exit 0 ;;
 esac
 
 # The destinations are a composition's, so a session outside one has nothing to be told.
-project_dir=${CLAUDE_PROJECT_DIR:-${cwd:-$PWD}}
-while [ "$project_dir" != "/" ] && [ "$project_dir" != "." ] && [ ! -f "$project_dir/.scrumia/config.yaml" ]; do
-  project_dir=$(dirname "$project_dir")
+# Resolved once: the walk and the file path then share one base, and no symlink hides it.
+project_dir=$(cd "${CLAUDE_PROJECT_DIR:-${cwd:-$PWD}}" 2>/dev/null && pwd -P) || exit 0
+while [ ! -f "$project_dir/.scrumia/config.yaml" ]; do
+  parent=$(dirname "$project_dir")
+  [ "$parent" != "$project_dir" ] || exit 0
+  project_dir=$parent
 done
-[ -f "$project_dir/.scrumia/config.yaml" ] || exit 0
 
 reminder=$(cat <<EOF
 Agent memory was just written: $file_path

@@ -104,7 +104,11 @@ the tree still answers whoever invokes it — what it does not do is speak first
 
 What it answers to is an **entry**. A memory directory also holds navigation — an index
 of the entries beside it — and an index states nothing that could have been placed
-somewhere else, so nothing is asked about one.
+somewhere else, so nothing is asked about one. Telling the two apart is allowed to be
+imperfect, and it is the non-blocking shape that allows it: an index taken for an entry
+draws one question the tree answers with "this is navigation", and an entry taken for an
+index loses one reminder. Neither costs a run, which is why this distinction needs no
+mechanism a gate would have required.
 
 ## An empty destination is named, never improvised
 
