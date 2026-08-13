@@ -52,8 +52,11 @@ honest, not reduced. Promotion does not complete it on the way out, however natu
 moment looks: filling one of those fields in is an edit, and an edit is not what a move is.
 
 The reverse direction is legitimate and carries no ceremony. A module that turned out to
-serve one project moves back in, and the projects that had adopted it are told through
-the mechanism `release-versioning` owns.
+serve one project moves back in, and the projects that had adopted it are told through the
+mechanism `release-versioning` owns — which today states none for this case: its window is
+counted on a published name a module renames, and a whole module leaving a marketplace is
+not that. Naming that gap is the answer here. What this feature holds is the refusal that
+follows from it: nothing is invented to fill it.
 
 ## Editing a module goes through the same pass as creating one
 

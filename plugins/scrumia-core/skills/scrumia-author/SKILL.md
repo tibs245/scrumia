@@ -124,11 +124,10 @@ answered in its old location *and* its new one is `local-extension`'s to name, n
 pass's to tidy away.
 
 The reverse direction is the same move and carries no extra ceremony. What it owes is owed
-to the projects that had adopted the module, and that is
+to the projects that had adopted the module, and it is
 [`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)'s
-to state — which today it does not: its window is counted on a published *name* a module
-renames, and a whole module leaving a marketplace is not that. **Say so, and notify through
-nothing of your own.** Do not open an issue on an adopting project, do not message anyone,
+to state. Read it there. **Where it states none for this case, say so and notify through
+nothing of your own**: do not open an issue on an adopting project, do not message anyone,
 and do not add a field to the manifest saying where the module went. A gap named is a
 finished report; a mechanism invented to fill it is the thing this refuses.
 
