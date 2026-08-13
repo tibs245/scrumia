@@ -573,12 +573,6 @@ cmd_settings() {
     note "no module is declared under '$key' in $CONFIG — resolving the layers that do not depend on it"
   fi
 
-  # Said rather than assumed: without a mapping this answer is the cascade as written, and
-  # a module still reading a retired nest resolves it somewhere this table does not show.
-  # A caller that passes one is told nothing — the two agree, so there is nothing to warn.
-  [ -n "$key" ] && [ "$LEGACY" = "[]" ] &&
-    note "resolved with no retired-nest mapping: if this module still reads keys under a 'settings.<nest>' block, pass --legacy <nest> to resolve them where it reads them"
-
   # The provenance is derived from the layers that carried something, never from the
   # layers that exist: a line naming a layer that did not answer is worse than no line,
   # because it is the one output whose whole job is to make the cascade checkable.
@@ -600,8 +594,13 @@ cmd_settings() {
           | if ($v | type) != "object" then .
             elif $m.key == "" then . * $v
             else . * { ($m.key): $v } end);
-    # Hoisted first, so the current shape still wins key by key inside one layer.
-    def norm: strip | (hoist * .);
+    # Hoisted first, so the current shape still wins key by key inside one layer; then the
+    # nest itself goes, so what comes out is the current shape and not the current shape
+    # beside a copy of the retired one. Left in, a consumer walking the block rather than
+    # naming its keys would read configuration at a path the project has migrated away
+    # from. `team.execution` is deleted without touching `team.roles`, which belongs to no
+    # module — nothing but a path names what goes.
+    def norm: strip | (hoist * .) | delpaths([$legacy[].path]);
     # A layer of empty blocks and bare keys resolved to nothing, whatever it was written
     # with, so it did not answer and is not claimed. Arrays count: an empty list replaces
     # rather than merges, so writing one is an answer even though it holds no scalar.
@@ -618,8 +617,17 @@ cmd_settings() {
                 , (if ($app_params | carries) then "params: of " + $k + " in app " + $app else empty end)
                 , (if (($local_base | carries) or ($local_params | carries)) then $lf else empty end) ] }')
 
+  # The mapping rides on the provenance line rather than on a warning of its own: a line
+  # that appears whether or not anything is wrong carries no information, and the reader
+  # learns to skip it. Said here, it answers the question the line exists for — what this
+  # resolution was, and what it was not.
   note "resolved from $(jq -r 'if (.layers | length) == 0 then "nothing: no layer carries a value"
-                               else (.layers | join(", ")) end' <<<"$answer")"
+                               else (.layers | join(", ")) end' <<<"$answer")$(
+    if [ "$LEGACY" != "[]" ]; then
+      printf '; retired nest: %s' "$(jq -r '[.[] | (.path | join(".")) + (if .key == "" then "" else "=" + .key end)] | join(", ")' <<<"$LEGACY")"
+    elif [ -n "$key" ]; then
+      printf '; no retired-nest mapping — pass --legacy <nest> if this module still reads one'
+    fi)"
   jq '.resolved' <<<"$answer"
 }
 

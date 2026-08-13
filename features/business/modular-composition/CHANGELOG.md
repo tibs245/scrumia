@@ -3,8 +3,8 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
-## 2026-08-12 — Each layer is normalised to the current shape before the layers combine (AC-20, AC-21)
-- Issue: #328
+## 2026-08-13 — The layer decides and the shape never does, and a key written bare is an absence (BR-14, BR-15, AC-20, AC-21)
+- Issue: #328, closing #342
 - Category: Changed
 - Breaking: no
 

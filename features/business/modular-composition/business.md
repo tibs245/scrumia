@@ -396,10 +396,16 @@ the composition.
   `settings:`, then the module's own `params:`, then `.scrumia/config.local.yaml`, which is
   never committed. A key one module reads belongs in that module's `params:`; `settings:`
   holds what is no module's, and a composition is reproducible in its modules but not
-  necessarily in its values.
+  necessarily in its values. **The order is what decides**, and nothing about how a value
+  is written may outrank it. A layer overrides with a value and never with an absence: a
+  key written with no value carries nothing, at any depth, and the layer beneath answers.
+  The cost is that no layer can subtract what a lower one carried — `tech.md` says what
+  that leaves a project.
 - **BR-15** — A module reads its configuration **through** that cascade, never out of the
   raw configuration file: reading `settings:` directly resolves layer 1 and silently
-  discards the other two.
+  discards the other two. While a module still reads keys under a retired `settings.<slot>`
+  nest, it names that nest to the resolver when it asks: the cascade reconciles the two
+  shapes, and it can only do so for a nest it has been told about.
 - **BR-16** — A module that cannot resolve its configuration — the resolver absent, or no
   layer carrying the block it reads — names what it could not resolve, proposes the next
   step as BR-3 requires, and stops. It does not answer from its own defaults. BR-3 governs

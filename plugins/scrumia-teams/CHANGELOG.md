@@ -16,7 +16,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   is in flight, the migrated key winning **within a layer**; across layers the cascade's
   order decides, so a machine still writing `settings.team.execution` outranks a repository
   that has migrated. This module names that nest when it asks rather than leaving
-  `scrumia-core` to guess it. The key its `params:` sit under comes from the
+  `scrumia-core` to guess it — through `scrumia-extends --legacy`, so **this release
+  requires the `scrumia-core` that ships it**; against an older one it stops and names what
+  it could not resolve rather than answering a model. The key its `params:` sit under comes from the
   project's own declaration, so a `local:` or `shared:` source resolves like a marketplace
   one.
 - `scrumia-pick-model` answers **no model at all** when no layer carries a grid — including

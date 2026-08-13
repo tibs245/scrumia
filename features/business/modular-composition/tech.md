@@ -138,6 +138,23 @@ layer before the layers combine, so the layer beneath answers, whether the bare 
 the top of a block or inside one. A layer left carrying nothing that way is not named among
 the layers that answered: the provenance names what resolved, never what merely exists.
 
+**What that costs a project configuring layer 3.** The layers add and overwrite; only one
+thing subtracts. A key set to nothing defers rather than clears, and an empty block merges
+rather than empties — so neither takes back what a lower layer carried. An empty **list**
+does: lists replace where blocks merge, so writing `[]` is the one way a layer removes what
+is beneath it, and it is also why a layer writing only `[]` counts as having answered.
+
+| Written in a higher layer | What the lower layer keeps |
+|---|---|
+| a value | nothing — it is overwritten |
+| a key with no value | the value, at any depth |
+| an empty block | every key it held |
+| an empty list | nothing — the list is replaced |
+
+A project that needs a key genuinely absent removes it from the layer that carries it. A
+module reaching a state where its configuration cannot be resolved is BR-16's, and it is
+reached by no layer carrying the block — never by clearing one.
+
 ## Where each thing is resolved, and by what
 
 | Question | Answered by | When |
