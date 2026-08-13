@@ -8,8 +8,8 @@ How a ScrumIA module comes into existence, changes, and moves — from nothing t
 that already meets the anatomy standard, and from a module used in one project to one a
 marketplace publishes. A module is created where it is first used and moves only once
 reuse is demonstrated; promotion changes its location and never its shape. Authoring
-refuses the two cheapest mistakes it could make: a module built for a single rule, and a
-new slot no project would fill differently.
+refuses the two cheapest mistakes it could make: a module built for a need below the
+threshold, and a new slot no project would fill differently.
 
 ## Links
 
@@ -24,10 +24,10 @@ new slot no project would fill differently.
   is found there. Authoring says *when* a module moves; that feature says *what the
   places are*.
 - Defers to: `features/business/knowledge-placement/` for where something goes when it is
-  below the threshold a module deserves. The refusal to create a module for a single rule
-  is only usable because that feature names the alternative.
-- Defers to: `features/business/modular-composition/` for what a slot is and when the
-  register vocabulary admits a new one.
+  below the threshold a module deserves. The refusal to create a module below it is only
+  usable because that feature names the alternative.
+- Defers to: `features/business/modular-composition/` for what a slot is and when a new
+  one is justified.
 
 ## Files present
 

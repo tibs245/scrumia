@@ -230,8 +230,22 @@ check("AC-10 reports a pass that created nothing as a completed pass",
 # is what makes AC-1's checker run the authority instead of a second opinion.
 check("the pass carries no copy of the anatomy standard's README sections",
       not any(s in pass_text for s in ("## What it answers", "## What it refuses", "## What it ships")))
-check("the pass ends on the checker, reached by the name it is published under",
-      "scrumia-module check" in pass_text)
+
+# Anchored to the step rather than to a bare substring: the deferral section names the same
+# command, so a grep for it alone stays green with Step 5 deleted.
+step5 = pass_text.partition("## Step 5")[2]
+check("AC-1 ends the pass on the checker, in a step of its own",
+      "scrumia-module check" in step5)
+check("AC-1 makes a clean check the finishing condition, not a report line",
+      "has not finished while the module" in step5.lower())
+check("AC-2 states the inferred reach out loud before anything is created",
+      "state the reach you inferred" in lower)
+check("AC-1 counts the concerns before the refusal reads the count",
+      "distinct concerns" in pass_text.partition("## Step 2")[0].lower())
+# What ties produce() to the pass: the fixture's manifest path is the one Step 4 orders first.
+check("the fixture is built on the manifest path Step 4 names",
+      ".claude-plugin/plugin.json" in pass_text
+      and (TMP / "ac1" / ".claude-plugin" / "plugin.json").exists())
 
 shutil.rmtree(TMP, ignore_errors=True)
 

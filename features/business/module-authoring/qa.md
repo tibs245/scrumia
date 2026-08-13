@@ -125,9 +125,9 @@ Then the module carries no declaration of any of the three — no `registers.jso
 ```
 
 Each third names something observable, which is what lets the scenario fail. A setting a
-module reads has no file of its own; what it has is the optional README section whose
-absence states that it reads none. Whether that absence is *true* is read rather than
-computed, and stays the audit's question.
+module reads has no file of its own; the surface it has is the optional README section
+`features/business/module-anatomy/` gives it, on the terms stated there. Whether an
+absence is *true* is read rather than computed, and stays that feature's audit's question.
 
 The Then names two of the three extension data files and not the third: what a module
 **runs** is a fourth axis this Given does not fix, and a module opening no register may
