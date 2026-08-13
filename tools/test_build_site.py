@@ -34,6 +34,7 @@ def check(name: str, condition: bool, detail: str = "") -> None:
 STUB_TEMPLATE = """<!doctype html>
 <html lang="{{@lang}}"><head><title>{{title}}</title></head>
 <body><h1>{{@mod_emoji}} {{@mod_name}}</h1>
+<p>{{tagline}}</p>
 <p>{{@mod_slot}} {{@mod_version}}</p>
 <ul>{{@mod_skills}}</ul>
 <ul>{{@mod_tags}}</ul>
@@ -77,7 +78,11 @@ def make_fixture(root: Path, plugins=("alpha", "beta"), extra=None, prose=None, 
         (d / "modules").mkdir(parents=True)
         (d / "common.json").write_text(json.dumps({"mod_no_slot": "none"}), encoding="utf-8")
         for p in plugins:
-            body = prose if prose is not None else {"title": f"{p} [{lang}]", "responsibilities": "<p>r</p>"}
+            # Every real module carries a tagline — module.html reads it, and so does
+            # the composer's additions shelf for the ones filling no slot.
+            body = prose if prose is not None else {"title": f"{p} [{lang}]",
+                                                     "tagline": f"{p} in one line",
+                                                     "responsibilities": "<p>r</p>"}
             if prose_extra and p in prose_extra:
                 body = {**body, **prose_extra[p]}
             (d / "modules" / f"{p}.json").write_text(json.dumps(body), encoding="utf-8")
@@ -457,6 +462,36 @@ def test_ac13_module_page_shows_what_it_goes_well_with() -> None:
           '<section id="pairs-with">' not in ghp, ghp)
 
 
+def test_composer_additions_are_derived_from_the_slot() -> None:
+    """#298 — the composer's additions shelf, built by composer_additions."""
+    print("AC-9 the additions shelf is derived from `slot`, and demands prose for what it offers")
+
+    modules = [{"name": "kernel", "slot": ""}, {"name": "alpha", "slot": ""},
+               {"name": "beta", "slot": "specs"}]
+    saved, bs.KERNEL = bs.KERNEL, "kernel"
+    bs.ERRORS.clear()
+    out = bs.composer_additions("en", modules)
+    bs.KERNEL = saved
+    html = out["@comp_add_options"]
+    check("a module that answers a slot is not offered as an addition", "beta" not in html)
+    check("the kernel is not offered — it cannot be declined", '"kernel"' not in html)
+    check("what fills no slot is offered, keyed by its own name",
+          'name="c-add" value="alpha"' in html, html)
+    check("a module offered with no tagline fails the build rather than shipping a blank option",
+          any("missing 'tagline'" in e and "alpha" in e for e in bs.ERRORS), str(bs.ERRORS))
+    bs.ERRORS.clear()
+
+    # The whole build, so the guard is proven by a build that actually fails.
+    code, errors, tmp = with_fixture(
+        extra={"alpha": {"emoji": "🅰", "slot": None}, "beta": {"emoji": "🅱", "slot": "specs"}},
+        prose={"title": "t", "responsibilities": "<p>r</p>"})
+    check("a slot-less module whose prose carries no tagline fails the build",
+          code == 1 and any("missing 'tagline'" in e and "alpha" in e for e in errors), str(errors))
+    check("and the one answering a slot is not asked for one",
+          not any("missing 'tagline'" in e and "beta" in e for e in errors), str(errors))
+    shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
                  test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
@@ -466,7 +501,8 @@ def main() -> int:
                  test_ac10_reference_links_to_every_module,
                  test_ac11_reference_link_is_generated_not_hand_written,
                  test_ac12_module_page_shows_what_it_plugs_into,
-                 test_ac13_module_page_shows_what_it_goes_well_with):
+                 test_ac13_module_page_shows_what_it_goes_well_with,
+                 test_composer_additions_are_derived_from_the_slot):
         test()
     print()
     if FAILURES:

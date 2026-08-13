@@ -1,0 +1,142 @@
+<!-- @dsCard group="Forms" -->
+<!doctype html>
+<html lang="en" data-theme="dark" class="has-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>key-entry — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+  .preview-note { max-width: var(--measure); color: var(--text-soft);
+       font-size: var(--text-sm); margin: 0 0 var(--space-4); }
+  /* The shelf's indent is declared on #composer-choices, which this page is not
+     inside. Named here so the four states sit where they sit on the real page. */
+  .stage { --shelf-indent: calc(1.2em + var(--space-4)); }
+</style>
+</head>
+<body class="stage">
+
+<h1>key-entry</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<p class="preview-note">One field that takes a whole qualified key. The source is typed as part
+of the answer, never picked beside it: the prefix set is open, and a picker could never
+produce the "no source stated" a refusal has to be able to fire on.</p>
+
+<p class="preview-note">Three of the four states below are unreachable without script on the
+real page, which is why all four are rendered here rather than left to be clicked to.</p>
+
+<h2>1 — Resting: the option, no box</h2>
+<p class="preview-note">The entry is indistinguishable in anatomy from any other option in the
+shelf. The section's resting state holds no empty field.</p>
+<div class="shelf" role="group" aria-label="Additions, resting">
+  <label class="opt opt-add">
+    <input type="checkbox" name="p1" value="scrumia-rules">
+    <b>scrumia-rules</b><span>The rules-hierarchy format itself: index, guides, decisions.</span>
+  </label>
+  <div class="opt opt-free">
+    <input type="checkbox" name="p1-free" id="p1-free">
+    <label class="opt-free-head" for="p1-free">
+      <b>A module of your own</b><span>Its key, source first — <code>local:</code>,
+      <code>shared:</code>, or <code>owner/repo:</code>. A name with no source is refused:
+      the site cannot guess where a module you wrote lives.</span>
+    </label>
+    <div class="key-entry">
+      <label class="key-entry-label" for="p1-key">module key</label>
+      <input class="key-entry-field" id="p1-key" type="text" placeholder="local:acme-docs-rules"
+             maxlength="80" spellcheck="false" autocomplete="off"
+             autocapitalize="none" autocorrect="off" aria-describedby="p1-refused">
+      <p class="key-entry-refused" id="p1-refused">not added — a key needs its source: local:, shared:, or owner/repo:</p>
+    </div>
+  </div>
+</div>
+
+<h2>2 — Revealed, empty: asked, not yet answered</h2>
+<p class="preview-note">A revealed field nobody has typed into is unanswered, never refused.
+No dashed border, no gap line — painting an empty box as an error is how a composition
+starts reading as a form.</p>
+<div class="shelf" role="group" aria-label="Additions, revealed">
+  <div class="opt opt-free">
+    <input type="checkbox" name="p2-free" id="p2-free" checked>
+    <label class="opt-free-head" for="p2-free">
+      <b>A module of your own</b><span>Its key, source first — <code>local:</code>,
+      <code>shared:</code>, or <code>owner/repo:</code>.</span>
+    </label>
+    <div class="key-entry">
+      <label class="key-entry-label" for="p2-key">module key</label>
+      <input class="key-entry-field" id="p2-key" type="text" placeholder="local:acme-docs-rules"
+             maxlength="80" spellcheck="false" autocomplete="off"
+             autocapitalize="none" autocorrect="off" aria-describedby="p2-refused">
+      <p class="key-entry-refused" id="p2-refused">not added — a key needs its source: local:, shared:, or owner/repo:</p>
+    </div>
+  </div>
+</div>
+
+<h2>3 — Revealed, answered: the decision landed</h2>
+<p class="preview-note">The enclosing option wears the <code>--human</code> wash every chosen
+option wears. Nothing about the field says "valid" — a decision that landed is reported by
+the artifacts, not by a green tick.</p>
+<div class="shelf" role="group" aria-label="Additions, answered">
+  <div class="opt opt-free">
+    <input type="checkbox" name="p3-free" id="p3-free" checked>
+    <label class="opt-free-head" for="p3-free">
+      <b>A module of your own</b><span>Its key, source first — <code>local:</code>,
+      <code>shared:</code>, or <code>owner/repo:</code>.</span>
+    </label>
+    <div class="key-entry">
+      <label class="key-entry-label" for="p3-key">module key</label>
+      <input class="key-entry-field" id="p3-key" type="text" value="local:acme-docs-rules"
+             maxlength="80" spellcheck="false" autocomplete="off"
+             autocapitalize="none" autocorrect="off" aria-describedby="p3-refused">
+      <p class="key-entry-refused" id="p3-refused">not added — a key needs its source: local:, shared:, or owner/repo:</p>
+    </div>
+  </div>
+</div>
+
+<h2>4 — Refused: three channels, no colour</h2>
+<p class="preview-note">Dashed border — this system's mark for a decided absence, borrowed
+from the empty slot's leader. The <code>--human</code> wash withdrawn, because the decision
+did not land. And the message itself in the gap idiom. The refusal never quotes what was
+typed: it states the rule the visitor does not know, not the mistake they do.</p>
+<div class="shelf" role="group" aria-label="Additions, refused">
+  <div class="opt opt-free">
+    <input type="checkbox" name="p4-free" id="p4-free" checked>
+    <label class="opt-free-head" for="p4-free">
+      <b>A module of your own</b><span>Its key, source first — <code>local:</code>,
+      <code>shared:</code>, or <code>owner/repo:</code>.</span>
+    </label>
+    <div class="key-entry">
+      <label class="key-entry-label" for="p4-key">module key</label>
+      <input class="key-entry-field" id="p4-key" type="text" value="acme-docs-rules"
+             aria-invalid="true"
+             maxlength="80" spellcheck="false" autocomplete="off"
+             autocapitalize="none" autocorrect="off" aria-describedby="p4-refused">
+      <p class="key-entry-refused" id="p4-refused">not added — a key needs its source: local:, shared:, or owner/repo:</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

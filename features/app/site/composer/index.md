@@ -27,6 +27,8 @@ form being filled.
     slot costs, and in whose voice it is said
   - `design/components/slot-index/spec.md` — how a slot row is drawn, and its
     choosable state
+  - `design/components/key-entry/spec.md` — how the field taking a whole
+    `<source>:<module>` key is drawn, and what it refuses
   - `docs/adr/0021-modules-keyed-by-source.md` — the shape the emitted config
     must carry, and the grammar of every key in it
   - `design/tokens.css` — which values may be used

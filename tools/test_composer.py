@@ -28,6 +28,9 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent
 PAGES = {"en": REPO / "site" / "index.html", "fr": REPO / "site" / "fr" / "index.html"}
 COMPOSER_JS = REPO / "site" / "assets" / "composer.js"
+STYLE_CSS = REPO / "site" / "assets" / "style.css"
+MODULES_JSON = REPO / "site" / "modules.json"
+KERNEL = "scrumia-core"
 
 FAILURES: list[str] = []
 
@@ -65,6 +68,19 @@ def js_string(name: str) -> str:
     return match.group(1)
 
 
+def js_regex(name: str) -> re.Pattern:
+    """Lift one `var NAME = /.../;` literal out of composer.js and compile it here.
+
+    The shipped pattern is what gets exercised. A copy of it restated in this file
+    would only ever test itself, which is how a guard passes while the thing it
+    guards is wrong.
+    """
+    match = re.search(rf"var {name} = /(.+?)/;", COMPOSER_JS.read_text(encoding="utf-8"))
+    if not match:
+        raise SystemExit(f"composer.js: no `var {name} = /.../;` to read")
+    return re.compile(match.group(1))
+
+
 APPS = js_object("APPS")
 PRACTICES = js_object("PRACTICES")
 SOURCE = js_string("SOURCE")
@@ -77,8 +93,11 @@ def source_key(module: str) -> str:
 # --- reading the page --------------------------------------------------------
 
 
+VOID = {"input", "br", "img", "hr", "meta", "link", "source", "area", "col", "embed", "wbr"}
+
+
 class Composer(HTMLParser):
-    """The composer's inputs and its two pre-rendered files."""
+    """The composer's inputs, its additions block and its two pre-rendered files."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -86,7 +105,9 @@ class Composer(HTMLParser):
         self.strings: dict[str, str] = {}
         self.pre: dict[str, str] = {}
         self.details_names: list[str] = []
+        self.additions: list[dict] = []   # every element inside #composer-additions
         self._depth = 0          # >0 while inside <section id="composer">
+        self._add_depth = 0      # >0 while inside the additions block
         self._pre_id: str | None = None
 
     def handle_starttag(self, tag, attrs):
@@ -98,6 +119,13 @@ class Composer(HTMLParser):
             self.strings = {k[5:]: v for k, v in a.items() if k.startswith("data-")}
         if not self._depth:
             return
+        if "additions" in a.get("class", "").split():
+            self._add_depth = 1
+        elif self._add_depth and tag not in VOID:
+            self._add_depth += 1
+        if self._add_depth:
+            self.additions.append({"tag": tag, "class": a.get("class", ""),
+                                   "name": a.get("name", ""), "value": a.get("value", "")})
         if tag == "section":
             self._depth += 1
         elif tag == "input":
@@ -114,6 +142,8 @@ class Composer(HTMLParser):
             self._pre_id = None
         elif tag == "section" and self._depth:
             self._depth -= 1
+        if self._add_depth and tag not in VOID:
+            self._add_depth -= 1
 
     def handle_data(self, data):
         if self._pre_id is not None:
@@ -241,8 +271,8 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
             picked = c.checked("c-" + slot)
             check(f"{lang}: {slot} has exactly one default answer",
                   len(picked) == 1, f"{len(picked)} checked")
-        check(f"{lang}: no input group beyond the seven slots",
-              c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-practice"},
+        check(f"{lang}: no input group beyond the seven slots and the additions block",
+              c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-practice", "c-add", "c-free"},
               str(sorted(c.groups())))
 
         # The note is the whole of its line now: one that lost its `#` is parsed
@@ -264,12 +294,131 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
                   value.startswith("#"), repr(value[:40]))
 
 
+def offered_additions() -> list[str]:
+    """The modules the composer must offer past the seven slots, derived the way
+    build_site.py derives them: everything filling no slot, minus the kernel.
+
+    Derived here too, deliberately. A test naming `scrumia-rules` would go on
+    passing the day a thirteenth module fills no slot and is never offered — which
+    is the failure mode a list validated entry by entry never catches.
+    """
+    data = json.loads(MODULES_JSON.read_text(encoding="utf-8"))
+    return sorted(name for name, facts in data.items()
+                  if not name.startswith("_") and not facts.get("slot") and name != KERNEL)
+
+
+def test_ac9_the_shelf_offers_every_module_that_fills_no_slot() -> None:
+    print("AC-9 the additions shelf is exactly the slot-less modules, minus the kernel")
+    want = offered_additions()
+    check("site/modules.json has something to offer", bool(want))
+    for lang, page in PAGES.items():
+        c = read(page)
+        got = sorted(i["value"] for i in c.inputs if i["name"] == "c-add")
+        check(f"{lang}: the shelf offers exactly the modules that fill no slot",
+              got == want, f"{got} != {want}")
+        # The kernel is installed unconditionally, so offering it would describe a
+        # choice the visitor does not have.
+        check(f"{lang}: the kernel is not offered", KERNEL not in got)
+        check(f"{lang}: no addition is checked by default — picking none is complete",
+              not [i for i in c.inputs if i["name"] == "c-add" and i["checked"]])
+
+
+def test_ac9_the_additions_block_is_a_shelf_not_an_eighth_row() -> None:
+    print("AC-9 the additions block carries no sign, no leader, no fill and no <details>")
+    for lang, page in PAGES.items():
+        c = read(page)
+        check(f"{lang}: the block is in the page", bool(c.additions))
+        drawn = [e for e in c.additions if e["tag"] in ("details", "summary")
+                 or any(k in e["class"] for k in ("slot-sign", "slot-lead", "slot-fill", "slot-row"))]
+        check(f"{lang}: nothing in the block draws a slot row", not drawn, str(drawn))
+        check(f"{lang}: it is built from .shelf and .opt, like a row's own body",
+              any("shelf" in e["class"] for e in c.additions)
+              and any("opt" in e["class"].split() for e in c.additions))
+
+
+def test_ac10_the_visitors_own_module_reaches_the_config_and_only_the_config() -> None:
+    print("AC-10 no install command is emitted for a module the site does not ship")
+    js = COMPOSER_JS.read_text(encoding="utf-8")
+    body = re.search(r"function installParts\(result\) \{(.*?)\n  \}", js, re.DOTALL)
+    check("installParts is readable", bool(body))
+    if body:
+        # It prints `result.modules` and nothing else, and `compute` keeps the
+        # visitor's own key out of that list — so the omission is structural rather
+        # than a line someone has to remember not to add.
+        check("the install block prints result.modules alone",
+              "result.modules" in body.group(1) and "result.own" not in body.group(1),
+              body.group(1).strip()[:120])
+    check("compute returns the own key beside the module list, not inside it",
+          re.search(r"return \{[^}]*own: ownKey\(\)[^}]*modules: dedupe", js, re.DOTALL) is not None)
+
+
+def test_ac10_a_key_with_no_source_is_refused() -> None:
+    print("AC-10 the free entry takes <source>:<module> and refuses everything else")
+    key = js_regex("KEY")
+    accept = ["local:acme-docs-rules", "shared:acme-conventions",
+              "tibs245/scrumia:scrumia-rules", "acme/market:their_module.v2"]
+    # The first is the one the ticket names: a bare name is refused rather than
+    # assumed published. The rest are keys that would break the file they land in.
+    refuse = ["acme-docs-rules", "local:", ":acme-rules", "local:acme rules",
+              "local:acme:rules", "acme:docs", "/x:y", "x/:y", "local:acme/rules",
+              '"local:x"', "local:x#y", "", "  ", "shared :x"]
+    for value in accept:
+        check(f"accepts {value!r}", bool(key.fullmatch(value)))
+    for value in refuse:
+        check(f"refuses {value!r}", not key.fullmatch(value))
+
+
+def test_ac11_the_free_entry_is_the_only_thing_gated_on_script() -> None:
+    print("AC-11 the free entry needs script; the seven rows and the shelf do not")
+    # Prose discusses these selectors, and a sentence is not a rule.
+    css = re.sub(r"/\*.*?\*/", "", STYLE_CSS.read_text(encoding="utf-8"), flags=re.DOTALL)
+    head = (REPO / "site" / "templates" / "partials" / "head.html").read_text(encoding="utf-8")
+
+    # `.js` means script AND motion wanted, so a capability gated on it would be
+    # deleted by a motion preference. `.has-js` means script alone.
+    check("head.html sets a gate that means script alone",
+          "classList.add('has-js')" in head)
+    check("and still sets the motion-aware gate separately", "classList.add('js')" in head)
+
+    gated = [s.strip() for s in re.findall(r"^([^{}]*\.has-js[^{}]*)\{", css, re.MULTILINE)]
+    check("the capability gate is used", bool(gated))
+    # The class, not the instances: anything else put behind this gate later fails
+    # here, because the seven rows and the known additions must keep working alone.
+    for selector in gated:
+        check(f"only the free entry sits behind the gate: {selector!r}", "opt-free" in selector)
+    check("nothing about the free entry is gated on the motion class instead",
+          not re.search(r"\.js\s+[^{}]*(opt-free|key-entry)[^{}]*\{", css))
+
+    check("the option is absent until then",
+          bool(re.search(r"^\.opt-free \{[^{}]*display: none", css, re.MULTILINE)))
+    check("and its field is revealed only by a checked box, never by script",
+          bool(re.search(r"^\.key-entry \{[^{}]*display: none", css, re.MULTILINE))
+          and bool(re.search(r"^\.opt-free:has\(> input:checked\) \.key-entry \{", css, re.MULTILINE)))
+
+    for lang, page in PAGES.items():
+        c = read(page)
+        free = [i for i in c.inputs if i["name"] == "c-free"]
+        check(f"{lang}: the block carries exactly one free entry", len(free) == 1)
+        check(f"{lang}: it is unchecked at rest, so the section holds no open box",
+              bool(free) and not free[0]["checked"])
+        opts = [e for e in c.additions if "opt" in e["class"].split()]
+        check(f"{lang}: it is the shelf's last option",
+              bool(opts) and "opt-free" in opts[-1]["class"], str([o["class"] for o in opts]))
+        check(f"{lang}: the field carries a label of its own, not a placeholder alone",
+              any("key-entry-label" in e["class"] for e in c.additions))
+
+
 def main() -> int:
     for test in (test_ac3_install_block_matches_the_rows,
                  test_ac3_config_block_matches_the_rows,
                  test_ac3_every_key_is_source_qualified,
                  test_ac5_the_two_indexes_stay_two_accordions,
-                 test_ac6_no_slot_is_answered_without_being_asked):
+                 test_ac6_no_slot_is_answered_without_being_asked,
+                 test_ac9_the_shelf_offers_every_module_that_fills_no_slot,
+                 test_ac9_the_additions_block_is_a_shelf_not_an_eighth_row,
+                 test_ac10_the_visitors_own_module_reaches_the_config_and_only_the_config,
+                 test_ac10_a_key_with_no_source_is_refused,
+                 test_ac11_the_free_entry_is_the_only_thing_gated_on_script):
         test()
     print()
     if FAILURES:

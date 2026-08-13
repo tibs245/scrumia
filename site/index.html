@@ -24,15 +24,17 @@
 /* Inline, and it has to stay that way: both decisions below are made before the
    first paint, and an external file is a round trip the paint waits on.
    1. The saved theme, or the reader watches one theme be replaced by the other.
-   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
-      only while something is running that can also un-hide, and never when the
-      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
 (function () {
   var root = document.documentElement;
   try {
     var saved = localStorage.getItem('scrumia-theme');
     if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
   } catch (e) {}
+  root.classList.add('has-js');
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!still && 'IntersectionObserver' in window) root.classList.add('js');
 })();
@@ -528,6 +530,44 @@
         </div>
       </details>
     </div>
+
+    <!-- Not an eighth slot: no sign, no leader, no fill, no <details>. The seven
+         above are choices between alternatives and these are not, so they take
+         none of the row's anatomy — only the .shelf and .opt those rows open
+         into. The options are derived from site/modules.json by
+         tools/build_site.py: whatever fills no slot is offered, so nothing here
+         is a list anyone has to remember to extend. -->
+    <div class="additions">
+      <h3 class="shelf-label" id="add-label">Additions</h3>
+      <p class="additions-intro">Modules that fill no slot. Adding none is a complete composition.</p>
+      <div class="shelf" role="group" aria-labelledby="add-label">
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-rules">
+          <b>scrumia-rules</b><span>The rules-hierarchy format itself: index, guides, decisions.</span>
+        </label>
+        <!-- A div, not a label: a label wrapping the field would toggle the box on
+             every click into it. Absent without script rather than inert — text
+             cannot become YAML through :has(), and a field that silently does
+             nothing under seven rows that all work is the worse failure. -->
+        <div class="opt opt-free">
+          <input type="checkbox" name="c-free" id="add-free">
+          <label class="opt-free-head" for="add-free">
+            <b>A module of your own</b><span>Its key, source first — <code>local:</code>, <code>shared:</code>, or <code>owner/repo:</code>. A name with no source is refused: the site cannot guess where a module you wrote lives.</span>
+          </label>
+          <div class="key-entry">
+            <label class="key-entry-label" for="add-free-key">module key</label>
+            <!-- autocapitalize: without it iOS turns `local:` into `Local:` and
+                 refuses a visitor who typed the right answer. -->
+            <input class="key-entry-field" id="add-free-key" type="text"
+                   placeholder="local:acme-docs-rules" maxlength="80"
+                   spellcheck="false" autocomplete="off"
+                   autocapitalize="none" autocorrect="off"
+                   aria-describedby="add-free-refused">
+            <p class="key-entry-refused" id="add-free-refused">not added — a key needs its source: local:, shared:, or owner/repo:</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Two files you take away, not a result panel. Both are pre-rendered here
@@ -612,6 +652,7 @@ apps:
        data-note-own-impl="No implementation module for that stack: the app follows the conventions of the code next to it. Normal behaviour, not a gap — and the contract for writing your own fits on one page."
        data-note-practices="Practices apply app by app, and only to the app types they speak for. Where one disagrees with the implementation module, the implementation module wins."
        data-note-practices-noapp="Practices attach to apps. With no app declared they install and activate nothing until apps appear in the file."
+       data-note-own-module="Your own module is in the config and in none of the install commands. The site ships no way to install it, and a command invented for it would make the others unverifiable — install it however it is distributed, then run scrumia-init."
        data-app-empty="# no module of its own — agents follow the code next to it"></div>
 </section>
 

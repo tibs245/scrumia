@@ -17,13 +17,9 @@
   var configPre = document.getElementById('composer-config');
   var notes = document.getElementById('composer-note');
   var live = document.getElementById('composer-live');
-  var own = document.getElementById('c-own');
-  var ownField = document.getElementById('c-own-key');
-
-  /* The free entry exists only where this file runs. Its own marker rather than the
-     root `.js` class, which head.html also withholds under reduced motion: a reader
-     who asked for less movement must not lose a capability with it. */
-  choices.classList.add('has-script');
+  var own = document.getElementById('add-free');
+  var ownField = document.getElementById('add-free-key');
+  var ownRefused = document.getElementById('add-free-refused');
 
   /* The five slots that take one module. Order is the order of the rows, of the
      install lines and of the modules: mapping — one sequence, said three times. */
@@ -75,9 +71,18 @@
   function ownKey() {
     if (!own || !own.checked || !ownField) return '';
     var value = ownField.value.trim();
-    var valid = KEY.test(value);
-    ownField.setAttribute('aria-invalid', value && !valid ? 'true' : 'false');
-    return valid ? value : '';
+    return KEY.test(value) ? value : '';
+  }
+
+  /* Refusal is marked when the visitor leaves the field and cleared on the next
+     keystroke: checking per keystroke calls a correctly-typed key wrong for its
+     first six characters. A box checked with nothing typed is unanswered, not
+     refused — painting that as an error is how a composition becomes a form.
+     The sentence is the one already in the markup, so it stays in site/i18n/. */
+  function markRefusal(refused) {
+    if (!ownField) return;
+    ownField.setAttribute('aria-invalid', refused ? 'true' : 'false');
+    if (refused && live && ownRefused) live.textContent = ownRefused.textContent;
   }
 
   function compute() {
@@ -248,14 +253,24 @@
   }
 
   choices.addEventListener('change', function (event) {
+    if (event.target === own && !own.checked) markRefusal(false);
     render();
     if (event.target.name) announce(event.target);
   });
 
   // A text field only fires `change` on blur, and the two files must follow the typing.
   choices.addEventListener('input', function (event) {
-    if (event.target === ownField) render();
+    if (event.target !== ownField) return;
+    markRefusal(false);
+    render();
   });
+
+  if (ownField) {
+    ownField.addEventListener('blur', function () {
+      var value = ownField.value.trim();
+      markRefusal(own.checked && value !== '' && !KEY.test(value));
+    });
+  }
 
   choices.addEventListener('click', function (event) {
     var button = event.target.closest('.preset');
