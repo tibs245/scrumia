@@ -124,22 +124,43 @@ verdict is three-way:
 | `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
 | `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
 | `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
-| `absent` or `conflict` | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
+| `absent` or `conflict`, from a marketplace or from inside the project | names only the module | `reachable` — the remedy is a fetch, and the file is not the defect |
+| `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
+
+**Only the shared tier can produce the last row**, because it is the only source whose
+location travels with nobody (BR-8). A marketplace declaration nothing answers means the
+plugin is not installed or the session was not restarted, and one inside the project means
+a directory is missing from the repository — neither is corrected by editing a sentence,
+and `--modules` already names both.
 
 **The match is on strings, never on the file's shape.** What shape the composition section
 takes is `modular-composition`'s and changes without this tool being told; a reconciliation
 that parsed a table would pass by accident the day the table moved. The declaration key is
-what separates the last two rows because it is the one string carrying the module *and* its
+what separates the middle rows because it is the one string carrying the module *and* its
 source (BR-6) — so a file that names it has said where the capability would come from, in
 the words the configuration uses, and a file that names only the bare module has not. A key
 present anywhere in the file counts: which sentence it sits in is a human's judgement, and
 a tool grading English is a tool inventing findings.
 
+A declaration from the retired list is its own key, so naming the module and naming the key
+are one act there and the verdict can never be `claimed`. That is right rather than a hole:
+a bare name states no origin for the file to repeat, and the fix — key the declaration by
+source — is the one the shadow and conflict reports already name.
+
+A name matches at its edges, not as a substring, and the boundary alphabet treats a path as
+one token: without that, a module named `tools` is found inside `tools/validate.py` and a
+module named `acme` inside `acme-lint`, and the tool accuses a correct file of a claim it
+never made. The remedy it prints then reads *add this to the file* — which would be a tool
+talking a project into the exact defect it exists to catch.
+
 It is vacuous on the machine that wrote the file, by construction — everything resolves
 there — and it is the clone that gets the answer. That asymmetry is the point rather than a
 weakness: AC-7 is a claim about a reader who is not the author.
 
-A project with no such file claims nothing, which is reported and is not a failure.
+A project with no such file claims nothing, which is reported and is not a failure. A file
+the caller names is different: the caller asserted it is there, so one that is not, or one
+that cannot be read, is an error. Read as empty it would clear every claim and exit clean,
+which is the one answer a surface whose job is to fail must never give.
 
 ## Two sets, and why they are not one
 
@@ -196,6 +217,19 @@ holder and belongs in a file that says so.
   link plus two keys — which is close to the promotion arrangement this feature encourages,
   so it is reachable by accident and not only by construction. *Exit condition*: a
   duplicate check across declarations, before a composition is seen doing it.
+- **A file that quotes its own configuration disarms `--claims` wholesale.** A key counts
+  anywhere in the file, so a project documenting its composition by pasting the `modules:`
+  block under the prose puts every declaration key in reach and every unbacked claim
+  becomes `named as absent`. It is the one input shape that retires the check silently, and
+  it is the price of refusing to read the file's structure — a rule about which region of
+  the file a key must sit in is a rule about the file's shape, which is
+  `modular-composition`'s and not this tool's to assume. *Exit condition*: a composition
+  section the writer marks off, at which point the region is declared rather than guessed.
+- **`--claims` reconciles the declarations, so a claim about a module the composition no
+  longer declares is invisible to it.** That is the ordinary stale-`CLAUDE.md` failure, and
+  it is `modular-composition`'s — the composing skill compares the file against the config,
+  where this compares the file against what resolved. Both are needed and neither covers
+  the other. *Exit condition*: a project found carrying a claim neither surface caught.
 - **A module resolved `local` or `shared` cannot publish a command.** The harness puts
   only an enabled marketplace plugin's `bin/` on PATH, so a name published by a checkout is
   not runnable — while `--check` reports the dependency met, because it accepts a name

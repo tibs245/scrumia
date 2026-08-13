@@ -45,9 +45,10 @@ terms rather than as a stepping stone:
   skill that consults that register, and it is data — no skill, no version, no
   installation.
 - **A rules section** the project owns, when a topic has grown past what one file can
-  carry. It is an ordinary document kept wherever the project keeps its documents, and it
-  reaches an agent through the directive whose `read:` names it — so it needs no home of
-  its own, and one no directive names is a document rather than a defect.
+  carry. It is a fragment like any a module ships — `modular-composition`'s word for the
+  file a directive points at — owned by the project and named by a project-local directive,
+  so it needs no home of its own, and one no directive names is an ordinary document rather
+  than a defect.
 - **A skill** the project ships to itself, when the thing needed is a procedure and no
   register asks for it.
 
@@ -198,13 +199,19 @@ Two comparisons carry that, and they answer different questions:
 | the text of `CLAUDE.md` | the state each declaration resolved to | whether that file's claims are true for whoever is reading it |
 
 The first is what makes a declared absence sayable at all. The second is what makes it
-sayable about the one file an agent reads before it knows anything else, and it is
-needed because `CLAUDE.md` resolves nothing — which puts it under BR-6's last sentence,
-where a row naming a capability by its bare name is phrasing a declaration as presence.
-Naming it by its declaration key instead states the module and its source at once, which
-is the same fact the absence report carries: the file then offers an origin the reader
-can check rather than a capability it cannot. A module that resolves wherever the project
-is cloned needs neither, because there the claim is simply true.
+sayable about the one file an agent reads before it knows anything else — a file written
+on one machine and read on every other, so its claims outlive the environment that made
+them true. A row naming a capability by its bare name promises it; naming it by the
+declaration key states the module and its source at once, which is the same fact the
+absence report carries, and offers the reader an origin it can check rather than a
+capability it cannot.
+
+Only one source needs that. A module comes from a marketplace anyone may install from, or
+from inside the project where it arrives with the clone — and there a bare name is either
+already true or one fetch away, which is a thing to do rather than a sentence to correct.
+A shared checkout is the location that travels with nobody, so it is the only one where a
+bare name in that file is a promise to a reader who has no way to keep it. That is the
+cost of the location, arriving where it is least expected.
 
 Neither comparison reads English, and neither is asked to. One matches names, the other
 matches declarations against directories; the sentence a human writes around a module is
@@ -245,10 +252,12 @@ on one machine is a module the project cannot be handed to someone else with.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
   present and never causes a failure. `CLAUDE.md` is held to the same rule by comparison
-  rather than by prose: a module it names that does not resolve for the reader running it
-  is a claim that reader cannot check, and the file states that module's source — its
-  declaration key — or makes no claim about it. What may fail there is the reconciliation,
-  and the defect it reports belongs to the file, never to the absence.
+  rather than by prose: where this composition declares a module from a location a clone
+  cannot reach, a file naming it by its bare name is a claim that reader cannot check, and
+  the file states that module's source — its declaration key — or makes no claim about it.
+  A module absent from a location every clone can reach is not that, because there the
+  answer is to fetch it. What may fail is the reconciliation, and what it reports belongs
+  to the file, never to the absence.
 - **BR-9** — A conflict blocks the declaration it applies to and nothing else: that
   module contributes no directive anywhere, every other module still resolves, and the
   dependency check exits non-zero on it.

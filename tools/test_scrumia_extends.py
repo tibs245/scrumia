@@ -760,9 +760,116 @@ modules:
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
     check("a key that is not a declaration is not reconciled against anything",
           code == 0 and "foo:" not in out, f"exit {code}: {out[:300]}")
+    shutil.rmtree(project)
 
+
+def test_claims_matches_a_name_at_its_edges_and_only_where_reach_is_at_stake() -> None:
+    print("AC-7 — what counts as naming a module, and which absence the file is answerable for")
+
+    # A name found inside a path or inside a longer name is not a claim, and accusing a
+    # correct file of one would have the tool talk a project into writing the real thing.
+    project = project_with("""
+project: { name: "Edges" }
+modules:
+  "shared:tools": {}
+  "shared:acme": {}
+  "shared:scrumia-practice": {}
+""")
+    (project / "CLAUDE.md").write_text(
+        "Run `python3 tools/validate.py` before pushing.\n"
+        "| `acme-lint` | Lints. |\n"
+        "| `scrumia-practice-tdd` | Tests first. |\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a name inside a path is not a claim about the module of that name",
+          code == 0, f"exit {code}: {out[:400]}")
+    check("nor is one inside a longer module name",
+          out.count("not claimed") == 3, out[:400])
+    shutil.rmtree(project)
+
+    # BR-8's subject: the location a clone cannot reach. A marketplace module nobody
+    # installed is absent too, and the answer there is a fetch, not a sentence to correct.
+    project = project_with("""
+project: { name: "Reach" }
+modules:
+  "acme/mk:acme-lint": {}
+  "local:acme-docs": {}
+  "shared:acme-conventions": {}
+""")
+    (project / "CLAUDE.md").write_text(
+        "| `acme-lint` | Lints. |\n| `acme-docs` | Docs. |\n"
+        "| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    code, out, err = run(["--claims"], project / ".scrumia" / "config.yaml")
+    verdicts = {line.split("|")[1].strip().strip("`"): line.split("|")[5].strip()
+                for line in out.splitlines() if line.startswith("| `")}
+    check("a marketplace module nobody installed is reachable, not a claim",
+          verdicts.get("acme/mk:acme-lint") == "reachable", verdicts)
+    check("nor is one inside the project, which arrives with the clone",
+          verdicts.get("local:acme-docs") == "reachable", verdicts)
+    check("only the shared checkout is a capability the reader cannot reach",
+          verdicts.get("shared:acme-conventions") == "claimed", verdicts)
+    check("and it alone decides the exit status",
+          code != 0 and err.count("comes from a shared checkout") == 1, f"exit {code}: {err}")
+    shutil.rmtree(project)
+
+
+def test_claims_answers_for_a_shadow_a_conflict_and_a_named_file() -> None:
+    print("AC-7 — the states other than absent, and a file the caller named")
+
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    make_module(shared / "acme-conventions-fork", "acme-conventions")
+
+    # A conflict binds nothing, so the module contributes nowhere — a file naming it bare
+    # promises a capability that is not running, exactly as an absence does.
+    project = project_with(CONFLICTING)
+    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    config = project / ".scrumia" / "config.yaml"
+    code, out, _ = run(["--claims"], config, shared=shared)
+    check("a conflicted module named bare is a claim the reader cannot reach",
+          code != 0 and "| claimed |" in out, f"exit {code}: {out[:400]}")
+    shutil.rmtree(project)
+
+    shutil.rmtree(shared)
+
+    # A shadow binds and is used, so the claim is simply true — reported, never failed.
+    # Its own shared directory: the fork above would make this one a conflict instead.
+    shared = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
+    make_module(shared / "acme-conventions", "acme-conventions")
+    project = project_with(SHADOWING)
+    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
+    config = project / ".scrumia" / "config.yaml"
+    code, out, _ = run(["--claims"], config, shared=shared)
+    check("a shadowed module is honoured, since the narrowest copy is running",
+          code == 0 and "| honoured |" in out, f"exit {code}: {out[:400]}")
     shutil.rmtree(project)
     shutil.rmtree(shared)
+
+    # One module declared project-wide and by an app is one claim, not two rows.
+    project = project_with("""
+project: { name: "Twice" }
+modules:
+  "tibs245/scrumia:scrumia-practice-tdd": {}
+apps:
+  - name: "web"
+    path: "apps/web"
+    modules:
+      "tibs245/scrumia:scrumia-practice-tdd": {}
+""")
+    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests. |\n",
+                                       encoding="utf-8")
+    config = project / ".scrumia" / "config.yaml"
+    code, out, _ = run(["--claims"], config)
+    check("a module declared in two scopes is reconciled once",
+          code == 0 and out.count("scrumia-practice-tdd") == 1, out[:400])
+
+    # A file the caller named is an assertion it is there. Read as empty it would clear
+    # every claim and exit clean, which is the answer this surface must never give.
+    for arg, label in [(str(project), "a directory"), (str(project / "nope.md"), "a typo")]:
+        code, _, err = run(["--claims", arg], config)
+        check(f"{label} passed as the file is an error, not a file claiming nothing",
+              code != 0 and "is not a file" in err, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
 
 
 def test_ac8_local_material_without_a_module_is_not_a_malformed_module() -> None:
@@ -834,6 +941,8 @@ def main() -> int:
     test_ac9_ac10_no_versioned_path_and_no_installation()
     test_ac6_a_clone_that_cannot_reach_the_module_is_told_and_still_works()
     test_ac7_what_claude_md_claims_survives_a_clone()
+    test_claims_matches_a_name_at_its_edges_and_only_where_reach_is_at_stake()
+    test_claims_answers_for_a_shadow_a_conflict_and_a_named_file()
     test_ac8_local_material_without_a_module_is_not_a_malformed_module()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0

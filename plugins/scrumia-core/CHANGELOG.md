@@ -9,10 +9,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   is reported as an absence naming where it would have come from, which is the ordinary
   state of a clone without a machine's shared checkouts, and is not a failure.
 - `scrumia-extends --claims [<file>]` — reconciles what `CLAUDE.md` says about the
-  composition against what actually resolves for whoever runs it, and exits non-zero
-  where the file names a module that does not resolve without naming its declaration
-  key. `scrumia-init` writes such a module by its key, and `scrumia-compose` diagnoses
-  with it: a section matching the config exactly still misleads every clone when the
+  composition against what actually resolves for whoever runs it. It exits non-zero only
+  where the file names a module from a shared checkout, by its bare name, that does not
+  resolve here: a marketplace module nobody installed is a fetch away, and a file naming
+  the declaration key has already said where the capability would come from.
+  `scrumia-init` writes a `shared:` module by its key, and `scrumia-compose` diagnoses
+  with it — a section matching the config exactly still misleads every clone when the
   capability lives on one machine.
 
 - `scrumia-place` — one tree from something just learned to exactly one destination: a

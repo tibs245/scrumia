@@ -736,23 +736,41 @@ cmd_check() {
 # It matches strings and never the file's shape: which shape the composition section takes
 # is modular-composition's and moves without this tool being told, so a reconciliation that
 # parsed a table would start passing by accident the day the table changed.
+#
+# A name is matched at its edges and never as a substring: `tools` must not be found inside
+# `tools/validate.py`, nor `scrumia-practice` inside `scrumia-practice-tdd`. The boundary
+# class holds the identifier's own alphabet plus `/` and `.`, so a path counts as one token
+# and a backtick or a pipe counts as an edge.
+names_it() {
+  local needle
+  needle=$(printf '%s' "$2" | sed 's![][\\.*^$+?(){}|]!\\&!g')
+  grep -qE -- "(^|[^A-Za-z0-9_/.-])${needle}([^A-Za-z0-9_/.-]|\$)" "$1"
+}
+
 cmd_claims() {
-  local file=$1 all key mod state loc named keyed verdict failed=0 rows="" unbacked=""
+  local file=$1 named_file=$1 all key mod state loc reach named keyed verdict
+  local failed=0 rows="" unbacked=""
   # Beside the configuration's own directory, like everything else under .scrumia/: a
   # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
   [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
   all=$(bindings)
 
+  # A file the caller named is an assertion that it is there; only the default may be
+  # missing, because a project that claims nothing is a project with nothing to reconcile.
+  # Unreadable is neither: read as empty it would clear every claim and exit clean, which
+  # is the one answer a surface whose job is to fail must never give.
   if [ ! -f "$file" ]; then
+    [ -z "$named_file" ] || die "$file is not a file"
     note "$file does not exist — this composition is claimed nowhere, so there is nothing to reconcile"
     return 0
   fi
+  [ -r "$file" ] || die "$file cannot be read"
 
-  while IFS=$'\t' read -r key mod state loc; do
+  while IFS=$'\t' read -r key mod state loc reach; do
     [ -n "$key" ] || continue
     named=no; keyed=no
-    grep -qF -- "$mod" "$file" && named=yes
-    grep -qF -- "$key" "$file" && keyed=yes
+    names_it "$file" "$mod" && named=yes
+    names_it "$file" "$key" && keyed=yes
 
     if [ "$state" = resolved ] || [ "$state" = shadow ]; then
       # It binds, so the claim is true for this reader whichever way the file words it.
@@ -760,13 +778,18 @@ cmd_claims() {
     elif [ "$named" = no ]; then
       verdict="not claimed"
     elif [ "$keyed" = yes ]; then
-      # The key is the one string carrying the module *and* its source (BR-6), so a file
-      # naming it has said where the capability would come from, in the configuration's
-      # own words. Which sentence it sits in is a human's judgement, not this tool's.
+      # The key is the one string carrying the module *and* its source, so a file naming it
+      # has said where the capability would come from, in the configuration's own words.
+      # Which sentence it sits in is a human's judgement, not this tool's.
       verdict="named as absent"
+    elif [ "$reach" != shared ]; then
+      # `shared` is the only source whose location travels with nobody. A marketplace module
+      # is reachable by anyone who declares it and one inside the project arrives with the
+      # clone, so there the answer is an install or a missing directory — not a file to edit.
+      verdict=reachable
     else
       verdict=claimed
-      unbacked="$unbacked$file claims '$mod', which is $state here — a reader of that file is told it has a capability this checkout cannot reach. Name it '$key', so the file states the location it would come from, or make no claim about it."$'\n'
+      unbacked="$unbacked$file claims '$mod', which is $state here and comes from a shared checkout this machine has no path to — a reader of that file is told it has a capability it cannot reach. Name it '$key', so the file states where it would come from, or make no claim about it."$'\n'
       failed=$((failed + 1))
     fi
     rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
@@ -775,19 +798,21 @@ cmd_claims() {
   # here rather than in the loop because a tab-separated empty field vanishes on `read`,
   # which shifts every column after it.
   done < <(jq -r 'map(select(.module != "")) | unique_by(.key)[]
-    | [.key, .module, .state, .location] | @tsv' <<<"$all")
+    | [.key, .module, .state, .location,
+       (if .source == "shared" then "shared" else "reachable" end)] | @tsv' <<<"$all")
 
   printf '# claims — %s against what resolves here\n\n' "$file"
   if [ -z "$rows" ]; then
-    printf 'This project declares no module, so the file claims nothing about one.\n'
+    printf 'This project declares no module.\n'
     return 0
   fi
   printf '| Declared as | Location | State | Named in the file | Verdict |\n|---|---|---|---|---|\n'
   printf '%s' "$rows"
   printf '\nA claim is honoured when the module resolves for whoever runs this. Where it does\n'
-  printf 'not, the file states the declaration key — which carries the source — or says\n'
-  printf 'nothing about the module; a bare name there is a capability asserted to a reader\n'
-  printf 'who has no way to reach it.\n'
+  printf 'not, the file names the declaration key — which carries the source — or says nothing\n'
+  printf 'about the module; `reachable` is the third way out, where the source is one any clone\n'
+  printf 'can get to and the answer is an install rather than an edit. Only a bare name for a\n'
+  printf 'shared checkout is a capability asserted to a reader who has no way to reach it.\n'
 
   # After the table, not as they are found: the table is the answer, and a reader scanning
   # a terminal reads the verdicts first and the remedy second.

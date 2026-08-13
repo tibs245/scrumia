@@ -259,8 +259,11 @@ neighbouring line, and diffing as exactly what changed.
 - **The tool writes nothing, anywhere.** Not a cache, not a temp file, not a lock. That is
   what lets it be safe to call from inside any skill, at any point, including concurrently
   across the worktrees a sprint opens.
-- **Exit status carries meaning only for `--check`.** Printing a table for a register
-  nothing extends is success: an empty answer is an answer.
+- **No answer about the composition carries meaning in the exit status.** Printing a table
+  for a register nothing extends is success: an empty answer is an answer. The surfaces
+  that do exit non-zero judge something else — a declared dependency nothing meets, and a
+  sentence written about the composition that its reader cannot check; which those are, and
+  what each refuses, is `local-extension`'s.
 
 ## Debt assumed
 
