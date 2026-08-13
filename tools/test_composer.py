@@ -370,7 +370,13 @@ def test_ac10_a_key_with_no_source_is_refused() -> None:
     # assumed published. The rest are keys that would break the file they land in.
     refuse = ["acme-docs-rules", "local:", ":acme-rules", "local:acme rules",
               "local:acme:rules", "acme:docs", "/x:y", "x/:y", "local:acme/rules",
-              '"local:x"', "local:x#y", "", "  ", "shared :x"]
+              '"local:x"', "local:x#y", "", "  ", "shared :x",
+              # A source spelled as an exclusion admitted these three, and each emits
+              # a config that does not parse where it is pasted.
+              'tibs245/scrumia":scrumia-rules', "a\\zb/c:mod", "{a}/b:mod",
+              # NEL, US and BOM: characters the two regex engines disagree about
+              # being whitespace, which a pattern carrying no \\s cannot disagree on.
+              "o\u0085w/r:mod", "o\u001fw/r:mod", "o\ufeffw/r:mod"]
     for value in accept:
         check(f"accepts {value!r}", bool(key.fullmatch(value)))
     for value in refuse:
@@ -389,7 +395,10 @@ def test_ac11_the_free_entry_is_the_only_thing_gated_on_script() -> None:
           "classList.add('has-js')" in head)
     check("and still sets the motion-aware gate separately", "classList.add('js')" in head)
 
-    gated = [s.strip() for s in re.findall(r"^([^{}]*\.has-js[^{}]*)\{", css, re.MULTILINE)]
+    # Each selector judged alone: a comma list beside the free entry, or a rule
+    # sharing a line, is what a per-rule match waves through.
+    gated = [s.strip() for chunk in re.split(r"[{}]", css)
+             for s in chunk.split(",") if ".has-js" in s]
     check("the capability gate is used", bool(gated))
     # The class, not the instances: anything else put behind this gate later fails
     # here, because the seven rows and the known additions must keep working alone.

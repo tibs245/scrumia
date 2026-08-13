@@ -17,7 +17,7 @@
   var configPre = document.getElementById('composer-config');
   var notes = document.getElementById('composer-note');
   var live = document.getElementById('composer-live');
-  var own = document.getElementById('add-free');
+  var ownBox = document.getElementById('add-free');
   var ownField = document.getElementById('add-free-key');
   var ownRefused = document.getElementById('add-free-refused');
 
@@ -31,8 +31,12 @@
 
   /* A whole key, ADR-0021's grammar: `local:`, `shared:` or `<owner>/<repo>:`, then
      the module. A name typed with no source is refused rather than assumed published
-     — that assumption is what would put a key nothing resolves in a visitor's repo. */
-  var KEY = /^(?:local|shared|[^\s:/]+\/[^\s:/]+):[A-Za-z0-9._-]+$/;
+     — that assumption is what would put a key nothing resolves in a visitor's repo.
+     Both halves are spelled positively. Spelled as an exclusion, the source would
+     admit a quote or a control character and emit a file that does not parse — and
+     `\s` is a different set in every engine, so a check written elsewhere would
+     disagree with this one about which strings those are. */
+  var KEY = /^(?:local|shared|[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+):[A-Za-z0-9._-]+$/;
 
   var APPS = {
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
@@ -69,20 +73,27 @@
   /* The visitor's own module, as one whole key. Unchecked, blank or malformed emits
      nothing: half a key pasted into a repository is worse than no key at all. */
   function ownKey() {
-    if (!own || !own.checked || !ownField) return '';
+    if (!ownBox || !ownBox.checked || !ownField) return '';
     var value = ownField.value.trim();
     return KEY.test(value) ? value : '';
   }
 
-  /* Refusal is marked when the visitor leaves the field and cleared on the next
-     keystroke: checking per keystroke calls a correctly-typed key wrong for its
-     first six characters. A box checked with nothing typed is unanswered, not
-     refused — painting that as an error is how a composition becomes a form.
+  /* A box checked with nothing typed is unanswered, not refused — painting that as
+     an error is how a composition becomes a form. */
+  function refused() {
+    var value = ownField ? ownField.value.trim() : '';
+    return !!(ownBox && ownBox.checked && value !== '' && !KEY.test(value));
+  }
+
+  /* Marked when the visitor leaves the field and cleared on the next keystroke:
+     checking per keystroke calls a correctly-typed key wrong for its first six
+     characters. Every caller passes the same predicate — one that only ever cleared
+     would leave a re-checked box wearing the wash of a decision that did not land.
      The sentence is the one already in the markup, so it stays in site/i18n/. */
-  function markRefusal(refused) {
+  function markRefusal(isRefused) {
     if (!ownField) return;
-    ownField.setAttribute('aria-invalid', refused ? 'true' : 'false');
-    if (refused && live && ownRefused) live.textContent = ownRefused.textContent;
+    ownField.setAttribute('aria-invalid', isRefused ? 'true' : 'false');
+    if (isRefused && live && ownRefused) live.textContent = ownRefused.textContent;
   }
 
   function compute() {
@@ -260,7 +271,7 @@
   }
 
   choices.addEventListener('change', function (event) {
-    if (event.target === own && !own.checked) markRefusal(false);
+    if (event.target === ownBox) markRefusal(refused());
     render();
     if (event.target.name) announce(event.target);
   });
@@ -273,10 +284,7 @@
   });
 
   if (ownField) {
-    ownField.addEventListener('blur', function () {
-      var value = ownField.value.trim();
-      markRefusal(own.checked && value !== '' && !KEY.test(value));
-    });
+    ownField.addEventListener('blur', function () { markRefusal(refused()); });
   }
 
   choices.addEventListener('click', function (event) {

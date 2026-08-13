@@ -1020,9 +1020,12 @@ tbody tr:last-child td { border-bottom: 0; }
 @keyframes fill-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
 
 /* The sign glyph plus the row's gutter — one fact, named once rather than
-   expressed inline wherever something has to line up under a question. Reset
-   below 800px, where the leader is gone and nothing is left to line up under. */
-#composer-choices { --shelf-indent: calc(1.2em + var(--space-4)); }
+   expressed inline wherever something has to line up under a question. Declared
+   at the root, not on #composer-choices: a shelf also stands alone in the design
+   system's previews, and an undefined var() there is an invalid declaration that
+   silently falls to no indent at all. Reset below 800px, where the leader is gone
+   and nothing is left to line up under. */
+:root { --shelf-indent: calc(1.2em + var(--space-4)); }
 @media (max-width: 800px) { #composer-choices { --shelf-indent: 0px; } }
 .shelf {
   display: grid; gap: var(--space-1);
