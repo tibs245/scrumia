@@ -273,6 +273,11 @@ it comes from, and a module named without one is not declared at all.
 | `tibs245/scrumia:scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 | `local:acme-house-rules` | This project's own module, at `.scrumia/modules/acme-house-rules/`. |
 
+Each module's own configuration sits under its `params:` beside that key; `settings:`
+holds only what several modules read. Read either through `scrumia-extends --settings`,
+never out of the file — that is the one call that applies all three layers, the last of
+them per-machine.
+
 ### Per app
 
 | App | Path | Modules |

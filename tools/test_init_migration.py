@@ -312,8 +312,8 @@ def test_claude_md_names_the_keys_its_config_declares() -> None:
 
     md = CLAUDE_MD.read_text(encoding="utf-8")
     section = md[md.index("## ScrumIA composition"):md.index("### What rules apply")]
-    named = set(re.findall(r"`([^`]+:[^`]+)`", section)) & set(
-        re.findall(r"`(\S+:scrumia-\S+)`", section))
+    named = set(re.findall(r"`([^`\s]+:[^`\s]+)`", section)) & set(
+        re.findall(r"`([^`\s]+:scrumia-[^`\s]+)`", section))
 
     check("every module the config declares is named in the table",
           declared <= named, f"missing from CLAUDE.md: {sorted(declared - named)}")
@@ -321,6 +321,18 @@ def test_claude_md_names_the_keys_its_config_declares() -> None:
           named <= declared, f"named but not declared: {sorted(named - declared)}")
     check("the per-app table no longer speaks of `Extends`",
           "| Extends |" not in section, "the retired column heading survives")
+
+    # Step 5 regenerates everything between the markers, so a generic sentence living
+    # there and not in the template survives exactly until the next scrumia-init run.
+    text = skill_text()
+    blocks = re.findall(r"^````markdown\n(.*?)^````", text, re.S | re.M)
+    template = blocks[0] if blocks else ""
+    check("Step 5 still carries the CLAUDE.md template as a fenced block",
+          "<!-- scrumia:start -->" in template, "no ````markdown block found in the skill")
+    generic = "Read either through `scrumia-extends --settings`"
+    check("a generic sentence inside the markers is in the template that regenerates them",
+          (generic in md) == (generic in template),
+          "the cascade sentence is in CLAUDE.md but not in scrumia-init's template")
 
 
 def main() -> int:
