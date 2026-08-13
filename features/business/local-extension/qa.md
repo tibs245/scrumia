@@ -127,7 +127,13 @@ Then the claim is reported as an absence the file already states, and it exits z
 Given a project every declared module of which resolves for the reader
 When the same reconciliation runs
 Then every claim is honoured and it exits zero, on any machine
-And in none of the three does any register fail to render, nor any other surface fail
+Given instead a module named by its bare name that nothing answers either, declared from a
+  marketplace or from inside the project — a location whose absence is every reader's, the
+  author's included
+When the same reconciliation runs
+Then it is reported without failing, because what is missing there is the module and not
+  the sentence
+And in none of the four does any register fail to render, nor any other surface fail
 ```
 
 The surface is `scrumia-extends --claims`, named here for the same reason AC-3 names its

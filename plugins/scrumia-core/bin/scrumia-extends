@@ -74,8 +74,10 @@ narrowest wins and says so, so promoting a module never disables it.
 
 --claims reconciles what a file says about the composition against those states, so that
 a capability reachable only from one machine is not asserted to a reader who cloned
-without it. It exits non-zero where the file names a module that does not resolve here
-without naming that module's declaration key, which states where it would come from.
+without it. It reads one file, and exits non-zero on one case only: the file names, by its
+bare name, a `shared:` module nothing here answers and nothing else binds. Absent from a
+marketplace or from inside the project, the module is what is missing rather than the
+sentence; naming the declaration key states the source and settles it either way.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -748,7 +750,7 @@ names_it() {
 }
 
 cmd_claims() {
-  local file=$1 named_file=$1 all key mod state loc reach named keyed verdict
+  local file=$1 named_file=$1 all decls key mod state loc reach elsewhere named keyed verdict
   local failed=0 rows="" unbacked=""
   # Beside the configuration's own directory, like everything else under .scrumia/: a
   # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
@@ -760,13 +762,27 @@ cmd_claims() {
   # Unreadable is neither: read as empty it would clear every claim and exit clean, which
   # is the one answer a surface whose job is to fail must never give.
   if [ ! -f "$file" ]; then
-    [ -z "$named_file" ] || die "$file is not a file"
+    [ -z "$named_file" ] && [ ! -e "$file" ] || die "$file is not a file"
     note "$file does not exist — this composition is claimed nowhere, so there is nothing to reconcile"
     return 0
   fi
   [ -r "$file" ] || die "$file cannot be read"
 
-  while IFS=$'\t' read -r key mod state loc reach; do
+  # Read before the loop, and checked: a query that failed feeds an empty loop, and an empty
+  # loop here prints "this project declares no module" — the one sentence a broken read must
+  # never produce, since it is also what a correct empty composition says.
+  # A key carrying no module name has no needle to look for, and an empty needle matches
+  # every file; load_config has already named it as no declaration. Dropped in the query
+  # rather than in the loop because a tab-separated empty field vanishes on `read`.
+  decls=$(jq -r '([.[] | select(.state == "resolved" or .state == "shadow") | .module]
+                  | unique) as $bound
+    | map(select(.module != "")) | unique_by(.key)[] | . as $r
+    | [$r.key, $r.module, $r.state, $r.location,
+       (if $r.source == "shared" then "shared" else "everyone" end),
+       (if ($bound | index($r.module)) then "bound" else "unbound" end)] | @tsv' <<<"$all") ||
+    die "could not reconcile the declarations"
+
+  while IFS=$'\t' read -r key mod state loc reach elsewhere; do
     [ -n "$key" ] || continue
     named=no; keyed=no
     names_it "$file" "$mod" && named=yes
@@ -777,15 +793,21 @@ cmd_claims() {
       [ "$named" = yes ] && verdict=honoured || verdict=unclaimed
     elif [ "$named" = no ]; then
       verdict="not claimed"
+    elif [ "$key" = "$mod" ]; then
+      # The declaration states no origin, so there is nothing for the file to repeat and no
+      # wording that would have been better. Keying it by source is the fix, and the shadow
+      # and conflict reports already name it.
+      verdict=unsourced
     elif [ "$keyed" = yes ]; then
       # The key is the one string carrying the module *and* its source, so a file naming it
       # has said where the capability would come from, in the configuration's own words.
       # Which sentence it sits in is a human's judgement, not this tool's.
       verdict="named as absent"
-    elif [ "$reach" != shared ]; then
-      # `shared` is the only source whose location travels with nobody. A marketplace module
-      # is reachable by anyone who declares it and one inside the project arrives with the
-      # clone, so there the answer is an install or a missing directory — not a file to edit.
+    elif [ "$elsewhere" = bound ] || [ "$reach" != shared ]; then
+      # `shared` is the only source whose location travels with nobody, and even there the
+      # capability is present when another key bound the same module — the promotion
+      # arrangement, where the old key outlives the move. Elsewhere the module is what is
+      # missing, for every reader alike: something to restore, not a sentence to correct.
       verdict=reachable
     else
       verdict=claimed
@@ -793,13 +815,7 @@ cmd_claims() {
       failed=$((failed + 1))
     fi
     rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
-  # A key the grammar does not admit carries no module name to look for, and an empty
-  # needle matches every file; load_config has already named it as no declaration. Dropped
-  # here rather than in the loop because a tab-separated empty field vanishes on `read`,
-  # which shifts every column after it.
-  done < <(jq -r 'map(select(.module != "")) | unique_by(.key)[]
-    | [.key, .module, .state, .location,
-       (if .source == "shared" then "shared" else "reachable" end)] | @tsv' <<<"$all")
+  done <<<"$decls"
 
   printf '# claims — %s against what resolves here\n\n' "$file"
   if [ -z "$rows" ]; then
@@ -808,11 +824,13 @@ cmd_claims() {
   fi
   printf '| Declared as | Location | State | Named in the file | Verdict |\n|---|---|---|---|---|\n'
   printf '%s' "$rows"
-  printf '\nA claim is honoured when the module resolves for whoever runs this. Where it does\n'
-  printf 'not, the file names the declaration key — which carries the source — or says nothing\n'
-  printf 'about the module; `reachable` is the third way out, where the source is one any clone\n'
-  printf 'can get to and the answer is an install rather than an edit. Only a bare name for a\n'
-  printf 'shared checkout is a capability asserted to a reader who has no way to reach it.\n'
+  printf '\nA claim is honoured when the module resolves for whoever runs this. Where it does not,\n'
+  printf 'the file names the declaration key — which carries the source — or says nothing about\n'
+  printf 'the module. `reachable` means the module is what is missing rather than the sentence:\n'
+  printf 'restore it. `unsourced` means the declaration states no origin for the file to repeat\n'
+  printf '— key it <source>:<module>. Only a bare name for a shared checkout is a capability\n'
+  printf 'asserted to a reader who has no way to reach it, and only that fails.\n'
+  printf '\nOne file per run, so an app with a CLAUDE.md of its own is checked by naming it.\n'
 
   # After the table, not as they are found: the table is the answer, and a reader scanning
   # a terminal reads the verdicts first and the remedy second.

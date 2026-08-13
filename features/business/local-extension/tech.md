@@ -116,22 +116,31 @@ a sentence written about it.
 ## Reconciling what `CLAUDE.md` claims
 
 `--claims` takes a file — `CLAUDE.md` beside the configuration's own directory unless one
-is named — and reconciles it against the states above. One row per declaration, and the
-verdict is three-way:
+is named — and reconciles it against the states above. **One file per run**: an app's own
+`CLAUDE.md` is a second claim in a second file, and the root run says nothing about it. One
+row per declaration, and one verdict each:
 
 | The declaration | The file | Verdict |
 |---|---|---|
 | `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
 | `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
+| `absent` or `conflict`, keyed by no source | names only the module | `unsourced` — the declaration states no origin for the file to repeat |
 | `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
-| `absent` or `conflict`, from a marketplace or from inside the project | names only the module | `reachable` — the remedy is a fetch, and the file is not the defect |
+| `absent` or `conflict`, from a marketplace or from inside the project, or bound under another key | names only the module | `reachable` — what is missing is the module, not the sentence |
 | `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
 
 **Only the shared tier can produce the last row**, because it is the only source whose
-location travels with nobody (BR-8). A marketplace declaration nothing answers means the
-plugin is not installed or the session was not restarted, and one inside the project means
-a directory is missing from the repository — neither is corrected by editing a sentence,
-and `--modules` already names both.
+absence belongs to the reader alone (BR-8). A marketplace declaration nothing answers means
+the plugin is not installed or the session was not restarted, and one inside the project
+means a directory missing from the repository — both are missing for the author too,
+neither is corrected by editing a sentence, and `--modules` already names both.
+
+**A module another declaration bound is present whatever this one did**, so it is
+`reachable` too. That is the promotion arrangement seen from one key behind: a module moved
+into the project while a `shared:` key still names it resolves under `local:`, the file's
+claim is true, and a tool failing there would be demanding the author write `shared:` over
+a module that ships in the repository — talking a project into the defect it exists to
+catch. The stale key is `--modules`' finding, where both rows are visible at once.
 
 **The match is on strings, never on the file's shape.** What shape the composition section
 takes is `modular-composition`'s and changes without this tool being told; a reconciliation
@@ -142,10 +151,12 @@ the words the configuration uses, and a file that names only the bare module has
 present anywhere in the file counts: which sentence it sits in is a human's judgement, and
 a tool grading English is a tool inventing findings.
 
-A declaration from the retired list is its own key, so naming the module and naming the key
-are one act there and the verdict can never be `claimed`. That is right rather than a hole:
-a bare name states no origin for the file to repeat, and the fix — key the declaration by
-source — is the one the shadow and conflict reports already name.
+A declaration whose key carries no source — one from the retired list, or one the grammar
+refuses — is its own module name, so naming the module and naming the key are one act and
+neither `named as absent` nor `claimed` would be true of it. It gets `unsourced` instead,
+which says what is actually wrong: the configuration states no origin, so no wording of the
+file could have stated one, and keying the declaration by source is what makes it
+answerable. That is the fix the shadow and conflict reports already name.
 
 A name matches at its edges, not as a substring, and the boundary alphabet treats a path as
 one token: without that, a module named `tools` is found inside `tools/validate.py` and a

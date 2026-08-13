@@ -811,6 +811,41 @@ modules:
           code != 0 and err.count("comes from a shared checkout") == 1, f"exit {code}: {err}")
     shutil.rmtree(project)
 
+    # A key left behind by a promotion. Failing here would demand a `shared:` row over a
+    # module the repository ships.
+    project = project_with("""
+project: { name: "Promoted" }
+modules:
+  "local:acme-conventions": {}
+  "shared:acme-conventions": {}
+""")
+    make_module(project / ".scrumia" / "modules" / "acme-conventions", "acme-conventions")
+    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a module another key already bound is not claimed against the stale one",
+          code == 0 and "| claimed |" not in out, f"exit {code}: {out[:400]}")
+    shutil.rmtree(project)
+
+    # A declaration stating no origin leaves the file nothing to repeat, so neither the
+    # remedy nor the verdict that carries it can be true of it.
+    project = project_with("""
+project: { name: "Unsourced" }
+extends:
+  - acme-conventions
+""")
+    (project / "CLAUDE.md").write_text("| `acme-conventions` | Tabs. |\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a declaration with no source is unsourced, not an absence the file stated",
+          code == 0 and "| unsourced |" in out, f"exit {code}: {out[:400]}")
+    shutil.rmtree(project)
+
+    project = project_with(MARKETPLACE)
+    (project / "CLAUDE.md").write_text("Nothing about the composition.\n", encoding="utf-8")
+    code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a module the file never names, that resolves, is unclaimed",
+          code == 0 and "| unclaimed |" in out, f"exit {code}: {out[:400]}")
+    shutil.rmtree(project)
+
 
 def test_claims_answers_for_a_shadow_a_conflict_and_a_named_file() -> None:
     print("AC-7 — the states other than absent, and a file the caller named")
