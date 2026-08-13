@@ -70,7 +70,8 @@ not optional:
   cleared at all: fixing it rewrites a file, and a move that rewrites a file is not one.
 
 A move re-reads Step 3's table — the reach is exactly what a move re-decides — and writes
-nothing, so Step 4 has nothing to do and already says so.
+nothing *inside* the module, so Step 4 has nothing to do. What it does write is the
+declaration, and that is below.
 
 ### Read its findings before you touch it
 
