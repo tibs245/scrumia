@@ -66,13 +66,16 @@ Then the move succeeds with no file rewritten, and projects that had adopted it 
   anything this pass invents
 ```
 
-In the withdrawal case that mechanism is a **final release of the module carrying the
-breaking signal, whose changelog entry names where the module went**. That release is the
-notice, read at update, on the terms that feature states; the window it counts is counted
-there and not here. Naming it is what lets the second half of the Then fail: a run that
+What this criterion tests is the **rather than** clause, because the first half is not
+this feature's to state and is not stated anywhere yet. `release-versioning` counts its
+window on a *published name a module renames*, and its AC-6 refuses a removal taken inside
+that window; a whole module leaving a marketplace is neither, and no feature says today
+what it owes the projects that adopted it. So the Then fails on invention: a run that
 notifies by opening an issue on an adopting project, by messaging anyone, or by adding a
-field to the manifest saying where the module moved has invented a notification, and fails
-this criterion even though the projects were, in some sense, told.
+field to the manifest saying where the module went has invented a notification and fails,
+even though the projects were, in some sense, told. Until `release-versioning` states the
+withdrawal case, naming the gap is the conformant answer and inventing a mechanism to fill
+it is not.
 
 ### AC-5 — Editing runs the same check as creating
 
