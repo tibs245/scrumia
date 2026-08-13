@@ -1,15 +1,29 @@
 
 ScrumIA composition — ScrumIA (tibs245/scrumia)
 
-  Modules this project extends
-  ────────────────────────────
-  scrumia-specs
-  scrumia-github-project
-  scrumia-teams
-  scrumia-discovery
-  scrumia-design
+  Modules this project declares
+  ──────────────────────────────────────
+  tibs245/scrumia:scrumia-specs
+      root=features, strates=["business","app"]
+  tibs245/scrumia:scrumia-github-project
+      autonomy={"level":"guided","auto_merge":"none"}, project=ScrumIA,
+      project_number=6, columns=["Backlog","Ready for dev","To dev","In
+      progress","In review","Done"],
+      board={"field_id":"PVTSSF_lAHOAD9HXc4Bfw4JzhaBcjo","options":{"Backlog":"7f19f379","Ready
+      for dev":"0b9c70dd","To dev":"9678ee59","In progress":"08535749","In
+      review":"3eb1c894","Done":"4daf8741"},"flow":{"ready":"Ready for
+      dev","in_progress":"In progress","in_review":"In review","done":"Done"}}
+  tibs245/scrumia:scrumia-teams
+      execution={"unlabeled":"sonnet","unrated_risk":"medium","labels":{"scope_prefix":"scope/","risk_prefix":"risk/"},"matrix":{"S":{"low":"sonnet","medium":"sonnet","high":"sonnet","critical":"opus"},"M":{"low":"sonnet","medium":"opus","high":"opus","critical":"opus"},"L":{"low":"opus","medium":"opus","high":"opus","critical":"opus"},"XL":{"low":"split_or_opus","medium":"split_or_opus","high":"split_or_opus","critical":"split_or_opus"}}},
+      escalation={"to_human":["disagreement between roles","missing business
+      rule","contract change consumed by another app"]},
+      sprint={"max_tickets":5}
+  tibs245/scrumia:scrumia-discovery
+  tibs245/scrumia:scrumia-design
+      root=design, remote=claude-design,
+      project_id=67f47e14-97d0-4e2b-8a10-abb2b2d5e51f
 
-  App    Path   Extends
+  App    Path   Modules
   ─────────────────────
   site   site   none
   tools  tools  none

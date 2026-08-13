@@ -1,42 +1,84 @@
-# ScrumIA composition. Describes the project and its tooling, never its state.
 project:
   name: "ScrumIA"
   repo: "tibs245/scrumia"
 
-# The modules this project runs. Flat, unordered, present modules only.
-extends:
-  - scrumia-specs
-  - scrumia-github-project
-  - scrumia-teams
-  - scrumia-discovery
-  - scrumia-design
+modules:
+  "tibs245/scrumia:scrumia-specs":
+    params:
+      root: "features"
+      strates: [business, app]
 
-# A project adds its own directives in .scrumia/extends.json — same shape as a module's,
-# read first by scrumia-extends, which is how a house rule beats a module's without
-# forking it. This project has none: every rule it runs is a module's.
+  "tibs245/scrumia:scrumia-github-project":
+    params:
+      autonomy:
+        level: guided
+        auto_merge: none
+      project: "ScrumIA"
+      project_number: 6
+      columns:
+        - Backlog
+        - Ready for dev
+        - To dev
+        - In progress
+        - In review
+        - Done
+      board:
+        field_id: "PVTSSF_lAHOAD9HXc4Bfw4JzhaBcjo"
+        options:
+          Backlog: "7f19f379"
+          Ready for dev: "0b9c70dd"
+          To dev: "9678ee59"
+          In progress: "08535749"
+          In review: "3eb1c894"
+          Done: "4daf8741"
+        flow:
+          ready: "Ready for dev"
+          in_progress: "In progress"
+          in_review: "In review"
+          done: "Done"
 
-# ScrumIA's product is markdown: plugins/ is the deliverable and carries no
-# implementation module. Only these two hold code an implementation module
-# could ever speak for.
+  "tibs245/scrumia:scrumia-teams":
+    params:
+      execution:
+        unlabeled: sonnet
+        unrated_risk: medium
+        labels:
+          scope_prefix: "scope/"
+          risk_prefix: "risk/"
+        matrix:
+          S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
+          M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
+          L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
+          XL: { low: split_or_opus, medium: split_or_opus, high: split_or_opus,  critical: split_or_opus }
+      escalation:
+        to_human:
+          - disagreement between roles
+          - missing business rule
+          - contract change consumed by another app
+      sprint:
+        max_tickets: 5
+
+  "tibs245/scrumia:scrumia-discovery": {}
+
+  "tibs245/scrumia:scrumia-design":
+    params:
+      root: "design"
+      remote: claude-design
+      project_id: "67f47e14-97d0-4e2b-8a10-abb2b2d5e51f"
+
 apps:
   - name: "site"
     path: "site"
-    type: "frontend"  # plain HTML/CSS/JS built by tools/build_site.py, deployed to Pages
+    type: "frontend"
+    modules: {}
   - name: "tools"
     path: "tools"
-    type: "cli"       # Python: validate.py gates the marketplace in CI, build_site.py renders the site
+    type: "cli"
+    modules: {}
 
-# Settings passed to modules. Every key below is commented with what reads it —
-# a setting with no named reader does not belong here (see CLAUDE.md instead).
 settings:
-  specs:                     # scrumia-specs-setup's own setup-time choice; consumers read the Specs contract in CLAUDE.md
-    root: "features"
-    strates: [business, app]
-  autonomy:
-    level: guided            # guided | assisted | autonomous — read by scrumia-refine to gate ticket-transition approval
-    auto_merge: none         # none | docs-only | all — read by scrumia-review before merging
-  team:                      # schema owned by scrumia-team-setup
-    roles:                   # enabled is read by scrumia-manager, which routes only to active roles
+  team:
+    roles:
       - name: manager
         enabled: true
       - name: business
@@ -45,55 +87,4 @@ settings:
         enabled: true
       - name: designer
         enabled: true
-        from: scrumia-design   # role defined outside the team slot — see docs/adr/0014
-    execution:               # read by scrumia-pick-model
-      unlabeled: sonnet
-      unrated_risk: medium
-      labels:
-        scope_prefix: "scope/"
-        risk_prefix: "risk/"
-      # Capability order, weakest to strongest: sonnet < opus < fable. The matrix
-      # below climbs it; read it before editing a cell, because the names carry no
-      # ordering of their own and a grid can ship inverted without failing anything.
-      # Opus is the ceiling: fable bills at twice opus per token, so no cell may
-      # name it. Reaching for it is a human's call, ticket by ticket, never a default.
-      matrix:                # scope × risk → model, or split_or_<model> when oversized
-        S:  { low: sonnet,        medium: sonnet,        high: sonnet,        critical: opus }
-        M:  { low: sonnet,        medium: opus,          high: opus,          critical: opus }
-        L:  { low: opus,          medium: opus,          high: opus,          critical: opus }
-        XL: { low: split_or_opus, medium: split_or_opus, high: split_or_opus,  critical: split_or_opus }
-    escalation:
-      to_human:              # read by scrumia-team-setup on re-run to check drift
-        - disagreement between roles
-        - missing business rule
-        - contract change consumed by another app
-    sprint:
-      max_tickets: 5         # read by scrumia-sprint to cap the batch
-  design:                    # schema owned by scrumia-design-setup
-    root: "design"           # setup-time choice; consumers read the Design contract in CLAUDE.md
-    remote: claude-design    # claude-design | none — read by scrumia-design-sync
-    project_id: "67f47e14-97d0-4e2b-8a10-abb2b2d5e51f"   # the claude.ai/design project UUID, written once linked
-  tracker:                   # read by scrumia-github-project, via scrumia-board
-    project: "ScrumIA"
-    project_number: 6
-    columns:
-      - Backlog
-      - Ready for dev
-      - To dev
-      - In progress
-      - In review
-      - Done
-    board:                   # resolved once by scrumia-board columns; stable for the life of the board
-      field_id: "PVTSSF_lAHOAD9HXc4Bfw4JzhaBcjo"
-      options:
-        Backlog: "7f19f379"
-        Ready for dev: "0b9c70dd"
-        To dev: "9678ee59"
-        In progress: "08535749"
-        In review: "3eb1c894"
-        Done: "4daf8741"
-      flow:                  # which column plays which role — skills name the step, not the column
-        ready: "Ready for dev"
-        in_progress: "In progress"
-        in_review: "In review"
-        done: "Done"
+        from: scrumia-design
