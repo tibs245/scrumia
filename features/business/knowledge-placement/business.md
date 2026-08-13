@@ -81,11 +81,24 @@ The tree runs after the fact. An agent writing to its memory is not intercepted,
 or redirected mid-action; it is asked afterwards whether that was the right place, and it
 answers with the same tree anyone else would use.
 
+What arrives names the entry that was written and the tree that answers for it. A line
+that names neither is indistinguishable from noise, and a reminder nobody can act on is
+the failure this shape is most exposed to — it is the price of not blocking, and it is
+paid by being specific.
+
 This is a deliberate limit and it has a known cost: a reminder can be ignored, and some
-will be. The alternative — refusing the write — buys compliance by making a module able to
-stop a session, which is a power no ScrumIA module holds today and which fails closed on
-every project that installed it. The reminder is chosen on the balance of those two, not
-because it works better.
+will be. The alternative — refusing the write — buys compliance at a price this one is
+not worth, and it fails closed on every project that installed it. Refusing a write is a
+power the composition does grant, and it grants it over **state written into the
+repository**: what that state should have been instead is already decided, so the refusal
+carries its own answer. Knowledge is the other case. Where an entry belongs is exactly
+what has not been decided yet, and the tree is the thing that decides it — so a refusal
+would stop a run on a judgment made before the judgment exists. The reminder is chosen on
+the balance of those two, not because it works better.
+
+The reminder also belongs to a composition, not to a machine. Where a repository has
+composed none, the tree has no destination to route to and says nothing there — a session
+that never asked for ScrumIA is not the place to be reminded of its tree.
 
 ## An empty destination is named, never improvised
 
@@ -116,11 +129,14 @@ refuses everywhere else.
   readings exclude wherever they enumerate it. The label's spelling and declaration are
   `github-tracking`'s, as is whether such an issue is enumerated at all.
 - **BR-8** — The tree runs after the write, as a reminder. It intercepts nothing and
-  refuses nothing.
+  refuses nothing, and what it says names the entry written and the tree that answers for
+  it — a line naming neither is not this reminder.
 - **BR-9** — Where the destination's capability is absent from the composition, the tree
   names the gap — the module that would fill it, or the empty slot itself where no module
   can be named — and improvises no substitute. It never writes project state into the
   repository to compensate.
+- **BR-10** — The reminder speaks where a composition does. A repository that has composed
+  none has none of the destinations, and nothing is said there.
 
 ## Vocabulary
 
