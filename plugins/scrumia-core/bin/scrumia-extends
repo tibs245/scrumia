@@ -13,6 +13,7 @@
 #   scrumia-extends --list
 #   scrumia-extends --modules
 #   scrumia-extends --check
+#   scrumia-extends --claims [<file>]
 #   scrumia-extends --settings [<source>:<module>] [--legacy <nest>[=<key>]]
 
 set -uo pipefail
@@ -43,6 +44,7 @@ scrumia-extends <register> --json       # the same rows, unrendered
 scrumia-extends --list                  # every register opened here, and what reaches it
 scrumia-extends --modules [--json]      # every declared module, and where it resolved from
 scrumia-extends --check                 # declared dependencies that are not met
+scrumia-extends --claims [<file>]       # what CLAUDE.md claims, against what resolves here
 scrumia-extends --settings [<key>]      # a module's configuration, the cascade applied
 scrumia-extends --settings <key> --legacy <nest>[=<key>]
                                         # …reading the nest under `settings:` this module's
@@ -69,6 +71,13 @@ A declaration no root answers is a declared absence. One that two distinct roots
 is a conflict, named with both and bound to neither; --check exits non-zero on it. Only a
 bare name from the retired list can be answered in more than one place at once: there the
 narrowest wins and says so, so promoting a module never disables it.
+
+--claims reconciles what a file says about the composition against those states, so that
+a capability reachable only from one machine is not asserted to a reader who cloned
+without it. It reads one file, and exits non-zero on one case only: the file names, by its
+bare name, a `shared:` module that does not resolve here and nothing else binds. Absent
+from a marketplace or from inside the project, the module is what is missing rather than
+the sentence; naming the declaration key states the source and settles it either way.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -147,7 +156,9 @@ load_config() {
                  elif $shape == "legacy" then
                    ((.composition // {}) | to_entries | map(select(.value != null) | .value) | from_list)
                  else [] end )
-    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG")
+    , apps: ((.apps // []) | map({ name: .name, path: (.path // ""), modules: app_modules })) }' <<<"$CFG") &&
+    [ -n "${SCOPES:-}" ] ||
+    die "$CONFIG: could not be read as a composition — '$KEY_READ:' is not in a shape this reads, here or under an app. 'modules:' is a mapping keyed <source>:<module> (ADR-0021); the retired 'extends:' is a list of names; 'composition:' maps a slot to a name. Checked here rather than left to yield nothing: an unreadable file would otherwise answer as the empty composition, which is a legitimate one."
 
   # A key the grammar does not admit would make the file mean whatever happens to be
   # installed, which is the failure the qualified source removes — so it is named and
@@ -397,7 +408,10 @@ bindings() {
     # An absent declaration still states where it would have come from — that is the whole
     # content of a declared absence (BR-8). A bare name from the retired list states none,
     # which is what the grammar replaced it for.
-    def tier: if . == "local" or . == "shared" then . else "marketplace" end;
+    # A source outside the three is no location either: crediting it to the marketplace
+    # would state an origin for a key the grammar has just refused to read as one.
+    def tier: if . == "local" or . == "shared" then .
+              elif test("^[^/]+/[^/]+$") then "marketplace" else "(none)" end;
     . as $mods
     | [ bound(($scopes.project // []); $mods)[] | . + {scope: "project-wide"} ]
       + [ $scopes.apps[] | .name as $a | bound(.modules; $mods)[] | . + {scope: $a} ]
@@ -722,15 +736,137 @@ cmd_check() {
   note "every declared dependency is met"
 }
 
+# AC-7's surface. --modules compares the declarations against the roots resolution found;
+# this compares what someone *wrote* about the composition against those same states, so
+# that a capability living on one machine is not asserted to whoever cloned without it.
+#
+# It matches strings and never the file's shape: which shape the composition section takes
+# is modular-composition's and moves without this tool being told, so a reconciliation that
+# parsed a table would start passing by accident the day the table changed.
+#
+# A name is matched at its edges and never as a substring: `tools` must not be found inside
+# `tools/validate.py`, nor `scrumia-practice` inside `scrumia-practice-tdd`. The boundary
+# class holds the identifier's own alphabet plus `/` and `.`, so a path counts as one token
+# and a backtick or a pipe counts as an edge.
+names_it() {
+  local needle
+  needle=$(printf '%s' "$2" | sed 's![][\\.*^$+?(){}|]!\\&!g')
+  grep -qE -- "(^|[^A-Za-z0-9_/.-])${needle}([^A-Za-z0-9_/.-]|\$)" "$1"
+}
+
+cmd_claims() {
+  local file=$1 named_file=$1 all decls key mod state loc reach elsewhere named keyed verdict
+  local failed=0 rows="" unbacked=""
+  # Beside the configuration's own directory, like everything else under .scrumia/: a
+  # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
+  [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
+  # Unreachable while load_config guards the only query a configuration can break, and kept
+  # because the sentence below is what an unchecked read prints: that this project declares
+  # no module, which is also what a correct empty composition says.
+  all=$(bindings) || die "could not resolve this project's declarations"
+
+  # A file the caller named is an assertion that it is there; only the default may be
+  # missing, because a project that claims nothing is a project with nothing to reconcile.
+  # Unreadable is neither: read as empty it would clear every claim and exit clean, which
+  # is the one answer a surface whose job is to fail must never give.
+  if [ ! -f "$file" ]; then
+    [ -z "$named_file" ] && [ ! -e "$file" ] || die "$file is not a file"
+    note "$file does not exist — this composition is claimed nowhere, so there is nothing to reconcile"
+    return 0
+  fi
+  [ -r "$file" ] || die "$file cannot be read"
+
+  # Read before the loop, and checked: a query that failed feeds an empty loop, and an empty
+  # loop here prints "this project declares no module" — the one sentence a broken read must
+  # never produce, since it is also what a correct empty composition says.
+  # A key carrying no module name has no needle to look for, and an empty needle matches
+  # every file; load_config has already named it as no declaration. Dropped in the query
+  # rather than in the loop because a tab-separated empty field vanishes on `read`.
+  decls=$(jq -r '([.[] | select(.state == "resolved" or .state == "shadow") | .module]
+                  | unique) as $bound
+    | map(select(.module != "")) | unique_by(.key)[] | . as $r
+    | [$r.key, $r.module, $r.state, $r.location,
+       (if $r.source == "shared" then "shared" else "everyone" end),
+       (if ($bound | index($r.module)) then "bound" else "unbound" end),
+       (if $r.source == "shared" or $r.source == "local"
+           or ($r.source | test("^[^/]+/[^/]+$")) then "stated" else "none" end)] | @tsv' <<<"$all") ||
+    die "could not reconcile the declarations"
+
+  while IFS=$'\t' read -r key mod state loc reach elsewhere origin; do
+    [ -n "$key" ] || continue
+    named=no; keyed=no
+    names_it "$file" "$mod" && named=yes
+    names_it "$file" "$key" && keyed=yes
+
+    if [ "$state" = resolved ] || [ "$state" = shadow ]; then
+      # It binds, so the claim is true for this reader whichever way the file words it.
+      [ "$named" = yes ] && verdict=honoured || verdict=unclaimed
+    elif [ "$named" = no ]; then
+      verdict="not claimed"
+    elif [ "$origin" = none ]; then
+      # No location this tool can use — a name from the retired list, or a source the
+      # grammar refuses. The configuration states no origin, so there is nothing for the
+      # file to repeat and no wording that would have been better; keying it by source is
+      # the fix, and load_config and the shadow report already name it.
+      verdict=unsourced
+    elif [ "$keyed" = yes ]; then
+      # The key is the one string carrying the module *and* its source, so a file naming it
+      # has said where the capability would come from, in the configuration's own words.
+      # Which sentence it sits in is a human's judgement, not this tool's.
+      verdict="named as absent"
+    elif [ "$elsewhere" = bound ] || [ "$reach" != shared ]; then
+      # `shared` is the only source whose location travels with nobody, and even there the
+      # capability is present when another key bound the same module — the promotion
+      # arrangement, where the old key outlives the move. Elsewhere the module is what is
+      # missing, for every reader alike: something to restore, not a sentence to correct.
+      verdict=reachable
+    else
+      verdict=claimed
+      unbacked="$unbacked$file claims '$mod', which is $state here and comes from a shared checkout this machine has no path to — a reader of that file is told it has a capability it cannot reach. Name it '$key', so the file states where it would come from, or make no claim about it."$'\n'
+      failed=$((failed + 1))
+    fi
+    rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
+  done <<<"$decls"
+
+  printf '# claims — %s against what resolves here\n\n' "$file"
+  if [ -z "$rows" ]; then
+    printf 'This project declares no module.\n'
+    return 0
+  fi
+  printf '| Declared as | Location | State | Named in the file | Verdict |\n|---|---|---|---|---|\n'
+  printf '%s' "$rows"
+  printf '\nA claim is honoured when the module resolves for whoever runs this. Where it does not,\n'
+  printf 'the file names the declaration key — which carries the source — or says nothing about\n'
+  printf 'the module. `reachable` means the module is what is missing rather than the sentence:\n'
+  printf 'restore it. `unsourced` means the declaration states no origin for the file to repeat\n'
+  printf '— key it <source>:<module>. Only a bare name for a shared checkout is a capability\n'
+  printf 'asserted to a reader who has no way to reach it, and only that fails.\n'
+  printf '\nOne file per run, so an app with a CLAUDE.md of its own is checked by naming it.\n'
+
+  # After the table, not as they are found: the table is the answer, and a reader scanning
+  # a terminal reads the verdicts first and the remedy second.
+  if [ "$failed" -gt 0 ]; then
+    printf '%s' "$unbacked" >&2
+    die "$failed claim(s) this checkout cannot honour"
+  fi
+  return 0
+}
+
 # ---------------------------------------------------------------- argument handling
 
 [ $# -ge 1 ] || usage
-REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""; LEGACY="[]"
+REGISTER=""; APP=""; AS_JSON=no; MODE=register; MODULE_KEY=""; LEGACY="[]"; CLAIMS_FILE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  MODE=list; shift ;;
     --modules) MODE=modules; shift ;;
     --check) MODE=check; shift ;;
+    # The file is optional, same idiom as --settings below: without one it is the CLAUDE.md
+    # beside the configuration, which is the file an agent reads before anything else.
+    --claims) MODE=claims; shift
+              if [ $# -ge 1 ]; then
+                [ "${1#-}" = "$1" ] && { CLAIMS_FILE=$1; shift; }
+              fi ;;
     # The key is optional: without one, the answer is the base layer a module inherits
     # before any `params:` of its own.
     --settings) MODE=settings; shift
@@ -775,6 +911,7 @@ case "$MODE" in
   list)     [ -z "$REGISTER" ] || usage; cmd_list ;;
   modules)  [ -z "$REGISTER" ] || usage; cmd_modules "$AS_JSON" ;;
   check)    [ -z "$REGISTER" ] || usage; cmd_check ;;
+  claims)   [ -z "$REGISTER" ] || usage; cmd_claims "$CLAIMS_FILE" ;;
   settings) [ -z "$REGISTER" ] || usage; cmd_settings "$MODULE_KEY" "$APP" ;;
   *)        [ -n "$REGISTER" ] || usage; cmd_register "$REGISTER" "$APP" "$AS_JSON" ;;
 esac

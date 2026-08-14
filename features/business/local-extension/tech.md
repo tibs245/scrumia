@@ -93,8 +93,9 @@ Four outcomes, one per declaration:
 | Surface | Resolved | Absent | Shadow | Conflict |
 |---|---|---|---|---|
 | a register's table | its rows, in scope order | absent from the table | the narrowest module's rows, named on stderr | absent from the table, named on stderr |
-| `--modules` | key, module, location, root | state `absent`, the location it would come from | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
+| `--modules` | key, module, location, root | state `absent`, the location it would come from — none, where the key states no source the grammar admits | state `shadow`, the winning location, every root | state `conflict`, **no location**, every root |
 | `--check` | — | — | named, not counted | an unmet dependency; exit non-zero |
+| `--claims` | honoured where the file names it | the verdict below | as resolved — it binds | the verdict below |
 | `compose-status.sh` | the declaration as written, under a heading saying so | the same — it resolves nothing, so it distinguishes none of these | | |
 
 A conflict is credited with no location, where a resolved or shadowed declaration is
@@ -106,9 +107,79 @@ not CI: `tools/validate.py` reads that stderr only on a non-zero exit, so a gree
 discards it. It is still the right surface, because it is the one someone runs when asking
 what is wrong.
 
-Exit status still carries meaning only for `--check`. A register table is an answer whether
-it is long or short, and a conflict must not stop a skill that never needed that module —
-which is why the conflict is loud everywhere and fatal in exactly one place.
+Two surfaces judge what the composition holds, and they judge different things. A register
+table is an answer whether it is long or short, and a conflict must not stop a skill that
+never needed that module — which is why the conflict is loud everywhere and fatal only at
+`--check`. `--claims` refuses nothing the composition holds at all: what it can refuse is a
+sentence written about it.
+
+Beneath both sits the one failure every surface shares — a configuration that cannot be
+read as a composition. That is not an empty composition, and the two must never arrive at
+the same answer: an empty composition is legitimate and says so, while a failed read that
+yielded one would clear every claim and meet every dependency, silently. So the read is
+checked where it happens and the tool stops there, rather than each surface reporting
+nothing with nothing said.
+
+## Reconciling what `CLAUDE.md` claims
+
+`--claims` takes a file — `CLAUDE.md` beside the configuration's own directory unless one
+is named — and reconciles it against the states above. **One file per run**: an app's own
+`CLAUDE.md` is a second claim in a second file, and the root run says nothing about it. One
+row per declaration, and one verdict each:
+
+| The declaration | The file | Verdict |
+|---|---|---|
+| `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
+| `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
+| `absent` or `conflict`, stating no source the grammar admits | names only the module | `unsourced` — the declaration states no origin for the file to repeat |
+| `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
+| `absent` or `conflict`, from a marketplace or from inside the project, or bound under another key | names only the module | `reachable` — what is missing is the module, not the sentence |
+| `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
+
+**Only the shared tier can produce the last row**, because it is the only source whose
+absence belongs to the reader alone (BR-8). A marketplace declaration nothing answers means
+the plugin is not installed or the session was not restarted, and one inside the project
+means a directory missing from the repository — both are missing for the author too,
+neither is corrected by editing a sentence, and `--modules` already names both.
+
+**A module another declaration bound is present whatever this one did**, so it is
+`reachable` too. That is the promotion arrangement seen from one key behind: a module moved
+into the project while a `shared:` key still names it resolves under `local:`, the file's
+claim is true, and a tool failing there would be demanding the author write `shared:` over
+a module that ships in the repository — talking a project into the defect it exists to
+catch. The stale key is `--modules`' finding, where both rows are visible at once.
+
+**The match is on strings, never on the file's shape.** What shape the composition section
+takes is `modular-composition`'s and changes without this tool being told; a reconciliation
+that parsed a table would pass by accident the day the table moved. The declaration key is
+what separates the middle rows because it is the one string carrying the module *and* its
+source (BR-6) — so a file that names it has said where the capability would come from, in
+the words the configuration uses, and a file that names only the bare module has not. A key
+present anywhere in the file counts: which sentence it sits in is a human's judgement, and
+a tool grading English is a tool inventing findings.
+
+A declaration stating no source the grammar admits — one from the retired list, one with no
+source at all, one whose source is a fourth thing — gets `unsourced`, and neither `named as
+absent` nor `claimed` would be true of it. The configuration states no origin, so no wording
+of the file could have repeated one, and keying the declaration by source is what makes it
+answerable at all. That is the fix the shadow report and the grammar's own notice already
+name. The test is the source rather than the key's shape: a key that is its own module name
+is one way to state no origin, and `foo:x` is another.
+
+A name matches at its edges, not as a substring, and the boundary alphabet treats a path as
+one token: without that, a module named `tools` is found inside `tools/validate.py` and a
+module named `acme` inside `acme-lint`, and the tool accuses a correct file of a claim it
+never made. The remedy it prints then reads *add this to the file* — which would be a tool
+talking a project into the exact defect it exists to catch.
+
+It is vacuous on the machine that wrote the file, by construction — everything resolves
+there — and it is the clone that gets the answer. That asymmetry is the point rather than a
+weakness: AC-7 is a claim about a reader who is not the author.
+
+A project with no such file claims nothing, which is reported and is not a failure. A file
+the caller names is different: the caller asserted it is there, so one that is not, or one
+that cannot be read, is an error. Read as empty it would clear every claim and exit clean,
+which is the one answer a surface whose job is to fail must never give.
 
 ## Two sets, and why they are not one
 
@@ -165,6 +236,19 @@ holder and belongs in a file that says so.
   link plus two keys — which is close to the promotion arrangement this feature encourages,
   so it is reachable by accident and not only by construction. *Exit condition*: a
   duplicate check across declarations, before a composition is seen doing it.
+- **A file that quotes its own configuration disarms `--claims` wholesale.** A key counts
+  anywhere in the file, so a project documenting its composition by pasting the `modules:`
+  block under the prose puts every declaration key in reach and every unbacked claim
+  becomes `named as absent`. It is the one input shape that retires the check silently, and
+  it is the price of refusing to read the file's structure — a rule about which region of
+  the file a key must sit in is a rule about the file's shape, which is
+  `modular-composition`'s and not this tool's to assume. *Exit condition*: a composition
+  section the writer marks off, at which point the region is declared rather than guessed.
+- **`--claims` reconciles the declarations, so a claim about a module the composition no
+  longer declares is invisible to it.** That is the ordinary stale-`CLAUDE.md` failure, and
+  it is `modular-composition`'s — the composing skill compares the file against the config,
+  where this compares the file against what resolved. Both are needed and neither covers
+  the other. *Exit condition*: a project found carrying a claim neither surface caught.
 - **A module resolved `local` or `shared` cannot publish a command.** The harness puts
   only an enabled marketplace plugin's `bin/` on PATH, so a name published by a checkout is
   not runnable — while `--check` reports the dependency met, because it accepts a name

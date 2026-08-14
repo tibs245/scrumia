@@ -8,6 +8,14 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   actually resolved from and the directory it resolved to. A declaration nothing answers
   is reported as an absence naming where it would have come from, which is the ordinary
   state of a clone without a machine's shared checkouts, and is not a failure.
+- `scrumia-extends --claims [<file>]` — reconciles what `CLAUDE.md` says about the
+  composition against what actually resolves for whoever runs it — one file per run, so an
+  app's own stub is checked by naming it. It exits non-zero on one case: the file names, by
+  its bare name, a `shared:` module that does not resolve here and no other key binds.
+  Elsewhere what is missing is the module rather than the sentence, and a file naming the
+  declaration key has already said where the capability would come from. `scrumia-init` writes a
+  `shared:` module by its key, and `scrumia-compose` diagnoses with it — a section matching
+  the config exactly still misleads every clone when the capability lives on one machine.
 
 - `scrumia-place` — one tree from something just learned to exactly one destination: a
   module, this project, a feature, a ticket, the change itself, or agent memory. Memory is

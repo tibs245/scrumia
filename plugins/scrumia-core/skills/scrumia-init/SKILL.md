@@ -263,6 +263,8 @@ remote: claude-design
 
 Write only the lines of modules actually plugged in. A table naming an absent module sends agents to a skill that doesn't exist.
 
+**A module declared `shared:` is named in this table by its declaration key, never by its bare name.** That is the one location whose files travel with nobody: this section is written on one machine and read on every other, so a row saying `acme-conventions` claims a capability whoever clones may simply not have, while `shared:acme-conventions` states the module and where it would come from, which a reader can check. The rule is `features/business/local-extension/`'s AC-7. Apply it while writing, not by checking afterwards — on this machine the checkout resolves, so nothing run here can see the difference.
+
 **The `## Specs contract` block is copied, never composed.** If the `specs` slot is filled, open the plugged module's main `SKILL.md`, find its own `## Composition block` section, and copy that block verbatim under `## Specs contract` — do not write it from memory of `scrumia-specs`'s shape, another module may occupy the slot with different keys' values. This is ADR-0009's documented-composition rule applied to a module's internal vocabulary, formalized in `docs/adr/0012-specs-contract.md`: consumers (`scrumia-ticket`, `scrumia-split`, the team agents) read this block instead of hard-coding a specs module's file names.
 
 **The `## Design contract` block follows the same rule**, copied from the plugged design module's `## Composition block` (`scrumia-design`: `skills/scrumia-design-system/SKILL.md`). Same reason, same discipline — and same omission when the slot is empty.

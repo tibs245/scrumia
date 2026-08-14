@@ -55,6 +55,35 @@ A capability that comes from `shared` is a capability the project cannot be hand
 someone else with. Say so when you plug one in — it is the cost of that location, and it
 is only visible at the moment of choosing.
 
+## What the composition claims, against what it resolves
+
+`CLAUDE.md` resolves nothing. It is written once, on one machine, and read on every other
+one — so a module it names by its bare name is a capability asserted to whoever cloned,
+whether or not that clone can reach it. One command reconciles the two:
+
+```bash
+scrumia-extends --claims                        # CLAUDE.md against the states above
+scrumia-extends --claims apps/web/CLAUDE.md     # …and one app's stub, which is its own file
+```
+
+Every declaration comes back with a verdict:
+
+- `honoured` / `unclaimed` — the module resolves, so the file is true whether it names it or not.
+- `not claimed` — it does not resolve, and the file says nothing about it.
+- `named as absent` — the file names the declaration key, so it states a source the reader cannot reach. Correct, and the shape to aim for.
+- `reachable` — it does not resolve, but from a location any clone gets to, or another key already binds it. The module is what is missing, not the sentence: restore it.
+- `unsourced` — the declaration names no origin, so the file has none to repeat. Key it `<source>:<module>` and it becomes answerable.
+- `claimed` — the defect, and the only one that exits non-zero: the file promises, by bare name, a module from a shared checkout that does not resolve here and that no other key binds. The fix is one of two and the human picks — name the module by its key so the file says where it comes from, or say nothing about it there.
+
+**It reads one file per run.** A per-app stub is a second composition claim in a second
+file, and the root run says nothing about it — check each `apps[].path/CLAUDE.md` that
+exists by naming it.
+
+Run it on a clone, not only where the composition was written: on the authoring machine
+everything resolves and the answer is vacuous. That asymmetry is the criterion, not a
+limitation of the command — the rule is
+`features/business/local-extension/`'s AC-7.
+
 ## Plug in or replace a module
 
 1. Check that the module is installed, **and reachable from the location its key names** —
@@ -73,10 +102,10 @@ is only visible at the moment of choosing.
 When something doesn't work, check in this order:
 
 1. **Did the declaration resolve, and to what?** `scrumia-extends --modules` is the first call, not a later one: a module present in the config but absent from `enabledPlugins` — or missing from the shared directory, or answered by two directories at once — is invisible to the agent, and every register renders shorter with nothing else said. Read the state before reading anything else, and read a conflict as a stop: that module contributes nothing until someone picks.
-2. **Does `CLAUDE.md` reflect the config?** If not, agents read a stale composition.
+2. **Does `CLAUDE.md` reflect the config, and does it survive a clone?** If not, agents read a stale composition. `scrumia-extends --claims` answers the second half, which staleness alone would miss: a file perfectly matching the config still lies to every clone when it names a module only one machine can reach.
 3. **Is the slot empty?** A missing capability is not a failure. Just say which module would provide it.
 4. **Does the app have an implementation module, and practices?** Without an implementation module, the agent follows the conventions of neighboring code; without practices, the implementation module's conventions suffice — acceptable behavior, not an error.
-5. **Does the app have a `path`, and does its per-app `CLAUDE.md` stub (if any) match it?** No `path` means no per-app activation — an agent editing a file there can't resolve which app it belongs to. A stub naming modules that were since replaced is the same failure as a stale root section, one level down.
+5. **Does the app have a `path`, and does its per-app `CLAUDE.md` stub (if any) match it?** No `path` means no per-app activation — an agent editing a file there can't resolve which app it belongs to. A stub naming modules that were since replaced is the same failure as a stale root section, one level down — and so is a stub claiming what a clone cannot reach, which needs its own `scrumia-extends --claims <that file>`: the root run never opened it.
 6. **Are the settings read by the right module?** Each module documents the keys it consumes under `settings`.
 
 ## Write a module
@@ -107,4 +136,4 @@ ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 
 On a view, that output is most of the answer already: the slots, their modules, the ones empty on purpose, and the per-app implementation and practices columns.
 
-What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — it prints the declarations as written, resolving nothing — so it cannot tell you where a module actually came from, whether a named module is enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. The first of those is `scrumia-extends --modules`; the rest are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.
+What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — it prints the declarations as written, resolving nothing — so it cannot tell you where a module actually came from, whether a named module is enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. The first of those is `scrumia-extends --modules`, and the half of the third that a clone would trip on is `scrumia-extends --claims`; the rest are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.

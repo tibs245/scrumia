@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-14 — The exit-status constraint names what it is about, since more than one surface now fails (tech.md)
+- Issue: #292
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-13 — The layer decides and the shape never does, and a key written bare is an absence (BR-14, BR-15, AC-20, AC-21)
 - Issue: #328, closing #342
 - Category: Changed

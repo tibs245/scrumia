@@ -45,13 +45,18 @@ terms rather than as a stepping stone:
   skill that consults that register, and it is data — no skill, no version, no
   installation.
 - **A rules section** the project owns, when a topic has grown past what one file can
-  carry.
+  carry. It is a fragment like any a module ships — `modular-composition`'s word for the
+  file a directive points at — owned by the project and named by a project-local directive,
+  so it needs no home of its own, and one no directive names is an ordinary document rather
+  than a defect.
 - **A skill** the project ships to itself, when the thing needed is a procedure and no
   register asks for it.
 
 None of these is a degraded module. A project whose entire local extension is four
 directives has extended ScrumIA correctly, and nothing may report that project as having a
-malformed module — there is no module there to be malformed.
+malformed module — there is no module there to be malformed. The anatomy standard is a
+property of a module's own tree, so a project holding none presents it nothing to judge:
+the directory the configuration sits in is not a module, and no surface reads it as one.
 
 This is the list `knowledge-placement` routes toward when its answer is "the project". It
 is stated here and nowhere else.
@@ -81,8 +86,9 @@ rejected. A configuration that names nothing leaves the composition unreadable: 
 machines produce two different answers and neither file says so.
 
 Naming the module and its origin gives a reader the composition's full intent — *this
-module comes from a shared checkout* is a fact about the project, and it is the fact AC-6
-and AC-7 turn on. Where that checkout is, is a fact about the machine.
+module comes from a shared checkout* is a fact about the project, and it is the fact both
+the declared absence and the honesty rule below turn on. Where that checkout is, is a fact
+about the machine.
 
 **The per-machine half lives in `.scrumia/.env.local`, as `SCRUMIA_SHARED_DIR`, and that
 file is never committed.** One variable, `KEY=value`, naming the directory the `shared`
@@ -168,8 +174,10 @@ The declaration binds nothing — no directive of that module renders, in any re
 and the conflict is named on the error stream every time it is reached. Everything else in
 the composition resolves and renders as usual.
 
-It becomes a failure at the one surface whose job is to fail: the dependency check, where
-an unresolvable declaration is an unmet dependency and exits non-zero. A conflict that
+It becomes a failure at the surface that judges the composition: the dependency check,
+where an unresolvable declaration is an unmet dependency and exits non-zero. No other
+surface reading the composition fails on it — the reconciliation below refuses a sentence
+someone wrote, which is a different object. A conflict that
 only shortened a table would be a module silently missing from a register — the failure
 mode this whole section exists to end — and one that stopped every skill would make an
 ambiguity in one module a project that cannot be worked in.
@@ -183,8 +191,35 @@ a directive travels with the project, a person's shared directory travels with n
 What follows is a rule about honesty rather than about mechanism: **what a project's
 `CLAUDE.md` claims must remain true for someone who clones it without any of it.** Where
 a capability comes from a location a clone cannot reach, the composition reports it as a
-declared absence, naming the module and where it would come from — the same treatment an
-empty slot already receives. It never reports it as present, and it never fails.
+declared absence, naming the module and the source its key states. It never reports it as
+present, and it never fails.
+
+Two comparisons carry that, and they answer different questions:
+
+| What is compared | Against | Answers |
+|---|---|---|
+| every declaration the configuration makes | the roots resolution found | which capabilities this machine actually has |
+| the text of `CLAUDE.md` | the state each declaration resolved to | whether that file's claims are true for whoever is reading it |
+
+The first is what makes a declared absence sayable at all. The second is what makes it
+sayable about the one file an agent reads before it knows anything else — a file written
+on one machine and read on every other, so its claims outlive the environment that made
+them true. A row naming a capability by its bare name promises it; naming it by the
+declaration key states the module and its source at once, which is the same fact the
+absence report carries, and offers the reader an origin it can check rather than a
+capability it cannot.
+
+Only one source needs that. A module comes from a marketplace anyone may install from, or
+from inside the project where it arrives with the clone — and where one of those is missing
+it is missing for every reader alike, author included, which is a module to restore rather
+than a sentence to correct. A shared checkout is the location that travels with nobody, so
+it is the only one whose absence is the reader's alone, and the only one where a bare name
+in that file is a promise to a reader who has no way to keep it. That is the cost of the
+location, arriving where it is least expected.
+
+Neither comparison reads English, and neither is asked to. One matches names, the other
+matches declarations against directories; the sentence a human writes around a module is
+the human's, and no tool is trusted to grade it.
 
 The consequence is worth stating plainly, because it is the argument against the shared
 directory and it should be readable by whoever is choosing it: a module that lives only
@@ -220,7 +255,14 @@ on one machine is a module the project cannot be handed to someone else with.
   narrowest and it is a conflict again.
 - **BR-8** — A capability reachable only from a location a clone cannot reach is reported
   as a declared absence, naming the module and its origin. It is never reported as
-  present and never causes a failure.
+  present and never causes a failure. `CLAUDE.md` is held to the same rule by comparison
+  rather than by prose: where this composition declares a module from a location a clone
+  cannot reach, a file naming it by its bare name is a claim that reader cannot check, and
+  the file states that module's source — its declaration key — or makes no claim about it.
+  A module absent from a location every clone can reach is not that: there it is missing
+  for every reader alike, which is a module to restore rather than a sentence to correct.
+  What may fail is the reconciliation, and what it reports belongs to the file, never to
+  the absence.
 - **BR-9** — A conflict blocks the declaration it applies to and nothing else: that
   module contributes no directive anywhere, every other module still resolves, and the
   dependency check exits non-zero on it.
