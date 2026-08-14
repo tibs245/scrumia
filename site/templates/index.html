@@ -462,6 +462,41 @@
         </div>
       </details>
     </div>
+
+    <!-- Not an eighth slot: no sign, no leader, no fill, no <details>. The seven
+         above are choices between alternatives and these are not, so they take
+         none of the row's anatomy — only the .shelf and .opt those rows open
+         into. The options are derived from site/modules.json by
+         tools/build_site.py: whatever fills no slot is offered, so nothing here
+         is a list anyone has to remember to extend. -->
+    <div class="additions">
+      <h3 class="shelf-label" id="add-label">{{comp_add_title}}</h3>
+      <p class="additions-intro">{{comp_add_intro}}</p>
+      <div class="shelf" role="group" aria-labelledby="add-label">
+{{@comp_add_options}}
+        <!-- A div, not a label: a label wrapping the field would toggle the box on
+             every click into it. Absent without script rather than inert — text
+             cannot become YAML through :has(), and a field that silently does
+             nothing under seven rows that all work is the worse failure. -->
+        <div class="opt opt-free">
+          <input type="checkbox" name="c-free" id="add-free">
+          <label class="opt-free-head" for="add-free">
+            <b>{{comp_add_free}}</b><span>{{comp_add_free_d}}</span>
+          </label>
+          <div class="key-entry">
+            <label class="key-entry-label" for="add-free-key">{{comp_add_key_label}}</label>
+            <!-- autocapitalize: without it iOS turns `local:` into `Local:` and
+                 refuses a visitor who typed the right answer. -->
+            <input class="key-entry-field" id="add-free-key" type="text"
+                   placeholder="local:acme-docs-rules" maxlength="80"
+                   spellcheck="false" autocomplete="off"
+                   autocapitalize="none" autocorrect="off"
+                   aria-describedby="add-free-refused">
+            <p class="key-entry-refused" id="add-free-refused">{{comp_add_key_refused}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Two files you take away, not a result panel. Both are pre-rendered here
@@ -546,6 +581,7 @@ apps:
        data-note-own-impl="{{comp_note_own_impl}}"
        data-note-practices="{{comp_note_practices}}"
        data-note-practices-noapp="{{comp_note_practices_noapp}}"
+       data-note-own-module="{{comp_note_own_module}}"
        data-app-empty="{{comp_app_empty_yaml}}"></div>
 </section>
 

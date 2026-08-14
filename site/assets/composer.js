@@ -17,6 +17,9 @@
   var configPre = document.getElementById('composer-config');
   var notes = document.getElementById('composer-note');
   var live = document.getElementById('composer-live');
+  var ownBox = document.getElementById('add-free');
+  var ownField = document.getElementById('add-free-key');
+  var ownRefused = document.getElementById('add-free-refused');
 
   /* The five slots that take one module. Order is the order of the rows, of the
      install lines and of the modules: mapping — one sequence, said three times. */
@@ -25,6 +28,15 @@
   /* The source half of every key emitted, per ADR-0021 — the marketplace the
      install block adds. A bare name is not a shorter spelling: nothing resolves it. */
   var SOURCE = 'tibs245/scrumia';
+
+  /* A whole key, ADR-0021's grammar: `local:`, `shared:` or `<owner>/<repo>:`, then
+     the module. A name typed with no source is refused rather than assumed published
+     — that assumption is what would put a key nothing resolves in a visitor's repo.
+     Both halves are spelled positively. Spelled as an exclusion, the source would
+     admit a quote or a control character and emit a file that does not parse — and
+     `\s` is a different set in every engine, so a check written elsewhere would
+     disagree with this one about which strings those are. */
+  var KEY = /^(?:local|shared|[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+):[A-Za-z0-9._-]+$/;
 
   var APPS = {
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
@@ -58,12 +70,41 @@
     return input && input.dataset.note ? input.dataset.note : '';
   }
 
+  /* The visitor's own module, as one whole key. Unchecked, blank or malformed emits
+     nothing: half a key pasted into a repository is worse than no key at all. */
+  function ownKey() {
+    if (!ownBox || !ownBox.checked || !ownField) return '';
+    var value = ownField.value.trim();
+    return KEY.test(value) ? value : '';
+  }
+
+  /* A box checked with nothing typed is unanswered, not refused — painting that as
+     an error is how a composition becomes a form. */
+  function refused() {
+    var value = ownField ? ownField.value.trim() : '';
+    return !!(ownBox && ownBox.checked && value !== '' && !KEY.test(value));
+  }
+
+  /* Marked when the visitor leaves the field and cleared on the next keystroke:
+     checking per keystroke calls a correctly-typed key wrong for its first six
+     characters. Every caller passes the same predicate — one that only ever cleared
+     would leave a re-checked box wearing the wash of a decision that did not land.
+     The sentence is the one already in the markup, so it stays in site/i18n/. */
+  function markRefusal(isRefused) {
+    if (!ownField) return;
+    ownField.setAttribute('aria-invalid', isRefused ? 'true' : 'false');
+    if (isRefused && live && ownRefused) live.textContent = ownRefused.textContent;
+  }
+
   function compute() {
     var slots = {};
     SINGLE.forEach(function (s) { slots[s] = picked(s); });
 
     var stacks = pickedAll('impl');
     var practices = pickedAll('practice').map(function (i) { return PRACTICES[i.value]; });
+    // Each option's value is the module's own name, so no table of the additions
+    // lives here: build_site.py derives them, and nothing here can fall behind it.
+    var additions = pickedAll('add').map(function (i) { return i.value; });
 
     var apps = stacks.map(function (input) {
       var a = APPS[input.value];
@@ -80,10 +121,21 @@
       // `other` names a tracker the reader will write: a module, but not ours.
       if (v && v !== 'other') modules.push(v);
     });
+    additions.forEach(function (m) { modules.push(m); });
     apps.forEach(function (a) { if (a.impl) modules.push(a.impl); });
     practices.forEach(function (p) { modules.push(p.module); });
 
-    return { slots: slots, apps: apps, practices: practices, stacks: stacks, modules: dedupe(modules) };
+    modules = dedupe(modules);
+    // A key already standing is not emitted twice: a duplicate mapping key is a
+    // silent overwrite in whatever parses the file, not a louder declaration.
+    var mine = SOURCE + ':';
+    var ownEntry = ownKey();
+    if (ownEntry.slice(0, mine.length) === mine
+        && modules.indexOf(ownEntry.slice(mine.length)) !== -1) ownEntry = '';
+
+    // Absent from `modules`: that list is what the install block prints.
+    return { slots: slots, apps: apps, practices: practices, stacks: stacks,
+             additions: additions, own: ownEntry, modules: modules };
   }
 
   function dedupe(list) {
@@ -117,10 +169,11 @@
 
   // Only the module name is coloured: the source repeats on every line, so
   // painting it too spends the emphasis on the half nobody chose.
-  function entry(parts, depth, module) {
+  function keyed(parts, depth, source, module) {
     var pad = new Array(depth + 1).join(' ');
-    parts.push(pad + '"' + SOURCE + ':', { t: module, c: 'm' }, '": {}');
+    parts.push(pad + '"' + source + ':', { t: module, c: 'm' }, '": {}');
   }
+  function entry(parts, depth, module) { keyed(parts, depth, SOURCE, module); }
 
   function configParts(result) {
     var parts = [{ t: S.config, c: 'c' },
@@ -141,6 +194,18 @@
       }
       parts.push('\n');
     });
+
+    result.additions.forEach(function (module) {
+      entry(parts, 2, module);
+      parts.push('\n');
+    });
+
+    // Keyed like every other entry, and installed by none of the commands above.
+    if (result.own) {
+      var cut = result.own.lastIndexOf(':');
+      keyed(parts, 2, result.own.slice(0, cut), result.own.slice(cut + 1));
+      parts.push('\n');
+    }
 
     if (result.apps.length) {
       parts.push('\napps:\n');
@@ -165,6 +230,9 @@
     var lines = [];
     var tracker = result.slots.tracker;
     if (tracker && tracker.value === 'other') lines.push(S.noteOwnTracker);
+    // Said, not left to be noticed: the install block's silence about this module is
+    // what the other commands' trustworthiness rests on.
+    if (result.own) lines.push(S.noteOwnModule);
     if (result.stacks.some(function (i) { return i.value === 'other'; })) lines.push(S.noteOwnImpl);
     if (result.practices.length) {
       lines.push(result.apps.length ? S.notePractices : S.notePracticesNoapp);
@@ -190,7 +258,12 @@
   function announce(input) {
     if (!live) return;
     var row = input.closest('.slot');
-    if (!row) return;
+    if (!row) {
+      // An addition has no row restating it, so the option's own name is the fact.
+      var opt = input.closest('.opt');
+      if (opt && opt.querySelector('b')) live.textContent = opt.querySelector('b').textContent;
+      return;
+    }
     var shown = [].filter.call(row.querySelectorAll('.slot-fill > span'), function (span) {
       return span.offsetParent !== null;
     }).map(function (span) { return span.textContent; });
@@ -198,9 +271,21 @@
   }
 
   choices.addEventListener('change', function (event) {
+    if (event.target === ownBox) markRefusal(refused());
     render();
     if (event.target.name) announce(event.target);
   });
+
+  // A text field only fires `change` on blur, and the two files must follow the typing.
+  choices.addEventListener('input', function (event) {
+    if (event.target !== ownField) return;
+    markRefusal(false);
+    render();
+  });
+
+  if (ownField) {
+    ownField.addEventListener('blur', function () { markRefusal(refused()); });
+  }
 
   choices.addEventListener('click', function (event) {
     var button = event.target.closest('.preset');

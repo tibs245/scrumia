@@ -46,6 +46,9 @@ PAGES = ["index", "workflow", "reference", "about"]
 # The two registers #extends draws (#296) — named rather than auto-picked, re-checked
 # against the live composition by extends_map_specials on every build.
 EXTENDS_FIGURE = {"populated": "implement", "empty": "sprint"}
+# The kernel fills no slot either, and the composer does not offer it: it is installed
+# unconditionally, and an option that cannot be declined misstates what the shelf is.
+KERNEL = "scrumia-core"
 LANGS = {
     "en": {"out": SITE, "prefix": "", "root": ""},
     "fr": {"out": SITE / "fr", "prefix": "fr/", "root": "../"},
@@ -321,6 +324,35 @@ def module_pairs_html(lang: str, module: dict, page_strings: dict, labels: dict,
     ), {"pairs_with"}
 
 
+def composer_additions(lang: str, modules: list[dict]) -> dict[str, str]:
+    """The `#composer` additions shelf (#298): one option per module that fills no slot.
+
+    Derived from `site/modules.json`'s `slot`, never listed in the template. The
+    condition is the shape — *fills no slot* — so the thirteenth module appears here
+    the day it is added, and a hand-written list that would have to be remembered
+    does not exist to go stale. Each option's value is the module's own name, which
+    is what lets `composer.js` hold no table of these either.
+
+    The description is the module page's own `tagline`, so a module offered here has
+    prose by construction: `module.html` already fails the build without it.
+    """
+    offered = [m for m in modules if not m["slot"] and m["name"] != KERNEL]
+    opts = []
+    for module in offered:
+        name = module["name"]
+        tagline = load_module_json(lang, name).get("tagline", "")
+        if not tagline:
+            ERRORS.append(f"site/i18n/{lang}/modules/{name}.json: missing 'tagline' — "
+                          f"the composer's additions shelf offers '{name}', which fills no slot")
+        opts.append(
+            '        <label class="opt opt-add">\n'
+            f'          <input type="checkbox" name="c-add" value="{html.escape(name)}">\n'
+            f'          <b>{html.escape(name)}</b><span>{html.escape(tagline)}</span>\n'
+            '        </label>'
+        )
+    return {"@comp_add_options": "\n".join(opts)}
+
+
 def declared_modules(cfg: dict) -> list[str]:
     """The module names a composition declares, in the shape precedence
     `features/business/modular-composition/tech.md` fixes: `modules:` is read when
@@ -546,10 +578,10 @@ def build() -> int:
     for lang, cfg in LANGS.items():
         cfg["out"].mkdir(parents=True, exist_ok=True)
         labels = load_common(lang)
+        # Rebuilt per language: the additions shelf carries each module's own tagline.
+        index_specials = {**extends_specials, **composer_additions(lang, modules)}
         for page in PAGES:
-            # extends_specials feeds #extends alone; harmless to carry on other
-            # pages since a special only surfaces where a template references it.
-            extra = {**emoji_specials, **link_specials, **(extends_specials if page == "index" else {})}
+            extra = {**emoji_specials, **link_specials, **(index_specials if page == "index" else {})}
             render_page(lang, cfg, page, TPL / f"{page}.html", extra)
         for module in modules:
             page_strings = load_module_json(lang, module["name"])

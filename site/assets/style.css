@@ -730,7 +730,6 @@ section > h2::before {
   .slot-fill { text-align: left; }
   .slot-answer { padding-left: 0; }
   .slots-choose .slot-fill { justify-content: flex-start; }
-  .shelf { padding-left: 0; }
 }
 
 /* ---------- Extends ---------- *
@@ -1020,10 +1019,20 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 @keyframes fill-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
 
+/* The sign glyph plus the row's gutter — one fact, named once rather than
+   expressed inline wherever something has to line up under a question. Declared
+   at the root, not on #composer-choices: a shelf also stands alone in the design
+   system's previews, and an undefined var() there is an invalid declaration that
+   silently falls to no indent at all. Reset at the same scope below 800px, where
+   the leader is gone and nothing is left to line up under — scoping the reset
+   narrower than the declaration would leave a shelf indented under a leader that
+   is no longer drawn. */
+:root { --shelf-indent: calc(1.2em + var(--space-4)); }
+@media (max-width: 800px) { :root { --shelf-indent: 0px; } }
 .shelf {
   display: grid; gap: var(--space-1);
   max-width: var(--measure); margin: 0 0 var(--space-6);
-  padding-left: calc(1.2em + var(--space-4));
+  padding-left: var(--shelf-indent);
 }
 .opt {
   display: grid; grid-template-columns: 16px 1fr; gap: var(--space-1) var(--space-3);
@@ -1032,10 +1041,12 @@ tbody tr:last-child td { border-bottom: 0; }
   transition: background var(--dur-1) var(--ease-move);
 }
 .opt:hover { background: var(--surface-raised); }
-.opt input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
+/* `> input`, not `input`: the free entry puts a text field inside an .opt, and a
+   descendant selector would hand it the checkbox's 16px box. */
+.opt > input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
 .opt b { font-size: var(--text-base); font-weight: var(--weight-body); color: var(--text); }
-.opt-1 b, .opt-2 b, .opt-3 b { font-family: var(--font-mono); font-size: var(--text-sm); }
-.opt-empty b, .opt-3:not(.opt-mod) b { font-family: var(--font-body); font-size: var(--text-base); }
+.opt-1 b, .opt-2 b, .opt-3 b, .opt-add b { font-family: var(--font-mono); font-size: var(--text-sm); }
+.opt-empty b, .opt-3:not(.opt-mod) b, .opt-free b { font-family: var(--font-body); font-size: var(--text-base); }
 .opt span { grid-column: 2; font-size: var(--text-sm); color: var(--text-soft); line-height: var(--leading-snug); }
 .opt:has(input:checked) { background: var(--human-surface); }
 .opt:has(input:checked) b { color: var(--human); font-weight: var(--weight-strong); }
@@ -1049,7 +1060,8 @@ tbody tr:last-child td { border-bottom: 0; }
    no `leave it empty` option, since checking nothing is that choice — and
    `.composer-note` carries it under the two files. */
 .opt-hint,
-.composer-note {
+.composer-note,
+.key-entry-refused {
   padding-left: var(--space-4);
   border-left: var(--space-tight) solid var(--border-strong);
   font-family: var(--font-mono); font-size: var(--text-xs);
@@ -1059,6 +1071,88 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .opt-hint { display: none; margin: var(--space-2) 0 0; }
 .slots-choose .slot-multi:not(:has(.opt-mod input:checked)) .opt-hint { display: block; }
+
+/* ---------- Additions ---------- *
+ * A shelf without a row (AC-9): no sign, no leader, no fill, no <details>. The
+ * modules that fill no slot are not a choice between alternatives, so they get
+ * none of the anatomy that exists to frame one. The heading is what stops the
+ * shelf reading as the seventh row's open body — and it wears the label register
+ * .presets-label already uses, not slot-name's: borrowing the row's typography
+ * borrows the row. It pulls its own weight down from an <h3>'s, which is the one
+ * thing it does not share with that span.
+ */
+.additions { margin: var(--space-8) 0 0; padding-left: var(--shelf-indent); }
+.additions .shelf { padding-left: 0; margin-bottom: 0; }
+.shelf-label {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint); font-weight: var(--weight-medium);
+  margin: 0 0 var(--space-2);
+}
+.additions-intro {
+  margin: 0 0 var(--space-3); max-width: var(--measure);
+  font-size: var(--text-sm); color: var(--text-soft);
+  line-height: var(--leading-snug);
+}
+
+/* ---------- The free entry: design/components/key-entry ---------- *
+ * The one control here a script must be running for — text cannot become YAML
+ * through :has(), so without script it is absent rather than a field that
+ * silently does nothing. Gated on .has-js, never .js: that one also means the
+ * reader wants motion, and a motion preference must cost no capability.
+ */
+.opt-free { display: none; }
+.has-js .opt-free { display: grid; cursor: default; }
+
+/* A <div>, not a <label>: a label wrapping the text field would toggle the
+   checkbox on every click into the field. The clickable region is the head. */
+.opt-free > .opt-free-head {
+  grid-column: 2; display: grid; gap: var(--space-1); cursor: pointer;
+}
+.opt-free-head > span { grid-column: 1; }
+.opt-free > .key-entry { grid-column: 2; }
+
+.key-entry { display: none; min-width: 0; }
+/* Revealed on demand is what keeps the section a composition rather than a form,
+   and a thing that appears because you asked for it is summoned. */
+.opt-free:has(> input:checked) .key-entry {
+  display: grid; gap: var(--space-1); margin-top: var(--space-2);
+  animation: fill-in var(--dur-2) var(--ease-summon) both;
+}
+
+.key-entry-label {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* Every UA default is overwritten: an input keeping its browser chrome is the
+   one thing in this section that would genuinely read as an OS form.
+   min-width: 0 is load-bearing — a text input's intrinsic min-content width
+   overflows .opt's 1fr track below roughly 420px without it. */
+.key-entry-field {
+  width: 100%; min-width: 0; box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  color: var(--text); background: var(--surface-sunken);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  caret-color: var(--human);
+  transition: border-color var(--dur-1) var(--ease-move);
+}
+.key-entry-field::placeholder { color: var(--text-faint); opacity: 1; }
+
+/* Refused. Dashed is this system's mark for a decided absence — the empty slot's
+   leader — so a key that will not be emitted wears it, and the --human wash is
+   withdrawn because the decision did not land. No new colour: a refusal is
+   neither a person deciding nor an agent running, so every token that could
+   carry it would be naming the wrong thing. */
+.key-entry-field[aria-invalid="true"] { border-style: dashed; }
+.opt-free:has(.key-entry-field[aria-invalid="true"]) { background: none; }
+.opt-free:has(.key-entry-field[aria-invalid="true"]) b {
+  color: var(--text); font-weight: var(--weight-body);
+}
+.key-entry-refused { display: none; margin: var(--space-1) 0 0; }
+.opt-free:has(.key-entry-field[aria-invalid="true"]) .key-entry-refused { display: block; }
 
 /* ---------- The two files you take away ---------- */
 

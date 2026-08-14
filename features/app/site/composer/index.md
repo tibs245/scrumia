@@ -8,7 +8,9 @@ The `#composer` section of the home page: the same seven slots the `slot-index`
 feature *reports*, offered as choices. The visitor answers each slot — or leaves
 it empty on purpose — and takes away two artifacts: the install commands for the
 modules they picked, and the `.scrumia/config.yaml` that declares the
-composition.
+composition. Past the seven, a shelf of the modules that fill no slot, and a
+field where a visitor names one of their own — which reaches the config and
+never the install commands.
 
 It is the only place on the site where a visitor does something rather than
 reads, which is why it is drawn as a composition assembling rather than as a
@@ -27,6 +29,8 @@ form being filled.
     slot costs, and in whose voice it is said
   - `design/components/slot-index/spec.md` — how a slot row is drawn, and its
     choosable state
+  - `design/components/key-entry/spec.md` — how the field taking a whole
+    `<source>:<module>` key is drawn, and what it refuses
   - `docs/adr/0021-modules-keyed-by-source.md` — the shape the emitted config
     must carry, and the grammar of every key in it
   - `design/tokens.css` — which values may be used
