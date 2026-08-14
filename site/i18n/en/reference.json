@@ -95,6 +95,8 @@
   "design_row2": "The reference: what lives where, the four questions before writing a component",
   "design_row3": "Pushes and pulls components through <code>DesignSync</code>, one at a time",
   "design_row4": "Audits an existing interface: drift and mutedness, two columns",
+  "html_css_p": "The HTML, CSS and accessibility capability for a covered app. Three refusal rules and one audit skill: a semantic element when both express the same intent, an interactive widget that uses the element whose contract matches the action, and a test that queries what an assistive technology would meet. Scoped to React and SolidJS by default; a project running neither pays no cost.",
+  "html_css_row1": "Audits a covered app's HTML/CSS against the three refusal rules",
 
   "impl_note_title": "Where design meets this contract",
   "impl_note_p": "The two contracts touch without overlapping: the implementation module owns <strong>how a component is written</strong>, <code>scrumia-design</code> owns <strong>what it looks like</strong>. A SolidJS component and a server-rendered template consume the same tokens.",

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-html-css — ScrumIA</title>
+<meta name="description" content="scrumia-html-css : la capacité ScrumIA pour HTML, CSS et accessibilité — élément sémantique plutôt que rôle ARIA, élément qui suit la fonction, tests qui questionnent ce que l'utilisateur rencontre.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-html-css.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-html-css.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-html-css.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-html-css.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-html-css — ScrumIA">
+<meta property="og:description" content="scrumia-html-css : la capacité ScrumIA pour HTML, CSS et accessibilité — élément sémantique plutôt que rôle ARIA, élément qui suit la fonction, tests qui questionnent ce que l'utilisateur rencontre.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-html-css.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
+      only while something is running that can also un-hide, and never when the
+      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../../assets/theme.js"></script>
+<script defer src="../../assets/motion.js"></script>
+<script defer src="../../assets/header.js"></script>
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="../../modules/scrumia-html-css.html" lang="en">EN</a>
+        <a href="scrumia-html-css.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">♿</span> <code>scrumia-html-css</code></h1>
+<p class="section-intro">Accessible par construction — éléments sémantiques, éléments qui suivent la fonction, tests qui disent ce que l'utilisateur rencontre.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · aucun</span>
+  <span class="pill">version · 0.1.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Possède la <em>forme</em> du HTML et du CSS d'une application web : un élément sémantique quand les deux expriment la même intention, un widget interactif qui utilise l'élément correspondant à sa fonction, et des tests qui atteignent le composant via <code>getByRole</code>, <code>getByLabelText</code> ou <code>getByText</code>. La capacité s'ancre dans le corpus W3C et MDN, jamais dans l'opinion ; chaque règle cite une source, et la licence accompagne la citation.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Pas de <code>&lt;div role=&quot;button&quot;&gt;</code> quand un <code>&lt;button&gt;</code> porterait le même contrat gratuitement. Pas de <code>&lt;div&gt;</code> stylé en bouton avec <code>cursor: pointer</code> quand aucune sémantique native ne s'applique. Pas de <code>getByTestId</code> quand un sélecteur basé sur l'accessibilité aurait atteint la même cible.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume que la couche assistive fait partie du contrat, et n'est pas un audit séparé. Un écran qui se lit correctement pour un utilisateur sighted et échoue pour un lecteur d'écran est un défaut que le système de design ne peut pas attraper, et que la revue visuelle ne voit jamais. Les règles de refus du plugin attrapent la forme qui passerait autrement.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>html-css-audit</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>html</li> <li>css</li> <li>accessibility</li> <li>a11y</li> <li>web</li></ul>
+</section>
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-html-css@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-html-css">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+    <span>ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

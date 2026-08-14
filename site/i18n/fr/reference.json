@@ -99,6 +99,8 @@
   "design_row2": "La référence : ce qui vit où, les quatre questions avant d'écrire un composant",
   "design_row3": "Pousse et récupère les composants via <code>DesignSync</code>, un à la fois",
   "design_row4": "Audite une interface existante : dérive et fadeur, deux colonnes",
+  "html_css_p": "La capacité HTML, CSS et accessibilité pour une application couverte. Trois règles de refus et une compétence d'audit : un élément sémantique quand les deux expriment la même intention, un widget interactif qui utilise l'élément dont le contrat correspond à l'action, et un test qui interroge ce que rencontre une technologie d'assistance. Ciblée sur React et SolidJS par défaut ; un projet qui ne tourne sur aucun des deux n'en supporte pas le coût.",
+  "html_css_row1": "Audite le HTML/CSS d'une application couverte contre les trois règles de refus",
 
   "impl_note_title": "Où le design rencontre ce contrat",
   "impl_note_p": "Les deux contrats se touchent sans se recouvrir : le module d'implémentation possède <strong>comment un composant est écrit</strong>, <code>scrumia-design</code> possède <strong>à quoi il ressemble</strong>. Un composant SolidJS et un gabarit rendu côté serveur consomment les mêmes tokens.",
