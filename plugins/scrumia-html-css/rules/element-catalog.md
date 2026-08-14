@@ -1,13 +1,12 @@
 # Element catalog
 
-*Refusal.* A deprecated element when a current one carries the same intent; a generic `<div>` or `<span>` when a semantic element names what the content is. The catalog below is the project-wide reference: every HTML element MDN recognises, what it is for, and — when the element is deprecated — what to write instead.
+*Refusal.* A deprecated element when a current one carries the same intent; a generic `<div>` or `<span>` when a semantic element names what the content is. The catalog below is the project-wide reference: every HTML element MDN ships today and recommends, what each is for. **Deprecated elements are not here** — they live in `element-obsolete-to-avoid.md`, which an implementation pass has no reason to read and a review pass reaches for only when a tag in the diff is not in this catalog.
 
 ## How to read the table
 
 - **Element** — the tag name.
 - **Category** — MDN's grouping (root, metadata, sectioning, text content, phrasing, embedded, scripting, tabular, forms, interactive, web components).
-- **Recommended use** — when to reach for it. A element that is "current" is one MDN ships today and recommends; reach for it as the default.
-- **Status** — `Current`, or `Deprecated — replaced by <X>` when an element is obsolete. The replacement is what MDN names today.
+- **Recommended use** — when to reach for it. A "current" element is one MDN ships today and recommends; reach for it as the default.
 
 ## The catalog
 
@@ -125,35 +124,14 @@
 | `geolocation` | Interactive elements | A control that shares the user's geolocation when activated. | Current |
 | `slot` | Web Components | A placeholder inside a Web Component's shadow tree, filled by the consumer. | Current |
 | `template` | Web Components | Inert HTML held for later instantiation by JavaScript. | Current |
-| `acronym` | Obsolete | Old acronym element. | Deprecated — replaced by `abbr` |
-| `big` | Obsolete | Larger text. | Deprecated — replaced by CSS `font-size` |
-| `center` | Obsolete | Horizontal centering of block content. | Deprecated — replaced by CSS |
-| `content` | Obsolete | Old Shadow-DOM insertion point. | Deprecated — replaced by `slot` |
-| `dir` | Obsolete | Directory listing. | Deprecated — replaced by `ul` |
-| `font` | Obsolete | Font size, colour, face. | Deprecated — replaced by CSS |
-| `frame` | Obsolete | A sub-frame inside a `<frameset>`. | Deprecated — replaced by `iframe` |
-| `frameset` | Obsolete | A set of `<frame>` elements. | Deprecated — replaced by `iframe` |
-| `image` | Obsolete | Predecessor of `<img>`. | Deprecated — replaced by `img` |
-| `marquee` | Obsolete | Scrolling text. | Deprecated — non-standard, use CSS animation |
-| `menuitem` | Obsolete | A menu command. | Deprecated — replaced by `<button>` inside `<menu>` |
-| `nobr` | Obsolete | Prevents line wrapping. | Deprecated — replaced by CSS `white-space` |
-| `noembed` | Obsolete | Fallback for browsers without `<embed>`. | Deprecated |
-| `noframes` | Obsolete | Fallback for browsers without `<frame>`. | Deprecated |
-| `param` | Obsolete | Parameters for `<object>`. | Deprecated |
-| `plaintext` | Obsolete | Raw text without HTML interpretation. | Deprecated |
-| `rb` | Obsolete | Old ruby base element. | Deprecated — replaced by direct `<ruby>` children |
-| `rtc` | Obsolete | Old ruby annotation container. | Deprecated — replaced by `<rt>` |
-| `shadow` | Obsolete | Old Shadow-DOM insertion point. | Deprecated — replaced by `slot` |
-| `strike` | Obsolete | Strikethrough text. | Deprecated — replaced by `s` or `del` |
-| `tt` | Obsolete | Monospace text. | Deprecated — replaced by CSS `font-family: monospace` |
-| `xmp` | Obsolete | Uninterpreted monospace text. | Deprecated — replaced by `<pre><code>` |
 
 ## What this catalog is not
 
 - It is not a permission slip for every element in the *Current* column. Some current elements — `<div>`, `<span>`, `<i>`, `<b>` — are intentional last-resort carriers that `element-follows-purpose` still refuses in favour of a more semantic alternative when one fits.
 - It is not exhaustive of every HTML feature MDN ships — form-validation pseudo-classes, ARIA roles, microdata — all live outside the element table by design.
 - It is not a substitute for reading the linked MDN page when an element's behaviour matters. The table is the project's *single-page reference*; the MDN page is the long form.
+- It is **not** the place to look for an element that has been retired — `element-obsolete-to-avoid.md` is. A review that flags a tag not in *this* table checks that file before writing a finding.
 
-## Sources complémentaires
+## Sources
 
-`https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements` — MDN Web Docs, *Référence des éléments HTML*. CC BY-SA 4.0. The element grouping, current/obsolete distinction, and replacement recommendations are MDN's; the prose in the *Recommended use* column is this project's transcription, with the bias a project owns: reach for the semantic element, refuse the generic when an intent is named.
+`https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements` — MDN Web Docs, *Reference of HTML elements*. CC BY-SA 4.0. The element grouping, current/obsolete distinction, and replacement recommendations are MDN's; the prose in the *Recommended use* column is this project's transcription, with the bias a project owns: reach for the semantic element, refuse the generic when an intent is named.
