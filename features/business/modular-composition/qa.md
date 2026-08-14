@@ -236,7 +236,20 @@ Given instead a configuration carrying a bare module name with no source
 When the same read runs
 Then it is reported as not a declaration, naming the key, rather than resolved against
   whichever module of that name happens to be installed
+Given a configuration being written or migrated, carrying names with no source
+When each name is sourced
+Then the source comes from what establishes the module — the repository its own manifest
+  claims, the project's module directory, or the shared tier that resolves it — and not
+  from the marketplace it was installed through
+Given instead a name nothing establishes, or one several tiers answer at once
+When the same write runs
+Then it is reported, naming the name and what answered, and left out of the written file,
+  while every name that could be sourced is written
 ```
+
+A bare name means one thing under `modules:` and another in the retired list shape, and
+the migration turns on the difference; `business.md` § `modules` states it, and
+`features/business/local-extension/`'s AC-11 governs the shadow it produces.
 
 ### AC-18 — A setting resolves through three layers, and reaches the module that reads it
 

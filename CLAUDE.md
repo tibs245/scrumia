@@ -4,28 +4,37 @@
 This project is driven by a composition of modules. Each module has a scope.
 Before acting, check which module covers what you are about to do.
 
-ScrumIA is the composition it ships: this repo runs on its own plugins.
+ScrumIA is the composition it ships: this repo runs on its own plugins. Each is named
+below by the key it declares in `.scrumia/config.yaml`, `<source>:<module>` — every one
+of them from this repository's own marketplace, so nothing the table names depends on
+machine-local material: no `shared:` key, and no file outside version control to make one
+resolve.
 
 | Module | What to know |
 |---|---|
-| `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
-| `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
-| `scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
-| `scrumia-discovery` | Scope an idea before it becomes a ticket: `scrumia-brainstorm`, then `scrumia-split`. |
-| `scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
+| `tibs245/scrumia:scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
+| `tibs245/scrumia:scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
+| `tibs245/scrumia:scrumia-teams` | Standing roles: manager, business, tech. Convene them with `scrumia-standup`. |
+| `tibs245/scrumia:scrumia-discovery` | Scope an idea before it becomes a ticket: `scrumia-brainstorm`, then `scrumia-split`. |
+| `tibs245/scrumia:scrumia-design` | Identity, tokens and components in `design/`. Never inline a value. |
 
 `scrumia-design` also ships the `designer` standing role, registered in
 `settings.team.roles` like the other three (`docs/adr/0014`). Route interface questions
 to it — it is the only role that judges what a user actually sees.
 
+Each module's own configuration sits under its `params:` beside that key; `settings:`
+holds only what several modules read. Read either through `scrumia-extends --settings`,
+never out of the file — that is the one call that applies all three layers, the last of
+them per-machine.
+
 ### Per app
 
-| App | Path | Extends |
+| App | Path | Modules |
 |---|---|---|
 | `site` | `site` | none |
 | `tools` | `tools` | none |
 
-Both apps extend nothing of their own, so follow the conventions of the neighbouring
+Neither app declares a module of its own, so follow the conventions of the neighbouring
 code. `plugins/` is the product itself — markdown, not code — and is deliberately absent
 from this table: no module speaks for it.
 

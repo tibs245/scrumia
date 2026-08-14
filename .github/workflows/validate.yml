@@ -41,6 +41,8 @@ jobs:
         run: python3 tools/test_scrumia_extends.py
       - name: Check that the modules consume the settings cascade
         run: python3 tools/test_settings_cascade.py
+      - name: Check what installs a project writes and migrates
+        run: python3 tools/test_init_migration.py
       - name: Check the board read against its acceptance criteria
         # scrumia-board resolves its settings through the name scrumia-core publishes, so
         # that module's bin has to be on PATH the way a session would put it there.
