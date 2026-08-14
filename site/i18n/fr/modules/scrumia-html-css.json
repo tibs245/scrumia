@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-html-css — ScrumIA",
+  "meta_description": "scrumia-html-css : la capacité ScrumIA pour HTML, CSS et accessibilité — élément sémantique plutôt que rôle ARIA, élément qui suit la fonction, tests qui questionnent ce que l'utilisateur rencontre.",
+  "og_title": "scrumia-html-css — ScrumIA",
+  "tagline": "Accessible par construction — éléments sémantiques, éléments qui suivent la fonction, tests qui disent ce que l'utilisateur rencontre.",
+  "responsibilities": "<p>Possède la <em>forme</em> du HTML et du CSS d'une application web : un élément sémantique quand les deux expriment la même intention, un widget interactif qui utilise l'élément correspondant à sa fonction, et des tests qui atteignent le composant via <code>getByRole</code>, <code>getByLabelText</code> ou <code>getByText</code>. La capacité s'ancre dans le corpus W3C et MDN, jamais dans l'opinion ; chaque règle cite une source, et la licence accompagne la citation.</p>",
+  "refusals": "<p>Pas de <code>&lt;div role=&quot;button&quot;&gt;</code> quand un <code>&lt;button&gt;</code> porterait le même contrat gratuitement. Pas de <code>&lt;div&gt;</code> stylé en bouton avec <code>cursor: pointer</code> quand aucune sémantique native ne s'applique. Pas de <code>getByTestId</code> quand un sélecteur basé sur l'accessibilité aurait atteint la même cible.</p>",
+  "philosophy": "<p>Présume que la couche assistive fait partie du contrat, et n'est pas un audit séparé. Un écran qui se lit correctement pour un utilisateur sighted et échoue pour un lecteur d'écran est un défaut que le système de design ne peut pas attraper, et que la revue visuelle ne voit jamais. Les règles de refus du plugin attrapent la forme qui passerait autrement.</p>"
+}

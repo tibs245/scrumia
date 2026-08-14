@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-html-css — ScrumIA",
+  "meta_description": "scrumia-html-css: the ScrumIA HTML, CSS and accessibility capability — semantic elements over ARIA roles, the element follows the purpose, tests query what the user meets.",
+  "og_title": "scrumia-html-css — ScrumIA",
+  "tagline": "Accessible by construction — semantic elements, elements that match their purpose, tests that say what the user meets.",
+  "responsibilities": "<p>Owns the <em>shape</em> of a web app's HTML and CSS: a semantic element when both express the same intent, an interactive widget that uses the element matching its purpose, and tests that reach the component through <code>getByRole</code>, <code>getByLabelText</code> or <code>getByText</code>. The capability is anchored in the W3C and MDN corpus, not opinion; every rule cites one source, and the licence travels with the citation.</p>",
+  "refusals": "<p>No <code>&lt;div role=&quot;button&quot;&gt;</code> when a <code>&lt;button&gt;</code> would carry the same contract for free. No <code>&lt;div&gt;</code> styled as a button with <code>cursor: pointer</code> when no native semantics apply. No <code>getByTestId</code> when an accessibility-based selector would have reached the same target.</p>",
+  "philosophy": "<p>Assumes the assistive layer is part of the contract, not a separate audit. A screen that reads correctly to a sighted user and fails a screen reader is a defect the design system cannot catch, and the visual review never sees. The plugin's refusal rules catch the shape that would otherwise pass.</p>"
+}
