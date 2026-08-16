@@ -110,7 +110,7 @@ The templates only ask for what cannot be inferred. A form that is too long does
 
 While here, make sure `.gitignore` lists `.worktrees/` and `review-prompt.txt` — append either line if it's missing, skip what's already present.
 
-`scrumia-ticket` creates its per-ticket worktrees under `.worktrees/` instead of `../<repo>-<n>`, so the working tree stays inside the directory Claude Code's permissions actually cover, and an untracked folder in the diff isn't a surprise. `review-prompt.txt` is what the role-review fallback writes into the worktree; a ticket run must reach a clean `git status` before it spawns a role, so an unignored copy either blocks that check or rides into the PR on the next `git add -A`.
+`scrumia-ticket` creates its per-ticket worktrees under `.worktrees/` instead of `../<repo>-<n>`, so the working tree stays inside the directory Claude Code's permissions actually cover, and an untracked folder in the diff isn't a surprise. `review-prompt.txt` is what the role-review fallback writes into the worktree; a ticket run must reach a clean `git status` before it spawns a role, per *Commit before you yield* in `scrumia-ticket`, so an unignored copy either blocks that check or rides into the PR on the next `git add -A`.
 
 ## Step 5 — Create the board
 

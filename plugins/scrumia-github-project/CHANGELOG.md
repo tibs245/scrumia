@@ -91,6 +91,11 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `README.md` — addressed to whoever is deciding whether to run this module, not to the
   agent that already does: what it answers, what it refuses, what it ships.
 
+### Fixed
+- `scrumia-project-setup`'s note that a ticket run must reach a clean `git status` before
+  spawning a role now cites *Commit before you yield* in `scrumia-ticket`, where that rule
+  is actually stated, instead of reading as a second source for it.
+
 ### Deprecated
 - `settings.tracker` in `.scrumia/config.yaml` — this module's keys move into its own
   `params:` under the `modules:` mapping (ADR-0021). Both shapes are read and merged key by
