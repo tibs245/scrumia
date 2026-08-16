@@ -23,10 +23,11 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0015](0015-scope-measures-reach.md) | The scope axis measures reach, not medium | accepted |
 | [0016](0016-global-feature-index.md) | The specs contract gains a global index; keys stop freezing values | accepted |
 | [0017](0017-version-bump-and-commit-signal.md) | What a version bump promises, and the commit signal it derives from | accepted |
-| [0018](0018-modules-reach-by-name.md) | A module reaches another by a published name, never by a path | accepted — extended by [0020](0020-skill-extension-protocol.md) |
+| [0018](0018-modules-reach-by-name.md) | A module reaches another by a published name, never by a path | accepted — extended by [0020](0020-skill-extension-protocol.md), second mechanism amended by [0022](0022-a-skill-carries-the-doc-it-needs.md) |
 | [0019](0019-extends-replaces-composition-and-practices.md) | `extends` replaces `composition:`, and folds `practices` into it | accepted — its `extends:` key superseded by [0021](0021-modules-keyed-by-source.md) |
 | [0020](0020-skill-extension-protocol.md) | A skill is extended by data, and the table is computed when asked | accepted |
 | [0021](0021-modules-keyed-by-source.md) | `modules` keyed by source, with a settings cascade | accepted |
+| [0022](0022-a-skill-carries-the-doc-it-needs.md) | A skill carries the doc it needs, and `docs/` points inward | accepted — amends [0018](0018-modules-reach-by-name.md) |
 
 ## Scope of the decisions
 
@@ -59,6 +60,7 @@ A module decision is contested by writing another module, not by debating this o
 - **0018** — if the harness stops putting every enabled plugin's `bin/` on the session PATH, or publishes a contract that supersedes the observation this rests on
 - **0017** — when the first module reaches `1.0.0`, which lifts the `0.x` shift; or the first time a type in daily use is missing from its vocabulary, since admitting one takes a superseding ADR
 - **0020** — if the harness publishes a contract for plugin PATH, or withdraws the behaviour: this one and 0018 move together
+- **0022** — if a doc turns out to be needed unchanged by several modules at once, ask `module-authoring`'s threshold question — whether it is a module of its own — not whether the direction was right
 - **0019** — if folding `practices` into `extends` loses an override granularity a project actually needed, that is #184's "rule addressability" wave, not a reason to reopen 0019
 - **0020** — if two modules opening the same register turns out to be legitimate, the check that reports it moves first
 

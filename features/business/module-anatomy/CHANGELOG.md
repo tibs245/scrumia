@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-16 — BR-12: a doc a skill needs ships inside the module, and AC-17 covers it
+- Issue: #224
+- Category: Added
+- Breaking: no
+
 ## 2026-08-12 — The gate delegates to the procedural check, and AC-5 names what it keeps
 - Issue: #287
 - Category: Changed
