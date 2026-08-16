@@ -106,8 +106,8 @@ false for — the failure this whole split exists to catch, on its most likely i
 A module is read on the machine it was installed on, where nothing of this repository sits
 around it. So a document one of its skills needs to do its work is that module's own, and
 ships inside it. The official documentation may point at a module's doc; a module pointing
-outward for something it needs is what this rule refuses, and `docs/adr/0022` states the
-reasoning.
+outward for something it needs is what this rule refuses, and
+[ADR-0022](../../../docs/adr/0022-a-skill-carries-the-doc-it-needs.md) states the reasoning.
 
 **The test is what the reader loses when the target is unreachable.** A target carrying a
 rule, a method or a refusal the skill applies belongs to the module and moves in. A target
