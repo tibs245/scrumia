@@ -85,12 +85,12 @@ retrospective that has nothing to read.
 ceremony starts; nothing is reconstructed from anyone's memory of the sprint.
 
 Not all four kinds are equally readable across a period yet. The deviation record carries a
-fielded shape and a search token; the label/diff gap does not — whichever feature fills the
-tracker slot says so itself, and today it is findable on the ticket it belongs to and not
-across the project (`features/business/github-tracking/`). So this trigger can be answered
-ticket by ticket for that fact and not by one read, and a run that reports on it must say
-which it did. That gap is open, and until it closes the trigger states an input the tracker
-only partly serves — the same shape as BR-6's read-mark below, and open for the same
+fielded shape and a search token; the label/diff gap does not — whichever module fills the
+`tracker` slot states what its own records carry, and today that answer is that the gap is
+findable on the ticket it belongs to and not across the period. So this trigger can be
+answered ticket by ticket for that fact and not by one read, and a run that reports on it
+must say which it did. That gap is open, and until it closes the trigger states an input the
+tracker only partly serves — the same shape as BR-6's read-mark below, and open for the same
 reason.
 
 **What it produces that outlives it.** A change to project data or to a spec — a cell
