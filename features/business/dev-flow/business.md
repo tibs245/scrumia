@@ -88,6 +88,34 @@ not re-decided here.
 nothing else), or `all`. What exactly counts as docs-only, and what happens to a
 PR mixing docs and code, is not yet pinned down.
 
+### Gate 2's scoping signal
+
+Gate 2 routes by the change's actual reach and reads no scope label, because a wrong
+label is precisely the failure a review exists to catch. The two therefore disagree
+routinely and correctly, and a disagreement on its own reports nothing. **The gap
+becomes a scoping signal on one further condition: the scope axis's own questions,
+applied to what the change actually touched, would have answered higher than the label
+carries** (`docs/adr/0015-scope-measures-reach.md`, whose test is stated once in
+`features/business/execution-policy/`). Both conditions together, and only then, gate 2
+owes the signal — reported when the gap is found, not deferred to whatever comes after.
+
+**The signal is addressed to the manager**, the role that set the label and routes on
+it. `features/business/agent-team/` states who that role is and what it owns; this
+feature states only that the signal is addressed there, so that a project reshuffling
+its roles changes one spec and not two.
+
+**And it is recorded against the work item, not merely mentioned in passing**, because
+a second reader depends on it: the retrospective's trigger counts label/diff gaps among
+the facts that make the ceremony worth holding (`features/business/ceremonies/`), and
+that trigger reads records, not conversations. A signal that exists only inside a run is
+a signal the run takes with it when it dies. What the manager owes on receipt, beyond
+the record existing, is written nowhere — deliberately, and it is not to be inferred
+from the fact that the signal arrives.
+
+Which artefact holds the record, and whether anything restates it for a human reading
+the change, is whichever feature fills the tracker slot to say. Strip the tracker and
+the obligation above still stands word for word; only its venue evaporates.
+
 ## What a commit carries, and who may rewrite one
 
 **Every commit carries a type and a scope**: `<type>(<scope>): <subject>`. The scope is

@@ -189,6 +189,30 @@ This is the rule the ordinary path rests on, so it is the one that must be able 
 An issue filed as work takes a card and an issue that is not work takes none, both from
 the single rule stated in the lifecycle section above.
 
+### AC-15 — Gate 2's scoping signal outlives a run that never opens a pull request
+
+```gherkin
+Given a ticket whose gate 2 owed a scoping signal — per `features/business/dev-flow/`,
+  which states when that is — and whose run died before `gh pr create`
+When that ticket's issue is read
+Then the signal is there as a comment, because the issue is the record and a pull request
+  body only ever echoes it
+```
+
+```gherkin
+Given the same signal written into the pull request body and nowhere else
+When the same read runs
+Then this criterion fails — the venue mistake AC-10 already names for the deviation
+  record, one artefact over: an echo with no record behind it is invisible to every
+  reader who is not looking at that one pull request
+```
+
+Scoped to the ticket's own issue on purpose. The deviation record next door is *also*
+findable across the project, by a token this file specifies; this record has no such token
+yet, so promising a project-wide read here would state a criterion nothing can satisfy.
+Closing that gap is its own change — the retrospective's trigger is the reader that will
+need it.
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.

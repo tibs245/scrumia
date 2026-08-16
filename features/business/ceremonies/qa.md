@@ -72,7 +72,7 @@ Then it is not admitted as a ceremony, because everything it reports is a second
 
 ```gherkin
 Given a sprint ends and the tracker holds no deviation record, gate-2 blocker, label/diff
-  gap or reopened ticket since the last retrospective's mark
+  gap recorded against a ticket, or reopened ticket since the last retrospective's mark
 When the boundary is reached
 Then no retrospective is held, and no one writes that the period was clean — the zero
   says nothing was recorded, which is not the same claim
