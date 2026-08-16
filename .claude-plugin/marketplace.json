@@ -131,6 +131,15 @@
       "category": "workflow",
       "tags": ["scrumia", "html", "css", "accessibility", "a11y", "web"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-rhf",
+      "source": "./plugins/scrumia-rhf",
+      "description": "The implementation slot, for React apps using React Hook Form — declarative form management, resolver-driven validation, registered inputs, state through the library. Plugs in app by app, scoped to scrumia-impl-reactjs only.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "form", "rhf", "react-hook-form", "react", "frontend"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

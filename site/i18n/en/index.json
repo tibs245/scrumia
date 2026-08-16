@@ -150,6 +150,7 @@
   "mod_tdd_d": "The cycle operationalized for an agent, the mock boundary, AC-to-test mapping. Reference, audit, refactor.",
   "mod_solid_d": "The five principles, each with its limit. Audits violations and over-applications alike. Reference, audit, refactor.",
   "mod_tanstack_d": "Query keys, options, mutations, testing — 9 guides, 13 decisions, ported from real monorepo use.",
+  "mod_rhf_d": "Declarative forms for React: a resolver, registered inputs, state through the library. Three refusals, one audit, scoped to <code>scrumia-impl-reactjs</code>.",
   "mod_design_d": "Identity, tokens and components in the repo, synced one at a time with Claude Design. Ships the <code>designer</code> role and an audit that reports drift and mutedness alike.",
   "mod_design_cmd": "claude plugin install scrumia-design@scrumia",
   "mod_slot_html_css": "no slot",

@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-rhf — ScrumIA",
+  "meta_description": "scrumia-rhf: the ScrumIA implementation slot for React Hook Form — declarative forms, resolver-driven validation, registered inputs.",
+  "og_title": "scrumia-rhf — ScrumIA",
+  "tagline": "Declarative forms, owned by the library end to end.",
+  "responsibilities": "<p>Owns the <em>how</em> for React Hook Form in a React app: a form declares a resolver (validation is one schema, not per-field logic), its inputs are registered through the library, and its state is read through <code>watch</code>, <code>getValues</code>, <code>formState</code> or <code>handleSubmit</code>. Three refusals, one audit skill, cited against <a href=\"https://react-hook-form.com\">react-hook-form.com</a> pinned to v7.</p>",
+  "refusals": "<p>No form without a resolver, no <code>useState</code> + <code>onChange</code> pair where <code>register()</code> already covers it, no state read through the DOM. A SolidJS app pays no cost — the contributions are scoped to <code>scrumia-impl-reactjs</code> only.</p>",
+  "philosophy": "<p>Assumes the form library is the source of truth for value, validation, touched and dirty state, and submission. Costs the unlearning of a hand-rolled form state, which a project pays once on adopting and stops paying on the next form it ships.</p>"
+}

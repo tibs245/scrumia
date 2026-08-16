@@ -77,6 +77,9 @@
   "tanstack_p": "Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite qui sépare l'état serveur de l'état purement client. Porté d'une utilisation réelle monorepo : 9 guides, 13 décisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.",
   "tanstack_row1": "La référence : query keys, invalidation de cache, optimistic updates, la limite serveur/client",
 
+  "rhf_p": "Gestion déclarative des formulaires pour les apps React utilisant <a href=\"https://react-hook-form.com\">React Hook Form</a>. <strong>Refuse</strong> un formulaire sans resolver, <code>useState</code> + <code>onChange</code> là où <code>register()</code> couvre déjà, et la lecture d'état via le DOM. Scopé à <code>scrumia-impl-reactjs</code> ; une app SolidJS ne paie rien.",
+  "rhf_row1": "Mesure une app React contre les trois refus — resolver, enregistrement, canal d'état",
+
   "config_title": "Configuration",
   "config_intro": "<code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.",
   "config_note": "Deux conventions qui comptent : la table nomme ce qui est présent, donc une capacité dont vous vous passez ne porte aucune clé — et là où la différence entre « pas encore choisi » et « délibérément sans » compte, elle se dit en commentaire, à la place de la clé. Et chaque module documente les clés qu'il lit sous <code>settings</code> : un paramètre implicite est celui que vous ne pouvez pas changer.",

@@ -1,0 +1,18 @@
+{
+  "implement": [
+    { "name": "form-has-resolver", "type": "refusal", "when": "required",
+      "summary": "A form's validation is one schema, not per-field logic — the form declares a resolver",
+      "read": "rules/form-has-resolver.md" },
+    { "name": "inputs-are-registered", "type": "refusal", "when": "required",
+      "summary": "The library owns registered inputs — useState + onChange reimplements what register() already provides",
+      "read": "rules/inputs-are-registered.md" },
+    { "name": "state-through-library", "type": "refusal", "when": "required",
+      "summary": "Form state is read through watch / getValues / formState / handleSubmit — never the DOM",
+      "read": "rules/state-through-library.md" }
+  ],
+  "review": [
+    { "name": "form-management refusals", "type": "refusal", "when": "required",
+      "summary": "Resolver required, inputs registered, state through the library's API",
+      "read": "skills/rhf-audit/SKILL.md" }
+  ]
+}

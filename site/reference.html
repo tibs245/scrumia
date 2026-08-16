@@ -250,6 +250,16 @@
       </tbody>
     </table>
   </div>
+  <h3><a href="modules/scrumia-rhf.html"><code>scrumia-rhf</code></a> — slot <code>implementation</code></h3>
+  <p>Declarative form management for React apps using <a href="https://react-hook-form.com">React Hook Form</a>. <strong>Refuses</strong> a form without a resolver, <code>useState</code> + <code>onChange</code> where <code>register()</code> already covers it, and state read through the DOM. Scoped to <code>scrumia-impl-reactjs</code>; a SolidJS app pays no cost.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>rhf-audit</code></td><td>Measures an existing React app against the three refusals — resolver, registration, state channel</td></tr>
+      </tbody>
+    </table>
+  </div>
   <h3><a href="modules/scrumia-design.html"><code>scrumia-design</code></a> — slot <code>design</code></h3>
   <p>Identity, tokens and components live in the repo; a Claude Design project is the review surface, not the source of truth. One rule underneath: a value the tokens don't carry is a finding, never an inlined exception. Ships the <code>designer</code> standing role — the only module that does so from outside the <code>team</code> slot, because a role with no design system to guard would judge on taste.</p>
   <div class="table-wrap">

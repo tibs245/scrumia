@@ -1,0 +1,10 @@
+{
+  "name": "scrumia-rhf",
+  "description": "Slot \"implementation\" — declarative form management for React apps: a form declares a resolver, its inputs are registered through React Hook Form, and its state is read through the library's API rather than the DOM. Plugs in app by app, scoped to scrumia-impl-reactjs only.",
+  "version": "0.1.0",
+  "author": { "name": "tibs245" },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": ["scrumia", "form", "rhf", "react-hook-form", "react", "frontend"]
+}
