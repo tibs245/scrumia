@@ -79,3 +79,38 @@ connection drop before the deferred fetch completes, and a timeout living inside
 that file would then never run. So the stylesheet that hides also un-hides: the
 hidden state carries a delayed `unhide` animation as the un-hiding of last
 resort. Any future rule that hides content must carry the same expiry.
+
+## No browser script is executed by CI, and what closes that gap instead
+
+Nothing in `.github/workflows/validate.yml` runs `composer.js`, `header.js`,
+`motion.js`, `theme.js`, or the inline `<script>` that `partials/head.html`
+ships into every built page — every gate reads them as text
+(`tools/test_composer.py` lifts table literals with a regex) or not at all. What CI does guarantee is the
+no-JS floor: `qa.md` AC-4 here, and the composer's own `qa.md` AC-3 last line —
+each page and each pre-rendered artifact is complete without a script running.
+Above that floor, a change to `configParts()`, to the inline theme/`.js`-gate
+script, or to any other script's runtime behaviour ships green even when
+broken.
+
+The gap is accepted, not closed, and bounded to one check, itself only over
+`site/assets/*.js` — the inline `<head>` script is not covered either: `node
+--check` on every file in `site/assets/*.js`, run one file at a time — a single
+glob argument makes `--check` silently stop after the first file and still
+exit 0, which would be the false-green this step exists to remove. That buys
+"the file parses," nothing about what it does when it runs, and Node parses a
+syntax superset of the browser floor above (Chrome/Edge 123, Firefox 120,
+Safari 17.5), so a passing check is not a promise the file runs in Safari.
+
+A DOM stub or a `node --test` suite executing `configParts()` was considered and
+rejected: the DOM surface these scripts touch (`querySelector`, `:checked`,
+`closest`, `dataset`, the `createElement`/`appendChild` tree `composer.js`
+builds) is enough that a no-dependency stub becomes a small selector engine —
+an artifact more likely to mis-report a passing script than the code it tests.
+Generating the composer's pre-rendered blocks from the same source
+`composer.js` reads was considered too, and rejected for the same reason from
+the other direction: it would collapse two independently-maintained statements
+into one, turning `tools/test_composer.py`'s AC-3 checks into tautologies.
+
+**Reopening trigger.** A second app shipping browser JavaScript, or the composer
+coming to own something a no-JS reader cannot get either way: at that point the
+answer is a real browser (Playwright), never a hand-rolled DOM stub.

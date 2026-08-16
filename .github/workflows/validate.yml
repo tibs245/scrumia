@@ -23,6 +23,14 @@ jobs:
         run: python3 -m pip install --quiet pyyaml
       - name: Validate the manifest, the specs tree, and every module through scrumia-module
         run: python3 tools/validate.py
+      # One `node --check` call per file, not `node --check site/assets/*.js`:
+      # given several files, --check silently stops after the first and still
+      # exits 0 — the false-green this step exists to remove.
+      - name: Check that every browser script parses
+        run: |
+          for f in site/assets/*.js; do
+            node --check "$f"
+          done
       - name: Check the gate's own rules, and that it delegates the module ones
         run: python3 tools/test_validate.py
       - name: Check the module checker against the anatomy standard's criteria

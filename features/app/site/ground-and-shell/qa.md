@@ -111,6 +111,16 @@ Then the rail is at the correct position at every point — home on load, under
   the pointed-at link while pointing — with no animated transition between them
 ```
 
+### AC-10 — Every `site/assets` script parses
+
+```gherkin
+Given the committed `site/assets/*.js` files
+When CI runs `node --check` on each of them, one file per invocation
+Then every check exits zero
+And CI fails the moment one does not — an unbalanced brace introduced in any of
+  them is caught here, the only point that ever parses the file's syntax
+```
+
 ## Out of scope
 
 - The hero, the slot index and the run — owned by `features/app/site/hero/`,
