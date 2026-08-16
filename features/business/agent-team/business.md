@@ -196,3 +196,14 @@ not one — one session executes the current sprint, another prepares the next.
 They do not coordinate directly; they stay consistent because the board is the
 shared state (`docs/adr/0002-standing-roles.md`), read fresh by each session
 rather than held in memory by either.
+
+That covers reads. Writes carry no equivalent guarantee: no session may assume
+its write was conditional on what it last read. The shared state is written
+**last-writer-wins**, with no compare-and-swap and no lock — a session that
+writes the same card as another does not get an error or a rejection back, and
+whichever write lands last is the one that stands. Two sessions targeting the
+same card race rather than corrupt anything, and the mitigation is the same as
+for reads: decide from a fresh read at the point of decision, not from a value
+held since earlier in the session. This does not introduce a claim, a lease or
+a lock — none of those exist in the shared state today, and none is implied by
+stating this.
