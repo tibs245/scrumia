@@ -271,6 +271,36 @@ a path built from a variable nothing substitutes, a reference climbing out of th
 each is a finding a first draft routinely carries, none is visible to a reader, and the
 check names the file and the fix for all three.
 
+### A doc the module needs is written in the module
+
+The module is read on the machine it was installed on, where nothing of this repository sits
+around it. So when a skill applies a rule, that rule is written in the module — not cited,
+and not restated with a link beside it standing in for the rest.
+
+**The refusal, stated so it is not inferred: a module does not point outside itself for
+something it needs.** Ask what the reader loses when the target cannot be reached:
+
+| The target carries | Then |
+|---|---|
+| a rule, a method, a refusal the skill applies | write it in the module |
+| the *reason* a rule is what it is, where the skill states the rule itself | it may stay outside |
+| an external source nobody can vendor — a standard, a licence | it stays outside, cited with its licence |
+
+Two mistakes this is written against. **The first is citing instead of carrying**, because
+the target happens to be reachable from where the pass is running: a repository path resolves
+in this checkout and nowhere else, and a URL into a branch hands the reader whatever that
+branch says today rather than the version the project installed. **The second is treating
+this as a rule about links.** A path written in prose and a markdown link are the same act,
+and rewriting one into the other fixes nothing.
+
+Where the reference is legitimate, say which of the two reasons it is. An unmarked outward
+reference reads as the first kind to whoever comes next.
+
+The reasoning is `docs/adr/0022`, the rule is `features/business/module-anatomy/`'s BR-12,
+and neither is restated here beyond what the pass needs to apply it. **The check does not
+catch this one**: a reference in prose is not a path it resolves, so this is read, not
+computed — which is why it is written here rather than left to Step 5.
+
 ## Step 5 — The check decides when the pass is finished
 
 Run it on what you produced, with nothing edited between the writing ending and the check

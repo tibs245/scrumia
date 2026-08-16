@@ -4,6 +4,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
+- `scrumia-author` — a pass writes a rule a skill applies into the module rather than
+  citing it, and names which of the two legitimate reasons an outward reference is. The
+  check does not catch this class, so the refusal is stated in Step 4 rather than left to
+  Step 5 (`docs/adr/0022`, `module-anatomy` BR-12).
 - `scrumia-extends --modules` — every module the project declares, with the location it
   actually resolved from and the directory it resolved to. A declaration nothing answers
   is reported as an absence naming where it would have come from, which is the ordinary
