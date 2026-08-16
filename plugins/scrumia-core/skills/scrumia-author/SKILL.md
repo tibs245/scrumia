@@ -296,8 +296,12 @@ and rewriting one into the other fixes nothing.
 Where the reference is legitimate, say which of the two reasons it is. An unmarked outward
 reference reads as the first kind to whoever comes next.
 
-The reasoning is `docs/adr/0022`, the rule is `features/business/module-anatomy/`'s BR-12,
-and neither is restated here beyond what the pass needs to apply it. **The check does not
+The reasoning is
+[ADR-0022](https://github.com/tibs245/scrumia/blob/main/docs/adr/0022-a-skill-carries-the-doc-it-needs.md),
+the rule is
+[`module-anatomy`](https://github.com/tibs245/scrumia/blob/main/features/business/module-anatomy/business.md)'s
+BR-12, and neither is restated here beyond what the pass needs to apply it — which is this
+rule's own second case, marked as such. **The check does not
 catch this one**: a reference in prose is not a path it resolves, so this is read, not
 computed — which is why it is written here rather than left to Step 5.
 
