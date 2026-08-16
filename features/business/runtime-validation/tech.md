@@ -3,21 +3,39 @@
 ## How the plugin composes
 
 `scrumia-zod` ships as a plugin with an `extends.json` that contributes to
-two registers:
+two registers. The keys are the register names themselves — the extension
+protocol keys a contribution by the register it feeds, never by a section
+named after a consumer:
 
 | Register | Module that opens it | Where the contribution lives |
 |---|---|---|
-| `implement` | `scrumia-github-project` (`scrumia-ticket`) | `extends.json#implements` |
-| `review` | `scrumia-github-project` (`scrumia-review`) | `extends.json#reviews` |
+| `implement` | `scrumia-github-project` (`scrumia-ticket`) | `extends.json`'s `implement` array |
+| `review` | `scrumia-github-project` (`scrumia-review`) | `extends.json`'s `review` array |
 
-Each contribution carries:
+Each contribution carries the five fields the protocol defines:
 
 - a `name` (one of `schema-as-source-of-truth`, `errors-carry-a-message`,
   `validation-at-boundary`),
 - a `type` (`refusal`),
-- a `required: false`,
-- a `one_liner`,
-- a `fragment` pointing at the rule's prose inside the plugin.
+- a `when` (`required` or `optional`),
+- a `summary`, one line of what the rule *says*,
+- a `read`, the rule's path **inside this module**.
+
+## Where the scoping actually lives
+
+`business.md`'s BR-1 names `scrumia-impl-reactjs` and `scrumia-impl-solidjs`
+as the module's default scope. That scope is **not** written in
+`extends.json`, and cannot be: the extension protocol states that nothing in
+a contribution names a consumer, which is what lets one rule reach
+implementation, review and audit without being written three times.
+
+The scope is realised in the consuming project's composition — the app's own
+module list in `.scrumia/config.yaml` — and documented for a human in the
+plugin's README. So "scoped to those two" is a statement about the
+composition a project is expected to declare, not a field the plugin ships.
+BR-2's "can be taken directly by a project running neither" is the same fact
+read from the other side: nothing in the plugin enforces the default, so
+nothing has to be edited to depart from it.
 
 ## Where the rules live
 
@@ -30,6 +48,8 @@ plugins/scrumia-zod/
 │   ├── schema-as-source-of-truth.md
 │   ├── errors-carry-a-message.md
 │   └── validation-at-boundary.md
+├── scripts/
+│   └── detect-boundaries.sh
 ├── skills/
 │   └── zod-audit/
 │       └── SKILL.md

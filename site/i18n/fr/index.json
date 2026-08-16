@@ -167,5 +167,7 @@
   "mod_compound_d": "Le motif de composants composés, indépendant du framework : les parties atteignent le parent par contexte (ou son équivalent), les sous-composants voyagent avec le parent, l'API publique est un seul symbole. React, Vue, Solid et Angular, dans l'idiome de chaque framework.",
   "mod_compound_cmd": "claude plugin install scrumia-compound-design@scrumia",
   "mod_slot_rhf": "aucun slot",
-  "mod_slot_compound": "aucun slot"
+  "mod_slot_compound": "aucun slot",
+  "mod_zod_d": "Le schéma fait autorité, les erreurs ciblent le champ là où un utilisateur les lit, et le parsing se fait à la frontière de confiance — pas sur des valeurs que le compilateur a déjà prouvées. Épinglé à Zod v4, avec une compétence d'audit et un détecteur de frontières.",
+  "mod_slot_zod": "aucun slot"
 }

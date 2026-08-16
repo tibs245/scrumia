@@ -61,10 +61,12 @@ And a citation without the version is a finding
 
 ```gherkin
 Given the plugin's tree, with its `extends.json` declaring contributions to
-  `implement` and `review` scoped to `scrumia-impl-reactjs` and
-  `scrumia-impl-solidjs`
+  the `implement` and `review` registers, and its README naming
+  `scrumia-impl-reactjs` and `scrumia-impl-solidjs` as the default scope
 When `python3 tools/validate.py` runs from the repository root
 Then the gate passes, naming the plugin once in its listing
+And no contribution in `extends.json` names a consuming module — the scope
+  is the consuming project's composition, per the extension protocol
 And the plugin's entry in `site/modules.json` carries an emoji distinct from
   every other module's, and the i18n files for both `en` and `fr` carry the
   prose the marketplace page reads

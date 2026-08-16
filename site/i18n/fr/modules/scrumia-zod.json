@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-zod — ScrumIA",
+  "meta_description": "scrumia-zod : validation à l'exécution aux frontières de confiance avec Zod — le schéma fait autorité, les erreurs en font partie, et le parsing se fait à la couture.",
+  "og_title": "scrumia-zod — ScrumIA",
+  "tagline": "Le schéma fait autorité ; le parsing se fait à la couture.",
+  "responsibilities": "<p>Trois règles de refus qui marquent où la validation appartient : le type se dérive du schéma, jamais réécrit à la main à côté ; le parsing se fait à la frontière de confiance, pas à chaque appel interne ; et un schéma dont un humain lit l'échec porte un message ciblé sur le champ. Livre une compétence <code>zod-audit</code> qui audite une base de code existante contre les trois, et un détecteur de frontières qui classe chaque <code>.parse</code> / <code>.safeParse</code> comme traversant ou interne — le verdict est heuristique et chaque constat le dit.</p>",
+  "refusals": "<p>Un type réécrit à la main. Un parse sur une valeur que le compilateur a déjà prouvée. Une frontière côté utilisateur qui échoue avec <code>Entrée invalide : string attendu</code>. Le verdict du détecteur sur un parse qui ressemble à un appel interne est rapporté comme un constat à vérifier par un humain, jamais comme un fait.</p>",
+  "philosophy": "<p>Présume que le schéma fait autorité et que la documentation de la bibliothèque est la citation de chaque règle — pas d'articles de blog, pas de tutoriels, pas de patterns communautaires. Coûte de la discipline sur chaque site de parse et sur chaque schéma, et le rend en erreurs qui signifient quelque chose pour le lecteur qui les déclenche.</p>"
+}

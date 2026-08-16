@@ -16,5 +16,6 @@
   "scrumia-design": { "emoji": "🎨", "slot": "design" },
   "scrumia-html-css": { "emoji": "♿", "slot": null },
   "scrumia-rhf": { "emoji": "📝", "slot": null },
-  "scrumia-compound-design": { "emoji": "🪢", "slot": null }
+  "scrumia-compound-design": { "emoji": "🪢", "slot": null },
+  "scrumia-zod": { "emoji": "🛡️", "slot": null }
 }

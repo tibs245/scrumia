@@ -102,5 +102,7 @@
   "write_c1": "# valider avant de publier",
   "write_c2": "# essayer sans installer",
   "write_newslot": "Un nouveau slot est justifié quand un vrai projet le remplirait <em>différemment</em>. Sinon, c'est une compétence de plus dans un module existant.",
-  "write_cta_decisions": "Les quatorze décisions"
+  "write_cta_decisions": "Les quatorze décisions",
+  "zod_p": "La validation à l'exécution, à la frontière de confiance. Le type est dérivé du schéma plutôt qu'écrit à la main à côté, le parsing se fait là où des données non fiables entrent plutôt qu'à chaque appel interne, et un schéma dont un utilisateur lit l'échec porte un message ciblé sur le champ. Cité contre Zod épinglé à la v4.",
+  "zod_row1": "Audite un code existant contre les trois refus : schémas dupliqués en types écrits à la main, frontières visibles par l'utilisateur sans erreur ciblée, et parsing sur des valeurs déjà prouvées par le compilateur."
 }
