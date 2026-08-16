@@ -122,6 +122,15 @@
       "category": "workflow",
       "tags": ["scrumia", "design", "design-system", "tokens"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-html-css",
+      "source": "./plugins/scrumia-html-css",
+      "description": "The HTML, CSS and accessibility capability — semantic elements over ARIA roles, the element follows the purpose, and tests query what the user meets. Plugs in app by app, scoped to React and SolidJS by default.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "html", "css", "accessibility", "a11y", "web"],
+      "author": { "name": "tibs245" }
     }
   ]
 }
