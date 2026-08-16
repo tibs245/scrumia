@@ -204,6 +204,8 @@ gh issue comment <issue> --body "Scoping signal: label <label> — review routed
 
 Now, not at PR time, and on the issue rather than in the PR body: the retrospective's trigger counts these gaps ([`features/business/ceremonies/`](https://github.com/tibs245/scrumia/blob/main/features/business/ceremonies/business.md)) and a run that dies before `gh pr create` must still leave one behind — the same reason Step 0's deviation record lives there. Step 7 echoes it in the PR for a human reading the diff, and that echo is a copy.
 
+*The three references above are provenance, in `module-anatomy`'s BR-12 sense: when the signal is owed, to whom, where it is recorded and what the echo is are all stated here, and the links name where each is owned. This step runs off this file.*
+
 The table has no scope tier in it, `scope/XL` included: ADR-0015 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
 Spawn the role by its agent type — `scrumia-teams:scrumia-tech`, `scrumia-teams:scrumia-business`. If the type does not resolve, the module that ships it was installed or updated without a restart since; say so rather than reviewing anyway, and fall back to a subprocess, prompt on stdin:
