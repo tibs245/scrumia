@@ -40,8 +40,14 @@ show.
 - The headline breaks are authored, not computed: `hero_title` carries `<br>` where
   the line should end, in both languages, and no CSS `text-wrap: balance` substitutes
   for that choice. A copy change re-checks the line silhouettes in both languages.
-- "Slot" stays untranslated in the French copy — it is the FR site's own term, not a
-  word awaiting translation.
+- The headline carries no emphasised word when its clauses are parallel: pointing at
+  one of three equals makes the other two read as lesser. The filled control is then
+  the hero's only accent, which is what `design/identity.md` decision 4 asks for.
 - The hero never spends `--human` or `--agent`. Only `--accent`, `--text` and the
   surfaces — the human/agent colour rule is a different feature's decision and
   the hero does not anticipate it either way. Tested by `qa.md` AC-5.
+- The headline states no model of the composition that a section further down the
+  same page contradicts. It is checked against what `#slots` and `#extends` (or
+  their successors) actually describe, not asserted on its own — a headline that
+  still claims "every capability is a slot" once a section describes capabilities
+  filling no slot has drifted from the page it opens. Tested by `qa.md` AC-6.

@@ -267,8 +267,9 @@ section > h2::before {
  * The opening of every page that is not the home page: a kicker naming the
  * page's role in the argument (never the title restated), the h1, and a lead.
  * `--text-display` is the rung tokens.css reserved for exactly this — above
- * the documentation `h1` the rest of the site uses, below the hero's
- * `--text-hero` — so spending it here touches nothing shared with index.html.
+ * the documentation `h1` the rest of the site uses. The hero now sets its own
+ * `h1` at the same rung, so size is no longer what separates them: the hero
+ * keeps `--leading-hero` and `--tracking-hero`, which this block does not.
  */
 
 .page-head { margin: var(--space-4) 0 var(--space-2); }
@@ -331,17 +332,11 @@ section > h2::before {
   padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill);
   margin-bottom: var(--space-5);
 }
-/* Architecture scale, not the documentation scale h1 uses elsewhere: the three
-   lines are authored with <br> in the string, not produced by text-wrap: balance
-   — at this size the break is a composition decision, not layout's to make. */
 .hero h1 {
   grid-column: 1; grid-row: 2;
   margin: 0; max-width: none;
-  font-size: var(--text-hero); line-height: var(--leading-hero);
+  font-size: var(--text-display); line-height: var(--leading-hero);
   letter-spacing: var(--tracking-hero);
-}
-.hero h1 em {
-  font-style: normal; color: var(--accent);
 }
 .hero .lead {
   grid-column: 1; grid-row: 3;

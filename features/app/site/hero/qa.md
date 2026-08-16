@@ -60,6 +60,19 @@ When the hero loads
 Then Hop is already assembled and its eye is already lit — nothing travels
 ```
 
+### AC-6 — The headline's claim matches the composition the page goes on to describe
+
+```gherkin
+Given the rendered headline and the sections that follow it on the same home page
+When the model the headline states is compared against the model `#slots` and
+  `#extends` (or whichever sections describe the composition at the time) actually
+  show
+Then the headline names no capability, count or relationship that those sections
+  contradict
+And a headline that still reads "every capability is a slot" fails this criterion
+  once any section on the same page describes a capability filling no slot
+```
+
 ## Out of scope
 
 - The slot index and the run, and everything below the hero — owned by
