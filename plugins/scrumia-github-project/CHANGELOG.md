@@ -31,6 +31,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   point, greps for stale cross-skill behavior claims on a `plugins/` change, and checks
   that a reservation's issue carries a board card before calling it handled.
 ### Changed
+- `scrumia-ticket` and `scrumia-review` — the module's two implementations of gate 2 — record
+  the scoping signal as a comment on the ticket's issue when they find the gap, and carry only
+  an echo of it in the PR. The signal previously lived in a PR body alone, so a run that died
+  before `gh pr create` lost it — and the retrospective's trigger counts these gaps. Same
+  record/echo split the deviation record already uses, one artefact over. `scrumia-review` also
+  gains the condition it lacked: a label and a diff disagreeing is not a signal unless the scope
+  axis's own questions would have answered higher (`features/business/github-tracking/`, #222).
 - `scrumia-board` resolves its settings through `scrumia-extends --settings`, the
   composition's three-layer cascade, instead of reading `settings.tracker` out of
   `.scrumia/config.yaml`. A value set in `.scrumia/config.local.yaml` now actually reaches

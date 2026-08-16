@@ -61,6 +61,8 @@ When hesitating between two levels, take the higher one: one tier too high costs
 
 That "Asked at entry" column is exactly that — **entry** routing — who is asked before and during execution. It does not decide who reviews the PR at the end: gate 2 routes that by the diff's actual scope (ADR-0005), so a ticket whose diff outgrows the label you set still gets the review its diff calls for, and the gap comes back to you as a scoping signal rather than as a skipped review.
 
+It reaches you because you set the label and route on it, and only where the three questions above, applied to what the diff actually touched, would have answered higher — the two grids disagreeing on their own is ordinary and reports nothing. Expect it **recorded against the ticket**, in whatever venue the module in the `tracker` slot names, rather than mentioned only in passing: the retrospective's trigger counts these gaps and reads records, so a run that dies before proposing its change still owes you one. The rule is [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Gate 2's scoping signal*; what you owe once you have the record is written nowhere, so do not invent an obligation for yourself here.
+
 ## Preparing a sprint
 
 A sprint is a set of tickets that can move forward **in parallel without stepping on each other**. The selection criterion is not priority alone, it's priority **and** absence of conflict.

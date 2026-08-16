@@ -194,7 +194,15 @@ If a team module is plugged in, route the review by what your diff actually touc
 
 This is the same table `scrumia-review` applies at gate 2, deliberately: the two must never disagree about who owed this PR a review.
 
-**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, say so in the PR — and per [ADR-0015](https://github.com/tibs245/scrumia/blob/main/docs/adr/0015-scope-measures-reach.md), report that gap as a signal of failed scoping **only when the axis's own questions would have answered higher**. The label reads a rule's reach; the exit grid reads the diff's paths. Since 0015 decoupled them they disagree routinely and correctly — a specs-only diff whose rule nothing beyond its feature consumes is a correct `scope/M` that still draws a business reviewer — and calling that a mislabel fires on a whole class of correctly-labelled ticket.
+**Do not gate this on the `scope/*` label.** The label says which review to *expect*, and comparing the two is worth a line in the PR — but a wrong label is precisely the failure a review exists to catch, so it cannot be what decides whether the review runs. Where the diff's row asks for more than the label implied, and per [ADR-0015](https://github.com/tibs245/scrumia/blob/main/docs/adr/0015-scope-measures-reach.md) **only when the axis's own questions would have answered higher**, report that gap as a scoping signal. The label reads a rule's reach; the exit grid reads the diff's paths. Since 0015 decoupled them they disagree routinely and correctly — a specs-only diff whose rule nothing beyond its feature consumes is a correct `scope/M` that still draws a business reviewer — and calling that a mislabel fires on a whole class of correctly-labelled ticket.
+
+**Where the signal is owed, comment it on the issue now, addressed to the manager** — the role that set the label and routes on it ([`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Gate 2's scoping signal*). Name the label the ticket carries, what the diff's row asked for, and which of the axis's questions would have answered higher:
+
+```bash
+gh issue comment <issue> --body "Scoping signal: label <label> — review routed <roles> — axis question <1|2|3> answers yes on <what>"
+```
+
+Now, not at PR time, and on the issue rather than in the PR body: the retrospective's trigger counts these gaps ([`features/business/ceremonies/`](https://github.com/tibs245/scrumia/blob/main/features/business/ceremonies/business.md)) and a run that dies before `gh pr create` must still leave one behind — the same reason Step 0's deviation record lives there. Step 7 echoes it in the PR for a human reading the diff, and that echo is a copy.
 
 The table has no scope tier in it, `scope/XL` included: ADR-0015 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
@@ -221,7 +229,7 @@ gh pr create --title "<type>(<scope>): <expected outcome>" --body "..."
 
 Same `<type>` vocabulary as the branch and the commits, same mandatory scope.
 
-The description contains: what was done, `Closes #<n>` **exactly once** — the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — with the label/diff gap from Step 6, where there was one — and the open reservations with their issues.
+The description contains: what was done, `Closes #<n>` **exactly once** — the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — echoing the label/diff gap Step 6 recorded, where there was one, the comment on the issue being the record and this its copy — and the open reservations with their issues.
 
 If Step 0 recorded a deviation, echo it here — kind, cell, what the policy chose, what ran, why — for a human reading the diff. The echo, not the record: the comment on the issue is what a later reader queries, and the PR body is a copy of it.
 
