@@ -101,6 +101,29 @@ setting is not decidable from its tree, so "the module reads five settings and s
 whose absence is supposed to assert something can be omitted by a module the assertion is
 false for — the failure this whole split exists to catch, on its most likely instance.
 
+## A doc a skill needs travels with the module
+
+A module is read on the machine it was installed on, where nothing of this repository sits
+around it. So a document one of its skills needs to do its work is that module's own, and
+ships inside it. The official documentation may point at a module's doc; a module pointing
+outward for something it needs is what this rule refuses, and `docs/adr/0022` states the
+reasoning.
+
+**The test is what the reader loses when the target is unreachable.** A target carrying a
+rule, a method or a refusal the skill applies belongs to the module and moves in. A target
+carrying only the *reason* a rule is what it is, where the skill states the rule itself, may
+stay outside. An external source nobody can vendor — a standard, a licence — stays outside
+and is cited with its licence.
+
+**It is a rule about the act, not about the form of the reference.** A path written in prose
+and a markdown link are the same act, and a rule that reached only the link would leave the
+act legal in the form that is harder to see.
+
+Two things this does not say. It does not say a module may never mention what is outside it:
+provenance is a legitimate reason to point outward, and stating one is not a loophole. And it
+does not make duplication an accident — the module's copy is the one that runs, which is what
+keeps two texts from drifting toward each other with no way to tell which was meant.
+
 ## One authority, two surfaces, split on what a machine can decide
 
 This standard is one authority on what a module must contain and what it must not. It is
@@ -229,6 +252,13 @@ is what this feature exists to replace.
   question, closed, and answerable from one file at a time. The audit holds no rule of its
   own, and a question it cannot answer that way belongs to the procedural check or to
   neither.
+- **BR-12** — A document a module's skill needs to do its work ships inside that module.
+  Pointing outward is for provenance — the reason a rule is what it is, where the skill
+  states the rule itself — and for an external source nobody can vendor. The rule is about
+  the act and not the form: a path in prose and a markdown link are judged the same. Which
+  of the two a given target is has to be read to be decided, so it is the audit's; a
+  reference that leaves the module at all is the procedural check's, and BR-7 governs
+  their split.
 
 ## Vocabulary
 

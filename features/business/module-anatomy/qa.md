@@ -235,3 +235,29 @@ When a consumer merges the two lists
 Then every row carries module, file, rule and one line of what was not met, and nothing in
   a row's shape reveals which surface produced it
 ```
+
+### AC-17 — A doc a skill needs, cited instead of carried, is a finding
+
+```gherkin
+Given a module whose skill applies a rule it does not state, and points at a document
+  outside the module for it
+When the audit runs over it
+Then a finding names the reference, because what the skill applies is not in the module
+Given instead a module whose skill states the rule and points outward only for the reason
+  behind it
+When the same audit runs
+Then no finding is raised — provenance is a legitimate reason to point outward
+Given a module citing an external source nobody can vendor, with its licence
+When the same audit runs
+Then no finding is raised
+```
+
+Split across both surfaces, per BR-5. *That* a reference leaves the module is decidable
+from the tree and is the procedural check's — and is enforced by neither surface today,
+which is debt this criterion makes visible rather than hides. *Whether* what it reaches is
+operative or provenance has to be read, so it is the audit's, and it is the half stated in
+the Gherkin above. The two are one rule reported in one shape (AC-16), not two rules.
+
+A form-shaped question is not accepted in place of this one: a bare path in prose and a
+markdown link are the same act, and asking only about links would pass a module that writes
+every one of them the other way.
