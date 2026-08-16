@@ -1,0 +1,34 @@
+{
+  "implement": [
+    {
+      "name": "Semantic element over ARIA role",
+      "type": "refusal",
+      "when": "required",
+      "summary": "An interactive component implemented as a non-semantic element with a role attribute fails when a native HTML element carries the same contract for free",
+      "read": "rules/semantic-over-aria.md"
+    },
+    {
+      "name": "Element follows the purpose",
+      "type": "refusal",
+      "when": "required",
+      "summary": "An interactive widget styled to look like a button must use the element that matches its purpose, not its appearance",
+      "read": "rules/element-follows-purpose.md"
+    },
+    {
+      "name": "Tests query by accessibility role",
+      "type": "refusal",
+      "when": "bin/detect-vitest.sh",
+      "summary": "When vitest is present, tests should query through getByRole, getByLabelText or getByText rather than data-testid or CSS-class selectors",
+      "read": "rules/tests-query-by-role.md"
+    }
+  ],
+  "review": [
+    {
+      "name": "HTML, CSS and accessibility refusals",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A non-semantic element with a role, a styled widget that ignores the element matching its purpose, and tests that query the wrong layer",
+      "read": "skills/html-css-audit/SKILL.md"
+    }
+  ]
+}

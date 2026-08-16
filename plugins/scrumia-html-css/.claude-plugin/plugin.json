@@ -1,0 +1,19 @@
+{
+  "name": "scrumia-html-css",
+  "description": "The HTML, CSS and accessibility capability — semantic elements over ARIA roles, the element follows the purpose, and tests query what the user meets. Plugs in app by app, scoped to React and SolidJS by default.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "html",
+    "css",
+    "accessibility",
+    "a11y",
+    "web"
+  ]
+}
