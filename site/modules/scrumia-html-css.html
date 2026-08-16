@@ -24,15 +24,17 @@
 /* Inline, and it has to stay that way: both decisions below are made before the
    first paint, and an external file is a round trip the paint waits on.
    1. The saved theme, or the reader watches one theme be replaced by the other.
-   2. The `.js` gate that lets the stylesheet hide arriving content. It is set
-      only while something is running that can also un-hide, and never when the
-      reader asked for reduced motion — so no JavaScript means nothing hidden. */
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
 (function () {
   var root = document.documentElement;
   try {
     var saved = localStorage.getItem('scrumia-theme');
     if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
   } catch (e) {}
+  root.classList.add('has-js');
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!still && 'IntersectionObserver' in window) root.classList.add('js');
 })();
@@ -109,6 +111,18 @@
   <h2>Tags</h2>
   <ul class="mod-tags"><li>scrumia</li> <li>html</li> <li>css</li> <li>accessibility</li> <li>a11y</li> <li>web</li></ul>
 </section>
+
+<section id="plugs-into">
+  <h2>What it plugs into</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Register</th><th>Direction</th><th>Module</th></tr></thead>
+      <tbody><tr><td><code>implement</code></td><td>contributes</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>review</code></td><td>contributes</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+
 
 <section id="install">
   <h2>Install it</h2>
