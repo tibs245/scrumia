@@ -8,6 +8,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
   register rather than from a list it maintained about modules it does not own.
 ### Changed
+- The manager role now says that gate 2's scoping signal reaches it recorded against the
+  ticket rather than mentioned in passing, and on what condition it is owed at all: only
+  where the scope axis's own questions would have answered higher. Which venue holds the
+  record is left to the `tracker` slot, as the rule itself leaves it. It also states that
+  nothing is written about what the manager owes on receipt, so the role stops short of
+  inventing one (`features/business/dev-flow/`, #222).
 - `scrumia-pick-model` resolves the execution policy through `scrumia-extends --settings`,
   the composition's three-layer cascade, instead of reading `settings.team.execution` out of
   `.scrumia/config.yaml`. A matrix cell overridden in `.scrumia/config.local.yaml` now
