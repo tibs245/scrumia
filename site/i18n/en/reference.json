@@ -77,6 +77,9 @@
   "tanstack_p": "Refines one point of the implementation contract: <strong>how the app talks to the server and caches what it gets back</strong> — query keys, invalidation, optimistic updates, the boundary against client-only state. Ported from real monorepo use: 9 guides, 13 decisions. <strong>Assumes</strong> a stack TanStack Query ships for (React, Solid, Vue, Svelte). <strong>Costs</strong> a caching model to learn — the audit and refactor skills that would measure and close the gap aren't built yet.",
   "tanstack_row1": "The reference: query keys, cache invalidation, optimistic updates, the server/client boundary",
 
+  "rhf_p": "Declarative form management for React apps using <a href=\"https://react-hook-form.com\">React Hook Form</a>. <strong>Refuses</strong> a form without a resolver, <code>useState</code> + <code>onChange</code> where <code>register()</code> already covers it, and state read through the DOM. Scoped to <code>scrumia-impl-reactjs</code>; a SolidJS app pays no cost.",
+  "rhf_row1": "Measures an existing React app against the three refusals — resolver, registration, state channel",
+
   "config_title": "Configuration",
   "config_intro": "<code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.",
   "config_note": "Two conventions that matter: the mapping names what is present, so a capability you go without carries no key at all — and where the difference between \"not chosen yet\" and \"deliberately without\" matters, it is said as a comment standing in the key's place. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.",

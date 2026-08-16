@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-rhf — ScrumIA",
+  "meta_description": "scrumia-rhf : le slot implémentation de ScrumIA pour React Hook Form — formulaires déclaratifs, validation par resolver, entrées enregistrées.",
+  "og_title": "scrumia-rhf — ScrumIA",
+  "tagline": "Des formulaires déclaratifs, possédés par la bibliothèque de bout en bout.",
+  "responsibilities": "<p>Possède le <em>comment</em> de React Hook Form dans une app React : un formulaire déclare un resolver (la validation est un schéma, pas une logique par champ), ses entrées sont enregistrées via la bibliothèque, et son état se lit par <code>watch</code>, <code>getValues</code>, <code>formState</code> ou <code>handleSubmit</code>. Trois refus, une compétence d'audit, cités contre <a href=\"https://react-hook-form.com\">react-hook-form.com</a> épinglés en v7.</p>",
+  "refusals": "<p>Pas de formulaire sans resolver, pas de paire <code>useState</code> + <code>onChange</code> là où <code>register()</code> couvre déjà, pas de lecture d'état via le DOM. Une app SolidJS ne paie rien — les contributions sont scopées à <code>scrumia-impl-reactjs</code> uniquement.</p>",
+  "philosophy": "<p>Présume que la bibliothèque de formulaires est la source de vérité pour la valeur, la validation, l'état touché/sali et la soumission. Coûte le désapprentissage d'un état de formulaire fait main, prix payé une fois à l'adoption et jamais renouvelé au formulaire suivant."
+}
