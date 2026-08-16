@@ -20,3 +20,9 @@ claim" rule exists to block.
 installed`; the dashed leader reinforces that word but is never the only
 signal — a stroke style alone is not perceivable to everyone. Tested by
 AC-2.
+
+## Interface constraints
+
+- "Slot" stays untranslated in the French copy — it is the FR site's own term, not a
+  word awaiting translation. The rule sits here because this section owns the word:
+  it held it while the hero still said "slot", and moved when the hero stopped.

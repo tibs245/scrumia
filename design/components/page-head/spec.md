@@ -16,9 +16,10 @@ Anatomy, in order:
   `--accent` dash. States the page's role in the argument, never the title
   again: "the run, in detail", not "workflow".
 - `h1` — set at `--text-display`, the rung `tokens.css` reserves for exactly
-  this: above the documentation `h1` size used inside a page's own sections,
-  below the hero's `--text-hero`. Spending it here touches nothing the home
-  page uses.
+  this: above the documentation `h1` size used inside a page's own sections.
+  The home page's hero sets its `h1` at the same rung, so size no longer
+  separates the two — the hero adds `--leading-hero` and `--tracking-hero`,
+  which this block never takes.
 - `.lead` — `--text-lg`, `--text-soft`, `max-width: var(--measure)`. Says what
   the page covers in one sentence a reader can skip past on purpose.
 
