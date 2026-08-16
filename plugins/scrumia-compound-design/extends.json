@@ -1,0 +1,13 @@
+{
+  "implement": [
+    { "name": "Children reach the parent through context", "type": "refusal", "when": "required",
+      "summary": "A compound child reads parent state through context (or its framework equivalent), never through a prop chain of three or more",
+      "read": "rules/children-reach-parent-through-context.md" },
+    { "name": "Sub-components are co-located with the parent", "type": "refusal", "when": "required",
+      "summary": "A compound's parts travel with the parent — `<Tabs>` carries `<Tab>`, a separate path exports neither",
+      "read": "rules/sub-components-co-located.md" },
+    { "name": "A compound is consumed as one symbol", "type": "refusal", "when": "required",
+      "summary": "The library exposes the parent; a consumer who reaches for `<Tab items={…}>` is reading the wrong shape",
+      "read": "rules/compound-consumed-as-unit.md" }
+  ]
+}

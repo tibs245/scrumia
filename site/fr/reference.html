@@ -250,13 +250,23 @@
       </tbody>
     </table>
   </div>
-  <h3><a href="modules/scrumia-rhf.html"><code>scrumia-rhf</code></a> — slot <code>implementation</code></h3>
+  <h3><a href="modules/scrumia-rhf.html"><code>scrumia-rhf</code></a> — no slot</h3>
   <p>Gestion déclarative des formulaires pour les apps React utilisant <a href="https://react-hook-form.com">React Hook Form</a>. <strong>Refuse</strong> un formulaire sans resolver, <code>useState</code> + <code>onChange</code> là où <code>register()</code> couvre déjà, et la lecture d'état via le DOM. Scopé à <code>scrumia-impl-reactjs</code> ; une app SolidJS ne paie rien.</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
       <tbody>
         <tr><td><code>rhf-audit</code></td><td>Mesure une app React contre les trois refus — resolver, enregistrement, canal d'état</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3><a href="modules/scrumia-compound-design.html"><code>scrumia-compound-design</code></a> — no slot</h3>
+  <p>Le motif de composants composés, indépendant du framework. Un parent expose ses parties par une seule API, les enfants atteignent le parent par contexte (ou son équivalent — <code>provide</code>/<code>inject</code>, signals, un service), et les sous-composants voyagent avec le parent plutôt que d'être éparpillés sur des chemins de modules. Documenté côte à côte pour React, Vue, Solid et Angular, dans l'idiome de chaque framework.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
+      <tbody>
+        <tr><td><code>compound-audit</code></td><td>Fait l'état des lieux d'un composant existant : se lit-il comme un composé ? Les parties sont-elles co-localisées ? L'API publique est-elle un seul symbole ?</td></tr>
       </tbody>
     </table>
   </div>

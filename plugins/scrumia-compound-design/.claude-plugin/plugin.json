@@ -1,0 +1,20 @@
+{
+  "name": "scrumia-compound-design",
+  "description": "The compound component pattern, framework-agnostic: parts reach the parent through context (or its framework equivalent), sub-components travel with the parent, and the public API is one symbol. Covers React, Vue, Solid and Angular.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "compound",
+    "components",
+    "react",
+    "vue",
+    "solid",
+    "angular"
+  ]
+}
