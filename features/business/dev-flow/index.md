@@ -25,6 +25,8 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 - Defers to: `features/business/release-versioning/` for what a commit's type and scope
   are *worth* — which bump each earns, and what a bump promises a project. This feature
   says a commit carries them; that one says what they buy.
+- Defers to: `features/business/agent-team/` for who the roles are — this feature says gate
+  2's scoping signal is addressed to the manager, that one says what a manager is and owns.
 - Defers to: `features/business/ceremonies/` for what happens beside the ticket path —
   which occasions are admitted, on what trigger, and what each leaves behind. This
   feature owns the gates, which are decision points inside the path and not ceremonies.
@@ -33,7 +35,7 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 
 | File | Read it when |
 |---|---|
-| `business.md` | need who decides what on each path, where the human gate sits, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
-| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), or what routes gate 2's review, as falsifiable scenarios |
+| `business.md` | need who decides what on each path, where the human gate sits, when gate 2 owes a scoping signal and to whom, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
+| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), or what routes gate 2's review and what its scoping signal owes, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 

@@ -110,7 +110,7 @@ When CI is green and gate 2 raised no blocker
 Then nothing merges without the human, whatever `settings.autonomy.level` says
 ```
 
-### AC-11 — A label that under-states the diff does not shrink the review
+### AC-11 — A label that under-states the diff does not shrink the review, and the gap is signalled durably
 
 ```gherkin
 Given a ticket labelled `scope/S` whose diff touches `features/business/**` and
@@ -124,18 +124,27 @@ Then the business role reviews it, alongside tech, because the diff routes the
 Given a ticket labelled `scope/S` whose diff changes a rule another feature or
   another app consumes — so the axis's own second question answers yes and the
   label should have been `scope/L`
-When the PR is written
-Then the gap between the label and the diff is flagged as a scoping failure per
-  ADR-0015
+When gate 2 runs
+Then the gap between the label and the diff is reported as a scoping signal per
+  ADR-0015, addressed to the manager, and recorded against the work item so the
+  retrospective's trigger can read it afterwards
+```
+
+```gherkin
+Given the same ticket, and a run that reports the signal only inside itself — spoken
+  to no one and written down nowhere that outlives the run
+When the run ends, whether or not it got as far as proposing its change
+Then this criterion fails: the signal is owed to a named recipient and owed durably,
+  and a gap nobody can read afterwards is the gap that was never reported
 ```
 
 ```gherkin
 Given a ticket labelled `scope/M` whose diff touches `features/business/**`, and the
   rule it changes is consumed by nothing beyond its own feature — so the axis's own
   second question answers no
-When the PR is written
+When gate 2 runs
 Then the extra review still happens and the gap is not reported as a scoping
-  failure — `scope/M` was the correct label, a rule having changed, and the axis's
+  signal — `scope/M` was the correct label, a rule having changed, and the axis's
   spec clause keeps it below `scope/L` (`features/business/execution-policy/` AC-3);
   the two grids disagreeing here is them measuring different things, not the manager
   having mislabelled

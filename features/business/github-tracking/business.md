@@ -186,6 +186,20 @@ What happens when either label is absent — which default applies, and that the
 assumption is stated rather than silently applied — belongs to the policy that reads
 them, and is specified there for the same reason.
 
+**Gate 2's scoping signal is a comment on the ticket's own issue; the pull request body
+echoes it.** `features/business/dev-flow/` states when the signal is owed, to whom, and
+that it is recorded against the work item. Here is what that becomes on GitHub: the record
+is a comment on the issue, posted when the gap is found; the pull request body carries a
+copy of it for whoever is reading the diff, and that copy is a courtesy. Same split, and
+for the same reason, as the deviation record below — a run that dies before `gh pr create`
+leaves the record behind it, where a signal living only in a PR body would have gone with
+it. The two records differ in what they hold, not in where they live, which is why this
+file states one venue rule and not two.
+
+What that record's fielded shape is, and the token a project-wide read finds it by, is not
+written yet — unlike the deviation record below, which carries both. Until it is, the
+signal is findable on the ticket it belongs to and not across the project.
+
 ## A deviation is a structured comment on its own issue
 
 `features/business/execution-policy/` requires that a **deviation** — a human overriding

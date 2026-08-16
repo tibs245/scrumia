@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-16 — Gate 2's scoping signal is recorded on the issue and echoed in the pull request
+- Issue: #222
+- Category: Added
+- Breaking: no
+
 ## 2026-08-12 — The board and the issues are two surfaces, and the module publishes both
 - Issue: #294
 - Category: Added
