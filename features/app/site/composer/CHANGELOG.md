@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-16 — Authority row for the with-JS CI gap, resolved in ground-and-shell
+- Issue: #105
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-12 — The emitted config is a `modules:` mapping keyed by source (AC-2, AC-3, AC-6)
 - Issue: #301
 - Category: Changed

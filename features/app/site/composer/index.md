@@ -34,6 +34,8 @@ form being filled.
   - `docs/adr/0021-modules-keyed-by-source.md` — the shape the emitted config
     must carry, and the grammar of every key in it
   - `design/tokens.css` — which values may be used
+  - `features/app/site/ground-and-shell/tech.md` — whether `composer.js` runs
+    under CI, and what's checked instead
 
 ## Files present
 
