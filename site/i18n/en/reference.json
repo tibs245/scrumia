@@ -102,5 +102,7 @@
   "write_c1": "# validate before publishing",
   "write_c2": "# try without installing",
   "write_newslot": "A new slot is warranted when a real project would fill it <em>differently</em>. Otherwise it's one more skill in an existing module.",
-  "write_cta_decisions": "The fourteen decisions"
+  "write_cta_decisions": "The fourteen decisions",
+  "zod_p": "Runtime validation at the trust boundary. The type is derived from the schema rather than hand-written beside it, parsing happens where untrusted data enters rather than on every internal call, and a schema whose failure a user reads carries a field-targeted message. Cited against Zod pinned to v4.",
+  "zod_row1": "Audits an existing codebase against the three refusals: schemas duplicated as hand-written types, user-facing boundaries with no field-targeted errors, and parses on values the compiler already proved."
 }

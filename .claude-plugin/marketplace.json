@@ -149,6 +149,15 @@
       "category": "workflow",
       "tags": ["scrumia", "component", "compound", "design-pattern", "frontend"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-zod",
+      "source": "./plugins/scrumia-zod",
+      "description": "Runtime validation at trust boundaries — the schema is the source of truth, the type is derived from it, and a user-facing failure carries a field-targeted message. Pinned to Zod v4. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "validation", "zod", "runtime", "typescript"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

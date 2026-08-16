@@ -167,5 +167,7 @@
   "mod_compound_d": "The compound component pattern, framework-agnostic: parts reach the parent through context (or its framework equivalent), sub-components travel with the parent, the public API is one symbol. React, Vue, Solid and Angular, in each framework's idiom.",
   "mod_compound_cmd": "claude plugin install scrumia-compound-design@scrumia",
   "mod_slot_rhf": "no slot",
-  "mod_slot_compound": "no slot"
+  "mod_slot_compound": "no slot",
+  "mod_zod_d": "The schema is the source of truth, errors are field-targeted where a user reads them, and parsing happens at the trust boundary — not on values the compiler already proved. Pinned to Zod v4, with an audit skill and a boundary detector.",
+  "mod_slot_zod": "no slot"
 }

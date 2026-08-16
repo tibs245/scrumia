@@ -1,0 +1,18 @@
+{
+  "name": "scrumia-zod",
+  "description": "Runtime validation at trust boundaries with Zod: the schema is the source of truth, errors are part of the schema where a user reads them, and parsing happens where untrusted data enters — not on every internal call. Pinned to Zod v4.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "zod",
+    "validation",
+    "schema",
+    "typescript"
+  ]
+}

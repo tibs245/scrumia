@@ -1,0 +1,27 @@
+{
+  "implement": [
+    { "name": "Schema as source of truth", "type": "refusal", "when": "required",
+      "summary": "The TypeScript type comes from z.infer, never hand-written beside the schema it restates",
+      "read": "rules/schema-as-source-of-truth.md" },
+    { "name": "Validation at the trust boundary", "type": "refusal", "when": "required",
+      "summary": "Parse where untrusted data enters — network, file, user input, queue, env — and trust the inferred type inward",
+      "read": "rules/validation-at-boundary.md" },
+    { "name": "Errors carry a message", "type": "refusal", "when": "required",
+      "summary": "A schema a user reads the failure of declares field-targeted errors via the v4 error param",
+      "read": "rules/errors-carry-a-message.md" },
+    { "name": "Auditing runtime validation", "type": "method", "when": "optional",
+      "summary": "Three questions that find a duplicated type, an unmessaged boundary, and a parse on a value already proved",
+      "read": "skills/zod-audit/SKILL.md" }
+  ],
+  "review": [
+    { "name": "A type declared twice", "type": "refusal", "when": "required",
+      "summary": "An interface restating a schema compiles after the schema moves, and describes a shape the parser no longer produces",
+      "read": "rules/schema-as-source-of-truth.md" },
+    { "name": "A parse on an internal value", "type": "refusal", "when": "required",
+      "summary": "A parse the type system already proved buys a deep clone and hides which parses are load-bearing",
+      "read": "rules/validation-at-boundary.md" },
+    { "name": "A boundary that fails without saying why", "type": "refusal", "when": "required",
+      "summary": "Default messages name the expected type; a user needs the field and what to do about it",
+      "read": "rules/errors-carry-a-message.md" }
+  ]
+}

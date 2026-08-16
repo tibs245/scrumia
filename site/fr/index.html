@@ -557,6 +557,10 @@
           <input type="checkbox" name="c-add" value="scrumia-compound-design">
           <b>scrumia-compound-design</b><span>Le motif de composants composés, indépendant du framework — documenté côte à côte pour React, Vue, Solid et Angular.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-zod">
+          <b>scrumia-zod</b><span>Le schéma fait autorité ; le parsing se fait à la couture.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -908,6 +912,19 @@ apps:
       <p class="mod-desc">Le motif de composants composés, indépendant du framework : les parties atteignent le parent par contexte (ou son équivalent), les sous-composants voyagent avec le parent, l'API publique est un seul symbole. React, Vue, Solid et Angular, dans l'idiome de chaque framework.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">claude plugin install scrumia-compound-design@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🛡️</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-zod.html">scrumia-zod</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Le schéma fait autorité, les erreurs ciblent le champ là où un utilisateur les lit, et le parsing se fait à la frontière de confiance — pas sur des valeurs que le compilateur a déjà prouvées. Épinglé à Zod v4, avec une compétence d'audit et un détecteur de frontières.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-zod@scrumia</code>
     </div>
 
     <div class="mod">

@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-zod — ScrumIA",
+  "meta_description": "scrumia-zod: runtime validation at trust boundaries with Zod — the schema is the source of truth, errors are part of the schema, and parsing happens at the seam.",
+  "og_title": "scrumia-zod — ScrumIA",
+  "tagline": "The schema is the source of truth; parsing happens at the seam.",
+  "responsibilities": "<p>Three refusal rules that mark where validation belongs: the type is derived from the schema, never hand-written beside it; parsing happens at the trust boundary, not on every internal call; and a schema a user reads the failure of carries a field-targeted message. Ships a <code>zod-audit</code> skill that audits an existing codebase against the three, and a boundary detector that classifies each <code>.parse</code> / <code>.safeParse</code> as boundary-crossing or internal — the verdict is heuristic and every finding says so.</p>",
+  "refusals": "<p>A type restated by hand. A parse on a value the compiler already proved. A user-facing boundary that fails with <code>Invalid input: expected string</code>. The detector's verdict on an internal-looking parse is reported as a finding for human verification, not as a fact.</p>",
+  "philosophy": "<p>Assumes the schema is the source of truth and the library's documentation is the citation for every rule — no blog posts, no tutorials, no community patterns. Costs discipline at every parse site and at every schema, and pays back in errors that mean something to the reader who trips them.</p>"
+}
