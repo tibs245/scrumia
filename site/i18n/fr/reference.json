@@ -2,11 +2,9 @@
   "title": "Référence — ScrumIA",
   "meta_description": "Référence ScrumIA : les douze modules et leurs compétences, les rôles, le fichier de configuration, et comment écrire votre propre module.",
   "og_title": "ScrumIA — Référence",
-
   "page_kicker": "chaque module, chaque commande",
   "page_title": "Référence",
   "page_intro": "Modules, compétences, configuration, et comment écrire le vôtre.",
-
   "mods_title": "Les modules",
   "th_skill": "Compétence",
   "th_what": "Fonction",
@@ -19,28 +17,23 @@
   "h_slot_impl": "slot <code>implementation</code>",
   "h_slot_practices": "slot <code>practices</code>",
   "h_slot_design": "slot <code>design</code>",
-
   "core_p": "Ne remplit aucun slot et ne fait rien par lui-même. Il décrit la composition et la rend lisible pour les agents. Le seul module obligatoire.",
   "core_row1": "Installe ou vérifie la composition, génère la section <code>CLAUDE.md</code>",
   "core_row2": "Inspecte, modifie ou diagnostique la composition",
-
   "rules_p": "Situé aux côtés de <code>scrumia-core</code> : le format de hiérarchie des règles lui-même — index, guides, décisions — qui permet à une compétence de connaissance d'un module, ou aux conventions propres d'un projet, de ne charger que le guide vers lequel une tâche est routée plutôt qu'un seul fichier qui grossit. Ne remplit aucun slot. Ne suppose rien au-delà de <code>scrumia-core</code>. Coûte une couche de plus à bien concevoir — une section est un surcoût en dessous de trois préoccupations distinctes.",
   "rules_row1": "La référence du format : anatomie, navigation, précédence entre sections — à lire en premier",
   "rules_row2": "Échafaude une section locale au projet : entretien, récolte depuis le code et les configs de lint, écriture, enregistrement dans <code>CLAUDE.md</code>",
   "rules_row3": "Fait évoluer une règle : conteste sa décision, l'affine ou la remplace, met à jour le guide, journalise le changement",
-
   "specs_p": "Specs par feature, orientées TDD. Un catalogue de fichiers contextuel plutôt qu'un document unique. <strong>Présume</strong> que les spécifications vivent dans le dépôt à côté du code. <strong>Coûte</strong> plus de jugement lors de la rédaction qu'un modèle fixe.",
   "specs_row1": "Crée l'arborescence des spécifications",
   "specs_row2": "Crée, met à jour ou audite une feature",
   "specs_row3": "Trouve une règle, parcourt les dépendances, charge le contexte minimal",
-
   "ghp_p": "Issues, sous-issues, colonnes de GitHub Projects, branches et PRs. Un hook <code>PreToolUse</code> bloque les fichiers d'état dans le dépôt. <strong>Présume</strong> un <code>gh</code> authentifié. <strong>Coûte</strong> une dépendance GitHub stricte et rien en mode hors ligne.",
   "ghp_row1": "Colonnes, étiquettes, modèles d'issues",
   "ghp_row2": "Déplace un ticket de Backlog à Ready for dev",
   "ghp_row3": "Exécute un ticket : worktree, spec, code, tests, revue, PR",
   "ghp_row4": "Route une revue de PR et la synthétise",
   "ghp_row5": "Vue de progression, calculée à la demande",
-
   "teams_tag_manager": "opus · memory: project",
   "teams_tag_role": "opus · memory: project",
   "teams_manager_p": "Tableau, division, routage, cadence. N'est pas responsable des règles métier, de l'architecture, ou de la fusion.",
@@ -49,41 +42,34 @@
   "teams_p": "Chaque limite est une <strong>ligne de refus</strong> — sans elle, les trois s'effondrent en un généraliste et la division cesse de s'auto-financer. Trois n'est pas un nombre magique : les rôles sont activés, désactivés et ajoutés par configuration. Éteindre l'un d'eux est un compromis documenté, pas une régression.",
   "teams_row1": "Rôles actifs, leurs modèles, règles d'escalade",
   "teams_row2": "Construit un sprint et le consomme dans des déroulés dynamiques",
-
   "disc_row1": "Remet en question une idée jusqu'à ce qu'elle puisse être divisée",
   "disc_row2": "Découpe en features, crée des issues, livre les specs sur une branche",
-
   "rust_p": "États invalides rendus impossibles, <code>Result</code> aux limites, erreurs typées par couche. <strong>Refuse</strong> <code>unwrap()</code> en production, les clones qui calment l'analyseur d'emprunt, les traits à implémenteur unique.",
   "rust_row1": "La référence, chargée avant d'écrire du Rust dans une application couverte",
   "rust_row2": "Mesure une application existante par rapport aux règles, constat par constat",
-
   "solidjs_p": "Réactivité à grain fin sans réflexes React, tests de composants comportement-d'abord, structure par feature. <strong>Refuse</strong> les props destructurées, les effets utilisés comme dérivations, les composants qui récupèrent les données.",
   "solidjs_row1": "La référence, chargée avant d'écrire du SolidJS dans une application couverte",
   "solidjs_row2": "Mesure une application existante par rapport aux règles, constat par constat",
   "reactjs_p": "Server Components par défaut, Actions pour les mutations, état dérivé au rendu, tests de composants comportement-d'abord. <strong>Refuse</strong> <code>useEffect</code> pour l'état dérivé, le DOM impératif, les effets là où un gestionnaire d'événement suffit, <code>\"use client\"</code> non nécessaire.",
   "reactjs_row1": "La référence, chargée avant d'écrire du React 19 dans une application couverte",
   "reactjs_row2": "Mesure une application existante par rapport aux règles, constat par constat",
-
   "tdd_p": "Affine un point du contrat d'implémentation : <strong>comment nous testons</strong>. Le cycle opérationnalisé pour un agent, la limite des mocks, la cartographie AC-to-test.",
   "tdd_row1": "La référence : cycle, limite des mocks, où TDD s'arrête",
   "tdd_row2": "L'état réel du filet de sécurité des tests d'une application",
   "tdd_row3": "Met une zone sous test avant de la toucher",
-
   "solid_p": "Affine un point du contrat d'implémentation : <strong>quels principes de conception</strong>. Les cinq principes, chacun avec sa limite d'application — la sur-application est auditée au même niveau que les violations.",
   "solid_row1": "La référence : les cinq, avec leurs limites, en OO et fonctionnel pareillement",
   "solid_row2": "Violations et sur-applications, sur un pied d'égalité",
   "solid_row3": "Résout un constat, en étapes sûres",
-
   "tanstack_p": "Affine un point du contrat d'implémentation : <strong>comment l'app communique avec le serveur et cache ce qu'elle récupère</strong> — query keys, invalidation, optimistic updates, la limite qui sépare l'état serveur de l'état purement client. Porté d'une utilisation réelle monorepo : 9 guides, 13 décisions. <strong>Présume</strong> une stack que TanStack Query livre (React, Solid, Vue, Svelte). <strong>Coûte</strong> un modèle de caching à apprendre — les compétences d'audit et de refactorisation qui mesureraient et fermeraient l'écart ne sont pas encore construites.",
   "tanstack_row1": "La référence : query keys, invalidation de cache, optimistic updates, la limite serveur/client",
-
+  "compound_p": "Le motif de composants composés, indépendant du framework. Un parent expose ses parties par une seule API, les enfants atteignent le parent par contexte (ou son équivalent — <code>provide</code>/<code>inject</code>, signals, un service), et les sous-composants voyagent avec le parent plutôt que d'être éparpillés sur des chemins de modules. Documenté côte à côte pour React, Vue, Solid et Angular, dans l'idiome de chaque framework.",
+  "compound_row1": "Fait l'état des lieux d'un composant existant : se lit-il comme un composé ? Les parties sont-elles co-localisées ? L'API publique est-elle un seul symbole ?",
   "rhf_p": "Gestion déclarative des formulaires pour les apps React utilisant <a href=\"https://react-hook-form.com\">React Hook Form</a>. <strong>Refuse</strong> un formulaire sans resolver, <code>useState</code> + <code>onChange</code> là où <code>register()</code> couvre déjà, et la lecture d'état via le DOM. Scopé à <code>scrumia-impl-reactjs</code> ; une app SolidJS ne paie rien.",
   "rhf_row1": "Mesure une app React contre les trois refus — resolver, enregistrement, canal d'état",
-
   "config_title": "Configuration",
   "config_intro": "<code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.",
   "config_note": "Deux conventions qui comptent : la table nomme ce qui est présent, donc une capacité dont vous vous passez ne porte aucune clé — et là où la différence entre « pas encore choisi » et « délibérément sans » compte, elle se dit en commentaire, à la place de la clé. Et chaque module documente les clés qu'il lit sous <code>settings</code> : un paramètre implicite est celui que vous ne pouvez pas changer.",
-
   "impl_title": "Modules et pratiques d'implémentation",
   "impl_intro": "Les slots les plus personnels. <code>implementation</code> et <code>practices</code> prennent tous deux plusieurs modules à la fois, cartographiés application par application. Deux développeurs compétents peuvent avoir des points de vue opposés ici et aucun n'a tort, c'est exactement pourquoi ce sont des modules remplaçables plutôt que des règles du noyau.",
   "impl_contract_h": "Le contrat",
@@ -96,10 +82,8 @@
   "impl_compose_p": "Un module de pratique affine <strong>un point nommé</strong> de ce contrat — TDD affine « comment vous testez », SOLID affine « quels principes de conception » — et livre trois compétences : la référence, l'audit, la refactorisation. Le module d'implémentation <em>situe</em> chaque pratique pour sa pile. Une règle de précédence : <strong>spécifique bat générique</strong> — module d'implémentation plutôt que pratique, remplacement de projet plutôt que les deux.",
   "impl_override_h": "Surcharger sans forker",
   "impl_override_p": "Paramètres déclarés sous <code>settings.implementation.&lt;module&gt;</code> et <code>settings.practices.&lt;module&gt;</code>, plus fichiers de remplacement de projet optionnels (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) que le module lit et honore plutôt que ses propres règles. Un module n'offrant ni l'un ni l'autre est forké au premier désaccord — et ce fork ne voit jamais une mise à jour.",
-
   "rules_hier_h": "Hiérarchie des règles",
   "rules_hier_p": "Chaque compétence de connaissance devient un index de routage plutôt qu'un seul fichier lourd : <code>00-index.md</code> chargé en premier et toujours, <code>guides/NN-topic.md</code> chargé seulement à la demande, <code>decisions/D-NN-slug.md</code> ouvert seulement quand une règle est contestée. Un <code>section.json</code> déclare les globs qu'une section gouverne. Dans un monorepo, le <code>path</code> d'une app dans <code>apps[]</code> ancre quelles sections s'appliquent où — la même précédence <strong>spécifique bat générique</strong>, un niveau plus bas. Voir <code>scrumia-rules</code> plus haut et <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
-
   "design_p": "Identité, tokens et composants vivent dans le dépôt ; un projet Claude Design est la surface de revue, pas la source de vérité. Une règle en dessous : une valeur que les tokens ne portent pas est un constat, jamais une exception écrite en dur. Fournit le rôle permanent <code>designer</code> — le seul module à le faire depuis l'extérieur du slot <code>team</code>, parce qu'un rôle sans design system à garder jugerait au goût.",
   "design_row1": "Crée l'arborescence, écrit l'identité, enregistre le rôle",
   "design_row2": "La référence : ce qui vit où, les quatre questions avant d'écrire un composant",
@@ -107,10 +91,8 @@
   "design_row4": "Audite une interface existante : dérive et fadeur, deux colonnes",
   "html_css_p": "La capacité HTML, CSS et accessibilité pour une application couverte. Trois règles de refus et une compétence d'audit : un élément sémantique quand les deux expriment la même intention, un widget interactif qui utilise l'élément dont le contrat correspond à l'action, et un test qui interroge ce que rencontre une technologie d'assistance. Ciblée sur React et SolidJS par défaut ; un projet qui ne tourne sur aucun des deux n'en supporte pas le coût.",
   "html_css_row1": "Audite le HTML/CSS d'une application couverte contre les trois règles de refus",
-
   "impl_note_title": "Où le design rencontre ce contrat",
   "impl_note_p": "Les deux contrats se touchent sans se recouvrir : le module d'implémentation possède <strong>comment un composant est écrit</strong>, <code>scrumia-design</code> possède <strong>à quoi il ressemble</strong>. Un composant SolidJS et un gabarit rendu côté serveur consomment les mêmes tokens.",
-
   "write_title": "Écrire un module",
   "write_intro": "Trois règles, pas plus :",
   "write_li1": "<strong>Remplir un slot</strong> — un existant, ou un nouveau que vous définissez et documentez",

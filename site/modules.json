@@ -15,5 +15,6 @@
   "scrumia-practice-tanstack-query": { "emoji": "🔄", "slot": "practices" },
   "scrumia-design": { "emoji": "🎨", "slot": "design" },
   "scrumia-html-css": { "emoji": "♿", "slot": null },
-  "scrumia-rhf": { "emoji": "📝", "slot": null }
+  "scrumia-rhf": { "emoji": "📝", "slot": null },
+  "scrumia-compound-design": { "emoji": "🪢", "slot": null }
 }

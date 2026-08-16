@@ -140,6 +140,15 @@
       "category": "workflow",
       "tags": ["scrumia", "form", "rhf", "react-hook-form", "react", "frontend"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-compound-design",
+      "source": "./plugins/scrumia-compound-design",
+      "description": "The compound component pattern, framework-agnostic — parts reach the parent through context, sub-components are co-located with it, and the compound is consumed as one unit. React, Vue, Solid and Angular. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "component", "compound", "design-pattern", "frontend"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

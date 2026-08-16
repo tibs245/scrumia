@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-compound-design — ScrumIA",
+  "meta_description": "scrumia-compound-design: the compound component pattern, framework-agnostic — parts reach the parent through context, sub-components are co-located, the public API is one symbol.",
+  "og_title": "scrumia-compound-design — ScrumIA",
+  "tagline": "The compound component pattern, framework-agnostic — documented side by side for React, Vue, Solid and Angular.",
+  "responsibilities": "<p>Owns the compound component pattern as a <em>cross-framework capability</em>: a parent exposes its parts through a single API, children reach the parent through context (or the framework's equivalent — <code>provide</code>/<code>inject</code>, signals, a service), and sub-components travel with the parent rather than being scattered across module paths. Translates the same principle into the idiom of React, Vue, Solid and Angular, with one framework doc per family so the variation across the four is visible at a glance.</p>",
+  "refusals": "<p>A prop chain of three or more levels for parent state — context (or its equivalent) is the medium for parent-child state in a compound. Sub-components exported from a separate module path. A compound consumed as a constellation where the parts surface individually rather than through the parent.</p>",
+  "philosophy": "<p>Assumes the pattern is the same in every framework and the mechanism differs. Costs the discipline to document the same idea four times in four idioms — and to refuse a project that tries to skip the documentation step on the grounds that one framework is enough.</p>"
+}

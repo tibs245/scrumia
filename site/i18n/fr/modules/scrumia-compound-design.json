@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-compound-design — ScrumIA",
+  "meta_description": "scrumia-compound-design : le motif de composants composés, indépendant du framework — les parties atteignent le parent par contexte, les sous-composants sont co-localisés, l'API publique est un seul symbole.",
+  "og_title": "scrumia-compound-design — ScrumIA",
+  "tagline": "Le motif de composants composés, indépendant du framework — documenté côte à côte pour React, Vue, Solid et Angular.",
+  "responsibilities": "<p>Possède le motif de composants composés comme <em>capacité inter-frameworks</em> : un parent expose ses parties par une seule API, les enfants atteignent le parent par contexte (ou son équivalent — <code>provide</code>/<code>inject</code>, signals, un service), et les sous-composants voyagent avec le parent plutôt que d'être éparpillés sur des chemins de modules. Traduit le même principe dans l'idiome de React, Vue, Solid et Angular, avec un document de framework par famille pour que la variation entre les quatre soit visible d'un coup d'œil.</p>",
+  "refusals": "<p>Une chaîne de props de trois niveaux ou plus pour l'état du parent — le contexte (ou son équivalent) est le medium pour l'état parent-enfant dans un composé. Des sous-composants exportés depuis un chemin de module séparé. Un composé consommé comme une constellation où les parties apparaissent individuellement plutôt qu'à travers le parent.</p>",
+  "philosophy": "<p>Présuppose que le motif est le même dans chaque framework et que le mécanisme diffère. Coûte la discipline de documenter la même idée quatre fois dans quatre idiomes — et de refuser un projet qui tente de sauter l'étape de documentation au motif qu'un seul framework suffit.</p>"
+}

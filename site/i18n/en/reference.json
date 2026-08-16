@@ -2,11 +2,9 @@
   "title": "Reference — ScrumIA",
   "meta_description": "ScrumIA reference: the twelve modules and their skills, the roles, the config file, and how to write your own module.",
   "og_title": "ScrumIA — reference",
-
   "page_kicker": "every module, every command",
   "page_title": "Reference",
   "page_intro": "Modules, skills, configuration, and how to write your own.",
-
   "mods_title": "The modules",
   "th_skill": "Skill",
   "th_what": "What it does",
@@ -19,28 +17,23 @@
   "h_slot_impl": "slot <code>implementation</code>",
   "h_slot_practices": "slot <code>practices</code>",
   "h_slot_design": "slot <code>design</code>",
-
   "core_p": "Fills no slot and does nothing on its own. It describes the composition and makes it legible to agents. The only non-optional module.",
   "core_row1": "Installs or checks the composition, generates the <code>CLAUDE.md</code> section",
   "core_row2": "Inspects, changes or diagnoses the composition",
-
   "rules_p": "Sits beside <code>scrumia-core</code>: the rules-hierarchy format itself — index, guides, decisions — that lets a module's knowledge skill, or a project's own conventions, load only the guide a task routes to instead of one growing file. Fills no slot. <strong>Assumes</strong> nothing beyond <code>scrumia-core</code>. <strong>Costs</strong> one more layer to author correctly — a section is overhead below three distinct concerns.",
   "rules_row1": "The format reference: anatomy, navigation, precedence between sections — read first",
   "rules_row2": "Scaffolds a project-local section: interview, harvest from code and lint configs, write, register in <code>CLAUDE.md</code>",
   "rules_row3": "Evolves a rule: challenges its decision, refines or supersedes it, updates the guide, logs the change",
-
   "specs_p": "Per-feature specs, TDD-oriented. A contextual file catalogue rather than one document. <strong>Assumes</strong> specs live in the repo next to the code. <strong>Costs</strong> more judgement when writing than a fixed template.",
   "specs_row1": "Creates the specs tree",
   "specs_row2": "Creates, updates or audits a feature",
   "specs_row3": "Finds a rule, walks dependencies, loads minimal context",
-
   "ghp_p": "Issues, sub-issues, GitHub Projects columns, branches and PRs. A <code>PreToolUse</code> hook blocks stateful files in the repo. <strong>Assumes</strong> an authenticated <code>gh</code>. <strong>Costs</strong> a hard GitHub dependency and nothing offline.",
   "ghp_row1": "Columns, labels, issue templates",
   "ghp_row2": "Moves a ticket from Backlog to Ready for dev",
   "ghp_row3": "Runs a ticket: worktree, spec, code, tests, review, PR",
   "ghp_row4": "Routes a PR review and synthesises",
   "ghp_row5": "Progress view, computed on demand",
-
   "teams_tag_manager": "opus · memory: project",
   "teams_tag_role": "opus · memory: project",
   "teams_manager_p": "Board, splitting, routing, cadence. Doesn't own business rules, architecture, or the merge.",
@@ -49,41 +42,34 @@
   "teams_p": "Each boundary is a <strong>line of refusal</strong> — without it, the three collapse into one generalist and the split stops paying for itself. Three isn't a magic number: roles are enabled, disabled and added by config. Turning one off is a documented trade-off, not a downgrade.",
   "teams_row1": "Active roles, their models, escalation rules",
   "teams_row2": "Builds a sprint and consumes it in dynamic workflows",
-
   "disc_row1": "Challenges an idea until it can be split",
   "disc_row2": "Splits into features, creates issues, ships specs on a branch",
-
   "rust_p": "Invalid states made unrepresentable, <code>Result</code> at the boundaries, typed errors per layer. <strong>Refuses</strong> <code>unwrap()</code> in production, clones that appease the borrow checker, single-implementer traits.",
   "rust_row1": "The reference, loaded before writing Rust in a covered app",
   "rust_row2": "Measures an existing app against the rules, finding by finding",
-
   "solidjs_p": "Fine-grained reactivity without React reflexes, behaviour-first component tests, structure by feature. <strong>Refuses</strong> destructured props, effects used as derivations, components that fetch.",
   "reactjs_p": "Server Components by default, Actions for mutations, derived state during render, behaviour-first component tests. <strong>Refuses</strong> <code>useEffect</code> for derived state, imperative DOM, effects where event handlers belong, unnecessary <code>\"use client\"</code>.",
   "solidjs_row1": "The reference, loaded before writing SolidJS in a covered app",
   "solidjs_row2": "Measures an existing app against the rules, finding by finding",
   "reactjs_row1": "The reference, loaded before writing React 19 in a covered app",
   "reactjs_row2": "Measures an existing app against the rules, finding by finding",
-
   "tdd_p": "Refines one point of the implementation contract: <strong>how we test</strong>. The cycle operationalized for an agent, the mock boundary, AC-to-test mapping.",
   "tdd_row1": "The reference: cycle, mock boundary, where TDD stops",
   "tdd_row2": "The real state of an app's test safety net",
   "tdd_row3": "Puts a zone under test before touching it",
-
   "solid_p": "Refines one point of the implementation contract: <strong>which design principles</strong>. The five principles, each with its application limit — over-application is audited on equal footing with violations.",
   "solid_row1": "The reference: the five, with their limits, in OO and functional alike",
   "solid_row2": "Violations and over-applications, on equal footing",
   "solid_row3": "Resolves one finding, in safe steps",
-
   "tanstack_p": "Refines one point of the implementation contract: <strong>how the app talks to the server and caches what it gets back</strong> — query keys, invalidation, optimistic updates, the boundary against client-only state. Ported from real monorepo use: 9 guides, 13 decisions. <strong>Assumes</strong> a stack TanStack Query ships for (React, Solid, Vue, Svelte). <strong>Costs</strong> a caching model to learn — the audit and refactor skills that would measure and close the gap aren't built yet.",
   "tanstack_row1": "The reference: query keys, cache invalidation, optimistic updates, the server/client boundary",
-
+  "compound_p": "The compound component pattern, framework-agnostic. A parent exposes its parts through a single API, children reach the parent through context (or the framework's equivalent — <code>provide</code>/<code>inject</code>, signals, a service), and sub-components travel with the parent rather than being scattered across module paths. Documented side by side for React, Vue, Solid and Angular, in each framework's idiom.",
+  "compound_row1": "Takes stock of an existing component: does it read like a compound? Are the parts co-located? Is the public API one symbol?",
   "rhf_p": "Declarative form management for React apps using <a href=\"https://react-hook-form.com\">React Hook Form</a>. <strong>Refuses</strong> a form without a resolver, <code>useState</code> + <code>onChange</code> where <code>register()</code> already covers it, and state read through the DOM. Scoped to <code>scrumia-impl-reactjs</code>; a SolidJS app pays no cost.",
   "rhf_row1": "Measures an existing React app against the three refusals — resolver, registration, state channel",
-
   "config_title": "Configuration",
   "config_intro": "<code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.",
   "config_note": "Two conventions that matter: the mapping names what is present, so a capability you go without carries no key at all — and where the difference between \"not chosen yet\" and \"deliberately without\" matters, it is said as a comment standing in the key's place. And every module documents the keys it reads under <code>settings</code>: an implicit setting is one you can't change.",
-
   "impl_title": "Implementation modules and practices",
   "impl_intro": "The most personal slots. <code>implementation</code> and <code>practices</code> both take several modules at once, mapped app by app. Two competent developers can hold opposite views here and neither is wrong, which is exactly why these are replaceable modules rather than kernel rules.",
   "impl_contract_h": "The contract",
@@ -103,13 +89,10 @@
   "design_row4": "Audits an existing interface: drift and mutedness, two columns",
   "html_css_p": "The HTML, CSS and accessibility capability for a covered app. Three refusal rules and one audit skill: a semantic element when both express the same intent, an interactive widget that uses the element whose contract matches the action, and a test that queries what an assistive technology would meet. Scoped to React and SolidJS by default; a project running neither pays no cost.",
   "html_css_row1": "Audits a covered app's HTML/CSS against the three refusal rules",
-
   "impl_note_title": "Where design meets this contract",
   "impl_note_p": "The two contracts touch without overlapping: the implementation module owns <strong>how a component is written</strong>, <code>scrumia-design</code> owns <strong>what it looks like</strong>. A SolidJS component and a server-rendered template consume the same tokens.",
-
   "rules_hier_h": "Rules hierarchy",
   "rules_hier_p": "Each knowledge skill becomes a routing index instead of one fat file: <code>00-index.md</code> loaded first and always, <code>guides/NN-topic.md</code> loaded only on demand, <code>decisions/D-NN-slug.md</code> opened only when a rule is challenged. A <code>section.json</code> declares the globs a section governs. In a monorepo, an app's <code>path</code> in <code>apps[]</code> anchors which sections apply where — the same <strong>specific beats generic</strong> precedence, one level down. See <code>scrumia-rules</code> above and <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr/0011-rules-hierarchy.md\">ADR-0011</a>.",
-
   "write_title": "Writing a module",
   "write_intro": "Three rules, no more:",
   "write_li1": "<strong>Fill a slot</strong> — an existing one, or a new one you define and document",
