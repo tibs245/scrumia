@@ -145,6 +145,24 @@ axis's three questions (`docs/adr/0015-scope-measures-reach.md`), and only one o
 concerns a business rule; the label alone therefore does not convene business, and the
 role's own condition in `business.md` — *and changes a business rule* — is what does.
 
+### AC-15 — Two sessions write the same card: last-writer-wins holds
+
+```gherkin
+Given two sessions target the same ticket's card
+When both write to it, one after the other
+Then the write executed last is the one that stands, with no error or lock
+  raised by the shared state today
+```
+
+### AC-16 — No compare-and-swap: a stale write still succeeds
+
+```gherkin
+Given a session decided its write from a read that is no longer current
+When it writes anyway
+Then the write is accepted regardless of the state read — no compare-and-swap
+  exists in the shared state to reject it
+```
+
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —
@@ -152,3 +170,6 @@ role's own condition in `business.md` — *and changes a business rule* — is w
   `features/business/execution-policy/`. This feature only establishes that a
   role's own model lives in its agent frontmatter.
 - The mechanics and matrix of `scrumia-pick-model`.
+- Any enforcement or claim mechanism for concurrent writes (session tags,
+  leases, locks) — AC-15 and AC-16 document today's last-writer-wins behavior
+  only; no change to `board.sh` or `scrumia-sprint` is implied or required.
