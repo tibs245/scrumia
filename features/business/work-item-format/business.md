@@ -55,20 +55,33 @@ whether that stops the caller is the caller's to decide. Refinement may refuse t
 an issue on the same verdict under which execution proceeds with an alert — one is a
 decision nobody is waiting on, the other is a run in flight.
 
-## BR-4 — The verdict alerts; the human decides
+## BR-4 — The verdict decides nothing; it requires that someone does
 
-A verdict never blocks on its own. It reports what the form found missing, and whoever is
-running the work decides what to do about it. Stopping a run is a decision a person takes,
-not a consequence a form imposes.
+A form never refuses work outright. What it does is raise what it found missing and
+require an explicit decision on it before the work goes on. Two answers close that: the
+gap is fixed, or someone with the standing to do so authorises proceeding without fixing
+it. Continuing on neither is not a third answer.
 
-**A verdict is recorded where the work item lives, and it outlives the run.** An alert
-that exists only in an agent's output is an alert nobody reads on a run that dies, and a
-run executed under an unresolved alert must remain visible afterwards — that visibility is
-the whole compensation for not blocking.
+**The authorisation is a human's, and it is specific.** Not a mode switched on once and
+forgotten, not a level of autonomy that covers everything in advance: a decision about
+this gap, on this work item, recorded as such. A permission granted in general is a
+permission nobody remembers giving.
 
-What this costs is stated rather than discovered: **where nobody is watching, nothing is
-enforced.** Work running unattended proceeds under an alert exactly as it would without
-one. The record is what makes that countable after the fact; it is not what prevents it.
+**Where there is nobody to decide, the work stops and escalates.** This is the half that
+is easy to get backwards. A form that alerted and proceeded would enforce nothing exactly
+where nothing is watching — unattended work would be the case with the least scrutiny and
+the most freedom. It is the opposite: attended work can be waved through in a moment,
+unattended work waits.
+
+**Both the verdict and the answer to it are recorded where the work item lives, and both
+outlive the run.** A run that dies leaves them behind. That record is what makes the
+project's authorisations countable — how often a gap was waved through rather than
+closed, and on which gap — which is the signal that says a rule is being routed around
+rather than applied.
+
+What this costs is stated rather than discovered: **unattended work stops on gaps a person
+would have waved through in seconds.** That is the accepted price of the rule, and the
+cheap remedy for it is fixing the gap in the work item, not widening the authorisation.
 
 ## BR-5 — A work item is a dated artefact, not a view
 
@@ -144,5 +157,8 @@ Three boundaries, stated so they are not inferred:
 - **Whether several forms may be composed in one project at once** — a lighter and a
   heavier variant of the same module, chosen per app. Nothing above forbids it and nothing
   above requires it; it is left open rather than answered by omission.
-- **Who counts the issues started under an unresolved alert, and at what threshold that
-  becomes a signal.** BR-4 makes the count possible and names no reader for it.
+- **Who counts the authorisations, and at what threshold they become a signal.** BR-4
+  makes them countable and names no reader for it. The same gap waved through repeatedly
+  is a rule being routed around, and nothing reads that today.
+- **What standing an authorisation requires.** BR-4 says a human's and specific; whether
+  some gaps demand a particular person, and how that would be expressed, is open.

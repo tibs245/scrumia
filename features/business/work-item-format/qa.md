@@ -48,19 +48,20 @@ Then they are the same text, read from one file
 Given one issue and one verdict reporting a missing element
 When refinement asks for that verdict, and execution asks for the same verdict
 Then the verdict returned is identical in both cases
-And refinement may decline to promote the issue while execution proceeds, with
-  neither outcome coming from the form
+And refinement may decline to promote the issue while execution proceeds once
+  authorised, with neither outcome coming from the form
 ```
 
-### AC-6 — A verdict outlives the run that produced it
+### AC-6 — A gap is closed by a fix or by an authorisation, never by neither
 
 ```gherkin
-Given a run that starts work on an issue under a verdict reporting a missing
-  element
-When that run is interrupted before it produces any other artefact
-Then the verdict is still readable against that issue afterwards
-And the issue can be counted among those started under an unresolved alert
+Given a verdict reporting a missing element on an issue
+When work on that issue goes on
+Then either the missing element was supplied, or a human authorised proceeding
+  without it
+And the authorisation names the gap it was given for
 ```
+
 
 ### AC-7 — Readiness and doneness come from the modules, not from the form
 
@@ -101,7 +102,28 @@ Then the issue's body is unchanged
 And nothing marks it as out of date on its own
 ```
 
-### AC-11 — A form requiring more than a tracker can render says so
+### AC-11 — With nobody to decide, the work stops instead of proceeding
+
+```gherkin
+Given a verdict reporting a missing element on an issue
+And a run with no human available to answer it
+When the work would otherwise go on
+Then it stops and escalates
+And no authorisation is inferred from the absence of an answer, from a level
+  of autonomy, or from a mode set earlier
+```
+
+### AC-12 — A verdict and its answer outlive the run that produced it
+
+```gherkin
+Given a run that starts work on an issue under an authorised gap
+When that run is interrupted before it produces any other artefact
+Then both the verdict and the authorisation are still readable against that
+  issue afterwards
+And the issue can be counted among those authorised rather than fixed
+```
+
+### AC-13 — A form requiring more than a tracker can render says so
 
 ```gherkin
 Given a form requiring something a title, a body and labels cannot express
