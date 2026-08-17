@@ -101,7 +101,26 @@ Both are written into the issue and stay as written — `work-item-format`'s BR-
 that, and it is what makes an issue readable years later against the rules it was actually
 judged under.
 
-## BR-7 — What this form does not prescribe
+## BR-7 — A unit of value takes the same five sections, answered higher
+
+A unit of value to be split is written under this form, not under one of its own. The five
+sections hold, read at its scale: the need names who gains from the whole unit, the
+rattachement names the feature it serves, the composed sections resolve against what the
+project requires before a unit may be *split* rather than before work may be *started* —
+which is `work-item-format`'s BR-9 doing its work, not a special case written here.
+
+Two differences, and both follow from the level rather than from a second form:
+
+- **Open questions appear**, contributed at this level and at this level only. They are what
+  a unit of value carries that a piece of work must not: an unanswered question in a piece
+  of work is a reason not to start it, and in a unit of value it is the material the split
+  will turn into tickets.
+- **It carries no acceptance criteria of its own.** Its criteria live in the feature it
+  serves, and its progress is the state of its children — both already have an authority,
+  and restating either in the body creates a second one that stops matching the first time
+  a child closes.
+
+## BR-8 — What this form does not prescribe
 
 - **What a classification level means.** The issue carries a measure of reach and a
   measure of risk; `execution-policy` says what each level says.
@@ -116,6 +135,3 @@ judged under.
 - **Whether lighter and heavier variants of this form ship beside it**, and whether they
   would be separate modules or separate compositions of this one. Only the standard form
   is composed today.
-- **What an epic carries under this form.** The sections above describe a ticket; whether
-  an epic is the same shape with sections left unanswered, or a form of its own, is not
-  settled.

@@ -138,6 +138,30 @@ cannot be rendered on the strict one.
 A form is free to be richer than that; it is then a form for the trackers that can carry
 it, and it says so rather than being discovered not to fit.
 
+## BR-9 — A work item's level is a condition like any other
+
+Work items come at more than one level: a unit of value to be split, and a piece of work to
+be executed. One form covers both, and what differs between them is which contributed rules
+apply — the level is a condition, answered the way BR-7 requires of any condition.
+
+That is what keeps a second form from being invented. Readiness means different things at
+the two levels — a unit of value is ready to be *split*, a piece of work is ready to be
+*started* — and a rule about red tests contributed to both would be noise on one of them.
+Conditioning on the level says that once, where the rule is contributed.
+
+**The axis is closed at two values.** Left open, it becomes an unbounded dimension of
+variation and the form diverges again, this time from underneath.
+
+**The form reads the level; it does not define it.** What makes a work item one level or
+the other belongs to whichever module owns the work items' vocabulary, and the form asks
+rather than deciding. A level a form defined for itself would be a second answer to a
+question already settled elsewhere.
+
+**The level has to be readable when the form is applied, which is before any consequence of
+it exists.** A unit of value has no children at the moment it is written, so a level
+derived from having them is unavailable exactly when the form needs it. It is therefore
+declared, not inferred — how, is the owning module's to state.
+
 ## What this feature does not own
 
 Three boundaries, stated so they are not inferred:

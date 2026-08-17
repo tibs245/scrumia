@@ -123,7 +123,16 @@ Then both the verdict and the authorisation are still readable against that
 And the issue can be counted among those authorised rather than fixed
 ```
 
-### AC-13 — A form requiring more than a tracker can render says so
+### AC-13 — A rule conditioned on one level does not reach the other
+
+```gherkin
+Given a contributed rule whose condition names one work-item level
+When the rules are assembled for a work item at the other level
+Then that rule is absent from what the reader receives
+And the level was read from the module that owns it, not decided by the form
+```
+
+### AC-14 — A form requiring more than a tracker can render says so
 
 ```gherkin
 Given a form requiring something a title, a body and labels cannot express

@@ -98,3 +98,14 @@ When two different agents each open an issue on unrelated subjects
 Then both carry the same sections under the same headings in the same order
 And the difference between them is content only
 ```
+
+### AC-11 — A unit of value takes the same sections and carries no criteria of its own
+
+```gherkin
+Given a work item written at the unit-of-value level
+When its body is read
+Then it carries the same five sections as a piece of work
+And it carries open questions
+And it states no acceptance criterion of its own, naming the feature that
+  holds them instead
+```
