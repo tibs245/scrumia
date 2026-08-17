@@ -4,6 +4,6 @@
   "og_title": "scrumia-specs — ScrumIA",
   "tagline": "Des specs par feature, en catalogue de fichiers ciblés plutôt qu'en document unique.",
   "responsibilities": "<p>Possède l'endroit où vit une spécification et la forme qu'elle prend : un répertoire par feature, chaque fichier avec un lecteur défini — les règles métier, les critères d'acceptation, les choix techniques, l'interface. Crée une feature, la met à jour, l'audite, et retrouve celle qui porte une règle sans lire tout l'arbre.</p>",
-  "refusals": "<p>Aucun modèle fixe, et aucune histoire dans une spec : un fichier n'existe que s'il a du contenu, et ce qui a changé appartient à git et aux tickets.</p>",
-  "philosophy": "<p>Présume que les specs vivent dans le dépôt, à côté du code qu'elles décrivent. Coûte plus de jugement à la rédaction qu'un modèle — le catalogue dit quel fichier <em>peut</em> exister, jamais lequel vous devez.</p>"
+  "refusals": "<p>Aucun modèle fixe, aucune histoire dans une spec, et aucun jugement laissé implicite : chaque angle porte les questions fermées qui décident si son fichier est dû, et ce qui a été écarté est rapporté.</p>",
+  "philosophy": "<p>Présume que les specs vivent dans le dépôt, à côté du code qu'elles décrivent. Coûte plus de jugement à la rédaction qu'un modèle — mais ce jugement est écrit sous forme de questions, avec la réponse à retenir en cas de doute, pour qu'un petit modèle et un humain attentif aboutissent au même ensemble de fichiers.</p>"
 }
