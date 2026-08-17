@@ -36,8 +36,8 @@ roles up, hands the floor back to the human, and starts no sprint.
 
 | File | Read it when |
 |---|---|
-| `business.md` | Activation triggers per role, the escalation rules that hold regardless of the project's autonomy level, and the Owns/Refuses table per role |
-| `qa.md` | Acceptance criteria for role activation, convening as an entry point, arbitration and the sprint-loop constraint |
+| `business.md` | Activation triggers per role, the escalation rules that hold regardless of the project's autonomy level, the Owns/Refuses table per role, and **when a role must be consulted** (the conditions under which refinement, execution and review route to a role, and how a report names what was consulted or why not) |
+| `qa.md` | Acceptance criteria for role activation, convening as an entry point, arbitration and the sprint-loop constraint, and the role-consultation reflex (a refinement consults the role whose domain owns the blocker; reports name what was consulted; an unreachable role is reported as such; a repeated question is asked once) |
 | `CHANGELOG.md` | History of changes to this feature |
 
 No `legal.md`: this feature governs the team's own workflow, not personal data,
