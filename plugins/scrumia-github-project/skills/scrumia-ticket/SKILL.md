@@ -228,6 +228,16 @@ Both run the actual role. [The roles' doc](https://github.com/tibs245/scrumia/bl
 
 A **Blocked** review gets fixed before opening the PR — and the fix is committed before the role is asked again, which is another yield. An **Approved with reservations** review goes out as is, with the reservations carried into the PR description and turned into issues.
 
+**The role posts its own verdict.** The executor is the convener of the review, not its author — "the author reviews their own work" was never the defect, and the fix is not to make the executor write one. At the end of the role review, the role's agent writes its verdict on the ticket's issue, in a fixed format a later reader can find:
+
+```
+Verdict: Approved | Reservations | Blocked — #<n> — by scrumia-<role>
+```
+
+The executor does not write the verdict on the role's behalf — the role's name is the attribution, and the substitution path a structured field written by the executor's return would reopen is the one the attribution clause closes. The pull-request body echoes the verdict for a human reading the diff, but the echo is a courtesy: the record is on the issue, where a run that dies between review and PR still leaves it behind. The format and the rule are [`features/business/agent-team/`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md) and [`features/business/github-tracking/`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md) to materialise; this step states only that the role posts it and the executor does not.
+
+**If the role's agent type does not resolve**, the verdict is `not_run` with cause "agent type did not resolve" — and the PR body says the review did not run as that role. A general agent handed the role's `.md` file is not that role, and the difference is measured (`features/business/agent-team/` AC-10); a fallback that reads as the real thing is worse than a fallback that names itself.
+
 Without a team module plugged in, your self-review from step 5 is the only review before the human. Say so explicitly in the PR: the reviewer must know what was checked and by whom.
 
 The same holds when the role itself could not be reached. Handing your own general agent the role's `.md` file is not that role, and the difference is measured: on one sprint's five PRs, self-applied reviews returned five approvals and two reservations where the actual roles returned one blocker and nine. Report which one ran. A fallback that reads as the real thing is worse than a fallback that names itself.
