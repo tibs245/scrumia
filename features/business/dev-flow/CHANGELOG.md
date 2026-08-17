@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — A ticket that names the feature it produces is not refused at Step 0
+- Issue: #18
+- Category: Added
+- Breaking: no
+
 ## 2026-08-16 — Gate 2's scoping signal: owed to the manager, recorded against the work item
 - Issue: #222
 - Category: Added

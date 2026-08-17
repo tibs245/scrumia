@@ -16,10 +16,11 @@ yield compliance; both are read from the ticket and the branch, not from a dashb
 
 **Brainstorming** — from an idea to a scoped ticket. **Execution** — from a scoped
 ticket to a PR. A ticket is the boundary between them: it exists once it carries at
-least one verifiable acceptance criterion and names the feature it belongs to (or,
-for the bootstrap case — a ticket whose deliverable is the parent feature itself,
-normally refused at Step 0 and admitted only by a stated exception — is what it
-produces).
+least one verifiable acceptance criterion and names the feature it belongs to. A
+ticket whose deliverable is the parent feature itself — the bootstrap case —
+names that feature the same way; what carries the intent is the acceptance
+criteria, since the feature is what the ticket produces. A ticket is refused only
+when it names no feature, not when the named feature does not yet exist.
 
 ## Who decides, on each path
 
