@@ -73,7 +73,7 @@ Each execution follows the same outline:
 
 The modules carrying these steps are the ones the project's `extends` names. Where nothing covers a step, it is simplified, not silently skipped: say so in the PR.
 
-Step 5's role review spawns the role by its agent type — the execution is itself a subagent spawned by the orchestrator, so the orchestrator (the session that runs the sprint) is the agent that may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([the roles' doc](https://github.com/tibs245/scrumia/blob/main/docs/agents.md)); fall back to a subprocess, prompt on stdin:
+Step 5's role review spawns the role by its agent type — the execution is itself a subagent spawned by the orchestrator, so the orchestrator (the session that runs the sprint) is the agent that may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([`rules/agent-restart-after-install.md`](../../rules/agent-restart-after-install.md)); fall back to a subprocess, prompt on stdin:
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-business \
