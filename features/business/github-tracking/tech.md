@@ -59,3 +59,27 @@ query silently returns everything.
 The two search terms are ANDed, and `L/low` does not collide with `XL/low` —
 adjacency is preserved, which is what lets the `cell` token alone discriminate one
 cell from another.
+
+## The role-verdict search command
+
+A role's verdict is found on the ticket's issue in the same carrier the deviation
+record uses, with the same discipline on the qualifier. The verdict is a comment
+carrying the `Verdict:` prefix and the `by scrumia-*` token — reading one ticket:
+
+```bash
+gh issue view <n> --json comments
+```
+
+Reading across the project — which is what the gather needs:
+
+```bash
+gh search issues --repo <owner>/<repo> --match comments 'Verdict:' 'by scrumia-*'
+```
+
+The two terms are ANDed. The `by scrumia-*` token is what discriminates a role
+verdict from any comment that quotes the word "Verdict:"; without it, a search on
+the prefix alone returns every issue that matches, in the same way the deviation
+record's qualifier does. `--match comments` is the same flag the deviation record
+needs — folding the qualifier into the query string sends the rest of the query
+as the qualifier's value, and GitHub discards what it cannot parse and answers
+with the whole repository, exit code 0, no warning.

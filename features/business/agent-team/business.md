@@ -22,7 +22,7 @@ independent of configuration), **arbitration** (the manager surfacing a
 disagreement between the other two to the human, with its own recommendation,
 without settling it itself), **verdict** (a role's explicit answer:
 approved / blocked, compliant / non-compliant, or their "with reservations"
-variants).
+variants — see § *The verdict vocabulary, posted by the role* below).
 
 ## Roles
 
@@ -264,3 +264,77 @@ for reads: decide from a fresh read at the point of decision, not from a value
 held since earlier in the session. This does not introduce a claim, a lease or
 a lock — none of those exist in the shared state today, and none is implied by
 stating this.
+
+## The verdict vocabulary, posted by the role
+
+A role review produces one of three states, of which one is a failure:
+
+- **`run`** — the review ran *as the role*, and a verdict is attached. The
+  transport that reached the role is not a state in itself: a `claude -p --agent`
+  subprocess is `run` when it ran as the role, and `not_run` when it did not —
+  what matters is who answered, not how the answer was reached.
+- **`not_required`** — the ticket's scope prescribes no review (`scope/S`).
+  This is a label-derived state: the executor does not declare it. An executor
+  that asserts `not_required` on a `scope/M` or `scope/L` is asserting a
+  substitution the gate refuses, and the record is read as non-compliant.
+- **`not_run`** — a required review did not run as its role. **Cause is
+  mandatory** in the carrier: the same record that names the state names the
+  reason — the role's agent type did not resolve, the role disclaimed, the
+  executor fell back to a self-applied review, the review was unreachable for
+  whatever reason. "Skipped" and "unreachable" are *causes* of `not_run`, not
+  states: at gate 3 the human takes the same decision for any required-and-absent
+  review, regardless of cause.
+
+A self-applied review — the executor running its own diff through a general
+agent handed the role's `agents/` file — is not a role review. The difference
+is measured: on one sprint's five PRs, the self-applied reviews returned five
+approvals and two reservations where the actual roles returned one blocker and
+nine. At the role gate, a self-applied review counts as `not_run` with that
+cause; the verdict the gate reads is the role's, and a verdict that came from
+no role is no verdict.
+
+**The verdict is posted by the role, not by the executor.** The role's agent
+writes its own verdict on the ticket's issue, in a form a later reader can find
+without having to re-run the review. The format is:
+
+```
+Verdict: Approved | Reservations | Blocked — #<n> — by scrumia-<role>
+```
+
+`Approved`, `Reservations` and `Blocked` are the three outcomes the role can
+sign; the ticket number ties the verdict to its work item; the `by scrumia-*`
+token names the role that produced it. Three properties no other carrier has:
+
+- **Unfalsifiable by omission.** No role-signed comment = no review, whatever
+  the executor's report says. A summary in the pull-request body that the
+  executor wrote is not a verdict and is not what the gate reads.
+- **Survives the executor's death.** A record that lives on the ticket's issue
+  outlives the run that created it; a structured field in the agent's return
+  dies with the session.
+- **Machine-readable.** A read can find the verdict by filtering the issue's
+  comments for the `Verdict:` prefix and the `by scrumia-*` token, in the same
+  call the board read uses for the deviation record.
+
+**Attribution is required.** A verdict that does not name the role that
+produced it is treated as absent: `not_run`. The `by scrumia-<role>` token is
+not a courtesy — it is what lets the gate tell a role verdict from a comment
+that happens to match the format, and closes the substitution path a structured
+field written by the executor's return would reopen.
+
+**The orchestrator runs the review as a net, on the absence of the carrier.**
+Where the role's verdict is not on the ticket at gate 3, the orchestrator
+triggers the review on that absence — a checkable fact, not a declaration by
+the executor. A PR for which the tracker holds no role-signed verdict goes
+through the net. The net is the immune system to the executor's report failing
+twice, and the way it triggers is the only one that does not trust the same
+record that already failed.
+
+This rule is not new in substance — it is the same falsifiability the
+deviation record and the scoping signal already enforce on the same surface.
+The deviation record is on the issue so the record survives the run; the
+scoping signal is on the issue so the gap survives the run; the verdict is on
+the issue so the review outcome survives the run. Three records, one venue,
+one reason. The venue and the read are
+[`features/business/github-tracking/`](../github-tracking/)'s to materialise; the
+vocabulary and the rule that the role posts its own verdict are this feature's,
+and `features/business/dev-flow/` cites rather than restates them.

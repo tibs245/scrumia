@@ -213,6 +213,63 @@ yet, so promising a project-wide read here would state a criterion nothing can s
 Closing that gap is its own change — the retrospective's trigger is the reader that will
 need it.
 
+### AC-16 — A role's verdict is on the issue, not in the pull request that may never open
+
+```gherkin
+Given a ticket whose review ran as the role and produced a verdict, and whose run
+  dies before opening a pull request
+When that ticket's issue is read
+Then the verdict is there as a comment in the role's format — `Verdict: … — #<n>
+  — by scrumia-<role>` — because the issue is the record and a pull-request body
+  only ever echoes it
+```
+
+```gherkin
+Given the same verdict written into the pull-request body and nowhere else
+When the same read runs
+Then this criterion fails — the venue mistake AC-10 already names for the
+  deviation record, one artefact over: an echo with no record behind it is
+  invisible to every reader who is not looking at that one pull request
+```
+
+### AC-17 — A role's verdict is read by the gate, by attribution, not by the executor's report
+
+```gherkin
+Given a ticket whose role review ran as the role and posted a verdict on the issue
+When the gather reads the verdict
+Then the verdict is found by the `Verdict:` prefix and the `by scrumia-*` token —
+  the role is identified, the verdict is attributable, and an executor's
+  "the review ran" summary is not the record the gate reads
+```
+
+```gherkin
+Given a ticket at gate 2 whose comment carries `Verdict: Approved …` but no
+  `by scrumia-*` token
+When the gather reads the verdict
+Then the verdict is treated as absent and the state is `not_run` — an
+  unattributed verdict is not a role verdict
+```
+
+```gherkin
+Given a ticket at gate 2 whose role review did not run as the role, and whose
+  executor reports "no review ran" on the gather
+When the orchestrator's net runs on the absence of a role-signed comment
+Then the net triggers the review on that absence — a checkable fact, not a
+  declaration by the executor — and trusts neither the executor's report nor its
+  silence
+```
+
+### AC-18 — A role verdict is found across the project by its tokens, not by scanning comments
+
+```gherkin
+Given issues across the project carrying role verdict comments on different tickets
+When the gather or another project-wide reader searches for them
+Then they are returned by a search over comment text on the `Verdict:` prefix and
+  the `by scrumia-*` token, without enumerating boards or opening each issue — and
+  a search returning the whole repository, the way a folded qualifier does, fails
+  this criterion
+```
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.

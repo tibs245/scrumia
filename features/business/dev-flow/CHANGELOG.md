@@ -3,6 +3,13 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — Gate 2's verdict is recorded by the role, not asserted by the executor
+- Issue: #125
+- Category: Added
+- Breaking: yes — the gate-2 outcome now has three states (`run`, `not_required`,
+  `not_run`) and the verdict is read from the ticket's issue, not from the executor's
+  report. A gather that does not know the new state cannot run.
+
 ## 2026-08-17 — `auto_merge` becomes a closed allowlist of named categories; the self-widening rule lands
 - Issue: #218
 - Category: Changed
@@ -24,6 +31,7 @@ regeneration) is the sibling implementation sub-issue (#219).
 - Issue: #18
 - Category: Added
 - Breaking: no
+
 
 ## 2026-08-16 — Gate 2's scoping signal: owed to the manager, recorded against the work item
 - Issue: #222

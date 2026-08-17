@@ -220,7 +220,53 @@ When the first ticket's refinement convenes the role and records the answer
 Then the second ticket's refinement references that answer rather than asking
   the role again
   And the role is convened once across the pass, not once per ticket
+
 ```
+
+
+## Verdict attribution and the role-posted format
+
+The verdict the role posts on the ticket's issue is identified by its format, and a record that does not match is read as absent. These scenarios test that the gate reads what the role wrote, and that what it cannot read it does not infer.
+
+### AC-22 — A role's verdict carries the role's name, and is posted by the role
+
+```gherkin
+Given a role review that ran as the role and reached a verdict
+When the verdict is recorded on the ticket's issue
+Then the comment carries the `Verdict:` prefix, one of `Approved`, `Reservations`,
+  `Blocked`, the ticket number, and the `by scrumia-<role>` token — the role is
+  identified, the verdict is attributable, and the comment is the role's, not
+  the executor's
+```
+
+```gherkin
+Given a verdict posted on the ticket's issue that lacks the `by scrumia-*` token
+When the gather reads the verdict
+Then the verdict is treated as absent and the state is `not_run` — an unattributed
+  verdict is not a role verdict, and the attribution clause exists for that
+  reading
+```
+
+### AC-23 — A `not_required` verdict is derived from the scope label, not asserted by the executor
+
+```gherkin
+Given a ticket whose scope is `scope/S` and which therefore requires no review
+When the gather reads the ticket
+Then it reports `not_required` — derived from the scope label, not asserted by
+  the executor; an executor that asserts `not_required` on a `scope/M` or
+  `scope/L` produces a non-compliant record
+```
+
+### AC-24 — A `not_run` carries a cause in the same field the state is
+
+```gherkin
+Given a `not_run` outcome that the gather reports on the ticket
+When the record is read
+Then the cause is named in the same field the state is — "skipped",
+  "unreachable", "self-applied", "agent type did not resolve" — and a state
+  without a cause is non-compliant
+```
+
 
 ## Out of scope
 

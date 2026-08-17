@@ -256,6 +256,75 @@ deviation restates it for a human reading the diff, and that echo is a courtesy.
 bodies were the whole record once, in the sprint whose repeated overrides on the same
 cell went uncounted for it; the comment is now the record and the PR is its copy.
 
+## A role review verdict is a comment on the ticket's own issue
+
+`features/business/dev-flow/` requires that a ticket at gate 2 carry the outcome of its
+review as a record that survives the executor's death — one of `run`, `not_required`,
+or `not_run` with a cause. Three properties no other carrier has: **unfalsifiable by
+omission** (no role-signed comment = no review, whatever the executor's report says),
+**survives the executor** between review and PR, and **machine-readable** for the
+gather. Here is what that becomes on GitHub.
+
+**The venue is a comment on the ticket's own issue**, posted by the reviewing role's
+agent at the end of its review. The format is the role's, fixed:
+
+```
+Verdict: Approved | Reservations | Blocked — #<n> — by scrumia-<role>
+```
+
+`Approved`, `Reservations` and `Blocked` are the three outcomes the role can sign;
+the ticket number ties the verdict to its work item; the `by scrumia-*` token names
+the role that produced it. The format is not negotiated per role or per ticket — it
+is the vocabulary the gate reads, and a verdict that does not match the format is
+read as absent (`not_run`).
+
+**Why an issue comment.** Same trade-off as the deviation record above: a label is
+queryable and carries no verdict, and the verdict is the substance. A Projects v2 field
+is structured but moves the record into board-side state, against ADR-0009's
+"documented composition, no dynamic resolution". A structured field in the agent's
+return dies with the session and is written by the executor — exactly the failure mode
+the role-posted verdict exists to remove. A comment carries the verdict, lives beside
+the ticket, survives the run, and reuses a carrier the project already writes to
+rather than inventing a third.
+
+**Who posts it.** The reviewing role's agent, not the executor. The executor is the
+*convener* of the review (`features/business/dev-flow/`), and is not the reviewer — the
+roles are distinct agents with their own definitions, and "the author reviews their own
+work" was never the defect. The executor running a general agent handed the role's
+`agents/` file is not a role review, and the verdict it could write is not a role
+verdict: the `claude -p --agent` subprocess is `run` when it ran as the role, and
+`not_run` when it did not. This is the substance the attribution clause names, and
+what the substitution path closes.
+
+**How it is read back.** One ticket: `gh issue view <n> --json comments`, the same
+read a deviation record uses. Across the project — which is what the gather needs:
+
+```bash
+gh search issues --repo <owner>/<repo> --match comments 'Verdict:' 'by scrumia-*'
+```
+
+The two terms are ANDed, and the `by scrumia-*` token is what discriminates a role
+verdict from a comment that happens to match the prefix; without it, a search over
+`Verdict:` alone returns every issue that quotes the word. The exact failure mode if
+the qualifier is folded into the query string is the same as the deviation record's
+(`tech.md`'s *"The deviation search command"*): GitHub discards what it cannot parse
+and answers with the whole repository, exit code 0, no warning.
+
+**The PR body echoes it, and stops being the record.** A PR whose ticket carries a
+role verdict restates it for a human reading the diff, and that echo is a courtesy.
+The orchestration that reports the verdict from the PR body alone is the orchestration
+that cannot tell a review that ran from one that was skipped — the executor wrote
+both, and the executor's report is what failed on the 2026-08-08 sprint. The comment
+is now the record; the PR is its copy.
+
+**The orchestrator reading the gate is the one that triggers the net.** Where the
+ticket's issue carries no `Verdict: … by scrumia-*` comment at gate 3, the
+orchestrator runs the role review on that absence — a checkable fact, not a
+declaration by the executor. "The executor says no review ran" is exactly the report
+that is not trusted: an executor that wrote the absence would have written a verdict
+in the same place, and both are the same record. The net is the checkable fact, and
+the gather's report is what closes the substitution path.
+
 ## Gate 3 reads the verdict and the file set through two tracker-side artefacts
 
 `features/business/dev-flow/` states the four cumulative conditions gate 3 opens
@@ -297,6 +366,7 @@ actually touched, not on what the manager's refinement assumed it would
 trace here is, like the one for deviations, the bare minimum the predicate
 needs to evaluate on — what `scrumia-review` and the eligibility script do
 with these artefacts is theirs, not this feature's.
+
 
 ## The reference is on every commit; the close is on the pull request, once
 
