@@ -205,6 +205,61 @@ Which artefact holds the record, and whether anything restates it for a human re
 the change, is whichever feature fills the tracker slot to say. Strip the tracker and
 the obligation above still stands word for word; only its venue evaporates.
 
+### Gate 2's verdict — recorded by the role, not asserted by the executor
+
+**A ticket is not complete at gate 2 unless the outcome of its review is recorded.**
+The outcome is one of three states, named here once and reused by every reader of the
+review:
+
+- **`run`** — the review ran *as the role*, and a verdict is attached. The transport
+  that reached the role (`claude -p --agent`, a subagent invocation, anything else) is
+  not a state in itself: what makes a review `run` is that it ran *as the role*, not
+  that the transport happened.
+- **`not_required`** — the ticket's scope prescribes no review. This is the case
+  `scope/S` reaches, and only this one — `not_required` is **derived from the scope
+  label, never asserted** by an executor. An executor cannot declare a ticket
+  `not_required` on a `scope/M` or `scope/L`; doing so reads as the executor choosing
+  which role reviews it, which is the gate-2-substitution failure the rule exists to
+  prevent.
+- **`not_run`** — a required review did not run as its role. **Cause is mandatory:**
+  the same record that names the state names the reason the role did not run.
+  `not_run` is the only failure state at this gate; everything else is reporting.
+
+**Skip** and **unreachable** are *causes* of `not_run`, not states. A self-applied
+review — the executor reading its own diff through a general agent handed the role's
+definition — is not a role review; it is gate 2's self-review equivalent
+(`features/business/agent-team/`'s AC-10 names why the substitution is invisible to the
+reader it fools), and at the role gate it counts as `not_run`. The human at gate 3
+takes the same decision for any required-and-absent review, regardless of cause.
+
+**The verdict is recorded by the role, not by the executor.** The role's agent posts
+its own verdict on the ticket's issue, in a form a later reader can find; the executor
+neither writes the verdict nor writes a declaration that the review did not run.
+A record written by the same run that ran the review is exactly the record that
+fails on the executor's death, and an executor asserting that a review did not run
+is the executor whose report the gate-3 read cannot trust — both at once. The
+vocabulary the role uses and the markers it posts are `features/business/agent-team/`'s
+to define; this feature states only that the verdict is the role's, and that an
+absent role-signed entry makes the ticket's report incomplete.
+
+**A verdict counts only if it is attributable.** A verdict that does not name the
+role that produced it is treated as absent: `not_run`. This closes the substitution
+path that a structured field written by the executor's own return would reopen —
+the executor's report is not the record, and a record that the executor could have
+written is not the record either.
+
+**The orchestrator runs the role review as a net, on the absence of the carrier.**
+Where the role's verdict is not on the ticket at gate 3, the orchestrator triggers
+the review on that absence — a checkable fact, not a declaration by the executor. A
+PR for which the tracker holds no role-signed verdict goes through the net.
+
+`features/business/github-tracking/` materialises the carrier — the issue comment,
+the pull-request body echo, the read that finds it. `features/business/agent-team/`
+carries the verdict vocabulary and the rule that the role posts its own verdict;
+this feature cites rather than restates it. Strip the tracker and the obligation
+stands word for word: the verdict is the role's; a missing verdict is `not_run`
+with a stated cause; the report is incomplete either way.
+
 ## What a commit carries, and who may rewrite one
 
 **Every commit carries a type and a scope**: `<type>(<scope>): <subject>`. The scope is

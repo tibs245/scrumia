@@ -73,7 +73,7 @@ Each execution follows the same outline:
 
 The modules carrying these steps are the ones the project's `extends` names. Where nothing covers a step, it is simplified, not silently skipped: say so in the PR.
 
-Step 5's role review spawns the role by its agent type — an execution is a main agent, so it may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([the roles' doc](https://github.com/tibs245/scrumia/blob/main/docs/agents.md)); fall back to a subprocess, prompt on stdin:
+Step 5's role review spawns the role by its agent type — the execution is itself a subagent spawned by the orchestrator, so the orchestrator (the session that runs the sprint) is the agent that may spawn subagents. If the type does not resolve, the module was installed or updated without a restart since ([`rules/agent-restart-after-install.md`](../../rules/agent-restart-after-install.md)); fall back to a subprocess, prompt on stdin:
 
 ```bash
 claude -p --agent scrumia-teams:scrumia-business \
@@ -84,9 +84,37 @@ If a role cannot be reached either way, the PR says the review did not run as th
 
 ## Step 5 — Gather
 
-For each ticket: PR opened, blocked and why, or sent back to refinement and what was missing.
+For each ticket, in this order, the gather reads the ticket's issue and the rules
+named by `features/business/dev-flow/`:
 
-Flag what needs human attention: review reservations, business contradictions raised, tickets sent back, and any ticket that deviated from the policy's answer.
+1. **The verdict.** Read the ticket's issue comments for a `Verdict: … by scrumia-*`
+   token, attributable to a role. The role's verdict is the record; the executor's
+   report is not. The verdict is one of three states:
+   - `run` — the role review ran as the role, with a verdict attached (`Approved`,
+     `Reservations`, `Blocked`).
+   - `not_required` — the ticket's scope is `scope/S`. This is derived from the
+     scope label, not asserted by the executor — an executor that declares
+     `not_required` on a `scope/M` or `scope/L` produces a non-compliant record.
+   - `not_run` — a required review did not run as its role. **Cause is mandatory**:
+     `skipped`, `unreachable`, `agent type did not resolve`, `self-applied`,
+     whatever the case is. A `not_run` without a cause is non-compliant.
+2. **The PR opened, blocked, or sent back to refinement.** The PR exists, or it does
+   not — and the verdict is the role's, not the executor's word for it. A **Blocked**
+   verdict lands on an open PR: the PR stays open, the card returns to `in_progress`,
+   and the gather flags the ticket. Gate 3 keeps the merge regardless.
+3. **The net.** If the ticket's issue carries no role-signed verdict at gate 3, the
+   orchestrator runs the role review on that absence — a checkable fact, not a
+   declaration by the executor. The net is the immune system to the executor's
+   report failing twice.
+
+The gather's report carries, per ticket: the verdict state, the role (or `not_required`),
+and the cause for `not_run` — never silence. A ticket whose verdict is absent is
+reported as `not_run` with cause "no role-signed comment on the issue", so the
+absence is named and the substitution path is closed.
+
+Flag what needs human attention: any `not_run` outcome, review reservations, business
+contradictions raised, tickets sent back, and any ticket that deviated from the
+policy's answer.
 
 A deviation reported here is a **second copy for the human in front of you**, not the record — the record is on the ticket, written when the deviation was decided, and it is the copy that survives this session.
 

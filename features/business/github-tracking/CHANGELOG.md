@@ -3,6 +3,12 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — A role's verdict is a comment on the ticket's issue, with the role's name
+- Issue: #125
+- Category: Added
+- Breaking: yes — the gather now reads the verdict from the ticket's issue, not
+  from the executor's report. A gather that does not know the new state cannot run.
+
 ## 2026-08-17 — Gate 3's verdict and the change's full file set, traced on this tracker
 - Issue: #218
 - Category: Added
@@ -14,6 +20,7 @@ as the inputs the predicate evaluates on, on this tracker: the change's full
 file set is read off the merge target through the diff pull (or the
 `files` JSON field); the verdict is read as a comment on the ticket's own
 issue, found by the reviewer's signed verdict rather than by a prefix.
+
 
 ## 2026-08-16 — Gate 2's scoping signal is recorded on the issue and echoed in the pull request
 - Issue: #222

@@ -3,6 +3,13 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — The verdict is posted by the role, with attribution, and `not_run` carries a cause
+- Issue: #125
+- Category: Added
+- Breaking: yes — the verdict vocabulary is now `run` / `not_required` / `not_run`,
+  and the verdict is read from the ticket's issue, not from the executor's report.
+  A gather that does not know the new state cannot run.
+
 ## 2026-08-17 — Role consultation becomes a reflex with an artefact, not an invitation
 - Issue: #121
 - Category: Added

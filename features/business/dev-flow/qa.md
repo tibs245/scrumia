@@ -247,6 +247,66 @@ Then it is allowed; and when the target is the default branch, or a branch anoth
   fetched
 ```
 
+### AC-18 — A ticket at gate 2 reads as complete only with a role-signed verdict, or a stated `not_run` cause
+
+```gherkin
+Given a ticket at gate 2 whose role review ran as the role and posted its verdict on
+  the ticket's issue
+When the gather reads the verdict
+Then the ticket is reported complete, citing the role and the verdict it signed
+```
+
+```gherkin
+Given a ticket at gate 2 whose role review did not run — the role's agent type did
+  not resolve, the role disclaimed, or the executor fell back to a self-applied
+  review
+When the gather reads the ticket
+Then it reports `not_run` with the cause, never an absence that reads as approval —
+  the report is incomplete without the outcome, and the outcome is not an approval
+  by default
+```
+
+```gherkin
+Given a ticket at gate 2 whose scope is `scope/S` and which therefore requires no
+  review
+When the gather reads the ticket
+Then it reports `not_required` — derived from the scope label, not asserted by the
+  executor
+```
+
+```gherkin
+Given a ticket at gate 2 whose scope is `scope/M` or `scope/L` and whose executor
+  asserts `not_required` on the record
+When the gather reads the ticket
+Then the record is non-compliant: `not_required` is derived from the scope label,
+  never declared, and an executor cannot substitute its own judgement for the gate
+```
+
+```gherkin
+Given a verdict posted on the ticket's issue that does not name the role that
+  produced it — a comment whose body matches the verdict format but lacks the
+  `by scrumia-*` token
+When the gather reads the verdict
+Then the verdict is treated as absent and the state is `not_run` — an unattributed
+  verdict is not a role verdict, and the substitution path the attribution clause
+  closes is the one a structured field written by the executor's return would reopen
+```
+
+```gherkin
+Given a PR whose gate 2 returns a **Blocked** verdict, and the orchestrator's net
+  ran on the absence of the verdict rather than on the executor's "I did not run it"
+  declaration
+When the verdict lands on the open PR
+Then the PR stays open, the card returns to `in_progress`, and the gather flags the
+  ticket; gate 3 keeps the merge regardless of where the net ran
+```
+
+The state vocabulary is `run`, `not_required`, `not_run`; `not_run` carries a cause
+and is the only failure state. "Skipped" and "unreachable" are causes of `not_run`,
+not states. These are cited here rather than restated; the verdict format and the
+carrier are `features/business/agent-team/`'s and `features/business/github-tracking/`'s
+to materialise.
+
 ### AC-13 — A commit's multi-scope form generalizes past modules, and `*` covers what isn't worth naming
 
 ```gherkin
