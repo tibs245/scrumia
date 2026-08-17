@@ -86,6 +86,8 @@ Deliver a synthesis, not a compilation. The human must be able to decide in one 
 - **The reservations** and the issues created for them
 - **The disagreements between reviewers**, passed on as is, without merging them into an average opinion
 
+**Name which role ran each verdict, or name the fallback.** When the agent type did not resolve — or any other condition of [`rules/when-a-role-must-be-consulted.md`](../../rules/when-a-role-must-be-consulted.md) § *Unreachable roles* applies — the synthesis says so and names what did run; a general agent handed the role's `.md` is reported as such, never as the role itself (AC-20). This is the same rule the skill that opens the PR applies to its own description; the two must not disagree about who was asked and who answered.
+
 When Business and Tech diverge, that is first-order information: it's exactly the case that calls for human arbitration. Don't smooth it over.
 
 ## Step 6 — Publish

@@ -163,6 +163,65 @@ Then the write is accepted regardless of the state read — no compare-and-swap
   exists in the shared state to reject it
 ```
 
+## Role consultation as a reflex
+
+The conditions under which a role is consulted — the rule itself — are stated once in
+`business.md § When a role must be consulted`. These scenarios test that the skills which
+route to a role apply it rather than inviting it.
+
+### AC-17 — A refinement consults the role whose domain owns the blocker
+
+```gherkin
+Given a refinement whose blocker is a question a role owns — a business rule is
+  ambiguous, the change reaches beyond one feature, two written statements
+  contradict, or the same question blocks several tickets
+When the refinement completes
+Then the role was consulted and its answer is on the ticket
+  Or the report names the role as unreachable and the gap that made it so
+```
+
+### AC-18 — A refinement that did not consult a role says so and says why
+
+```gherkin
+Given a refinement completes without consulting any role
+When the refinement report is written
+Then it names the roles it could have consulted and states which condition of
+  business.md § When a role must be consulted did not apply — and a report that
+  is silent on the question has not met this criterion
+```
+
+### AC-19 — An execution consults the same role the refinement did, or states why not
+
+```gherkin
+Given a ticket whose refinement consulted a role and recorded the answer on it
+When the execution runs and the same question still conditions the change
+Then the execution references the answer on the ticket rather than re-asking
+  Or its report names the reason the previous answer no longer holds
+```
+
+### AC-20 — A review that could not run as the role names what did run
+
+```gherkin
+Given a PR's role review could not be reached — the agent type did not resolve,
+  the shipping module was not installed, or the question lies outside every
+  declared role
+When the PR is opened
+Then the PR description names the role as unreachable and what ran in its place
+  — a general agent handed the role's definition is named as such, never as the
+  role itself
+```
+
+### AC-21 — A repeated question is asked once and referenced
+
+```gherkin
+Given two tickets in the same refinement pass share a blocker on the same role's
+  domain
+When the first ticket's refinement convenes the role and records the answer
+Then the second ticket's refinement references that answer rather than asking
+  the role again
+  And the role is convened once across the pass, not once per ticket
+```
+
 ## Out of scope
 
 - Which model executes a given ticket, based on its scope and risk labels —

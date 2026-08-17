@@ -52,17 +52,20 @@ Three possible outcomes:
 - **The spec must evolve** → refinement produces the spec update, not just the ticket
 - **The spec contradicts the ticket** → escalate, don't settle it
 
-## Step 4 — Call on the roles when it's useful
+## Step 4 — Call on the roles whose domain owns the blocker
 
-If the team module is plugged in, bring in a role **when its answer changes the ticket's content** — not to cover the decision.
+The condition under which a role must be consulted — not an invitation, a check —
+is in [`rules/when-a-role-must-be-consulted.md`](../../rules/when-a-role-must-be-consulted.md).
+Read it there; the table that used to live here restated it and is gone.
 
-| Situation | Role |
-|---|---|
-| A business rule is ambiguous or missing | Business |
-| The ticket touches several apps, or an interface contract | Tech |
-| Feasibility drives the splitting | Tech |
+Apply that condition. Where it triggers, convene the role by its agent type — and
+where a role is unreachable, follow the same spec's *Unreachable roles*. The role's
+answer, or the gap, lands on the ticket: a report silent on the question is one
+that did not consult, regardless of whether one was reached.
 
-Without a team module plugged in, ask the human. It's slower and perfectly viable.
+Without a team module plugged in, the human answers. It's slower and perfectly
+viable — but the report still names the conditions the role would have covered, so
+a reader knows what was asked of the human and why.
 
 ## Step 5 — Split if necessary
 
@@ -130,6 +133,8 @@ Otherwise, move the ticket to `Ready for dev` directly. The configured autonomy 
 ## Step 8 — Report back
 
 On the issue: what was clarified, the specs updated, the sub-issues created, the scope chosen and why, the questions left open.
+
+**The report names the roles consulted, their answers, and where the answer is recorded — or states that no role was needed and which condition of the rule did not apply.** A silent report has not consulted, regardless of whether one was reached (AC-18).
 
 Then move the card to the `ready` step — or leave it in `Backlog` and say what's missing:
 

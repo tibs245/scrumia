@@ -204,6 +204,8 @@ gh issue comment <issue> --body "Scoping signal: label <label> — review routed
 
 Now, not at PR time, and on the issue rather than in the PR body: the retrospective's trigger counts these gaps and a run that dies before `gh pr create` must still leave one behind — the same reason Step 0's deviation record lives there. Step 7 echoes it in the PR for a human reading the diff, and that echo is a copy.
 
+**Apply the same role-consultation rule as refinement.** The condition is in [`rules/when-a-role-must-be-consulted.md`](../../rules/when-a-role-must-be-consulted.md). If the refinement recorded an answer on the ticket that still conditions the change, the execution references it rather than re-asking (AC-19). If the ticket's blocker is a question the execution meets first, the execution consults and records on the ticket — same condition, same reporting.
+
 The table has no scope tier in it, `scope/XL` included: ADR-0015 sends an `XL` ticket back to scoping rather than into execution, and where Step 0's split was refused as genuinely indivisible so it executed anyway on the fallback model (`features/business/execution-policy/`), its diff routes its review like every other diff's. No tier is left without a stated review, because no tier states one.
 
 Spawn the role by its agent type — `scrumia-teams:scrumia-tech`, `scrumia-teams:scrumia-business`. If the type does not resolve, the module that ships it was installed or updated without a restart since; say so rather than reviewing anyway, and fall back to a subprocess, prompt on stdin:
@@ -230,6 +232,8 @@ gh pr create --title "<type>(<scope>): <expected outcome>" --body "..."
 Same `<type>` vocabulary as the branch and the commits, same mandatory scope.
 
 The description contains: what was done, `Closes #<n>` **exactly once** — the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — echoing the label/diff gap Step 6 recorded, where there was one, the comment on the issue being the record and this its copy — and the open reservations with their issues.
+
+**The description names the roles consulted during execution, their answers, and where the answer is recorded — or states that no role was needed and which condition did not apply.** A review that ran as a fallback because the agent type did not resolve is named as such, never reported as the role itself (AC-20).
 
 If Step 0 recorded a deviation, echo it here — kind, cell, what the policy chose, what ran, why — for a human reading the diff. The echo, not the record: the comment on the issue is what a later reader queries, and the PR body is a copy of it.
 
