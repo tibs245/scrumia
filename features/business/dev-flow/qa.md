@@ -66,6 +66,17 @@ Then it is refused, a comment on the issue names precisely what's missing, and
   nothing is executed on a guessed intent
 ```
 
+### AC-18 — A ticket that names the feature it produces is not refused at Step 0
+
+```gherkin
+Given a ticket whose deliverable is the parent feature it names — the bootstrap case,
+  an empty `specs_root` on the project's first ticket being the canonical instance
+When execution starts (`scrumia-ticket` Step 0)
+Then it runs and produces the feature, rather than being refused for the feature's
+  absence — the refusal fires on a ticket that names no feature, not on one that
+  names a feature that does not yet exist
+```
+
 ## Edge cases
 
 ### AC-7 — A business rule found missing mid-execution is escalated, not invented

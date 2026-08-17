@@ -14,9 +14,18 @@ Usage: `/scrumia-github-project:scrumia-ticket 42`
 Read the issue (`gh issue view <n> --json title,body,labels`). Stop immediately if:
 
 - No verifiable acceptance criterion
-- No parent feature
+- The ticket names no feature at all — absent a name, the intent cannot be checked
 
-In those cases, comment on the issue stating precisely what's missing, and point back to the Manager or to `scrumia-brainstorm`. **Do not guess the intent.** A ticket executed on an assumed intent produces a PR to throw away, and that costs more than asking for clarification.
+A ticket whose deliverable is the parent feature itself — the bootstrap case, an
+empty `specs_root` on the project's first ticket being the canonical instance — is
+not refused: it names the feature, and the acceptance criteria carry the intent. The
+refusal fires on a ticket that never said which feature it belongs to, not on one
+that names a feature that does not yet exist.
+
+In those cases (no acceptance criterion, or no named feature), comment on the issue
+stating precisely what's missing, and point back to the Manager or to
+`scrumia-brainstorm`. **Do not guess the intent.** A ticket executed on an assumed
+intent produces a PR to throw away, and that costs more than asking for clarification.
 
 Then, if a team module is plugged in, ask what this ticket's size and risk imply. `scrumia-teams` ships the policy as a script it publishes by name on the session's PATH:
 

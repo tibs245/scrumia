@@ -13,7 +13,10 @@ Usage: `/scrumia-github-project:scrumia-refine 42`
 
 Four conditions, all verifiable:
 
-1. A parent feature exists and is up to date
+1. A parent feature exists and is up to date — **or this ticket is what produces
+   it**, the bootstrap case (an empty `specs_root` on the project's first ticket
+   being the canonical instance). "A feature will probably show up" does not
+   satisfy this.
 2. The acceptance criteria are written, identified in the format named by `ac_id_format`, and can fail
 3. The scope is known: which apps, which anticipated files
 4. No open question blocks the start
