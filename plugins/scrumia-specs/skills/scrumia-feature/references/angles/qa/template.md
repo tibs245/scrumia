@@ -17,7 +17,8 @@ Then <observable result>
 
 ## Edge cases
 
-<Cover at minimum the ones that apply. Delete the other lines.>
+<Cover at minimum the ones that apply. Delete the other lines — an absent
+case says it does not apply; an "N/A" says nobody looked.>
 
 ### AC-2 — Zero / empty
 ### AC-3 — Boundary value

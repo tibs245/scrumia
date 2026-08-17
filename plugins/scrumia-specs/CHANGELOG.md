@@ -2,8 +2,25 @@
 
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.5.0] - 2026-08-17
 ### Added
+- The catalog splits into **angles**: one directory per angle under
+  `scrumia-feature/references/angles/<angle>/`, each shipping `context.md` (what it
+  answers, what activates it, the questions that explore it, its boundary),
+  `template.md` and `checklist.md` — the review guard-rails naming the defects that
+  angle actually produces. `references/catalog.md` becomes the index of the eleven.
+- Activation is answered rather than felt: each content-tested angle carries a table of
+  closed questions with the answer to take when unsure. A project overrides any of them
+  through `params.angles` — `always`, `context` (default) or `never`.
+- `scrumia-feature` gains a numbered creation procedure whose order is what prevents the
+  format's most common defect, and a mandatory report of which angles were declined and
+  on which answer — an absence nobody can see was considered asserts nothing.
+- The disposition on disk is stated: when a feature sits inside another, the test that
+  decides it, and the three constraints that come with nesting.
+- `index.md`'s `Links` vocabulary is a closed set of nine keys — four structural,
+  declared on both sides; five referential.
+- `tools/validate.py` gains `check_angle_directories`, `check_feature_links` and
+  `check_feature_nesting`.
 - `registers.json`, `extends.json` and `dependencies.jsonl` — this module opens the
   `write-spec` and `find-spec` registers, contributes the spec-before-code rule to
   `implement` and the spec/code gap to `review`, and declares the names it runs.

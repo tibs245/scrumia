@@ -13,7 +13,8 @@ Yes → ADR. No → `archi.md`). Omit any section with nothing to say.>
 
 ## Contracts at stake
 
-<Which `api-contract.md` files this EPIC depends on.>
+<Which `api-contract.md` files this EPIC depends on — as pointers, never as
+copies of the schemas.>
 
 ## Cross-app data flow
 
@@ -21,8 +22,9 @@ Yes → ADR. No → `archi.md`). Omit any section with nothing to say.>
 
 ## Deployment order
 
-<If it matters.>
+<If it matters, and what breaks if the pieces ship out of order.>
 
 ## Degraded modes
 
-<What happens when a part of this EPIC is unavailable.>
+<What happens when a part of this EPIC is unavailable, and whether the other
+parts notice.>
