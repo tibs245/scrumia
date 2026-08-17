@@ -381,6 +381,123 @@ def check_extends_tool_runs() -> None:
             error(f"scrumia-extends --claims: {line}")
 
 
+ANGLES_ROOT = (
+    ROOT / "plugins" / "scrumia-specs" / "skills" / "scrumia-feature"
+    / "references" / "angles"
+)
+ANGLE_FILES = ["context.md", "template.md", "checklist.md"]
+
+
+def check_angle_directories() -> None:
+    """Every angle ships context.md, template.md and checklist.md, and is in the table.
+
+    An angle with no checklist is one nobody can review; one missing from the
+    catalog's table is one no writer will find.
+    """
+    catalog = ANGLES_ROOT.parent / "catalog.md"
+    if not catalog.exists():
+        error(f"{catalog.relative_to(ROOT)}: missing — the angle catalog is the entry point")
+        return
+    listed = set(re.findall(r"\[`([a-z-]+)`\]\(angles/[a-z-]+/context\.md\)", catalog.read_text(encoding="utf-8")))
+    on_disk = {d.name for d in ANGLES_ROOT.iterdir() if d.is_dir()}
+    for name in sorted(listed - on_disk):
+        error(f"references/catalog.md: lists angle '{name}', which has no angles/{name}/ directory")
+    for name in sorted(on_disk - listed):
+        error(f"references/angles/{name}: on disk but absent from catalog.md's angle table")
+    for name in sorted(on_disk):
+        for filename in ANGLE_FILES:
+            if not (ANGLES_ROOT / name / filename).exists():
+                error(f"references/angles/{name}: missing {filename}")
+
+
+# Referential keys point at an authority that owes nothing back; these do not.
+LINK_RECIPROCALS = {
+    "Business parent": "Implemented by",
+    "Implemented by": "Business parent",
+    "Parent": "Children",
+    "Children": "Parent",
+}
+LINK_REFERENTIAL = {"Consumes", "Consumed by", "Defers to", "Authority", "Boundary"}
+LINK_KEYS = set(LINK_RECIPROCALS) | LINK_REFERENTIAL
+
+LINKS_SECTION_RE = re.compile(r"^## Links\s*\n(.*?)(?=\n## |\Z)", re.MULTILINE | re.DOTALL)
+LINK_BULLET_RE = re.compile(r"^- ([A-Z][A-Za-z ]*?):\s*(.*)$")
+BACKTICKED_RE = re.compile(r"`([^`]+)`")
+
+
+def _feature_links(feature_dir: Path) -> list[tuple[str, list[Path]]]:
+    """Parse a feature index's ## Links bullets into (key, resolved feature targets).
+
+    A bullet's continuation lines are folded in, so a path wrapped onto the next
+    line still counts. Only targets inside features/ are resolved — an Authority
+    line pointing at design/ or docs/ resolves to nothing here by design.
+    """
+    index_md = feature_dir / "index.md"
+    if not index_md.exists():
+        return []
+    section = LINKS_SECTION_RE.search(index_md.read_text(encoding="utf-8"))
+    if not section:
+        return []
+    bullets: list[tuple[str, str]] = []
+    for line in section.group(1).splitlines():
+        match = LINK_BULLET_RE.match(line.strip())
+        if match:
+            bullets.append((match.group(1), match.group(2)))
+        elif bullets and line.strip() and not line.strip().startswith("<"):
+            bullets[-1] = (bullets[-1][0], bullets[-1][1] + " " + line.strip())
+    out: list[tuple[str, list[Path]]] = []
+    for key, body in bullets:
+        targets = []
+        for raw in BACKTICKED_RE.findall(body):
+            candidate = ROOT / raw if raw.startswith("features/") else feature_dir / raw
+            if (candidate / "index.md").exists():
+                targets.append(candidate.resolve())
+        out.append((key, targets))
+    return out
+
+
+def check_feature_links() -> None:
+    """index.md's links use the fixed keys, and every structural link is declared both ways."""
+    declared: dict[Path, list[tuple[str, list[Path]]]] = {}
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        declared[feature_dir.resolve()] = _feature_links(feature_dir)
+
+    for feature_dir, links in declared.items():
+        rel = feature_dir.relative_to(ROOT)
+        for key, targets in links:
+            if key not in LINK_KEYS:
+                error(f"{rel}/index.md: link key '{key}' is outside the fixed set {sorted(LINK_KEYS)}")
+                continue
+            if key not in LINK_RECIPROCALS:
+                continue
+            wanted = LINK_RECIPROCALS[key]
+            for target in targets:
+                back = declared.get(target)
+                if back is None:
+                    error(f"{rel}/index.md: '{key}' points at {target.relative_to(ROOT)}, which is not a feature")
+                    continue
+                if not any(k == wanted and feature_dir in t for k, t in back):
+                    error(
+                        f"{rel}/index.md: '{key}: {target.relative_to(ROOT)}' has no matching "
+                        f"'{wanted}' back to {rel} — a structural link is declared on both sides"
+                    )
+
+
+def check_feature_nesting() -> None:
+    """A nested feature declares Parent, its parent declares Children, and nesting stops at one level."""
+    features_root = ROOT / "features"
+    for feature_dir in bfi.find_leaf_features(ROOT):
+        parent = feature_dir.parent
+        if not (parent / "index.md").exists():
+            continue  # not nested
+        rel = feature_dir.relative_to(ROOT)
+        if (parent.parent / "index.md").exists():
+            error(f"{rel}: nested two levels deep — check the splitting criterion, nesting stops at one")
+        keys = {key for key, _ in _feature_links(feature_dir)}
+        if "Parent" not in keys:
+            error(f"{rel}/index.md: sits inside {parent.relative_to(features_root)} but declares no 'Parent:' link")
+
+
 def check_feature_mandatory_files() -> None:
     """Every leaf feature carries index.md, qa.md, CHANGELOG.md and business.md.
 
@@ -474,10 +591,7 @@ def check_feature_index_sections() -> None:
     The allowed set is parsed from the template, never a second hardcoded list —
     so the two cannot drift from each other.
     """
-    template_path = (
-        ROOT / "plugins" / "scrumia-specs" / "skills" / "scrumia-feature"
-        / "assets" / "index.template.md"
-    )
+    template_path = ANGLES_ROOT / "index" / "template.md"
     if not template_path.exists():
         error(f"{template_path.relative_to(ROOT)}: missing — cannot determine the index section set")
         return
@@ -674,7 +788,10 @@ def main() -> int:
     check_french_leftovers()
     check_composition_drift()
     check_extends_tool_runs()
+    check_angle_directories()
     check_feature_mandatory_files()
+    check_feature_links()
+    check_feature_nesting()
     check_no_tracker_refs()
     check_business_value_heading()
     check_qa_shape()
