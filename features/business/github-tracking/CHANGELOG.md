@@ -3,6 +3,18 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — Gate 3's verdict and the change's full file set, traced on this tracker
+- Issue: #218
+- Category: Added
+- Breaking: no
+
+`features/business/dev-flow/` states gate 3's four cumulative conditions and
+the predicate over `settings.autonomy.auto_merge`. Two artefacts are named
+as the inputs the predicate evaluates on, on this tracker: the change's full
+file set is read off the merge target through the diff pull (or the
+`files` JSON field); the verdict is read as a comment on the ticket's own
+issue, found by the reviewer's signed verdict rather than by a prefix.
+
 ## 2026-08-16 — Gate 2's scoping signal is recorded on the issue and echoed in the pull request
 - Issue: #222
 - Category: Added

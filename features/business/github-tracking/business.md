@@ -256,6 +256,48 @@ deviation restates it for a human reading the diff, and that echo is a courtesy.
 bodies were the whole record once, in the sprint whose repeated overrides on the same
 cell went uncounted for it; the comment is now the record and the PR is its copy.
 
+## Gate 3 reads the verdict and the file set through two tracker-side artefacts
+
+`features/business/dev-flow/` states the four cumulative conditions gate 3 opens
+on and the predicate over `settings.autonomy.auto_merge`. Whether a change
+satisfies condition (2) — every path matched by an active category — needs the
+change's **full file set**, and condition (4) needs the **attributable verdict
+on the record**. Here is what each becomes on this tracker.
+
+**The full file set is the change's commit history on the branch, evaluated at
+the head it actually merges.** A file the change touched and then reverted
+still counts — the file appeared in the diff set, and a partial-credit reading
+is what condition (2) explicitly refuses. A label the change carried and
+dropped does not; a commit message does not. What is read is the set of paths
+the branch's commits introduce or modify, at the merge target — obtained
+through the same artefact the diff passes to gate 2 (`gh pr diff <n>` for the
+plain listing, `gh pr view <n> --json files` for the structured one), whichever
+the caller chooses, with the same reading discipline. Reading the change off
+the working tree instead of the branch would evaluate a tree the branch may
+already have moved past; the merge target is the only state the merge actually
+merges.
+
+**The verdict is a comment on the ticket's own issue, sourced from the
+reviewer that wrote it.** Gate 3 reads it the same way every other artefact on
+the issue is read — `gh issue view <n> --json comments` — and finds it by the
+reviewer's signed verdict, not by a count of comments: the same rule that
+finds a deviation by the `cell` token rather than the `Deviation:` prefix,
+because a prefix matches prose about verifiers as readily as verifier records,
+and a reader that trusts the prefix counts prose as a verdict. The verdict
+itself is a separate shape from the deviation record named just above — it
+names whether the change is mergeable, mergeable with reservations, or
+blocked, and who said so — and what gates reading it is what the sibling
+implementation sub-issue's eligibility script does on top of this read.
+
+**Why the verdict and the file set, and not the labels.** Gate 3 does not read
+`scope/*` or `risk/*` at all. A wrong label is exactly the failure a review
+guards against, and the eligibility decision depends on what the change
+actually touched, not on what the manager's refinement assumed it would
+(`features/business/dev-flow/business.md` § *Gate 2's scoping signal*). The
+trace here is, like the one for deviations, the bare minimum the predicate
+needs to evaluate on — what `scrumia-review` and the eligibility script do
+with these artefacts is theirs, not this feature's.
+
 ## The reference is on every commit; the close is on the pull request, once
 
 `features/business/dev-flow/` states the abstract rule — every commit references the work

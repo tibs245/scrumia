@@ -26,7 +26,7 @@ which artefact each step becomes here, and redefines none of them.
 
 | File | Read it when |
 |---|---|
-| `business.md` | the ticket lifecycle, the milestone/epic vocabulary, label consumers, where a deviation from the execution policy and where gate 2's scoping signal are recorded, how a commit references its issue and where the close is written, the slot's scope per ADR-0013 |
+| `business.md` | the ticket lifecycle, the milestone/epic vocabulary, label consumers, where a deviation from the execution policy and where gate 2's scoping signal are recorded, how gate 3's verdict and the change's full file set are obtained, how a commit references its issue and where the close is written, the slot's scope per ADR-0013 |
 | `qa.md` | checking the board-reading discipline against a falsifiable scenario |
 | `tech.md` | how `scrumia-board` and `gh` carry out a rule stated in `business.md` — a retry, a field shape, a search command |
 | `CHANGELOG.md` | tracing when a rule above last changed and under which issue |

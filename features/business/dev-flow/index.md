@@ -35,7 +35,7 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 
 | File | Read it when |
 |---|---|
-| `business.md` | need who decides what on each path, where the human gate sits, when gate 2 owes a scoping signal and to whom, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
-| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), or what routes gate 2's review and what its scoping signal owes, as falsifiable scenarios |
+| `business.md` | need who decides what on each path, where the human gate sits and the four cumulative conditions that open it, the self-widening rule and the constraints any category list must satisfy, when gate 2 owes a scoping signal and to whom, what a commit must carry, who may rewrite a branch, or who owns the code cycle |
+| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), the cumulative-conditions scenario for gate 3, the `auto_merge` eligibility rules (the value-space rule, the `not_run`-verdict rule, the partial-credit rule, the self-widening rule, the single-definition rule), or what routes gate 2's review and what its scoping signal owes, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 
