@@ -12,7 +12,7 @@ modules:
     params:
       autonomy:
         level: guided
-        auto_merge: none
+        auto_merge: []
       project: "ScrumIA"
       project_number: 6
       columns:

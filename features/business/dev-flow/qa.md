@@ -106,19 +106,38 @@ When a ticket finishes scoping
 Then the human validates the transition to execution before an agent starts it
 ```
 
-### AC-10 — Only an explicitly widened `auto_merge` lets gate 3 go unattended
+### AC-10 — Gate 3 opens only on four cumulative conditions
 
 ```gherkin
-Given `settings.autonomy.level` is `autonomous` and `settings.autonomy.auto_merge`
-  is `docs-only`
-When CI is green, gate 2 raised no blocker, and the PR touches documentation only
-Then the PR merges without an additional human step
+Given `settings.autonomy.level` is `autonomous`, every path in the change's
+  full file set is matched by an active category of `settings.autonomy.auto_merge`,
+  CI is green, and a clean attributable verdict is on the record
+When gate 3 is evaluated
+Then the change merges unattended — all four conditions hold simultaneously
 ```
 
 ```gherkin
-Given `settings.autonomy.auto_merge` is `none` — its default
-When CI is green and gate 2 raised no blocker
-Then nothing merges without the human, whatever `settings.autonomy.level` says
+Given exactly one of the four conditions holds — `level` is `autonomous`, or
+  every path matches an active category, or CI is green, or a clean verdict is
+  on the record — and the other three do not
+When gate 3 is evaluated
+Then the change does not merge unattended; any one condition is necessary but
+  none is sufficient alone
+```
+
+```gherkin
+Given `settings.autonomy.level` is `guided` or `assisted`
+When gate 3 is evaluated
+Then the human merges, whatever the other three conditions say — a level below
+  `autonomous` does not open gate 3, on its own
+```
+
+```gherkin
+Given `settings.autonomy.auto_merge` is `[]` — its current default in this
+  repository
+When gate 3 is evaluated
+Then nothing merges unattended, whatever the other three conditions say — the
+  default has no named category to match the file set against
 ```
 
 ### AC-11 — A label that under-states the diff does not shrink the review, and the gap is signalled durably
@@ -260,6 +279,84 @@ When the scope is written
 Then it may use the `*` escape hatch (`refactor(*): …`), which derives no bump on its own; a
   commit that also needs a module to bump still names that module's real token alongside it
   (`refactor(specs,*): …`)
+```
+
+### AC-18 — `auto_merge` eligibility rules (value-space, not-run verdict, partial-credit, self-widening, single-definition)
+
+**Spec note.** Each scenario below states the rule unambiguously, on the
+ticket's own reading (its Scope section) — *here* "blocks the merge" /
+"is not eligible" mean *the rule is stated* in this feature. The eligibility
+script that makes them checkable at run time is the sibling implementation
+sub-issue's job, which depends on this spec landing first. A criterion that
+names gate 3's runtime outcome therefore passes in this feature when the spec
+says what gate 3's input must look like, regardless of whether anything runs
+gate 3 yet.
+
+#### AC-18.1 — `auto_merge` is a list of named categories; `all` does not exist
+
+```gherkin
+Given the value space of `settings.autonomy.auto_merge` offered by this repository
+When it is read
+Then it is a list of named categories, never a scalar — `all`, `none` as a
+  scalar, `docs-only` as a scalar, or any synonym of "everything merges" is
+  not in the value space; absence of categories is expressed as an empty list,
+  not as a scalar default
+```
+
+```gherkin
+Given a config, skill, doc or site page offered by this repository
+When its `auto_merge` setting is read
+Then the value space is the list form above and nothing else offers `all` or
+  any synonym of it
+```
+
+#### AC-18.2 — A `not_run` or absent verdict blocks an unattended merge
+
+```gherkin
+Given a change for which gate 2's reviewer produced no verdict — a verifier
+  that did not run, errored before reporting, or simply was not triggered
+When gate 3 is evaluated
+Then the change does not merge unattended, by the rule that condition (4)
+  requires a verdict on the record — "no verdict" reads as a refusal to
+  author the fourth condition, never as a silent approval
+```
+
+#### AC-18.3 — A mixed change (one eligible path plus one ineligible) is not eligible
+
+```gherkin
+Given a change whose file set contains one path matched by an active category
+  and one path not matched by any active category of `settings.autonomy.auto_merge`
+When gate 3 is evaluated
+Then the change is not eligible — the universal quantification over the whole
+  file set admits no partial-credit reading, and one ineligible path
+  disqualifies the entire change
+```
+
+#### AC-18.4 — A change touching `.scrumia/**` is never eligible, without a rule naming `auto_merge`
+
+```gherkin
+Given a change whose file set contains any path under `.scrumia/**`, including
+  `settings.autonomy.auto_merge` itself and the rest of the autonomy config
+When gate 3 is evaluated
+Then the change is not eligible — by the universal quantification over an
+  empty intersection with `.scrumia/**` in every category's allowed-path set,
+  with no rule naming `.scrumia/**` or `auto_merge` specifically; the
+  protection is the predicate itself, not a clause in any list
+```
+
+#### AC-18.5 — The single definition lives in `features/business/dev-flow/`
+
+```gherkin
+Given the rules an unattended merge must satisfy and the constraints any
+  category list must satisfy
+When a reader — human or skill — looks them up
+Then they are stated once, in `features/business/dev-flow/business.md` § *Gate
+  3 opens only on four cumulative conditions* and following sections; the
+  category list itself lives in `.scrumia/config.yaml` (project data); the
+  trace — how the verdict is read and the file list obtained on this tracker
+  — lives in `features/business/github-tracking/`; downstream consumers
+  (`scrumia-review`, `scrumia-init`, `scrumia-ticket`) cite this definition
+  rather than restating the predicate alongside their reading of it
 ```
 
 ## Out of scope

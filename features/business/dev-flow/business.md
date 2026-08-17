@@ -75,7 +75,7 @@ Four gates govern both paths. Gate 0 is on brainstorming; Gates 1–3 are on exe
 | 0 — Content validation | Brainstorming | Agent proposes; human decides | Refusal, re-route, or pending clarity |
 | 1 — Automatic | Execution | CI, linter, tests | A red check |
 | 2 — Agent | Execution | The roles, routed by the diff's actual scope | A **Blocked** verdict |
-| 3 — Human | Execution | The human | The merge — always, unless `settings.autonomy.auto_merge` is set past `none` and the PR falls within what it covers |
+| 3 — Human | Execution | The human | The merge — always, unless `settings.autonomy.auto_merge` names a category whose allowed-path set contains every file in the change, **and** the other three cumulative conditions (level, CI, verdict) hold |
 
 `settings.autonomy.level` (`.scrumia/config.yaml`) widens or narrows how far into
 execution the human reaches, without ever removing gate 3: `guided` adds a human
@@ -84,10 +84,98 @@ don't. Only `autonomous`, and only where `auto_merge` reaches past its `none`
 default, lets gate 3 itself go unattended — the conditions for that are ADR-0005's,
 not re-decided here.
 
-`auto_merge` is one scalar for the whole project, not a per-ticket category:
-`none` (nothing merges unattended), `docs-only` (a PR touching documentation and
-nothing else), or `all`. What exactly counts as docs-only, and what happens to a
-PR mixing docs and code, is not yet pinned down.
+`auto_merge` is a list of named categories for the whole project, not a scalar
+and not a per-ticket category. Each category names an eligible **kind of change**
+and the path set whose presence proves the kind; absence of named categories
+means none. There is no `all` — no general rule, no "everything not explicitly
+named" — and removing the value-space entry from the configuration does not
+produce it as an implicit default.
+
+An **eligible change** is one whose full file set matches the rule below; the
+conditions any unattended merge must satisfy, and the constraints any category
+list must satisfy, are stated here, in this feature. The category list itself
+is project data in `.scrumia/config.yaml` (same pattern as the model grid in
+`features/business/execution-policy/business.md` § *The grid is project data;
+what it must satisfy is not*). The trace — how the verdict is read and the
+file list obtained on this tracker — is `features/business/github-tracking/`'s
+to say.
+
+### Gate 3 opens only on four cumulative conditions
+
+Gate 3 opens unattended **only when all four hold**:
+
+1. `settings.autonomy.level` is `autonomous`. `guided` and `assisted` retain the
+   human at gate 3 unconditionally — a level below `autonomous` does not open
+   the gate.
+2. **Every** path in the change's full file set is matched by an active
+   category. Universally, over the whole diff: one path outside any active
+   category disqualifies the entire change. There is no partial credit and no
+   "mostly eligible".
+3. CI is green. A red check never opens gate 3, whatever the other conditions say.
+4. A clean, attributable verdict is on the record — produced by a reviewer, not
+   standing in by absence. A verifier that did not run, errored before
+   reporting, or was not triggered at all is not a clean verdict, and what it
+   carries to gate 3 is the same no-clean-verdict answer as a blocker would.
+
+Each is necessary; none is sufficient alone. Failing any one falls back to the
+human, with no overlap between conditions: a `not_run` verdict cannot be made
+up by widened paths, and CI cannot be made up by a clean verdict.
+
+### A delegation never widens itself
+
+`.scrumia/**` is excluded from every category's allowed-path set — by
+construction, not by a rule that names it. No category lists a path under
+`.scrumia/**`, and no category excludes it as a named carve-out: the protection
+is the shape of the predicate, not a clause in any list a future editor might
+rephrase.
+
+The generalisation matters beyond `auto_merge`. The same rule, applied
+uniformly, covers `settings.autonomy.level` (lowering it empties gate 3 by
+failing condition (1)), `settings.team.roles` (disabling a reviewer empties
+gate 2 by leaving no role to author a clean verdict), and the execution matrix
+and its declared ceiling (silently rewriting either is a path under `.scrumia/**`
+and therefore ineligible by condition (2)). A special case is a rule someone
+forgets to restate when a third, fourth, fifth category joins; the construction
+closes that gap by including `.scrumia/**` in nothing at all.
+
+### An absent or `not_run` verdict never opens gate 3
+
+A verdict that did not run is a verdict that was not produced. Gate 3's fourth
+condition is a clean, attributable verdict **on the record**, and "on the
+record" requires a verdict there: one was posted, by a reviewer, with a
+verdict and a person attributed. An empty verifier, a verifier that errored
+before reporting, a verifier whose step was not triggered, and a verifier no
+reviewer asked for each read the same way — as a refusal to author condition
+(4), not as its satisfaction.
+
+This is the only reading that survives a verifier that silently never fired.
+The pre-condition for unattended merge is the verdict; the verdict that says
+nothing says nothing.
+
+### What shape a category list must satisfy
+
+A category list is data the project keeps beside the rules. The rules any list
+must satisfy are stated here, once:
+
+- **Closed.** Every category is named in the list. A category that is not on
+  the list does not exist for eligibility purposes. The list is read off the
+  default branch at evaluation time, so two changes widening the list in
+  parallel cannot both benefit in the same window.
+- **Explicit.** A category names its allowed paths. No inference from "no file
+  outside X" runs at evaluation time: the predicate quantifies over an
+  enumerated set, not over a complement.
+- **Excludes the product, the specs, the decisions and the autonomy config.**
+  No category admits paths under `plugins/**` (the product — a `SKILL.md` is
+  executable prose every consuming project runs), `features/**` (specs — the
+  rules this feature states), `docs/adr/**` (decisions, distinct from the
+  documentation they live alongside), or `.scrumia/**` (the composition,
+  including the autonomy config and the category list itself). A category
+  naming any of these on its allowed-path set is non-conforming, irrespective
+  of what file list it produces — the rule is on the shape of the list, not
+  on what an evaluation of it returns.
+
+A list that violates any of the three is a list the rule cannot be evaluated
+against — it is reported as malformed, not silently narrowed.
 
 ### Gate 2's scoping signal
 

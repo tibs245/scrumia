@@ -3,6 +3,23 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-17 — `auto_merge` becomes a closed allowlist of named categories; the self-widening rule lands
+- Issue: #218
+- Category: Changed
+- Breaking: yes
+
+The `settings.autonomy.auto_merge` value space changes from a scalar
+(`none | docs-only | all`) to a list of named categories; `all` is removed.
+Gate 3's opening conditions are stated as four cumulative ones (level,
+every path matched by an active category, CI green, clean attributable
+verdict); `.scrumia/**` is excluded from every category by construction; a
+`not_run` or absent verdict never opens gate 3; the constraints any category
+list must satisfy (closed, explicit, excluding product/specs/decisions/
+autonomy config) are stated here. The category list itself is project data
+in `.scrumia/config.yaml`; the trace is in `features/business/github-tracking/`.
+Downstream consumer wiring (eligibility script, skill citations, site
+regeneration) is the sibling implementation sub-issue (#219).
+
 ## 2026-08-17 — A ticket that names the feature it produces is not refused at Step 0
 - Issue: #18
 - Category: Added

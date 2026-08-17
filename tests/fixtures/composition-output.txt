@@ -6,7 +6,7 @@ ScrumIA composition — ScrumIA (tibs245/scrumia)
   tibs245/scrumia:scrumia-specs
       root=features, strates=["business","app"]
   tibs245/scrumia:scrumia-github-project
-      autonomy={"level":"guided","auto_merge":"none"}, project=ScrumIA,
+      autonomy={"level":"guided","auto_merge":[]}, project=ScrumIA,
       project_number=6, columns=["Backlog","Ready for dev","To dev","In
       progress","In review","Done"],
       board={"field_id":"PVTSSF_lAHOAD9HXc4Bfw4JzhaBcjo","options":{"Backlog":"7f19f379","Ready
