@@ -55,9 +55,8 @@ Three possible outcomes:
 ## Step 4 — Call on the roles whose domain owns the blocker
 
 The condition under which a role must be consulted — not an invitation, a check —
-is stated once in [`features/business/agent-team/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/agent-team/business.md)
-§ *When a role must be consulted*. Read it there; the table that used to live here
-restated it and is gone.
+is in [`rules/when-a-role-must-be-consulted.md`](../../rules/when-a-role-must-be-consulted.md).
+Read it there; the table that used to live here restated it and is gone.
 
 Apply that condition. Where it triggers, convene the role by its agent type — and
 where a role is unreachable, follow the same spec's *Unreachable roles*. The role's
