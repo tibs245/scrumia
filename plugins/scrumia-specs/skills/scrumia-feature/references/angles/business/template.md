@@ -12,11 +12,16 @@ which every feature states.>
 matters; whether that contribution can be measured — name the measure, or
 say plainly it is not instrumented today. Business stratum: the feature's
 value. App stratum: this app's share of the value, then a reference to the
-parent Business feature — never a copy of its rules.>
+parent Business feature — never a copy of its rules.
+
+Write what changes for a person, not what the system does. "So that <who>
+stops <losing what>" is the shape; "the system does X" is the defect this
+section exists to prevent.>
 
 ## Personas
 
-<Who acts in this feature, and what they come for.>
+<Who acts in this feature, and what they come for. Include an actor the
+feature decides something about without them acting.>
 
 ## Use cases
 
@@ -30,9 +35,12 @@ no click path. The moment a step names one, it belongs to `ux.md` instead
 
 ## The rules
 
-<The business rules and invariants. An uncertain rule is written as an open
-question, not resolved by assertion.>
+<The business rules and invariants. A rule constrains what the product
+promises, whatever tool enacts it; how a tool achieves it belongs to
+`tech.md`. An uncertain rule is written as an open question, not resolved by
+assertion.>
 
 ## Vocabulary
 
-<The domain terms this feature relies on, defined once.>
+<The domain terms this feature relies on, defined once. A term a neighbouring
+feature already defines differently is a finding, not a paragraph.>

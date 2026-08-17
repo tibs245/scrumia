@@ -21,9 +21,10 @@ the feature consumes belongs to `tech.md` instead.>
 
 ## Stability
 
-<Producing feature only: what is stable and what may change.>
+<Producing feature only: what is stable and what may change, and what a
+consumer can expect when it does change.>
 
 ## Consumed contract
 
 <Consuming feature only: the reference to the producer's contract, and the
-assumptions made about it.>
+assumptions made about it that the contract does not itself guarantee.>

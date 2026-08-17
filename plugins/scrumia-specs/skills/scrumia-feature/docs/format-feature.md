@@ -27,7 +27,9 @@ The fourth defect is the worst: from the moment nobody verifies anymore, the doc
 
 ## The principle: absence is information
 
-A feature is a **directory of targeted files**, each with a role and a reader. An optional file is created only if it has content.
+A feature is a **directory of targeted files**, each the output of one **angle** — one
+way of interrogating the feature, with its own reader. An optional file is created only
+if it has content.
 
 This seemingly innocuous rule is the heart of the format. With a fixed template, `legal.md` always exists and contains "N/A" — and you don't know whether that means "not applicable" or "not thought through yet". With the catalog, the absence of `legal.md` is an **assertion**: nothing legal at stake.
 
@@ -36,12 +38,39 @@ Direct consequence: an agent can decide what to read without reading everything.
 ## The boundary
 
 A subject alone does not make a scope: taste is how nine indexes grew sections no
-template defined. So the catalog states, for every file, a three-part boundary —
-holds, may hold, must not hold, every exclusion naming its destination — and settles
-the collision-prone edges with membership tests instead of case-by-case debate. The
-tests, the boundaries and the existence categories (which files are mandatory, which
-are content-tested) live **once**, in the catalog linked above — this document does
-not restate them, because a second copy is how they would drift.
+template defined. So each angle states a three-part boundary — holds, may hold, must
+not hold, every exclusion naming its destination — and the collision-prone edges are
+settled by membership tests instead of case-by-case debate.
+
+An angle ships three files, and the split is deliberate. `context.md` says what the
+angle answers, **when it activates**, and the questions that explore it; `template.md`
+is what gets copied; `checklist.md` is the guard-rails a reviewer runs against the
+result. Judgment that stays in someone's head is applied differently every time — the
+questions make it repeatable, and the checklist makes it checkable by someone who did
+not write the file.
+
+The tests and the existence categories (which files are mandatory, which are
+content-tested) live **once**, in the catalog linked above; each angle's own boundary
+lives once, in its `context.md`. This document restates neither, because a second copy
+is how they drift.
+
+## Activation, and why it is written as closed questions
+
+The catalog's conditional column — "if personal data", "if it touches ≥2 apps" — is a
+reminder, not the rule. The rule is a table of closed questions in each angle's
+`context.md`, each with the answer to take when unsure.
+
+That shape is chosen for a specific failure: open-ended judgment, applied by a reader
+in a hurry or by a model with little room to reason, defaults to "no" on every
+question — so the conditional file never gets written, and its absence is read as an
+assertion nobody made. A closed question with a stated default fails the other way,
+which is the cheaper direction.
+
+A project can take the judgment out of the writer's hands entirely, per angle, through
+`params.angles` in `.scrumia/config.yaml`: `always`, `context` (the default), `never`.
+That is for projects whose obligations do not vary feature by feature — an audited
+codebase where an absent `security.md` is never an acceptable assertion. The mandatory
+four ignore the setting.
 
 Which files are mandatory is the plugged specs module's own declaration, made where
 its catalog lives; another module may declare a different set. A consumer delegates
@@ -59,15 +88,38 @@ The rule that matters: **an App feature never copies a business rule**. It refer
 
 An App feature without a Business parent is acceptable if it is purely technical, and its `index.md` must say so. Otherwise, the Business feature is missing.
 
-The catalog is open. Two rules so it does not sprawl: a new file must have a
-**distinct reader** (otherwise it is a section, not a file), and its addition must be
-documented in the catalog, boundary included — otherwise the next feature will invent
-another name for the same thing, and the format will lose what makes it useful: its
-predictability.
+## One feature inside another
+
+A feature may sit inside another, in the parent's own directory. One thing licenses
+that: the parent states what any answer to its question is held to, and the child is
+one such answer. Everything else — dependency, a shared subject, a mention — is two
+features side by side, linked but not nested.
+
+The distinction is not filing preference. Nesting says "you cannot understand this
+without its parent"; juxtaposition says "these two are peers". A reader who lands on a
+nested feature reads its parent first, and a reader who lands on a sibling does not
+need to. Getting it wrong makes one of those two reads wasted, every time.
+
+Two constraints keep it from becoming a folder tree: a parent is a full feature with
+content of its own — this format has no grouping directory — and nesting stops at one
+level. A child of a child means the middle level was really the feature. The test and
+its rules are the catalog's.
+
+The catalog is open. Three rules so it does not sprawl: a new angle must have a
+**distinct reader** (otherwise it is a section, not an angle); it ships the full
+directory — questions, template, checklist; and it is listed in the catalog's table.
+Otherwise the next feature will invent another name for the same thing, and the format
+will lose what makes it useful: its predictability.
 
 ## The special role of `index.md`
 
 It is the only file read systematically. Its section set is fixed by the template — `In brief`, `Links`, `Files present`, those three and no others — so a section outside the set is detectable rather than a matter of taste. `Files present` carries **one line per file, stating when to read it**: not why it exists, but the situation that makes an agent open it.
+
+Its `Links` vocabulary is fixed for the same reason. Left open, it grew fifteen keys
+across twenty indexes — two of them meaning the same thing, several invented once and
+never reused — and a link nobody can resolve mechanically is one nobody checks. Nine
+keys now: four structural, declared on both sides because they describe where the
+feature sits; five referential, one-sided because the authority owes nothing back.
 
 That last point is not decorative: it is what lets an agent load `legal.md` only when the situation calls for it, rather than as a precaution.
 
