@@ -4,10 +4,12 @@
 
 ## In brief
 
-The contextual file catalogue that replaces the monolithic PRD. A feature is a
-directory of targeted files, each with a defined reader — not a single
-document that grows without bound. Two strata carry it: Business (the *what*)
-and App (the *how*, one app each). The operational catalogue lives in
+The contextual catalogue of angles that replaces the monolithic PRD. A feature
+is a directory of targeted files, each the output of one angle with a defined
+reader — not a single document that grows without bound. Two strata carry it:
+Business (the *what*) and App (the *how*, one app each), and within a stratum
+a feature may sit inside another when the parent holds it to something. The
+operational catalogue lives in
 `plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md`; the
 rules it implements are in `business.md`.
 
@@ -17,8 +19,9 @@ rules it implements are in `business.md`.
   `plugins/scrumia-specs` (`scrumia-feature` scaffolds a feature,
   `scrumia-specs-find` walks them), which fills the `specs` slot.
 - Authority: `plugins/scrumia-specs/skills/scrumia-feature/references/catalog.md`
-  — the operational catalogue: each file's three-part boundary, the three
-  existence categories, the membership tests.
+  — the operational catalogue: the angle table, the two existence categories,
+  the membership tests, and the disposition rule. Each angle's own boundary,
+  activation questions and review checklist sit in `angles/<angle>/` beside it.
 
 ## Files present
 

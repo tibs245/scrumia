@@ -190,6 +190,45 @@ And neither entry's title describes the other's change, so each stays the one
   line the format asks for
 ```
 
+### AC-18 — A feature nests only when its parent holds it to something
+
+```gherkin
+Given two features where the second merely depends on the first
+When their disposition on disk is decided
+Then they sit side by side, linked, and neither is inside the other
+And a feature sits inside another only when the parent states what any answer
+  to its question is held to and the child is one such answer
+```
+
+### AC-19 — A nested feature is declared on both sides, and nesting stops at one level
+
+```gherkin
+Given a feature that sits inside another
+When its index and its parent's are read
+Then the child declares the parent and the parent declares the child
+And no third level exists below the child
+And the parent carries every mandatory file with content of its own
+```
+
+### AC-20 — A link key outside the fixed set is detectable
+
+```gherkin
+Given an index whose links use a key the format does not define
+When the index is checked
+Then the key is reported as outside the fixed set
+And a structural link declared on one side only is reported as incomplete
+```
+
+### AC-21 — A declined optional subject is reported with the answer that declined it
+
+```gherkin
+Given a feature whose optional subjects have been considered
+When the writing is reported
+Then each declined subject is named with the answer that declined it
+And a subject absent from that report cannot be told apart from one nobody
+  considered
+```
+
 ## Out of scope
 
 - The numeric splitting guardrails (`business.md` around 200 lines, `qa.md`

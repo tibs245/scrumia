@@ -45,6 +45,39 @@ Duplicating a business rule instead of referencing it guarantees the two
 copies diverge — it is a matter of time, not of discipline. A rule has one
 authoritative location: the Business feature that owns it.
 
+### Disposition on disk
+
+Within a stratum, a feature either sits beside its neighbours or **inside**
+one of them. One thing licenses nesting: the parent states what any answer to
+its question is held to, and the child is one such answer. Dependency, a
+shared subject, or a mention are not nesting — they are two features side by
+side, linked.
+
+The distinction is not filing preference. Nesting says a reader cannot
+understand the child without its parent; juxtaposition says the two are
+peers. Getting it wrong wastes one of those two reads, every time.
+
+Three constraints hold:
+
+- A parent is a full feature, carrying every mandatory file with content of
+  its own. This format has no grouping directory — a directory that exists
+  only to hold children is flattened.
+- Nesting stops at **one level**. A child of a child means the middle level
+  was really the feature and the rest are its rules.
+- Both sides declare the relationship. A child's stratum is its parent's.
+
+### The link vocabulary is fixed
+
+An index's links use a closed set of keys. Four are **structural** — they
+describe where the feature sits, in which stratum and in which directory —
+and are declared on both sides; the rest are **referential**, pointing at an
+authority that owes nothing back.
+
+Left open, the vocabulary grows: one key per writer's intuition, several
+meaning the same thing, and a link nobody can resolve mechanically is a link
+nobody checks. The closed set is what makes a one-sided structural link
+detectable rather than a matter of noticing.
+
 ## Absolute rule — every file has a three-part boundary
 
 The catalogue does not merely name each file's subject: for every file it
@@ -154,6 +187,27 @@ carries the value of this app's share and a reference to the parent, never a
 copy of its rules. **Content-tested**: every other file in the catalogue. The
 categories are declared explicitly, not inferred from a table cell — a
 consumer must be able to read which category a file is in.
+
+### The content test is answered, not felt
+
+"Has content" is a judgement, and a judgement left to prose is applied
+differently by every writer — and defaulted to "no" by any reader in a hurry,
+which is how a conditional file never gets written while its absence is read
+as an assertion nobody made.
+
+So each optional subject carries the closed questions that decide whether it
+applies, each with the answer to take when unsure. The writer answers them
+rather than deciding by feel, and **reports which subjects were declined and
+on which answer**. An absence nobody can see was considered asserts nothing:
+the report is what makes "absence is information" true rather than merely
+claimed.
+
+A project whose obligations do not vary feature by feature may take the
+judgement out of the writer's hands per subject — required always, decided by
+context, or off entirely — through its configuration. Requiring one always
+means a feature with nothing to state says so explicitly, with a date, rather
+than leaving an empty file. The mandatory set ignores the setting: it is not
+a preference.
 
 ## Absolute rule — no inline history
 
