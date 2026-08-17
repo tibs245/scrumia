@@ -16,7 +16,7 @@
 | [compound-components](business/compound-components/index.md) | business | draft | The compound component pattern, framework-agnostic. |
 | [dev-flow](business/dev-flow/index.md) | business | active | Two paths, kept deliberately apart: brainstorming turns an idea into a scoped ticket, human-led and agent-challenged; execution turns a… |
 | [execution-policy](business/execution-policy/index.md) | business | active | Which model executes a ticket, decided from two labels the manager already sets at refinement: scope/ — how far the change reaches — and… |
-| [feature-format](business/feature-format/index.md) | business | active | The contextual file catalogue that replaces the monolithic PRD. |
+| [feature-format](business/feature-format/index.md) | business | active | The contextual catalogue of angles that replaces the monolithic PRD. |
 | [form-management](business/form-management/index.md) | business | draft | Declarative form management for React implementations. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
 | [html-css-and-accessibility](business/html-css-and-accessibility/index.md) | business | draft | Modern HTML and CSS, with accessibility as a first-class concern, applicable to React and SolidJS implementations. |

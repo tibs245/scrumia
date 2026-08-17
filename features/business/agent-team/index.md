@@ -15,7 +15,7 @@ roles up, hands the floor back to the human, and starts no sprint.
 
 ## Links
 
-- Owner: `plugins/scrumia-teams` — three of the roles are subagent definitions in
+- Authority: `plugins/scrumia-teams` — three of the roles are subagent definitions in
   `plugins/scrumia-teams/agents/` (`scrumia-manager.md`, `scrumia-business.md`,
   `scrumia-tech.md`); `scrumia-designer.md` lives in `plugins/scrumia-design/agents/`
   and is registered in the same list. All are consumed by `scrumia-github-project`'s `scrumia-ticket` skill
@@ -26,11 +26,9 @@ roles up, hands the floor back to the human, and starts no sprint.
 - No App feature implements this. `plugins/` is ScrumIA's own product and carries
   no implementation module (`CLAUDE.md`); the roles are not code under `site` or
   `tools`, they are the agent definitions themselves.
-- Related ADRs: `docs/adr/0002-standing-roles.md` (why subagents, not team members;
+- Authority: `docs/adr/0002-standing-roles.md` (why subagents, not team members;
   the sprint-loop constraint), `docs/adr/0015-scope-measures-reach.md` (how a ticket
   reaches a role).
-- Roles: `business.md` — the Owns/Refuses table per role, and the rule that which
-  roles exist is a property of the composition, not of one module.
 
 ## Files present
 

@@ -26,7 +26,7 @@ surfaces included.
 - Defers to: `features/business/release-versioning/` for what a change to a module costs
   a project that has adopted it. This feature says what a module must look like, not what
   moving it promises.
-- Consumed beyond this feature: `features/business/module-authoring/` produces modules
+- Consumed by: `features/business/module-authoring/` produces modules
   against this standard; `features/business/local-extension/` states that a module
   resolved outside the marketplace is held to it unchanged.
 

@@ -18,7 +18,7 @@ paradigm and live elsewhere. Authoritative source:
   `scrumia-impl-reactjs` only.
 - Authority: `https://react-hook-form.com` — the plugin's README cites it
   and pins the version the rules were written against.
-- Pairs with: `features/business/runtime-validation/` for the resolver
+- Boundary: `features/business/runtime-validation/` for the resolver
   pattern — Zod schemas feed `react-hook-form` through
   `@hookform/resolvers/zod`. The two plugins compose independently; the pair
   is documented but neither requires the other.

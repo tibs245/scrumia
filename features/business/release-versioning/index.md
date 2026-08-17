@@ -21,9 +21,9 @@ finds out that something broke.
 - Defers to: `features/business/dev-flow/` for what a commit message must carry and who
   may rewrite a branch. This feature says what the type and scope are *worth*; that one
   says they are mandatory and where they are written.
-- Traced by: `features/business/github-tracking/` for the GitHub spellings of a commit's
+- Consumed by: `features/business/github-tracking/` for the GitHub spellings of a commit's
   reference to its work item.
-- Consumed beyond this feature: `features/business/modular-composition/` establishes that
+- Consumed by: `features/business/modular-composition/` establishes that
   a module can be composed and points here for how it evolves once adopted.
 
 ## Files present

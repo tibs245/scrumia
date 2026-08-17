@@ -24,7 +24,7 @@ This is the section that carries the argument the site currently does not make �
   - `design/identity.md` — the mechanism-over-claim rule this section is most at risk of
     breaking
   - `design/tokens.css` — the vocabulary of values this feature may use
-- Neighbouring sections: `features/app/site/slot-index/` answers *what can be replaced*;
+- Boundary: `features/app/site/slot-index/` answers *what can be replaced*;
   this one answers *what can be added without replacing anything*. Neither restates the
   other, and a reader arriving at one must be able to reach the other.
 
