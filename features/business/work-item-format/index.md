@@ -16,7 +16,7 @@ repository ships is one instance of it, and sits under `standard/`.
 
 ## Links
 
-- Instances: `standard/` — the form this repository ships. A second form would
+- Children: `standard/` — the form this repository ships. A second form would
   sit beside it, under this feature, rather than restating what both are held
   to.
 - Implemented by: no App feature — purely technical, enacted by a module in

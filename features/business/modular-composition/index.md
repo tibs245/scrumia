@@ -18,7 +18,10 @@ cascade through three layers, the last of them per-machine. `business.md` § *Vo
 
 ## Links
 
-- Implemented by: no App feature. The mechanism this feature describes lives in
+- Implemented by: `features/app/site/composer/` and `features/app/site/module-pages/` —
+  the site's own rendering of a composition; neither implements the mechanism, they
+  present it.
+- Implemented by: no other App feature. The mechanism this feature describes lives in
   `scrumia-core` (`plugins/scrumia-core/`) — it reads `.scrumia/config.yaml`, writes the
   composition table into `CLAUDE.md`, renders a register's directives through the
   `scrumia-extends` name it publishes, and prints the composition to a terminal through

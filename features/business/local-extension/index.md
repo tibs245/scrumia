@@ -23,7 +23,7 @@ deliberately not a module: a directive, a rules section, a skill. What a project
   sound while the checker stays location-blind, judging the tree it is handed and never
   asking where it sits. A checker that gained a location would need BR-2 restated as a
   criterion of its own over there.
-- Consumed beyond this feature: `features/business/module-authoring/` decides *when* a
+- Consumed by: `features/business/module-authoring/` decides *when* a
   module moves between the locations this feature defines;
   `features/business/knowledge-placement/` routes toward them.
 

@@ -16,11 +16,11 @@ project declares once and a tool reads for everyone.
   `team` slot, and consumed by `scrumia-sprint` and by `scrumia-ticket`'s Step 0.
 - The grid's cells and the capability order they climb are project data — see
   `business.md` § *The grid is project data; what it must satisfy is not*.
-- Related ADRs: `docs/adr/0015-scope-measures-reach.md` — why the scope axis is measured
+- Authority: `docs/adr/0015-scope-measures-reach.md` — why the scope axis is measured
   rather than estimated, the three questions it is measured by, and why the second one
   reads a rule's reach rather than a file's location. It supersedes
   `docs/adr/0006-ticket-routing.md`.
-- Consumed beyond this feature: the blast-radius test in `business.md` § *The scope axis
+- Consumed by: the blast-radius test in `business.md` § *The scope axis
   measures reach, not medium* is read by `features/business/agent-team/` for entry
   routing, and applied by the plugin prose and the `scope/*` label descriptions that a
   labeller works from.

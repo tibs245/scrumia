@@ -19,7 +19,7 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 - Defers to: `features/business/execution-policy/` for which model executes a scoped
   ticket. This feature says the human validates at the end of execution, not which
   model does the executing.
-- Traced by: `features/business/github-tracking/` — it binds this feature's abstract
+- Consumed by: `features/business/github-tracking/` — it binds this feature's abstract
   cycle to GitHub's concrete artefacts (a PR, a column, a milestone). Whichever
   feature fills the tracker slot plays that role; none of them redefines the process.
 - Defers to: `features/business/release-versioning/` for what a commit's type and scope
