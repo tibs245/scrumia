@@ -40,11 +40,11 @@ They are its author's, on his projects. Each one is a module, so each one can be
 
 ### `scrumia-specs` — per-feature specs, TDD-oriented
 
-A feature is a directory of targeted files. The optional ones are created only if they have content, so an absence becomes an assertion: no `legal.md` means "nothing legal at stake". Four files sit outside that test because the module mandates them — `index.md`, `qa.md`, `CHANGELOG.md`, `business.md`: a feature has to stay findable, followable over time, testable, and worth building — every feature states its value.
+A feature is a directory of targeted files, each the output of one **angle** — one way of interrogating the feature. The optional ones are created only if they have content, so an absence becomes an assertion: no `legal.md` means "nothing legal at stake". Four files sit outside that test because the module mandates them — `index.md`, `qa.md`, `CHANGELOG.md`, `business.md`: a feature has to stay findable, followable over time, testable, and worth building — every feature states its value.
 
 `qa.md` is central rather than an appendix: acceptance criteria carry stable identifiers, are written before the implementation, and become the tests.
 
-The price: a bit more judgment at writing time than with a fixed template. See [`format-feature.md`](../plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md) and [ADR-0004](adr/0004-feature-splitting.md).
+Each angle ships its own activation questions, template and review checklist, so whether an optional file is owed is answered rather than felt — and a project can override any of them through `params.angles`. The price: a bit more judgment at writing time than with a fixed template. See [`format-feature.md`](../plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md) and [ADR-0004](adr/0004-feature-splitting.md).
 
 ### `scrumia-github-project` — state outside the repo
 
