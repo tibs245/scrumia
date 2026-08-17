@@ -27,5 +27,5 @@
 | [module-authoring](business/module-authoring/index.md) | business | draft | How a ScrumIA module comes into existence, changes, and moves — from nothing to a module that already meets the anatomy standard, and from… |
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
 | [runtime-validation](business/runtime-validation/index.md) | business | draft | Type-safe runtime validation at trust boundaries, applicable to React and SolidJS implementations. |
-| [standard-work-item-form](business/standard-work-item-form/index.md) | business | draft | The form this repository ships: five sections, three of them written by whoever opens the issue and two composed from the modules the… |
 | [work-item-format](business/work-item-format/index.md) | business | draft | What any form of work item has to satisfy, whichever module supplies it and whichever tracker renders it. |
+| [standard](business/work-item-format/standard/index.md) | business | draft | The form this repository ships: five sections, three of them written by whoever opens the issue and two composed from the modules the… |

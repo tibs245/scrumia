@@ -6,8 +6,12 @@
 
 The form this repository ships: five sections, three of them written by whoever
 opens the issue and two composed from the modules the project runs. It is one
-instance of what `work-item-format` requires of any form — the general rules
-are stated there and none of them is repeated here.
+instance of what its parent requires of any form — the general rules are stated
+there and none of them is repeated here.
+
+It sits inside its parent's directory because it is one answer to that
+feature's question, not a neighbouring subject: a second form would sit beside
+it, under the same parent, without either restating what both are held to.
 
 Its bet is that an issue reads the same everywhere while staying short to
 write: a title, a need, criteria that can fail, and a rattachement. Everything
@@ -15,7 +19,8 @@ else an issue eventually carries is contributed rather than typed.
 
 ## Links
 
-- Parent: `work-item-format` — the standard every form is held to.
+- Parent: `features/business/work-item-format/` — the standard every form is
+  held to. This feature is one instance of it.
 - Implemented by: no App feature — purely technical, enacted by the
   `scrumia-ticket-writer` module. Neither app in this repository is involved.
 - Boundary: the sections are this feature's; what a classification level means

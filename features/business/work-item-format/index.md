@@ -12,10 +12,13 @@ tells whether an issue meets them; the tracker renders that form onto its own
 tool and defines none of it.
 
 This feature states the standard every form is held to. The form this
-repository ships is `standard-work-item-form`'s.
+repository ships is one instance of it, and sits under `standard/`.
 
 ## Links
 
+- Instances: `standard/` — the form this repository ships. A second form would
+  sit beside it, under this feature, rather than restating what both are held
+  to.
 - Implemented by: no App feature — purely technical, enacted by a module in
   the `work-item-form` position. Neither app in this repository is involved.
 - Consumed by: whichever module fills the `tracker` slot, which renders the
