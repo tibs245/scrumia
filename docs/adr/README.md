@@ -26,8 +26,9 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0018](0018-modules-reach-by-name.md) | A module reaches another by a published name, never by a path | accepted — extended by [0020](0020-skill-extension-protocol.md), second mechanism amended by [0022](0022-a-skill-carries-the-doc-it-needs.md) |
 | [0019](0019-extends-replaces-composition-and-practices.md) | `extends` replaces `composition:`, and folds `practices` into it | accepted — its `extends:` key superseded by [0021](0021-modules-keyed-by-source.md) |
 | [0020](0020-skill-extension-protocol.md) | A skill is extended by data, and the table is computed when asked | accepted |
-| [0021](0021-modules-keyed-by-source.md) | `modules` keyed by source, with a settings cascade | accepted |
+| [0021](0021-modules-keyed-by-source.md) | `modules` keyed by source, with a settings cascade | accepted — its `<owner>/<repo>` source-row clause superseded by [0023](0023-source-key-comes-from-the-manifest.md) |
 | [0022](0022-a-skill-carries-the-doc-it-needs.md) | A skill carries the doc it needs, and `docs/` points inward | accepted — amends [0018](0018-modules-reach-by-name.md) |
+| [0023](0023-source-key-comes-from-the-manifest.md) | A module's `<owner>/<repo>` source is its manifest's claim, not the marketplace | accepted |
 
 ## Scope of the decisions
 
