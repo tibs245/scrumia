@@ -162,3 +162,30 @@ Then it reports what it concluded and why, leaves the working tree unchanged, an
 ```
 
 An authoring pass that can only succeed by creating a module will always create one.
+
+### AC-11 — A move that would shadow an existing module is refused
+
+```gherkin
+Given a module created inside a project and a destination marketplace that already
+  publishes a module of the same name
+When the authoring pass promotes the local module to that marketplace
+Then the move is refused before any file is moved or any declaration is rekeyed, the
+  refusal names the colliding module and the source it is registered under, and the
+  pass offers the two conformant paths — rename first (with the window
+  `release-versioning/` counts) or pick a different destination
+And nothing inside the module is rewritten, and no marketplace entry is added, and
+  `tools/validate.py` would have refused the result had the move proceeded
+
+Given instead a destination marketplace whose existing module of that name is itself
+  being withdrawn at the same release, and the move is staged as a coordinated rename
+When the authoring pass runs
+Then the move is refused unless the mover produces the rename's N release in the
+  destination marketplace first, so the old spelling is deprecated under the same
+  two-release window `release-versioning/` lines 107–119 already require
+```
+
+The second scenario closes the swap gap without a separate ticket: the refusal is
+conditioned on the destination *carrying* the name at the moment of the move, not on
+the name having been used there at any prior release. A module that was at version N
+and properly withdrawn under `release-versioning/`'s window is no longer carried, and
+a promotion into that marketplace is not refused by this rule.

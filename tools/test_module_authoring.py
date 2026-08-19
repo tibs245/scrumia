@@ -363,6 +363,74 @@ check("a register declared and never consulted is a finding, so a scaffold canno
       code == 3 and any(f["rule"] == "modular-composition/BR-11" for f in envelope["findings"]),
       envelope)
 
+# -------------------------------------------------------------------------- AC-11
+
+print("AC-11 — a promotion that would shadow an existing module is refused")
+
+# Digests taken before any prose is read so the And can re-check that nothing moved.
+ac11_local = produce(TMP / "ac11-shadow" / ".scrumia" / "modules" / "acme-oncall")
+ac11_destination = TMP / "ac11-shadow-mkt" / "acme-oncall"
+produce(ac11_destination)
+ac11_digests = {"local": digest(ac11_local), "destination": digest(ac11_destination)}
+
+pass_text = SKILL.read_text(encoding="utf-8")
+step0_full = pass_text.partition("## Step 0")[2].partition("## Step 1")[0]
+step0_lower = " ".join(step0_full.lower().split())
+check("AC-11's shadow refusal sits in Step 0, where the move is staged",
+      "destination already carries" in step0_lower)
+check("…and fires before any file is moved or any declaration is rekeyed",
+      "before any file is moved or any declaration is rekeyed" in step0_lower)
+check("AC-11 names the colliding module's qualified key in <source>:<name>",
+      "qualified key" in step0_lower and "<source>:<name>" in pass_text)
+check("AC-11 names the source the colliding module is registered under",
+      "source it is registered under" in step0_lower)
+check("AC-11 cites the bin/ PATH collision under modular-composition BR-11",
+      "br-11" in step0_lower and "bin/" in step0_lower)
+check("AC-11 offers the rename path with the release-versioning window by line",
+      "release-versioning" in step0_lower and "107" in step0_lower and "119" in step0_lower)
+check("AC-11 offers the different-destination path",
+      "different destination" in step0_lower)
+check("AC-11 closes the swap case in the same refusal",
+      "swap case" in step0_lower and "withdrawn" in step0_lower)
+check("AC-11 conditions the swap on the rename's N release landing first",
+      "n release" in step0_lower and "deprecated" in step0_lower)
+check("…and nothing inside the local module has moved",
+      digest(ac11_local) == ac11_digests["local"], digest(ac11_local))
+check("…and nothing inside the destination has moved either",
+      digest(ac11_destination) == ac11_digests["destination"], digest(ac11_destination))
+
+business_text = (ROOT / "features" / "business" / "module-authoring" / "business.md").read_text()
+br9 = business_text.partition("- **BR-9**")[2].partition("## Vocabulary")[0]
+br9_lower = br9.lower()
+check("BR-9 sits in module-authoring's Business rules list, after BR-8",
+      bool(br9.strip()))
+check("BR-9 names the destination-already-carries condition",
+      "destination already carries a module of that name" in br9_lower
+      and "refused before any file moves" in br9_lower)
+check("BR-9 names the qualified key shape <source>:<name>",
+      "<source>:<name>" in br9)
+check("BR-9 cites modular-composition BR-11 by name",
+      "modular-composition" in br9_lower and "br-11" in br9_lower)
+check("BR-9 names both conformant paths",
+      "rename first" in br9_lower and "different destination" in br9_lower)
+check("BR-9 cites the release-versioning rename window by line range",
+      "release-versioning" in br9_lower and "107–119" in br9)
+
+qa_text = (ROOT / "features" / "business" / "module-authoring" / "qa.md").read_text()
+ac11 = qa_text.partition("### AC-11")[2]
+check("AC-11 sits in the Refusals section, with two Given/When/Then scenarios",
+      ac11.count("Given") == 2 and ac11.count("When") == 2 and ac11.count("Then") == 2)
+check("AC-11's first scenario is the shadow case",
+      "already\n  publishes a module of the same name" in ac11)
+check("AC-11's second scenario is the swap case",
+      "Given instead a destination marketplace whose existing module of that name is itself\n  being withdrawn" in ac11)
+check("AC-11's swap scenario conditions on the rename's N release",
+      "n release" in ac11.lower() and "107–119" in ac11)
+
+changelog = (ROOT / "features" / "business" / "module-authoring" / "CHANGELOG.md").read_text()
+check("CHANGELOG carries an AC-11 / BR-9 entry tied to #376",
+      "AC-11" in changelog and "BR-9" in changelog and "#376" in changelog)
+
 # ------------------------------------------------------------------------- the pass itself
 
 print("The pass — the branches each refusal criterion requires")

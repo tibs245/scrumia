@@ -89,6 +89,43 @@ to whoever touched it last.
 Fixing a pre-existing finding is welcome and is a change like any other. Inheriting one in
 silence is what this reading forbids.
 
+### The destination is checked before the move starts
+
+A promotion whose destination already carries a module of that name is refused before
+any file is moved or any declaration is rekeyed. The check fires on the name, not on
+the bytes — a `local:` module promoted into a marketplace that already publishes one
+is the same case whether the destination is the project's own marketplace or one
+several sources publish into.
+
+The refusal names three things, so the mover can act on what the rule actually
+collides with:
+
+- the colliding module's **qualified key**, in the form `<source>:<name>`;
+- the **source it is registered under**, so a same-named module from a different
+  source is named rather than implied;
+- the `bin/` names each module declares under
+  [`modular-composition`](https://github.com/tibs245/scrumia/blob/main/features/business/modular-composition/business.md)
+  BR-11 that would resolve to the shadow rather than to the existing module. PATH is
+  one flat namespace, and a silent shadow lands there before the next reader runs
+  anything.
+
+The two conformant paths the pass offers:
+
+- **rename first**, with the window
+  [`release-versioning`](https://github.com/tibs245/scrumia/blob/main/features/business/release-versioning/business.md)
+  counts at lines 107–119. A published name a module renames sits inside that window;
+  so does a whole module's name.
+- **pick a different destination.** A marketplace is one of three places; the other
+  two do not collide.
+
+**The swap case is the same refusal, conditioned on the rename's N release landing
+first.** A destination whose existing module of that name is itself being withdrawn at
+the same release is still carrying the name at the moment of the move, and the move
+is refused unless the rename's N release has landed in the destination marketplace
+already — so the old spelling is deprecated under the same two-release window.
+A module properly withdrawn under that window is no longer carried at the moment of
+the next promotion, and the rule does not refuse it.
+
 ### Moving it between locations rewrites nothing
 
 A module moves when the reach of its need turns out to be wider or narrower than where it

@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-19 — A promotion that would shadow an existing module is refused before anything moves (BR-9, AC-11)
+- Issue: #376
+- Category: Added
+- Breaking: no
+
 ## 2026-08-14 — A withdrawal's notice is a gap named, not a mechanism (AC-4)
 - Issue: #290
 - Category: Changed
