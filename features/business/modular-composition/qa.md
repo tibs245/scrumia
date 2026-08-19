@@ -327,6 +327,25 @@ Then the lower layer's cell answers, so a table has a hole where a layer leaves 
   opposite things
 ```
 
+### AC-22 — A declared module absent from the runtime is reported by name
+
+```gherkin
+Given a project whose composition declares a module under `modules:` whose
+  `<source>:<module>` key is not present in `claude plugin list --json`'s output —
+  the entry is missing, `enabled: false`, scoped to another `projectPath`, or its
+  `installPath` does not resolve on disk
+When `compose-status.sh` runs
+Then a one-line note naming the declared module, the source that should provide it,
+  and the install command is emitted to stderr, and stdout is unchanged for any caller
+  that gates on it
+```
+
+AC-22 covers the module itself; AC-11 covers a module that is present but whose declared
+dependencies are unmet. The runtime read is what BR-6 admits: a declaration can name a
+module whose install is absent, and nothing else surfaces the gap. The four signals are
+read separately because each is a different failure mode — the predicate is in BR-6's
+amendment and `scrumia-core`'s `compose-status.sh` is the kernel-level executor.
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor or

@@ -345,14 +345,22 @@ because the prose still reads plausibly. So the skills that present the composit
 modules the project runs, and each app with the modules it declares. What a human reads is the
 file, every time, rather than what one session remembered of it.
 
-This is reporting, not resolution. Nothing calls the script to find out who provides
-anything; it resolves nothing on any agent's behalf, and BR-4 stands untouched.
+The script reads the config as the versioned artefact on stdout, and reads the runtime —
+`claude plugin list --json` — as machine-local state on stderr. For each declared
+module whose `<source>:<module>` key is not present in the runtime (entry missing,
+`enabled: false`, scoped to another project, or `installPath` not resolving on disk),
+one note names the module, the source that should provide it, and the install command.
+stdout is unchanged for any caller that gates on it (the site publishes it verbatim;
+`tests/fixtures/composition-output.txt` gates it).
 
-It stops there deliberately. It reads the config and only the config, so it cannot tell
-whether a module named there is actually enabled, or whether `CLAUDE.md` has gone stale
-against it. Those are diagnoses `scrumia-compose` runs and reports around the script's
-output — a status printer that guessed at them would be the least trustworthy output in
-the composition.
+This is reporting, not resolution. Nothing calls the script to find out who provides
+anything; it resolves nothing on any agent's behalf, and BR-4 stands untouched. Reading
+the runtime is the cross-check BR-6 admits: a declaration can name a module whose
+install is absent, and that drift would not otherwise be visible to anyone who closes
+by running the script. The four signals are read separately because each is a different
+failure mode — a module not in the cache is one thing, a module disabled in the cache
+is another, a module scoped to another project is a third, and a stale entry whose
+`installPath` no longer resolves is a fourth.
 
 ## Business rules
 
@@ -373,9 +381,11 @@ the composition.
   marketplace. A third-party module is not required to: it declares its own source in
   `marketplace.json`, at the adopting project's discretion.
 - **BR-6** — The composition is reported by reading `.scrumia/config.yaml`, never from
-  memory. A skill that presents the composition closes by running the kernel's status
-  script and does not paraphrase the table it prints. Reporting the composition is not
-  resolving it: BR-4 still forbids resolving a name to a module at runtime.
+  memory, and cross-checked against the runtime — what `claude plugin list --json`
+  confirms is installed — before being printed. A skill that presents the composition
+  closes by running the kernel's status script and does not paraphrase the table it
+  prints. Reporting the composition is not resolving it: BR-4 still forbids resolving
+  a name to a module at runtime.
 - **BR-7** — Every reference a module writes resolves inside that module. A file
   another module ships is reached by running the name that module publishes on
   PATH — never by a path climbing out of the caller's own root — and a document
