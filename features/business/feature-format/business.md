@@ -71,7 +71,9 @@ Three constraints hold:
 An index's links use a closed set of keys. Four are **structural** — they
 describe where the feature sits, in which stratum and in which directory —
 and are declared on both sides; the rest are **referential**, pointing at an
-authority that owes nothing back.
+authority that owes nothing back. **Cited by** is a referential key for
+the inverse asymmetry the consumer raises: a feature that names this one
+as the home of a finding rather than as something it consumes.
 
 Left open, the vocabulary grows: one key per writer's intuition, several
 meaning the same thing, and a link nobody can resolve mechanically is a link
