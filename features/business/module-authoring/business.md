@@ -127,6 +127,14 @@ reads none of — it writes nothing, and the absence is the statement.
   the accepted answer where a slot is not justified.
 - **BR-8** — The pass writes no placeholder. Where it has nothing to write, it writes
   nothing.
+- **BR-9** — A promotion whose destination already carries a module of that name is
+  refused before any file moves or any declaration is rekeyed. The refusal names the
+  colliding module's qualified key (`<source>:<name>`), the source it is registered
+  under, and the `bin/` published names each module declares under
+  `modular-composition` BR-11 that would resolve to the shadow rather than to the
+  existing module. The two conformant paths are: rename first (with the window
+  `features/business/release-versioning/` counts at lines 107–119), or pick a
+  different destination.
 
 ## Vocabulary
 
