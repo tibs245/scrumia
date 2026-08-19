@@ -153,6 +153,9 @@ if command -v claude >/dev/null 2>&1; then
   RUNTIME_JSON=$(claude plugin list --json 2>/dev/null || true)
   if [ -n "${RUNTIME_JSON:-}" ] && printf '%s' "$RUNTIME_JSON" | jq -e 'type == "array"' >/dev/null 2>&1; then
     RUNTIME_PWD=$(pwd -P 2>/dev/null || pwd)
+    # CLI stores plugins under the marketplace alias; we map source repo -> alias.
+    SETTINGS_JSON="${SCRUMIA_SETTINGS:-.claude/settings.json}"
+    [ -f "$SETTINGS_JSON" ] || SETTINGS_JSON=""
     while IFS=$'\t' read -r declared _; do
       [ -n "$declared" ] || continue
       module=${declared#*:}
@@ -168,12 +171,38 @@ if command -v claude >/dev/null 2>&1; then
               or ($pp // "") != "" and ($pwd | startswith($pp + "/"))
             )
         ] | first // empty' 2>/dev/null)
+      case "$source" in
+        local)
+          remediation="place it at .scrumia/modules/$module/ on this machine"
+          install_cmd=""
+          ;;
+        shared)
+          remediation="drop a checkout in \$SCRUMIA_SHARED_DIR/$module/"
+          install_cmd=""
+          ;;
+        *)
+          alias=""
+          if [ -n "$SETTINGS_JSON" ]; then
+            alias=$(jq -r --arg src "$source" '
+              .extraKnownMarketplaces // {} | to_entries[]
+              | select((.value.source.repo // "") as $r | $r == $src)
+              | .key' "$SETTINGS_JSON" 2>/dev/null | head -n1)
+          fi
+          if [ -n "$alias" ] && [ "$alias" != "null" ]; then
+            install_cmd="claude plugin install $module@$alias --scope project"
+            remediation="run \`$install_cmd\`"
+          else
+            install_cmd=""
+            remediation="register the marketplace '$source' under extraKnownMarketplaces, then run \`claude plugin install $module@<alias> --scope project\`"
+          fi
+          ;;
+      esac
       if [ -z "$match" ] || [ "$match" = "null" ]; then
-        note "declared module '$declared' is not installed here — run \`claude plugin install $module@$source --scope project\` to install it"
+        note "declared module '$declared' is not installed here — $remediation"
       else
         ip=$(printf '%s' "$match" | jq -r '.installPath // ""' 2>/dev/null)
         if [ -z "$ip" ] || [ ! -d "$ip" ]; then
-          note "declared module '$declared' has no installPath on disk — run \`claude plugin install $module@$source --scope project\` to repair it"
+          note "declared module '$declared' has no installPath on disk — $remediation"
         fi
       fi
     done <<<"$MODULES"
