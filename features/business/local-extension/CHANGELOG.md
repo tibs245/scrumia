@@ -3,6 +3,16 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-19 — Contract-defined project roots are excluded from local material by name (BR-3, AC-12)
+- Issue: #310
+- Category: Changed
+- Breaking: no
+
+## 2026-08-19 — The closing vocabulary sentence states the exclusion, so the list is not self-contradictory (AC-13)
+- Issue: #310
+- Category: Added
+- Breaking: no
+
 ## 2026-08-13 — What `CLAUDE.md` claims is reconciled against what resolves, not asserted (BR-8, AC-7, tech.md)
 - Issue: #292
 - Category: Added
