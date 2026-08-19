@@ -28,11 +28,13 @@ def check(name: str, ok: bool, detail: str = "") -> None:
         print(f"  FAIL  {name}{' — ' + detail if detail else ''}")
 
 
-def env_for(config: Path | None = None, **extra: str) -> dict[str, str]:
+def env_for(config: Path | None = None, claude_stub: Path | None = None, **extra: str) -> dict[str, str]:
     env = dict(os.environ)
     env.pop("NO_COLOR", None)
     if config is not None:
         env["SCRUMIA_CONFIG"] = str(config)
+    if claude_stub is not None:
+        env["PATH"] = f"{claude_stub}/bin:{env['PATH']}"
     env.update(extra)
     return env
 
@@ -108,6 +110,26 @@ def config_with(body: str) -> Path:
     handle.write(body)
     handle.close()
     return Path(handle.name)
+
+
+def stub_claude(runtime_json: str | None) -> Path:
+    """A fake `claude` on PATH returning a controlled `plugin list --json`.
+
+    Passing `None` returns exit 127 — the script's `command -v` check passes,
+    but `claude plugin list --json` exits non-zero, so the runtime check is
+    skipped silently (CI's behaviour). Passing a string makes the stub print it
+    verbatim. The returned directory's bin/ is prepended to PATH by the caller.
+    """
+    dir_ = Path(tempfile.mkdtemp(prefix="scrumia-claude-stub-"))
+    bin_ = dir_ / "bin"
+    bin_.mkdir()
+    if runtime_json is None:
+        body = "#!/bin/sh\nexit 127\n"
+    else:
+        body = f"#!/bin/sh\necho '{runtime_json}'\n"
+    (bin_ / "claude").write_text(body)
+    (bin_ / "claude").chmod(0o755)
+    return dir_
 
 
 PROJECT_CONFIG = """
@@ -271,8 +293,10 @@ def test_ac2_colour_gating() -> None:
 
 def test_ac3_read_only_and_no_argument() -> None:
     print("AC-3 — writes nothing, needs no argument")
+    # Stubbed `claude` exits 127 → runtime check skipped, like CI's behaviour.
+    no_claude = stub_claude(None)
     before = snapshot(ROOT)
-    code, out, err = run_piped(env_for())
+    code, out, err = run_piped(env_for(claude_stub=no_claude))
     after = snapshot(ROOT)
 
     check("exits 0 with no argument in a configured repo", code == 0, f"exit {code}, {err.strip()}")
@@ -283,26 +307,26 @@ def test_ac3_read_only_and_no_argument() -> None:
 
     # A migrated config earns silence: a warning every run is a warning nobody reads.
     migrated = config_with(MODULES_CONFIG)
-    code, out, err = run_piped(env_for(migrated))
+    code, out, err = run_piped(env_for(migrated, claude_stub=no_claude))
     check("a config on modules: says nothing on stderr", err == "", err.strip())
     check("and still prints its composition", "Demo" in out, out[:120])
     os.unlink(migrated)
 
     retired = config_with(PROJECT_CONFIG)
-    _, _, err = run_piped(env_for(retired))
+    _, _, err = run_piped(env_for(retired, claude_stub=no_claude))
     check("a config still on the retired extends: is told to migrate",
           err.startswith("compose-status.sh:") and "migrate to 'modules:'" in err,
           err.strip())
     os.unlink(retired)
 
-    code, _, err = run_piped(env_for(), ["--help"])
+    code, _, err = run_piped(env_for(claude_stub=no_claude), ["--help"])
     check("--help documents the call", code == 2 and "compose-status.sh" in err)
 
-    code, _, err = run_piped(env_for(), ["63"])
+    code, _, err = run_piped(env_for(claude_stub=no_claude), ["63"])
     check("an unexpected argument is refused, not ignored", code == 2)
 
     missing = Path(tempfile.gettempdir()) / "scrumia-no-such-config.yaml"
-    code, out, err = run_piped(env_for(missing))
+    code, out, err = run_piped(env_for(missing, claude_stub=no_claude))
     check("a missing config fails loudly on stderr",
           code == 1 and "scrumia-init" in err and out == "", f"exit {code}")
 
@@ -348,8 +372,11 @@ def test_ac3_config_text_is_never_expanded() -> None:
 
 def test_ac17_the_key_carries_the_source() -> None:
     print("AC-17 — a module is reported under the key it is declared by")
+    # CI-mode: no `claude` on PATH → runtime check skipped, so the migration-notice
+    # assertion stays meaningful (a developer's runtime would emit its own notes).
+    no_claude = stub_claude(None)
     config = config_with(MODULES_CONFIG)
-    _, out, err = run_piped(env_for(config, COLUMNS="140"))
+    _, out, err = run_piped(env_for(config, COLUMNS="140", claude_stub=no_claude))
 
     for key in ("tibs245/scrumia:scrumia-specs", "shared:acme-conventions",
                 "local:acme-docs-rules"):
@@ -365,7 +392,7 @@ def test_ac17_the_key_carries_the_source() -> None:
     os.unlink(config)
 
     bare = config_with(UNSOURCED_CONFIG)
-    _, out, _ = run_piped(env_for(bare, COLUMNS="140"))
+    _, out, _ = run_piped(env_for(bare, COLUMNS="140", claude_stub=no_claude))
     check("a bare name is named as not a declaration",
           "'scrumia-specs' is not a declaration" in out, out[:400])
     check("and the grammar it should have used is stated",
@@ -383,13 +410,14 @@ def test_ac17_the_key_carries_the_source() -> None:
 
 def test_ac18_the_local_layer_is_reported_as_such() -> None:
     print("AC-18 — the per-machine layer is named where it changes what resolves")
+    no_claude = stub_claude(None)
     config = config_with(MODULES_CONFIG)
-    _, without, err = run_piped(env_for(config))
+    _, without, err = run_piped(env_for(config, claude_stub=no_claude))
     check("nothing is claimed when there is no local layer",
           "local layer" not in without and "local layer" not in err, without[:200])
 
     local = config_with(LOCAL_LAYER)
-    _, report, err = run_piped(env_for(config, SCRUMIA_CONFIG_LOCAL=str(local)))
+    _, report, err = run_piped(env_for(config, SCRUMIA_CONFIG_LOCAL=str(local), claude_stub=no_claude))
     check("the layer in effect is named", "local layer is in effect" in err, err[:300])
     check("the file that holds it is named", str(local) in err)
     check("and the cost is stated, not hidden", "not versioned" in err, err[-400:])
@@ -419,6 +447,115 @@ def test_ac4_both_skills_end_by_running_it() -> None:
               "\n## Step" not in tail, "a later step follows the call")
 
 
+def test_ac22_runtime_cross_check() -> None:
+    print("AC-22 — a declared module absent from the runtime is reported by name")
+    # Stubbed `claude` makes the predicate deterministic across developer/CI machines.
+    cwd = str(Path.cwd())
+    enabled_no_installpath = (
+        '[{"id":"scrumia-design@scrumia","version":"0.4.0","scope":"project",'
+        '"enabled":true,"projectPath":"' + cwd + '"}]'
+    )
+    foreign_project = (
+        f'[{{"id":"scrumia-design@scrumia","version":"0.4.0","scope":"project",'
+        f'"enabled":true,"installPath":"{cwd}","projectPath":"/some/other/project"}},'
+        f'{{"id":"scrumia-specs@scrumia","version":"0.5.0","scope":"project",'
+        f'"enabled":false,"installPath":"{cwd}","projectPath":"{cwd}"}}]'
+    )
+    empty = "[]"
+
+    # When every declared module is in the runtime and enabled for this project,
+    # the check is silent — the runtime confirms the config, nothing to report.
+    all_installed = (
+        f'[{{"id":"scrumia-specs@scrumia","version":"0.5.0","scope":"project",'
+        f'"enabled":true,"installPath":"{cwd}","projectPath":"{cwd}"}},'
+        f'{{"id":"acme-conventions@scrumia","version":"0.1.0","scope":"user",'
+        f'"enabled":true,"installPath":"{cwd}"}},'
+        f'{{"id":"acme-docs-rules@scrumia","version":"0.1.0","scope":"project",'
+        f'"enabled":true,"installPath":"{cwd}","projectPath":"{cwd}"}}]'
+    )
+
+    cases = [
+        ("an empty runtime fires the note for every declared module", empty, True),
+        ("every declared module installed silently passes the check", all_installed, False),
+        ("an enabled entry scoped to another project fires the note", foreign_project, True),
+        ("a missing installPath fires the note", enabled_no_installpath, True),
+    ]
+    config = config_with(MODULES_CONFIG)
+    for label, runtime_json, expect_note in cases:
+        stub = stub_claude(runtime_json)
+        _, _, err = run_piped(env_for(config, claude_stub=stub))
+        fired = "is not installed here" in err or "has no installPath on disk" in err
+        check(label, fired == expect_note, err.strip()[:200])
+    os.unlink(config)
+
+    config = config_with(MODULES_CONFIG)
+    stub = stub_claude(empty)
+    _, out, _ = run_piped(env_for(config, claude_stub=stub))
+    check("stdout still carries the report when a note fires",
+          "Demo" in out and "scrumia-specs" in out, out[:120])
+    os.unlink(config)
+
+    config = config_with(MODULES_CONFIG)
+    stub = stub_claude(None)
+    _, _, err = run_piped(env_for(config, claude_stub=stub))
+    check("no `claude` on PATH skips the check silently",
+          "not installed" not in err and "installPath" not in err, err.strip()[:200])
+    os.unlink(config)
+
+    # The note names the install command with the marketplace alias from
+    # extraKnownMarketplaces, not the source repo — the CLI stores the alias.
+    config = config_with(MODULES_CONFIG)
+    stub = stub_claude(empty)
+    _, _, err = run_piped(env_for(config, claude_stub=stub))
+    check("the marketplace note uses the alias, not the source repo",
+          "claude plugin install scrumia-specs@scrumia" in err, err.strip()[:300])
+    check("the marketplace note never names the source repo as the alias",
+          "scrumia-specs@tibs245/scrumia" not in err, err.strip()[:300])
+    os.unlink(config)
+
+    local_shared = """
+project:
+  name: "Demo"
+modules:
+  "shared:acme-conventions": {}
+  "local:acme-docs-rules": {}
+"""
+    config = config_with(local_shared)
+    stub = stub_claude(empty)
+    _, _, err = run_piped(env_for(config, claude_stub=stub))
+    check("a shared module names the SCRUMIA_SHARED_DIR checkout",
+          "$SCRUMIA_SHARED_DIR/acme-conventions" in err, err.strip()[:400])
+    check("a local module names .scrumia/modules/<module>/",
+          ".scrumia/modules/acme-docs-rules" in err, err.strip()[:400])
+    check("neither names a `claude plugin install` command",
+          "claude plugin install" not in err, err.strip()[:400])
+    os.unlink(config)
+
+    unregistered = """
+project:
+  name: "Demo"
+modules:
+  "acme/scrumia:scrumia-specs": {}
+"""
+    config = config_with(unregistered)
+    stub = stub_claude(empty)
+    _, _, err = run_piped(env_for(config, claude_stub=stub))
+    check("an unregistered marketplace names the registration, not a broken install",
+          "extraKnownMarketplaces" in err and "acme/scrumia" in err,
+          err.strip()[:400])
+    os.unlink(config)
+
+    config = config_with(MODULES_CONFIG)
+    stub = stub_claude("error: connection refused")
+    _, out, err = run_piped(env_for(config, claude_stub=stub))
+    check("malformed runtime JSON is silently skipped",
+          "not installed" not in err and "installPath" not in err,
+          err.strip()[:200])
+    check("stdout still prints when the runtime is malformed",
+          "Demo" in out, out[:120])
+    os.unlink(config)
+
+
 def main() -> int:
     if not os.access(SCRIPT, os.X_OK):
         print(f"error: {SCRIPT.relative_to(ROOT)} is not executable")
@@ -432,6 +569,7 @@ def main() -> int:
     test_ac17_the_key_carries_the_source()
     test_ac18_the_local_layer_is_reported_as_such()
     test_ac4_both_skills_end_by_running_it()
+    test_ac22_runtime_cross_check()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
 
