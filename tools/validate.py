@@ -417,7 +417,7 @@ LINK_RECIPROCALS = {
     "Parent": "Children",
     "Children": "Parent",
 }
-LINK_REFERENTIAL = {"Consumes", "Consumed by", "Defers to", "Authority", "Boundary"}
+LINK_REFERENTIAL = {"Consumes", "Consumed by", "Defers to", "Authority", "Boundary", "Cited by"}
 LINK_KEYS = set(LINK_RECIPROCALS) | LINK_REFERENTIAL
 
 LINKS_SECTION_RE = re.compile(r"^## Links\s*\n(.*?)(?=\n## |\Z)", re.MULTILINE | re.DOTALL)
