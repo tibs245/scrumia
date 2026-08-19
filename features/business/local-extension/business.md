@@ -234,7 +234,10 @@ on one machine is a module the project cannot be handed to someone else with.
 - **BR-2** — A module resolved outside a marketplace is held to the anatomy standard
   unchanged. There is no local tier.
 - **BR-3** — Local material that is not a module — a directive, a rules section, a skill
-  — is legitimate as an end state, not as a stage before becoming one.
+  — is legitimate as an end state, not as a stage before becoming one. Material a
+  module's contract in `CLAUDE.md` declares is not local material, and this feature's
+  enumeration does not cover it: it lives by the contract that names it, and reading
+  it is the contract's responsibility.
 - **BR-4** — A project with local material and no local module is correctly extended, and
   nothing reports it as carrying a malformed module.
 - **BR-5** — Resolution states the location each module came from. Where more than one
@@ -272,4 +275,8 @@ on one machine is a module the project cannot be handed to someone else with.
 - **Location** — where a module's files sit. Not a slot, not a source in a manifest: a
   module has one location and may fill zero or one slot.
 - **Local material** — what a project adds without creating a module. Bounded to the
-  three shapes above; anything larger is a module and is treated as one.
+  three shapes above; anything larger is a module and is treated as one. Material a
+  module's contract in `CLAUDE.md` declares — the `specs_root` `scrumia-specs`
+  names, the `design_root` `scrumia-design` names, and any other contract-defined
+  root — is not local material: its shape is the contract's, and the contract names
+  the file the contract itself is filed in.

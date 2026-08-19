@@ -26,6 +26,9 @@ deliberately not a module: a directive, a rules section, a skill. What a project
 - Consumed by: `features/business/module-authoring/` decides *when* a
   module moves between the locations this feature defines;
   `features/business/knowledge-placement/` routes toward them.
+- Cited by: `features/business/knowledge-placement/`'s destinations table defers
+  to this feature for the three project shapes; `scrumia-place`'s Step 3 question 3
+  names this feature as the home of any finding that none of the three shapes fit.
 
 ## Files present
 

@@ -191,3 +191,35 @@ When that register is asked for
 Then the directive appears with no module having been created, versioned or installed for
   it
 ```
+
+### AC-12 — A contract-defined project root is not local material
+
+```gherkin
+Given a project holding only contract-defined project roots — a `specs_root` named by
+  `scrumia-specs`'s contract and a `design_root` named by `scrumia-design`'s — and no
+  directive, no rules section and no skill of its own
+When the composition is checked and the anatomy checker runs
+Then the project is reported as correctly extended, the contract roots are reported as
+  read by the contracts that declare them rather than by this feature's enumeration, and
+  no finding names a contract root a malformed module, a malformed directive, or a
+  malformed rules section — local material has not been widened to cover it
+Given instead the same project holding one directive alongside the contract roots
+When the composition is checked
+Then the directive is reported under BR-3 as it would be without the contract roots, and
+  the contract roots are still reported by their contracts, and the two reports do not
+  conflate
+```
+
+### AC-13 — The closing vocabulary sentence states the exclusion
+
+```gherkin
+Given the closing sentence of `local-extension/business.md`'s Vocabulary
+When the file is read end-to-end
+Then the sentence names the bounded shapes and states that project-owned material
+  declared by another module's contract is not local material, and a reader who knows
+  the three shapes alone has the full claim and the full exclusion
+```
+
+AC-13 pins the load-bearing closing sentence at line 275 — `scrumia-place` cites it via
+the list, not the section title, and any tool that grep-matches the bounding phrase reads
+it there.
