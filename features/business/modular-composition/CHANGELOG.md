@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-19 — The composition is cross-checked against the runtime, and a declared-but-not-installed module is reported by name (BR-6, AC-22)
+- Issue: #46
+- Category: Changed
+- Breaking: no
+
 ## 2026-08-14 — The exit-status constraint names what it is about, since more than one surface now fails (tech.md)
 - Issue: #292
 - Category: Changed
