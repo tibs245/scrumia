@@ -346,6 +346,39 @@ module whose install is absent, and nothing else surfaces the gap. The four sign
 read separately because each is a different failure mode — the predicate is in BR-6's
 amendment and `scrumia-core`'s `compose-status.sh` is the kernel-level executor.
 
+### AC-23 — A plugin citing its own home-repo's `features/` restates the operative rule inline
+
+```gherkin
+Given a plugin whose installed root is no longer its home-repo, and which cites a
+  `features/` rule owned by its own home-repo — a document the plugin owns in
+  source but not at install time, because the consumer's `scrumia-specs` instance
+  ships its own `features/` with the same path shape and content that may differ
+  under the same name
+When the citation is read in a consumer's installation, in a session that has
+  resolved neither the plugin's home-repo nor any plugin named for its `features/`
+Then the plugin's own prose restates the operative rule inline, in a form a reader
+  can apply without following the link; the citation is then a provenance pointer,
+  not a load-bearing reference, and the reader's session is not asked to mediate
+Given instead the reader is in the plugin's own home-repo, where the cited link
+  resolves to the rule it was written against
+When the same citation is read from there
+Then the restate-inline form still holds — the operative rule restated inline is
+  the same rule regardless of which installation the reader is in, so the inline
+  statement and the cited content agree rather than relying on the reader's
+  installation to mediate
+```
+
+The third case is narrower than BR-7's second bullet because the cited document
+*is* the plugin's own rule in source — and that is exactly why the citation must
+not be load-bearing. The wording is grounded on **text** (the consumer's
+`scrumia-specs` ships its own `features/` with the same path shape and content
+that may differ), not on path resolution: a load-bearing citation would resolve
+to whichever instance the runtime sees, and the reader's installation would
+mediate a rule it was never asked to mediate. The second scenario pins the
+restate-inline obligation as not optional: the home-repo's installation is the
+easiest reader for the inline statement to look redundant in, and the easiest for
+it to be silently dropped from — exactly the failure the clause exists to forbid.
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor or

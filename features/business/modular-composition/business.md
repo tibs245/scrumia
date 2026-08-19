@@ -317,7 +317,8 @@ module's own root lands somewhere different in the two layouts, and nowhere at a
 project that is not the module's home repository. It fails silently: a link nothing
 opens, a script that is simply absent.
 
-Two ways out, and only two:
+Two ways out for what crosses the module boundary — and a third, narrower one for a
+`features/` rule the plugin owns in source but not at install time:
 
 - **A file another module ships** — the owning module publishes it as a *named
   executable* under its own `bin/`, which the harness puts on the session's PATH with the
@@ -325,6 +326,15 @@ Two ways out, and only two:
 - **A document belonging to no module** — a rationale or a spec in the home repository.
   The module inlines what it needs, or cites an absolute public URL. A
   repository-relative link assumes a consuming project has a file it has never had.
+- **A `features/` rule the plugin owns in source but not at install time** — once
+  installed, the plugin is no longer its home-repo: the home-repo's `features/`
+  directory belongs to the consumer's own `scrumia-specs` instance, which ships its
+  own `features/` with the same path shape and content that may differ under the
+  same name. A citation that drops a `features/` path or links out of the plugin root
+  lands on whichever instance the runtime reads the same shape — possibly the
+  consumer's `features/`, with different content. So the plugin restates the
+  operative rule inline, and the citation is then a provenance pointer, not a
+  load-bearing reference.
 
 The same harness fact is what makes a contribution readable without an executable: the
 modules present are the ones whose `bin/` the harness put on PATH, so the kernel's tool
@@ -391,7 +401,13 @@ is another, a module scoped to another project is a third, and a stale entry who
   PATH — never by a path climbing out of the caller's own root — and a document
   belonging to no module is inlined or cited by absolute URL. Running a published
   name is not resolving a slot, so BR-4 stands: the name is constant and greppable,
-  and nothing decides at runtime which module answers it.
+  and nothing decides at runtime which module answers it. When the cited document is
+  the plugin's own home-repo `features/` rule — a file the plugin owns in source but
+  not at install time — the operative rule is restated inline before the citation;
+  the citation is then a provenance pointer, not a load-bearing reference, because a
+  load-bearing reference would resolve to whichever `features/` instance the
+  consumer's `scrumia-specs` shipped, with content that may differ under the same
+  path shape.
 - **BR-8** — A register is opened by exactly one main skill, and may be extended by any
   number of modules. Two modules opening the same register is a conflict named by the
   check, never arbitrated by declaration order — `modules` carries no order to arbitrate by.
