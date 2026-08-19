@@ -40,7 +40,7 @@ Present what you found in one pass, and ask for confirmation.
 
 ## Step 2 — Establish the composition
 
-List the installed modules by reading `enabledPlugins` in `.claude/settings.json` and `.claude/settings.local.json` (an agent cannot run the interactive `/plugin list`). It is an **object**, keyed by `"<plugin>@<marketplace>"`, whose value is a boolean:
+List the installed modules by reading `enabledPlugins` in `.claude/settings.json` and `.claude/settings.local.json`. (The interactive slash command `/plugin list` is for a human at the prompt; `claude plugin list --json` is the agent-runnable source — it returns `id`, `enabled`, `scope`, `installPath` and `projectPath`.) It is an **object**, keyed by `"<plugin>@<marketplace>"`, whose value is a boolean:
 
 ```json
 "enabledPlugins": {

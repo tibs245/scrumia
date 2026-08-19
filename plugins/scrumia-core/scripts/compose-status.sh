@@ -147,6 +147,39 @@ UNSOURCED=""
   [ (.modules // {} | keys[]), ((.apps // [])[] | .modules // {} | keys[]) ]
   | map(select(malformed)) | .[]' <<<"$CFG")
 
+# BR-6's runtime cross-check on stderr: declared vs. installed. stdout is the
+# published artefact, so a missing `claude` is a silent skip rather than a guess.
+if command -v claude >/dev/null 2>&1; then
+  RUNTIME_JSON=$(claude plugin list --json 2>/dev/null || true)
+  if [ -n "${RUNTIME_JSON:-}" ] && printf '%s' "$RUNTIME_JSON" | jq -e 'type == "array"' >/dev/null 2>&1; then
+    RUNTIME_PWD=$(pwd -P 2>/dev/null || pwd)
+    while IFS=$'\t' read -r declared _; do
+      [ -n "$declared" ] || continue
+      module=${declared#*:}
+      source=${declared%%:*}
+      match=$(printf '%s' "$RUNTIME_JSON" | jq -r --arg mod "$module" --arg pwd "$RUNTIME_PWD" '
+        [ .[]
+          | select((.id // "") | startswith($mod + "@"))
+          | select(.enabled == true)
+          | .projectPath as $pp
+          | select(
+              (.scope // "") == "user"
+              or ($pp // "") == $pwd
+              or ($pp // "") != "" and ($pwd | startswith($pp + "/"))
+            )
+        ] | first // empty' 2>/dev/null)
+      if [ -z "$match" ] || [ "$match" = "null" ]; then
+        note "declared module '$declared' is not installed here — run \`claude plugin install $module@$source --scope project\` to install it"
+      else
+        ip=$(printf '%s' "$match" | jq -r '.installPath // ""' 2>/dev/null)
+        if [ -z "$ip" ] || [ ! -d "$ip" ]; then
+          note "declared module '$declared' has no installPath on disk — run \`claude plugin install $module@$source --scope project\` to repair it"
+        fi
+      fi
+    done <<<"$MODULES"
+  fi
+fi
+
 MOD_ROWS="" MOD_W=6
 while IFS=$'\t' read -r m params; do
   [ -n "$m" ] || continue

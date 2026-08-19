@@ -11,7 +11,7 @@ The composition is the choice of modules that drive a project. This skill reads 
 
 Read `.scrumia/config.yaml` and present:
 
-- Each slot, the plugged-in module, and whether it is actually installed — read `enabledPlugins` in `.claude/settings.json` and `.claude/settings.local.json` (an agent cannot run the interactive `/plugin list`)
+- Each slot, the plugged-in module, and whether it is actually installed — `compose-status.sh` (Step *End every pass by printing the composition*, below) reads `claude plugin list --json` and reports any declared-but-not-installed module on stderr. `enabledPlugins` in `.claude/settings.json` is the declaration, not the runtime: a module there as `true` is one the project intends to run, not one the session has.
 - Empty slots, and what the project loses as a result
 - Each app's own `extends` list (`apps[].extends`), with the apps that carry none
 - **Each app's `path`** — required for per-app activation to resolve at all; flag any app entry missing it
