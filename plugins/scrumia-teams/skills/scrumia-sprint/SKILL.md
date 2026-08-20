@@ -52,9 +52,44 @@ Present the batch before launching: number, title, scope, risk, the model each w
 
 ## Step 4 — Consume the sprint
 
-One dynamic workflow per ticket, in parallel, each with `isolation: worktree`. Each worktree lands at `.worktrees/<branch>` inside the project directory, never `../<repo>-<n>` — same convention as `scrumia-ticket` Step 2: Claude Code's permissions are scoped to the project directory, and a path outside it triggers extra prompts or fails outright in restricted modes.
+One dynamic workflow per ticket, in parallel, each with `isolation: worktree`. This
+skill — the sprint orchestrator — is the one and only layer that creates the worktree
+for that ticket. The execution skill (`scrumia-github-project:scrumia-ticket`) cites
+the rule from [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Isolation: the
+orchestrator decides the execution mode, the executor does not isolate itself* and
+neither calls `git worktree add` nor cleans up afterwards: a second layer doing so is
+the drift the rule exists to refuse.
 
-Give each execution the ticket number and the model it runs on — nothing else. It loads its own context via the plugged-in modules; passing it your summary of the ticket would add a distortion.
+Each worktree path is `.worktrees/<branch>` — **resolved against the orchestrator's own
+cwd**, never as an absolute path. Claude Code's project-scoped permissions and
+harness-owned working trees mean that cwd is a directory the harness may tear down on
+session end or on a sibling's return; what carries an execution's output is the branch,
+not the directory, so an executor that commits before any yield is durable across that.
+The convention that puts `.worktrees/` inside the project directory (not `../<repo>-<n>`)
+is a permission-scope choice: a worktree outside the project triggers extra prompts or
+fails outright in restricted modes. Both rules apply to whatever cwd this skill runs in.
+
+Create one worktree per ticket:
+
+```bash
+git worktree add .worktrees/<branch> -b <branch>
+```
+
+The branch name follows the project's commit-type vocabulary from
+[`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*
+— `<type>/<n>-<slug>`.
+
+If the command fails with a `.lock: File exists` error, a sibling holds it briefly:
+retry, up to three times, a few seconds apart. If it still fails after that, the lock is
+stale — its owner died holding it. Report the lock file's path and stop; never delete a
+lock file in a shared `.git` yourself: four siblings may be live inside it.
+
+The number of siblings is `sprint.max_tickets`, a human-review cap — git is not the
+limiting factor. Raising it is a review-bandwidth decision, never a git one.
+
+When the worktree is in place, dispatch the execution in it. Give each execution the
+ticket number and the model it runs on — nothing else. It loads its own context via the
+plugged-in modules; passing it your summary of the ticket would add a distortion.
 
 The one exception is a **deviation**: where the model you pass is not the one `scrumia-pick-model` answered — a human overrode it in Step 3, or Step 1 refused a split — say so, and pass the reason with it. It cannot reconstruct a reason it was never told, and a model handed over with no explanation reads exactly like a policy answer. Tell it not to re-derive the choice either: the decision was made here.
 
