@@ -427,8 +427,8 @@ def test_ac22_manifest_fields(tmp: Path) -> None:
           envelope["state"] == "clean" and envelope["findings"] == [],
           messages(envelope))
 
-    # The shipped tree's failure mode: every plugin carries `author`, `license` and
-    # `keywords`, none of which BR-13 names — applying the rule today is the scenario.
+    # A manifest carrying the schema's metadata fields is conformant: those are what
+    # every shipped plugin already has, and the rule is against invention, not metadata.
     body = json.dumps({"name": "fixture", "version": "0.1.0",
                        "description": "The fixture module.",
                        "repository": "https://github.com/acme/marketplace",
@@ -439,14 +439,28 @@ def test_ac22_manifest_fields(tmp: Path) -> None:
     fixture(body, name="ac22c")
     (root / "README.md").write_text(README, encoding="utf-8")
     _, envelope = verdict(root)
+    check("author, license and keywords are schema fields and raise nothing",
+          envelope["state"] == "clean" and envelope["findings"] == [],
+          messages(envelope))
+
+    # The failure mode the rule exists against: keys no schema defines.
+    body = json.dumps({"name": "fixture", "version": "0.1.0",
+                       "description": "The fixture module.",
+                       "maintainer": "acme", "sponsor": "acme", "vibe": "good"})
+    root = tmp / "ac22e"
+    (root / ".claude-plugin").mkdir(parents=True)
+    fixture(body, name="ac22e")
+    (root / "README.md").write_text(README, encoding="utf-8")
+    _, envelope = verdict(root)
     extras = [f for f in envelope["findings"]
               if f["file"] == ".claude-plugin/plugin.json"
               and f["rule"] == "module-anatomy/BR-13"
-              and "not in the fixed set" in f["message"]]
-    check("a manifest with three extras reports each as its own finding",
-          sorted(f["message"].split("`")[1] for f in extras) == ["author", "keywords", "license"],
+              and "the plugin schema defines" in f["message"]]
+    check("a manifest with three invented keys reports each as its own finding",
+          sorted(f["message"].split("`")[1] for f in extras)
+          == ["maintainer", "sponsor", "vibe"],
           messages(envelope))
-    check("every extra finding names the manifest and BR-13",
+    check("every invention finding names the manifest and BR-13",
           all(f["file"] == ".claude-plugin/plugin.json"
               and f["rule"] == "module-anatomy/BR-13" for f in extras),
           messages(envelope))

@@ -47,15 +47,25 @@ OPTIONAL_SECTIONS = [
     "not shipped yet",
 ]
 
-# BR-13 fixes the manifest's field set: name, version and description are always
-# present; repository and homepage are conditional (present when the module has
-# them, absent when it doesn't, never filled in on the way out). Every other key
-# is a finding — both sides catch each other: the set is closed, so an unknown
-# key has to fail, and a missing required key has to fail by the same rule rather
-# than by a separate one.
+# BR-13 fixes the manifest's field set to what the plugin schema defines: name,
+# version and description are always present; every other schema field is conditional
+# (present when the module has one to state, absent when it doesn't, never filled in on
+# the way out). A key the schema does not define is an invention, and a finding. The set
+# is the schema's rather than this standard's own, because a rule forbidding a field the
+# loader reads would make the two conformities exclusive — and a module has to be both.
 MANIFEST_ALWAYS = ("name", "version", "description")
-MANIFEST_OPTIONAL = ("repository", "homepage")
-MANIFEST_ALLOWED = frozenset(MANIFEST_ALWAYS + MANIFEST_OPTIONAL)
+MANIFEST_METADATA = (
+    "$schema", "displayName", "author", "homepage", "repository", "license",
+    "keywords", "metadata", "defaultEnabled",
+)
+MANIFEST_COMPONENTS = (
+    "skills", "commands", "agents", "workflows", "hooks", "mcpServers",
+    "outputStyles", "lspServers", "experimental", "userConfig", "channels",
+    "dependencies",
+)
+MANIFEST_ALLOWED = frozenset(
+    MANIFEST_ALWAYS + MANIFEST_METADATA + MANIFEST_COMPONENTS
+)
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
 SCRIPT_RE = re.compile(r"\$\{CLAUDE_SKILL_DIR\}/([\w./-]+\.(?:sh|py))")
@@ -117,9 +127,9 @@ class Checker:
         return self.module
 
     def check_manifest_fields(self) -> None:
-        """BR-13: the manifest carries the fixed field set, and only that set.
+        """BR-13: the manifest carries the schema's fields, and only those.
 
-        The split between extras and omissions is two findings, both citing the
+        The split between inventions and omissions is two findings, both citing the
         same rule — one pass over the same dict, the half the procedural check
         owns (membership), the half the audit owns (resolving the URL when one
         is named) under AC-23.
@@ -131,14 +141,14 @@ class Checker:
             self.report(
                 ".claude-plugin/plugin.json",
                 "module-anatomy/BR-13",
-                f"field `{key}` is not in the fixed set BR-13 names — {CANONICAL}"
+                f"field `{key}` is not one the plugin schema defines — {CANONICAL}"
                 "features/business/module-anatomy/business.md",
             )
         for key in sorted(set(MANIFEST_ALWAYS) - keys):
             self.report(
                 ".claude-plugin/plugin.json",
                 "module-anatomy/BR-13",
-                f"field `{key}` is in the fixed set as always-present, "
+                f"field `{key}` is one BR-13 marks always-present, "
                 f"and this manifest omits it — {CANONICAL}"
                 "features/business/module-anatomy/business.md",
             )
