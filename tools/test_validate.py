@@ -280,19 +280,9 @@ def test_every_module_is_checked_including_the_one_shipping_the_checker() -> Non
 
 
 def test_the_real_marketplace_passes_the_delegation() -> None:
-    print("the gate delegates to the procedural check and surfaces BR-13 on every shipped module")
+    print("every module this repository ships meets the standard as the gate now applies it")
     errors = run_check(REPO, "check_module_anatomy")
-    # BR-13 names the fixed set; the cleanup that drops `author`/`license`/`keywords`
-    # from each shipped plugin is a follow-up, so the tree is non-conformant today.
-    shipped = sorted(p.name for p in (REPO / "plugins").iterdir()
-                     if (p / ".claude-plugin" / "plugin.json").is_file())
-    check("the gate emits BR-13 findings for every shipped plugin",
-          all(any(f"plugins/{name}/.claude-plugin/plugin.json" in e and "BR-13" in e for e in errors)
-              for name in shipped), sorted({name for e in errors for name in shipped if f"plugins/{name}/" in e}))
-    check("every BR-13 finding carries the qualified rule and the file",
-          all(("module-anatomy/BR-13" in e and ".claude-plugin/plugin.json" in e)
-              for e in errors if "BR-13" in e),
-          str([e for e in errors if "BR-13" in e][:3]))
+    check("no finding on any shipped module", errors == [], str(errors))
 
 
 def test_canonical_url_naming_no_file_is_caught() -> None:

@@ -172,31 +172,34 @@ Then it exits with the code `tech.md` gives the `not a module` state — `4`, di
 An unbounded finding list on an arbitrary directory is how a check teaches people to
 ignore it.
 
-### AC-22 — A manifest carries the named fields and only those (`module-anatomy/BR-13`)
+### AC-22 — A manifest carries the schema's fields and only those (`module-anatomy/BR-13`)
 
 ```gherkin
 Given a module's `.claude-plugin/plugin.json`
 When the procedural check runs over it
-Then the finding is empty if every key the file carries is in the fixed set BR-13
-  names and absent keys are exactly the keys BR-13 marks as conditional
-And any other key raises a finding naming the file and BR-13
+Then the finding is empty if every key the file carries is one the plugin schema
+  defines and the three BR-13 marks always-present are all there
+And a key the schema does not define raises a finding naming the file and BR-13
   (https://github.com/tibs245/scrumia/blob/main/features/business/module-anatomy/business.md)
 Given instead a manifest that omits a conditional field BR-13 marks
-  (`repository` or `homepage`)
+  (`repository`, `homepage`, `author`, `license`, `keywords`)
 When the same check runs
 Then no finding is raised against the omission — the absence is itself the statement
   BR-13 takes as conformant
 ```
 
-The first scenario fails the day a manifest is allowed to grow fields the standard has
-not named, which is what `author`, `license` and `keywords` are on every module the
-marketplace ships today. Each is a finding under BR-13 until it is removed. The second
-scenario is the rule that keeps the procedural check from reporting its absence: omitting
-`repository` because the module is not yet hosted is conformant, and a check that turned
-it back in would be flagging the conformant case as the defect the rule exists against.
+The first scenario fails the day a manifest is allowed to grow a key the platform does
+not define, which is the invention the rule exists against. It does not fail on `author`,
+`license` or `keywords`: those are fields the plugin schema defines, every module the
+marketplace ships carries them, and a standard that called them non-conformant would put
+conformity to itself and conformity to the loader in conflict. The second scenario is the
+rule that keeps the procedural check from reporting an absence: omitting `repository`
+because the module is not yet hosted is conformant, and a check that turned it back in
+would be flagging the conformant case as the defect the rule exists against.
 
-A failing scenario — a manifest carrying a key outside the set — can be triggered with a
-single extra string. A passing one is a manifest that names only the set's members.
+A failing scenario — a manifest carrying a key outside the schema — can be triggered with
+a single invented string. A passing one is a manifest that names only fields the schema
+defines.
 
 ## The audit
 

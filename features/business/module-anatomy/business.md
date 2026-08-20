@@ -259,15 +259,20 @@ is what this feature exists to replace.
   of the two a given target is has to be read to be decided, so it is the audit's; a
   reference that leaves the module at all is the procedural check's, and BR-7 governs
   their split.
-- **BR-13** — A module's manifest carries a fixed set of fields, and only that set.
-  `name`, `version` and `description` are always present; `repository` is present when
-  the module is hosted on a public git forge, `homepage` when the module publishes a docs
-  URL, and absent otherwise on the rule `module-authoring/business.md` states. A field
-  outside the set, or one of those two expected to be absent and filled anyway, is a
-  non-conformity; the absence of a conditional field is itself a statement and raises no
-  finding. The procedural check enforces the membership under AC-22; the audit verifies
-  that each conditional field, when present, names a publication that resolves on the day
-  the audit runs, under AC-23.
+- **BR-13** — A module's manifest carries fields the plugin schema defines, and only
+  those. `name`, `version` and `description` are always present. Every other field the
+  schema names is conditional — `repository` when the module is hosted on a public git
+  forge, `homepage` when it publishes a docs URL, `author`, `license` and `keywords` when
+  the module has one to state — and absent otherwise, on the rule
+  `module-authoring/business.md` states: absent rather than filled with a placeholder.
+  The set is the schema's, not this standard's invention: a rule that forbade a field the
+  platform defines would make conformity to the standard and conformity to the loader
+  exclusive, and a module has to be both. What the rule catches is the invented key — one
+  the schema does not define — and the conditional field filled in on the way out. The
+  absence of a conditional field is itself a statement and raises no finding. The
+  procedural check enforces the membership under AC-22; the audit verifies that each
+  publication field, when present, names a publication that resolves on the day the audit
+  runs, under AC-23.
 
 ## Vocabulary
 
