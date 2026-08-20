@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-20 — BR-13 fixes the manifest's field set, AC-22 enforces it, AC-23 audits the URLs
+- Issue: #375
+- Category: Added
+- Breaking: no
+
 ## 2026-08-16 — BR-12: a doc a skill needs ships inside the module, and AC-17 covers it
 - Issue: #224
 - Category: Added

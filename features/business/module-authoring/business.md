@@ -126,7 +126,10 @@ reads none of — it writes nothing, and the absence is the statement.
 - **BR-7** — A new slot is not invented to hold a new module. A module filling no slot is
   the accepted answer where a slot is not justified.
 - **BR-8** — The pass writes no placeholder. Where it has nothing to write, it writes
-  nothing.
+  nothing. A field in `.claude-plugin/plugin.json` naming a publication the module does
+  not have is absent, not filled with a placeholder — the procedural check enforces the
+  fixed set under `module-anatomy/BR-13`, the audit verifies the publication exists under
+  `module-anatomy/AC-23`.
 - **BR-9** — A promotion whose destination already carries a module of that name is
   refused before any file moves or any declaration is rekeyed. The refusal names the
   colliding module's qualified key (`<source>:<name>`), the source it is registered

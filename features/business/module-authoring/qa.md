@@ -51,10 +51,12 @@ moment promotion needs to touch anything inside the module.
 The file the byte-identical check is really about is the module's own
 `.claude-plugin/plugin.json`, and a test diffs it byte for byte: it is the one file that is
 both shipped by the module and tempting to complete on the way out. A promotion that fills
-in a version, a homepage or a repository fails here, on `business.md`'s boundary. What
-changes instead is outside the tree — the declaration's source in each project's
-configuration, and the marketplace's own manifest — so a run that changed only those two
-and left the tree alone is what passing looks like.
+in a homepage or a repository fails here, on `business.md`'s boundary — the version is
+always already in the manifest and a move cannot add what is already there, so it leaves
+the forbidden list on `module-anatomy/BR-13`'s reading. What changes instead is outside
+the tree — the declaration's source in each project's configuration, and the marketplace's
+own manifest — so a run that changed only those two and left the tree alone is what
+passing looks like.
 
 ### AC-4 — Demotion is the same move, unceremonious
 

@@ -172,6 +172,32 @@ Then it exits with the code `tech.md` gives the `not a module` state — `4`, di
 An unbounded finding list on an arbitrary directory is how a check teaches people to
 ignore it.
 
+### AC-22 — A manifest carries the named fields and only those (`module-anatomy/BR-13`)
+
+```gherkin
+Given a module's `.claude-plugin/plugin.json`
+When the procedural check runs over it
+Then the finding is empty if every key the file carries is in the fixed set BR-13
+  names and absent keys are exactly the keys BR-13 marks as conditional
+And any other key raises a finding naming the file and BR-13
+  (https://github.com/tibs245/scrumia/blob/main/features/business/module-anatomy/business.md)
+Given instead a manifest that omits a conditional field BR-13 marks
+  (`repository` or `homepage`)
+When the same check runs
+Then no finding is raised against the omission — the absence is itself the statement
+  BR-13 takes as conformant
+```
+
+The first scenario fails the day a manifest is allowed to grow fields the standard has
+not named, which is what `author`, `license` and `keywords` are on every module the
+marketplace ships today. Each is a finding under BR-13 until it is removed. The second
+scenario is the rule that keeps the procedural check from reporting its absence: omitting
+`repository` because the module is not yet hosted is conformant, and a check that turned
+it back in would be flagging the conformant case as the defect the rule exists against.
+
+A failing scenario — a manifest carrying a key outside the set — can be triggered with a
+single extra string. A passing one is a manifest that names only the set's members.
+
 ## The audit
 
 ### AC-12 — A file answering two questions is reported, and a long one is not
@@ -261,3 +287,28 @@ the Gherkin above. The two are one rule reported in one shape (AC-16), not two r
 A form-shaped question is not accepted in place of this one: a bare path in prose and a
 markdown link are the same act, and asking only about links would pass a module that writes
 every one of them the other way.
+
+### AC-23 — A publication field, when present, names a publication that exists (`module-anatomy/BR-13`)
+
+```gherkin
+Given a module whose manifest carries `repository` or `homepage`
+When the audit runs over the module
+Then the URL resolves on the day the audit runs, and a finding names the file and the
+  unresolvable field — alongside BR-13
+  (https://github.com/tibs245/scrumia/blob/main/features/business/module-anatomy/business.md)
+Given instead a manifest carrying neither
+When the same audit runs
+Then no finding is raised — the absence is the statement BR-13 takes as conformant
+```
+
+This is the half BR-5 sends to the audit. A URL is read, not parsed: which of the
+publication fields a manifest carries is the procedural check's, and a manifest carrying
+the wrong one is BR-13's, not this criterion's. A link the audit cannot open on the day
+it runs names the file and the unresolvable field — never the surrounding manifest — so
+a finding the reviewer has to walk back through `plugin.json` to read.
+
+"Resolves on the day the audit runs" snapshots the URL: a publication that moves later is
+not re-found here. The audit reads no cache, makes no second attempt, and refuses to
+guess at a redirect. A blank `homepage` is an empty string the audit will not try to open;
+that is BR-13's case (a conditional field that should have been absent) and the procedural
+check owns it.
