@@ -93,6 +93,42 @@ Then the entry is reported as active and left untouched, not dropped as unknown
   to the team module
 ```
 
+### AC-8a — A contributed role is enumerated by `scrumia-extends convene`
+
+```gherkin
+Given a module declares a role in its extends.json under convene:
+When scrumia-extends convene is run
+Then the row appears in the contribution surface with its name, type, summary,
+  read, and an extends: list of <source>:<module> keys
+```
+
+### AC-8b — A convene row carries a non-empty `extends:`
+
+```gherkin
+Given a module's extends.json carries a convene row without an extends: list
+When scrumia-extends convene is run
+Then the row is reported as a finding (empty extends:), not silently included
+```
+
+### AC-8c — An enabled role with no contribution surfaces as a finding
+
+```gherkin
+Given settings.team.roles carries a name with enabled: true whose module ships
+  no convene contribution and no agents/ file
+When the team is convened
+Then that role is reported as a finding, not silently omitted from the roster
+```
+
+### AC-8d — A `from:` outside the role's `extends:` set is a finding
+
+```gherkin
+Given a contributed role with extends: ["tibs245/scrumia:scrumia-design"]
+And settings.team.roles enables it with from: "shared:acme-design"
+When the team is convened
+Then the from: mismatch is reported as a finding (set-membership check), and
+  the role is not convened as if the cross-check had passed
+```
+
 ### AC-9 — A role whose slot is empty is not offered
 
 ```gherkin
@@ -129,6 +165,20 @@ When the team is convened
 Then that role is reported as a gap rather than silently convened as part of
   a smaller roster
 And the install command is named, not a restart
+```
+
+### AC-13a — Convening only happens when contribution, enablement, and `from:` agree
+
+```gherkin
+Given a role's contributes declare extends: ["tibs245/scrumia:scrumia-design"]
+And settings.team.roles enables it with from: "tibs245/scrumia:scrumia-design"
+  and enabled: true
+When the team is convened
+Then the role is convened (the cross-check passes on all three axes)
+And a row with enabled: false stays down (enablement gates convening)
+And a row with the same name but no from: when the role is contributed by
+  another module is reported as a finding (the from: is required, not optional,
+  in the cross-checked form)
 ```
 
 ### AC-14 — A non-business rule crossing the boundary does not convene business

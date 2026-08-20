@@ -3,6 +3,17 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-20 — The roles contract splits contribution from enablement, and the cross-check is the contract
+- Issue: #437
+- Category: Changed
+- Breaking: yes — `settings.team.roles` is no longer "the single list". The contract is now
+  two surfaces: the contribution side (`scrumia-extends convene`, every row carrying an
+  `extends:` list) and the enablement side (`settings.team.roles`, each entry carrying
+  `name`, `enabled`, and a full `<source>:<module>` `from:`). A role is convened when all
+  three conditions hold — contributed, enabled, `from:` in `extends:`. ADR-0014's
+  "regardless of which module defines it" line is replaced by the split. AC-8, AC-13 gain
+  AC-8a/8b/8c/8d and AC-13a covering the cross-check.
+
 ## 2026-08-17 — The verdict is posted by the role, with attribution, and `not_run` carries a cause
 - Issue: #125
 - Category: Added

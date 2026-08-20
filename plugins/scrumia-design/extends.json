@@ -20,6 +20,7 @@
   "convene": [
     { "name": "Designer", "type": "reference", "when": "optional",
       "summary": "The standing role that judges what a user actually sees — route interface questions to it",
-      "read": "agents/scrumia-designer.md" }
+      "read": "agents/scrumia-designer.md",
+      "extends": ["tibs245/scrumia:scrumia-design"] }
   ]
 }

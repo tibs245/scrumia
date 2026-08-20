@@ -20,20 +20,23 @@ Writing `scrumia-design` makes that sentence load-bearing. The module fills the 
 
 ## Decision
 
-**A module that fills a slot may ship the standing role that guards that slot's capability. The role is registered in `settings.team.roles` regardless of which module defines it.**
+**A module that fills a slot may ship the standing role that guards that slot's capability. The role is contributed by that module — declared in its own `extends.json` under the `convene` register — and enabled by the project in `settings.team.roles`; the contract that decides whether the role convenes is the cross-check between the two surfaces, not a single list.**
 
-The list stays single — that is what keeps routing working. An entry names the providing module when it is not the `team` one:
+The two surfaces are distinct facts about distinct things. The **contribution** surface lists which roles a composition offers: `scrumia-extends convene` is the union call, and every row carries an `extends:` list of `<source>:<module>` keys naming the sources that contribute this role. The **enablement** surface lists which of those roles this project wants — `settings.team.roles`, where each entry is `name + enabled + from:`, and `from:` is the full `<source>:<module>` key of one contributing module.
 
 ```yaml
 roles:
   - name: manager
     enabled: true
+    # no from: — contributed by the team slot's module
   - name: designer
     enabled: true
-    from: scrumia-design    # absent = provided by the team slot's module
+    from: tibs245/scrumia:scrumia-design    # full key, set-membership against the role's extends:
 ```
 
-`scrumia-design-setup` writes that entry when it installs the slot; removing the module means removing the entry. `scrumia-manager` keeps reading one list and needs no notion of where a definition came from.
+A role convenes when all three hold: it appears in the contribution surface with a non-empty `extends:`, it appears in `settings.team.roles` with `enabled: true`, and its `from:` is one of the keys in its `extends:` set. The three failure modes — contributed-but-disabled, enabled-but-not-contributed, `from:` outside `extends:` — are different findings, none of them silently reconciled. `scrumia-manager` reads what the cross-check produces, not one list, and a manager that asks the surface to reconcile them itself reintroduces the failure the split exists to prevent.
+
+`scrumia-design-setup` writes the entry in `settings.team.roles` when it installs the slot, and the `extends:` field in its own `extends.json` names itself as the contributing source; removing the module means removing both.
 
 `docs/agents.md` keeps its three roles: they are the `team` module's opinion. Its "not a role" section now says what it actually means — UX is not a role *of the team module*, and becomes one only through the module that brings a design system with it.
 

@@ -26,31 +26,78 @@ variants — see § *The verdict vocabulary, posted by the role* below).
 
 ## Roles
 
-Which roles exist is a property of the composition, not of one module.
-`settings.team.roles` is the single list, and it stays a single shared list
-rather than descending into any module's own settings: it declares the team,
-which is the project's fact, not one module's configuration.
+The roles the project may convene split into two surfaces, and the prose that
+collapses them into one list is the source of the contract's drift. They are
+distinct facts about distinct things, and the contract names them as such:
 
-**An entry names the agent and says whether this project wants it.** Nothing
-else — the agent's own file already carries its description and what it guards,
-and a project that restated them would own the half that stops being updated.
+### Contribution
+
+Which roles a composition **offers** is a property of the modules that ship
+them. A role-bearing module declares its roles in its own `extends.json`,
+under the `convene` register, and every row carries an `extends:` list — the
+set of `<source>:<module>` keys that contribute this role. `scrumia-extends
+convene` is the union call; the result is the contribution surface.
+
+```json
+"convene": [
+  { "name": "Designer", "type": "reference", "when": "optional",
+    "summary": "…",
+    "read": "agents/scrumia-designer.md",
+    "extends": ["tibs245/scrumia:scrumia-design"] }
+]
+```
+
+`extends:` is non-empty: a row with no contributing source is a finding, not a
+silently-included role.
+
+### Enablement
+
+Which of those roles **this project wants** is a property of the project's
+configuration, not of any module's. `settings.team.roles` is the enablement
+surface: it carries the project's fact about its own team.
 
 ```yaml
 settings:
   team:
     roles:
-      - { name: scrumia-manager,  enabled: true }
-      - { name: scrumia-designer, enabled: true }
-      - { name: acme-legal,       enabled: true }
+      - { name: manager,  enabled: true }
+      - { name: designer, enabled: true, from: tibs245/scrumia:scrumia-design }
+      - { name: acme-legal, enabled: true, from: shared:acme-legal }
 ```
 
-The name is the **agent's** name, not a role label to be translated into one.
-There is no provider field: an agent a module ships and an agent a project
-writes for itself enter on the same line, and resolving the name to a runnable
-agent is the harness's job rather than a convention this feature would have to
-state and something would have to enforce. A role a project enables whose agent
-does not resolve is a finding, reported with the restart that usually explains
-it (§ *Reaching a role requires a restart after install*).
+Each entry carries `name`, `enabled`, and `from:` — where `from:` is the full
+`<source>:<module>` key of a single contributing module. The three fields
+together are what gets matched against the contribution surface (§ *Cross-check*,
+below).
+
+### Cross-check
+
+A role is convened if and only if all of the following hold:
+
+- it appears in the contribution surface (`scrumia-extends convene`) with a
+  non-empty `extends:` list;
+- it appears in `settings.team.roles` with `enabled: true`;
+- its `from:` in `settings.team.roles` is one of the keys in its `extends:` set.
+
+A role that fails any of the three is not silently convened. Three failure
+modes, three different reports:
+
+- **Contributed but not enabled** — the role exists in the composition, the
+  project chose not to use it. Stays down. Mentioned only when a question
+  reaches its domain and the convening skill has to say who is off.
+- **Enabled but not contributed** — the composition claims a reviewer that
+  no module ships, with no agent file to read. Reported as a finding, not
+  silently omitted. The install command for the named source is the next step.
+- **Enabled, contributed, but `from:` not in `extends:`** — the project's
+  enablement names a source the role's contribution does not list. Reported as
+  a finding (set-membership mismatch), not silently reconciled.
+
+The cross-check is the contract. It is not an optional check run by the
+convening skill as a courtesy; the cross-check is what makes "the list is
+settings.team.roles" *not* the single source of truth, and "the list is
+convene" *not* the single source of truth, and what `settings.team.roles` and
+`convene` *together* say the single source of truth. Both are wrong in
+isolation; the cross-check is right.
 
 A role whose slot is empty does not exist: it would have nothing to guard but
 its own taste.
