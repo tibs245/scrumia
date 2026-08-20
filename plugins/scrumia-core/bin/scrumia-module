@@ -47,6 +47,16 @@ OPTIONAL_SECTIONS = [
     "not shipped yet",
 ]
 
+# BR-13 fixes the manifest's field set: name, version and description are always
+# present; repository and homepage are conditional (present when the module has
+# them, absent when it doesn't, never filled in on the way out). Every other key
+# is a finding — both sides catch each other: the set is closed, so an unknown
+# key has to fail, and a missing required key has to fail by the same rule rather
+# than by a separate one.
+MANIFEST_ALWAYS = ("name", "version", "description")
+MANIFEST_OPTIONAL = ("repository", "homepage")
+MANIFEST_ALLOWED = frozenset(MANIFEST_ALWAYS + MANIFEST_OPTIONAL)
+
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)#\s]+)(?:#[^)]*)?\)")
 SCRIPT_RE = re.compile(r"\$\{CLAUDE_SKILL_DIR\}/([\w./-]+\.(?:sh|py))")
 PLUGIN_ROOT_RE = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}")
@@ -73,6 +83,10 @@ class Checker:
         self.root = root
         self.findings: list[dict[str, str]] = []
         self.module = root.name
+        # The parsed manifest, set by name_from_manifest. Other checks read it
+        # directly rather than re-parsing — every key the file carries is one
+        # pass over the same dict.
+        self.manifest: dict = {}
 
     def report(self, path: Path | str, rule: str, message: str) -> None:
         rel = path if isinstance(path, str) else str(path.relative_to(self.root))
@@ -98,8 +112,36 @@ class Checker:
             raise CouldNotCheck(f"{manifest}: could not be read — {exc}") from exc
         if not isinstance(data, dict):
             raise CouldNotCheck(f"{manifest}: is not a JSON object")
+        self.manifest = data
         self.module = data.get("name") or self.root.name
         return self.module
+
+    def check_manifest_fields(self) -> None:
+        """BR-13: the manifest carries the fixed field set, and only that set.
+
+        The split between extras and omissions is two findings, both citing the
+        same rule — one pass over the same dict, the half the procedural check
+        owns (membership), the half the audit owns (resolving the URL when one
+        is named) under AC-23.
+        """
+        if not self.manifest:
+            return
+        keys = set(self.manifest)
+        for key in sorted(keys - MANIFEST_ALLOWED):
+            self.report(
+                ".claude-plugin/plugin.json",
+                "module-anatomy/BR-13",
+                f"field `{key}` is not in the fixed set BR-13 names — {CANONICAL}"
+                "features/business/module-anatomy/business.md",
+            )
+        for key in sorted(set(MANIFEST_ALWAYS) - keys):
+            self.report(
+                ".claude-plugin/plugin.json",
+                "module-anatomy/BR-13",
+                f"field `{key}` is in the fixed set as always-present, "
+                f"and this manifest omits it — {CANONICAL}"
+                "features/business/module-anatomy/business.md",
+            )
 
     # ---------------------------------------------------------------- the README
 
@@ -393,6 +435,7 @@ class Checker:
 
     def run(self) -> list[dict[str, str]]:
         self.name_from_manifest()
+        self.check_manifest_fields()
         self.check_readme()
         self.check_references()
         self.check_published_names()
