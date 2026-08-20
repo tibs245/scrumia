@@ -22,6 +22,7 @@
 | [html-css-and-accessibility](business/html-css-and-accessibility/index.md) | business | draft | Modern HTML and CSS, with accessibility as a first-class concern, applicable to React and SolidJS implementations. |
 | [knowledge-placement](business/knowledge-placement/index.md) | business | draft | What happens to something an agent just learned. |
 | [local-extension](business/local-extension/index.md) | business | draft | The places a module may live besides a marketplace, and the material a project may add without a module at all. |
+| [local-tracking](business/local-tracking/index.md) | business | draft | The address of a tracker store that lives outside the project's repository, the git plumbing that resolves it from every linked worktree… |
 | [modular-composition](business/modular-composition/index.md) | business | active | A project declares which modules it runs through modules, an unordered mapping in . |
 | [module-anatomy](business/module-anatomy/index.md) | business | draft | The shape a ScrumIA module takes inside itself, and what says whether a given module has it. |
 | [module-authoring](business/module-authoring/index.md) | business | draft | How a ScrumIA module comes into existence, changes, and moves — from nothing to a module that already meets the anatomy standard, and from… |
