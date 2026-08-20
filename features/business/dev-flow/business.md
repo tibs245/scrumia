@@ -324,16 +324,52 @@ is the same failure the commit-before-yield rule above exists to prevent.
 
 **This feature owns the code cycle.** How a scoped ticket becomes a reviewable
 change — isolation per ticket, when work is committed, what must be reviewed and
-when, what may merge unattended — is specified here, and only here. Not all of it is
-written down yet: worktree ownership is not yet written down in this file. When work
-is committed is written above, under § *Who decides, on each path* → **Execution**.
-Ownership is settled; the wording of what remains follows.
+when, what may merge unattended — is specified here, and only here. When work is
+committed is written above, under § *Who decides, on each path* → **Execution**.
+The decision of how each run is isolated is below; the wording of what it implies
+for the executor follows.
 
 **A tracker feature owns the tracing and relaying of that cycle.** It states which
 concrete artefact each abstract step becomes on its tool: that the reviewable
 proposal is a GitHub PR opened this way, that entering execution shows up as a
 column move, that a sprint is a milestone. It adapts to this feature; it does not
 define it.
+
+### Isolation: the orchestrator decides the execution mode, the executor does not isolate itself
+
+How a batch of runs is executed — one worktree per ticket in parallel, sequentially
+after the previous one, in the main tree without isolation — depends on facts only the
+layer that assembled the batch holds: how many tickets, whether they conflict, whether
+they can run at once. A ticket executing alone cannot know any of them, and so must
+not decide for itself.
+
+**The orchestrator decides the execution mode.** Where the batch is a sprint
+assembled by `scrumia-teams`, it sets the mode (one worktree per ticket, sequential,
+or another shape) and creates the worktree, citing this section. Where the batch is a
+single ticket invoked directly by a human, the human is the orchestrator: the call to
+`scrumia-ticket` arrives with a working tree already on the ticket's branch, the
+executor reads that precondition, and the human — outside any sprint — decides whether
+to isolate and how.
+
+**One layer creates the worktree, never two.** Both `scrumia-teams:scrumia-sprint` and
+`scrumia-github-project:scrumia-ticket` cite this rule and never restate it. The
+executor never calls `git worktree add`: a ticket that finds no branch on its cwd has
+been handed an inconsistent invocation, and stops with a comment on the issue rather
+than silently isolating. Two layers writing the same isolation is the drift this rule
+refuses — the second one reads as a feature, the first one is the bug.
+
+**A relative worktree path resolves against the invoking agent's cwd.** The path
+`.worktrees/<type>/<n>-<slug>` names no absolute location: it is the cwd of whoever
+runs `git worktree add` that decides where it lands. Claude Code's project-scoped
+permissions and harness-owned working trees mean that cwd may be a directory the
+harness later tears down — a pause that hands control to a sibling, a sub-agent whose
+workspace is reclaimed on return, the normal end of a session. **What carries an
+execution's output is the branch, not the directory.** A commit taken before a pause
+survives even if the directory is deleted afterwards; uncommitted work in a torn-down
+tree is work the run may not assume it still has. The rule is the same for
+`scrumia-sprint` (the orchestrator) and for a human invoking `scrumia-ticket` directly
+(also the orchestrator, in that call): what they create may not survive them, so what
+they commit must.
 
 **Precedence, where the two disagree: this feature governs.** A tracker feature
 found stating a different process rule is the one that must change — not this one,

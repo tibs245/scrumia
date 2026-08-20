@@ -307,6 +307,44 @@ not states. These are cited here rather than restated; the verdict format and th
 carrier are `features/business/agent-team/`'s and `features/business/github-tracking/`'s
 to materialise.
 
+### AC-19 — The orchestrator decides the execution mode; the executor does not isolate itself
+
+```gherkin
+Given a sprint assembling N tickets, and the orchestrator has chosen `isolation: worktree`
+  in `scrumia-sprint` Step 3 for that batch
+When `scrumia-ticket` is invoked on one of those tickets, in the worktree the orchestrator
+  already created on the ticket's branch
+Then the executor does not call `git worktree add` — the working tree it was given is the
+  one it works in, and a second isolation would nest the ticket inside itself
+```
+
+```gherkin
+Given `scrumia-ticket` invoked directly by a human, outside any sprint — the human is
+  the orchestrator for that call
+When the execution starts
+Then the skill states its precondition (a working tree on the ticket's branch) and stops
+  rather than silently isolating; whether to isolate, and how, is the human's call, not the
+  skill's
+```
+
+```gherkin
+Given an executor on a worktree the harness may later tear down — a relative path under
+  `.worktrees/` resolved against the agent's cwd
+When the executor writes the implementation
+Then what carries the run's output is the branch, not the directory; a commit taken before
+  a pause survives even if the directory is later deleted, and uncommitted work in a
+  torn-down tree is work the run may not assume it still has — per the commit-before-yield
+  rule above
+```
+
+```gherkin
+Given both `scrumia-sprint` Step 3 and `scrumia-ticket` Step 2 read by a reader following
+  the path of a ticket through the system
+When the reader checks who created the worktree
+Then exactly one layer states it does, and the other cites it rather than restating the
+  command — two layers issuing `git worktree add` is the drift this rule refuses
+```
+
 ### AC-13 — A commit's multi-scope form generalizes past modules, and `*` covers what isn't worth naming
 
 ```gherkin

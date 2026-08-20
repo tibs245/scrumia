@@ -3,6 +3,14 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-20 — The orchestrator decides the execution mode; the executor does not isolate itself
+- Issue: #124
+- Category: Added
+- Breaking: yes — `scrumia-ticket` no longer creates a worktree and states a precondition
+  instead. `scrumia-sprint` is now the sole authority on isolation for batched runs.
+  A direct invocation of `scrumia-ticket` outside a sprint is covered (the human is the
+  orchestrator). Both skills cite this feature rather than restate the command.
+
 ## 2026-08-17 — Gate 2's verdict is recorded by the role, not asserted by the executor
 - Issue: #125
 - Category: Added
