@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-20 — A module withdrawn from a marketplace owes the breaking signal at its last release, with a one-release window (AC-13, AC-14, AC-15)
+- Issue: #374
+- Category: Added
+- Breaking: no
+
 ## 2026-08-11 — AC-12 narrows "must act on" to "must act on to keep working"
 - Issue: #233
 - Category: Changed
