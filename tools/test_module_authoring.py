@@ -94,8 +94,6 @@ MANIFEST = {
     "name": "acme-oncall",
     "description": "The on-call handover: what the outgoing shift states and the incoming confirms.",
     "version": "0.1.0",
-    "author": {"name": "acme"},
-    "license": "MIT",
 }
 
 README = """# acme-oncall

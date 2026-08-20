@@ -64,6 +64,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   namespace shared with every enabled plugin, so a bare name says which command and never
   whose; `--check` resolves the name and compares the publisher's own declared source
   against the claim. What a skill invokes stays the bare name.
+- `scrumia-module` — the procedural check enforces `module-anatomy/BR-13`'s fixed
+  field set on `.claude-plugin/plugin.json`: `name`, `version`, `description` are
+  always present, `repository` and `homepage` are present when the module has them.
+  An unknown key, or one the rule names as required and the manifest omits, is a
+  finding citing BR-13 by absolute URL. Published URL resolution stays the audit's
+  under AC-23.
+- `scrumia-module-audit` — Q7 closes the manifest half BR-5 sent to the audit: when
+  `repository` or `homepage` is present, the URL resolves on the day the audit runs;
+  absence is conformant and never raised.
 ### Changed
 - `scrumia-init` writes `modules:` keyed `<source>:<module>` with each module's own
   configuration under its `params:`, and migrates a project off `extends:` or the older

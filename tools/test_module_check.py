@@ -62,8 +62,10 @@ def module(tmp: Path, name: str = "fixture", *, manifest: bool = True, **files) 
     root = tmp / name
     root.mkdir(parents=True, exist_ok=True)
     if manifest:
+        # BR-13 names `description` as always-present, so the helper must carry it.
         write(root / ".claude-plugin" / "plugin.json",
               json.dumps({"name": name, "version": "0.1.0",
+                          "description": f"The {name} module.",
                           "repository": "https://github.com/acme/marketplace"}))
     for rel, body in files.items():
         write(root / rel.replace("__", "/"), body)
@@ -401,6 +403,73 @@ def test_ac11_not_a_module(tmp: Path) -> None:
           set(envelope) == {"ok", "state", "module", "findings"}, str(sorted(envelope)))
 
 
+# --------------------------------------------------------------------------- AC-22
+
+def test_ac22_manifest_fields(tmp: Path) -> None:
+    print("AC-22 — the manifest carries the fixed field set, no extras or omissions")
+    fixture = lambda body, name="ac22": write(
+        tmp / name / ".claude-plugin" / "plugin.json", body)
+
+    root = module(tmp / "ac22a", **{"README.md": README})
+    _, envelope = verdict(root)
+    check("name, version, description, repository and no others raise nothing",
+          envelope["state"] == "clean" and envelope["findings"] == [],
+          messages(envelope))
+
+    body = json.dumps({"name": "fixture", "version": "0.1.0",
+                       "description": "The fixture module."})
+    root = tmp / "ac22b"
+    (root / ".claude-plugin").mkdir(parents=True)
+    fixture(body, name="ac22b")
+    (root / "README.md").write_text(README, encoding="utf-8")
+    _, envelope = verdict(root)
+    check("omitting repository and homepage is conformant, BR-13 marks them conditional",
+          envelope["state"] == "clean" and envelope["findings"] == [],
+          messages(envelope))
+
+    # The shipped tree's failure mode: every plugin carries `author`, `license` and
+    # `keywords`, none of which BR-13 names — applying the rule today is the scenario.
+    body = json.dumps({"name": "fixture", "version": "0.1.0",
+                       "description": "The fixture module.",
+                       "repository": "https://github.com/acme/marketplace",
+                       "author": {"name": "acme"}, "license": "MIT",
+                       "keywords": ["fixture", "test"]})
+    root = tmp / "ac22c"
+    (root / ".claude-plugin").mkdir(parents=True)
+    fixture(body, name="ac22c")
+    (root / "README.md").write_text(README, encoding="utf-8")
+    _, envelope = verdict(root)
+    extras = [f for f in envelope["findings"]
+              if f["file"] == ".claude-plugin/plugin.json"
+              and f["rule"] == "module-anatomy/BR-13"
+              and "not in the fixed set" in f["message"]]
+    check("a manifest with three extras reports each as its own finding",
+          sorted(f["message"].split("`")[1] for f in extras) == ["author", "keywords", "license"],
+          messages(envelope))
+    check("every extra finding names the manifest and BR-13",
+          all(f["file"] == ".claude-plugin/plugin.json"
+              and f["rule"] == "module-anatomy/BR-13" for f in extras),
+          messages(envelope))
+    check("each finding cites BR-13 by absolute URL",
+          all("https://github.com/" in f["message"] for f in extras),
+          messages(envelope))
+
+    body = json.dumps({"name": "fixture", "version": "0.1.0",
+                       "repository": "https://github.com/acme/marketplace"})
+    root = tmp / "ac22d"
+    (root / ".claude-plugin").mkdir(parents=True)
+    fixture(body, name="ac22d")
+    (root / "README.md").write_text(README, encoding="utf-8")
+    _, envelope = verdict(root)
+    missing = [f for f in envelope["findings"]
+               if f["file"] == ".claude-plugin/plugin.json"
+               and f["rule"] == "module-anatomy/BR-13"
+               and "always-present" in f["message"]]
+    check("a manifest omitting `description` raises one finding naming the field",
+          len(missing) == 1 and "description" in missing[0]["message"],
+          messages(envelope))
+
+
 # --------------------------------------------------------------------------- AC-16
 
 def test_ac16_one_finding_shape(tmp: Path) -> None:
@@ -436,6 +505,7 @@ def main() -> int:
         test_ac10_extension_data(tmp)
         test_ac11_not_a_module(tmp)
         test_ac16_one_finding_shape(tmp)
+        test_ac22_manifest_fields(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

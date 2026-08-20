@@ -87,6 +87,23 @@ Four closed questions, each answered from this one file:
 
 Record which files answered yes to which, and to what.
 
+### Q7 — If this file is `.claude-plugin/plugin.json`, do its publication fields, when present, resolve today? (`module-anatomy/BR-13`)
+
+`repository` and `homepage` are conditional fields. A manifest carrying neither raises no
+finding — the absence is the statement BR-13 takes as conformant, and the procedural
+check under AC-22 already enforces the closed set. The audit's half of BR-13 is the
+question neither surface can decide from the tree alone: a publication URL that resolves
+on the day the audit runs.
+
+Fetch each present field's value once. A field that does not open — wrong host, moved,
+behind authentication, returning a non-success status the agent can read — is a finding
+naming the file and the unresolvable field. A redirect is followed once; a redirect that
+fails is the same finding. Caching past the run is not done: "the day the audit runs"
+snapshots the URL, and what it points at tomorrow is tomorrow's audit's question.
+
+- Finding: `{ module, file: ".claude-plugin/plugin.json", rule: "module-anatomy/BR-13", message: "field \`<name>\` does not resolve today → \`<value>\`" }`
+- No finding: the field is absent (conformant by BR-13) or fetched cleanly today.
+
 ## Step 3 — Compare the record against the README
 
 This step is bookkeeping, not a new question: it combines yes/no answers already produced
