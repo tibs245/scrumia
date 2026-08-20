@@ -124,8 +124,8 @@ The geometry is not the rename geometry. A withdrawn module publishes no old
 spelling — there is nothing for two releases to keep working — and the two cases
 do not share a row. The window is **one release**, counted in published versions:
 N, the last release, carries the breaking signal on its commit, and its
-changelog carries a `Deprecated:` entry naming the marketplace action —
-withdrawal, not a published-name spelling — and a `Removed:` entry naming N as
+changelog carries a `Deprecated` entry naming the marketplace action —
+withdrawal, not a published-name spelling — and a `Removed` entry naming N as
 the release that removes the module from the marketplace. After N, the
 marketplace manifest no longer carries the module: there is nothing to update
 to, and the install surface says so by the absence of an entry. A project that
@@ -189,7 +189,7 @@ by whoever edits its manifest.
 
 AC-13 carries the same caveat. The marketplace action is read from a module's manifest,
 its changelog and the commits behind it, by hand — no validator checks whether the last
-release carried the breaking signal, whether the `Deprecated:` entry names withdrawal
+release carried the breaking signal, whether the `Deprecated` entry names withdrawal
 rather than a rename, or whether the manifest still carries a module whose last release
 declared it withdrawn. Conformance is a habit until a release slot arrives; the gate
 that automates the derivation is the same one that would catch this.
