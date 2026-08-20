@@ -166,8 +166,8 @@ Then it owes no breaking signal: the project reads about the difference the next
 ```gherkin
 Given a module declared at version N and to be withdrawn from its marketplace
 When release N is published as the last one
-Then N's commit carries the breaking signal, and N's changelog carries a `Deprecated:`
-  entry naming the marketplace action — withdrawal, not a rename — and a `Removed:`
+Then N's commit carries the breaking signal, and N's changelog carries a `Deprecated`
+  entry naming the marketplace action — withdrawal, not a rename — and a `Removed`
   entry naming N as the release that removes the module from the marketplace
 Given instead a module withdrawn without N carrying the breaking signal, or with a
   `Deprecated` entry naming a published-name spelling rather than a marketplace action
