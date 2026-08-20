@@ -161,6 +161,44 @@ Then it owes no breaking signal: the project reads about the difference the next
   for exactly this reason is conforming, not withholding
 ```
 
+### AC-13 — A withdrawal carries the breaking signal at its last release, and the carrier is the changelog
+
+```gherkin
+Given a module declared at version N and to be withdrawn from its marketplace
+When release N is published as the last one
+Then N's commit carries the breaking signal, and N's changelog carries a `Deprecated:`
+  entry naming the marketplace action — withdrawal, not a rename — and a `Removed:`
+  entry naming N as the release that removes the module from the marketplace
+Given instead a module withdrawn without N carrying the breaking signal, or with a
+  `Deprecated` entry naming a published-name spelling rather than a marketplace action
+When the last release is checked against this rule
+Then it is non-conforming: a rename refused under AC-6 is not a withdrawal, the two
+  cannot share an entry, and the window for the marketplace case is one release counted
+  in published versions, not the two-release rename window
+```
+
+### AC-14 — The dependency check is the surface a project learns from at install
+
+```gherkin
+Given a module that was at version N and is then withdrawn, and a project that took N
+  and has since updated its marketplace clone and installed cache
+When the project runs its dependency check
+Then the check exits non-zero on the module's declaration, naming the module, its source
+  and the marketplace action; and the check is the surface that says so — not the
+  changelog, which the project has already read once
+```
+
+### AC-15 — A project that never installs the last release is told nothing, and that is correct
+
+```gherkin
+Given a module withdrawn at N, and a project that took N−1 and never updated its
+  marketplace clone or installed cache to N
+When the project runs
+Then nothing warns it and nothing breaks — the notice is owed at install of N or later,
+  not on a schedule, and a project that skipped N learns only when it next takes a
+  release that exposes the absence
+```
+
 ## Out of scope
 
 - **What a commit message must carry, and who may rewrite a branch** — the mandatory type

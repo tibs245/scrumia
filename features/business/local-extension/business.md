@@ -269,6 +269,13 @@ on one machine is a module the project cannot be handed to someone else with.
 - **BR-9** — A conflict blocks the declaration it applies to and nothing else: that
   module contributes no directive anywhere, every other module still resolves, and the
   dependency check exits non-zero on it.
+- **BR-10** — A declaration whose source resolves but whose module is no longer present
+  at that source is a withdrawn declaration. The dependency check names the module, the
+  source the declaration's key states, and the marketplace action — and exits non-zero,
+  with the same consequence as an unresolvable declaration (BR-9). The notice is owed by
+  `features/business/release-versioning/`, not invented here: that feature states what a
+  withdrawn module owes at its last release and counts the window in published versions,
+  and this feature states only the surface the declaration's resolution lands on.
 
 ## Vocabulary
 

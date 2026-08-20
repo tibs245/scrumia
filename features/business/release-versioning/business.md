@@ -118,6 +118,21 @@ Counted in **releases** — versions published to the marketplace — not in com
 Not "for a while", not "until the next major": two releases, counted. A rename and its
 removal in the same release is a breaking change wearing a deprecation notice.
 
+### When the thing withdrawn is the module itself
+
+The geometry is not the rename geometry. A withdrawn module publishes no old
+spelling — there is nothing for two releases to keep working — and the two cases
+do not share a row. The window is **one release**, counted in published versions:
+N, the last release, carries the breaking signal on its commit, and its
+changelog carries a `Deprecated:` entry naming the marketplace action —
+withdrawal, not a published-name spelling — and a `Removed:` entry naming N as
+the release that removes the module from the marketplace. After N, the
+marketplace manifest no longer carries the module: there is nothing to update
+to, and the install surface says so by the absence of an entry. A project that
+already declared the module learns from the absence at install, and what the
+dependency check says on the way out is `features/business/local-extension/`'s
+BR-10 to state, not this feature's.
+
 ## When a project finds out
 
 Two lags exist independently, and refreshing one does not refresh the other:
@@ -134,10 +149,24 @@ back to a default. Silent degradation is what makes the second layer invisible, 
 `features/business/modular-composition/` already requires a named message for the
 analogous absent-module case.
 
-**"Never" is not an admissible answer for a major.** A breaking change a project can take
-without ever being told is the failure this feature exists to prevent. Reading the
-changelog is a step of taking an update, not a courtesy — which is what makes the
-changelog's `Deprecated` and `Removed` entries load-bearing rather than decorative.
+For a withdrawn module the same two lags apply, with the geometry that the changelog is
+read once at the last release and the manifest carries the absence afterwards. At update,
+the marketplace clone reads the last release's changelog and learns the marketplace
+action — a clone that already reflects N finds no entry to install for this module, and
+the manifest's absence is the surface. At install, the same absence is what the
+dependency check meets, and `features/business/local-extension/`'s BR-10 names what it
+says on the way out: the module, its source, and the marketplace action. The notice is
+owed at install of N or later, not on a schedule — a project that skipped N learns only
+when it next takes a release whose manifest exposes the absence, the same reasoning
+AC-15 states for the project that never installed the last release.
+
+**"Never" is not an admissible answer for a major, or for a withdrawal.** A breaking
+change a project can take without ever being told is the failure this feature exists to
+prevent, and a whole module leaving a marketplace is a breaking change: the published
+surface disappears from one of the three locations a project reads at install. Reading
+the changelog is a step of taking an update, not a courtesy — which is what makes the
+changelog's `Deprecated` and `Removed` entries load-bearing rather than decorative, and
+what makes the manifest's absence at install a surface rather than a silence.
 
 ## Which assertion of breakage is authoritative
 
@@ -157,6 +186,13 @@ The rule is documented and **enforced by nothing**. No validator reads a commit 
 no script derives a number, and no release run exists. That is stated here rather than
 discovered: until a gate exists, conformance is a habit, and a module's version is moved
 by whoever edits its manifest.
+
+AC-13 carries the same caveat. The marketplace action is read from a module's manifest,
+its changelog and the commits behind it, by hand — no validator checks whether the last
+release carried the breaking signal, whether the `Deprecated:` entry names withdrawal
+rather than a rename, or whether the manifest still carries a module whose last release
+declared it withdrawn. Conformance is a habit until a release slot arrives; the gate
+that automates the derivation is the same one that would catch this.
 
 Whether a module ever fills a `release` slot and performs the derivation is not this
 feature's to decide, and is open.

@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-20 — A withdrawn declaration exits non-zero on the dependency check, naming module, source and action (BR-10)
+- Issue: #374
+- Category: Added
+- Breaking: no
+
 ## 2026-08-19 — Contract-defined project roots are excluded from local material by name (BR-3, AC-12)
 - Issue: #310
 - Category: Changed
