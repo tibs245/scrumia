@@ -9,7 +9,7 @@ Someone asked for the team. Give them the team — not a sprint. Executing ticke
 
 ## Step 1 — Read who is on it
 
-`settings.team.roles` in `.scrumia/config.yaml` lists the roles and which are `enabled`. Only enabled roles get convened; a disabled one is a capability the project decided not to have, and you say so rather than routing to it anyway.
+`settings.team.roles` in `.scrumia/config.yaml` **enables** the roles `scrumia-extends convene` enumerates. Only roles whose enablement, contribution and `from:` cross-check convene; a disabled one is a capability the project decided not to have, and you say so rather than routing to it anyway.
 
 An entry carrying `from:` belongs to another module — `scrumia-design` ships `designer` this way. Convene it like the others, and read its definition from that module.
 

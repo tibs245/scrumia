@@ -335,6 +335,172 @@ def test_claude_md_names_the_keys_its_config_declares() -> None:
           "the cascade sentence is in CLAUDE.md but not in scrumia-init's template")
 
 
+# --------------------------------------------------- #437 — agent-team contract split
+
+CONVENABLE_EXTENDS = "plugins/scrumia-design/extends.json"
+
+
+def _load_convene_rows() -> list[dict]:
+    rows: list[dict] = []
+    for path in ROOT.glob("plugins/*/extends.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for row in data.get("convene") or []:
+            rows.append({**row, "_module_dir": path.parent.name})
+    return rows
+
+CONVENABLE_EXTENDS = "plugins/scrumia-design/extends.json"
+
+
+def _load_convene_rows() -> list[dict]:
+    """The union of every module's `convene` rows in this repo, parsed from disk."""
+    rows: list[dict] = []
+    for path in ROOT.glob("plugins/*/extends.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for row in data.get("convene") or []:
+            rows.append({**row, "_module_dir": path.parent.name})
+    return rows
+
+
+def _cross_check(contributed: list[dict], enabled: list[dict]) -> dict:
+    enabled_by_name = {(e.get("name") or ""): e for e in enabled}
+    findings: list[tuple[str, str, str]] = []
+    convened: list[dict] = []
+    contributed_names = {r.get("name") for r in contributed if r.get("name")}
+
+    for row in contributed:
+        name = row.get("name") or ""
+        ext = row.get("extends") or []
+        if not isinstance(ext, list) or not ext:
+            findings.append(("empty_extends", name,
+                             "a convene row must carry a non-empty extends: list"))
+            continue
+        if name not in enabled_by_name:
+            findings.append(("contributed_but_disabled", name,
+                             "the role is contributed but no enabled entry names it"))
+            continue
+        entry = enabled_by_name[name]
+        if not entry.get("enabled", False):
+            findings.append(("disabled", name, "settings.team.roles has enabled: false"))
+            continue
+        frm = entry.get("from") or ""
+        if not frm:
+            findings.append(("missing_from", name,
+                             "an enabled cross-checked role must carry a from: key"))
+            continue
+        if frm not in ext:
+            findings.append(("from_outside_extends", name,
+                             f"from: {frm!r} is not in the role's extends: set {ext!r}"))
+            continue
+        convened.append({"name": name, "from": frm, "extends": ext, "module_dir": row.get("_module_dir")})
+
+    for name, entry in enabled_by_name.items():
+        if not entry.get("enabled", False):
+            continue
+        if name in contributed_names:
+            continue
+        findings.append(("enabled_but_not_contributed", name,
+                         "settings.team.roles enables a role no module ships"))
+
+    return {"convened": convened, "findings": findings}
+
+
+def test_ac8a_contribution_rows_carry_extends() -> None:
+    print("AC-8a — every convene row carries a non-empty extends: list")
+    rows = _load_convene_rows()
+    check("at least one module contributes a role via convene:", bool(rows),
+          "no module declares any convene row")
+    for row in rows:
+        ext = row.get("extends") or []
+        check(f"row '{row.get('name')}' carries extends: as a non-empty list",
+              isinstance(ext, list) and bool(ext),
+              f"got: {ext!r}")
+        for key in ext:
+            check(f"row '{row.get('name')}' extends key '{key}' matches <source>:<module>",
+                  bool(re.match(r"^(?:[^/:]+/[^/:]+|shared|local):[^:]+$", key)),
+                  f"key '{key}' is not a sourced declaration")
+
+
+def test_ac8b_empty_extends_is_a_finding() -> None:
+    print("AC-8b — a convene row with empty extends: surfaces as a finding")
+    rows = _load_convene_rows()
+    bad = [r for r in rows if not (r.get("extends") or [])]
+    check("no contributed row ships without an extends: list", not bad,
+          f"rows missing extends:: {[r.get('name') for r in bad]}")
+
+
+def test_ac8c_contributed_role_cross_checks_against_enablement() -> None:
+    print("AC-8c — the cross-check convenes a role when the three axes agree")
+    rows = _load_convene_rows()
+    designer = next((r for r in rows if r.get("name") == "Designer"), None)
+    check("scrumia-design contributes a Designer row", designer is not None,
+          "no Designer row in any extends.json")
+
+    enabled = [{
+        "name": "Designer",
+        "enabled": True,
+        "from": "tibs245/scrumia:scrumia-design",
+    }]
+    check("scrumia-design/extends.json row names itself as the contributing source",
+          designer and "tibs245/scrumia:scrumia-design" in (designer.get("extends") or []),
+          f"extends: is {designer.get('extends') if designer else None!r}")
+
+    res = _cross_check(rows, enabled)
+    check("a fresh fixture with one contributed+enabled+matched role convenes one role",
+          len(res["convened"]) == 1 and res["convened"][0]["name"] == "Designer",
+          f"convened: {res['convened']!r}")
+    check("and produces no findings on the happy path", not res["findings"],
+          f"findings: {res['findings']!r}")
+
+    # enabled: false keeps the role down
+    res_down = _cross_check(rows, [{**enabled[0], "enabled": False}])
+    check("enabled: false keeps the role down (enablement gates convening)",
+          not res_down["convened"] and any(f[0] == "disabled" for f in res_down["findings"]),
+          f"convened: {res_down['convened']!r}, findings: {res_down['findings']!r}")
+
+    # from: outside extends: is a finding, not a silent convening
+    res_mismatch = _cross_check(rows,
+                                [{"name": "Designer", "enabled": True,
+                                  "from": "shared:acme-design"}])
+    check("from: outside extends: is a finding, not a convening",
+          not res_mismatch["convened"]
+          and any(f[0] == "from_outside_extends" for f in res_mismatch["findings"]),
+          f"convened: {res_mismatch['convened']!r}, findings: {res_mismatch['findings']!r}")
+
+    # missing from: is a finding (the role requires from: in the cross-checked form)
+    res_no_from = _cross_check(rows, [{"name": "Designer", "enabled": True}])
+    check("an enabled role with no from: is a finding when the role is contributed",
+          not res_no_from["convened"]
+          and any(f[0] == "missing_from" for f in res_no_from["findings"]),
+          f"convened: {res_no_from['convened']!r}, findings: {res_no_from['findings']!r}")
+
+
+def test_ac8d_enabled_role_with_no_contribution_is_a_finding() -> None:
+    print("AC-8d — an enabled role with no contribution is a finding")
+    rows = _load_convene_rows()
+    phantom = [{"name": "phantom-role", "enabled": True, "from": "shared:phantom-module"}]
+    res = _cross_check(rows, phantom)
+    check("an enabled role with no contribution does not convene",
+          not res["convened"], f"convened: {res['convened']!r}")
+    check("and is reported as an `enabled_but_not_contributed` finding",
+          any(f[0] == "enabled_but_not_contributed" and f[1] == "phantom-role"
+              for f in res["findings"]),
+          f"findings: {res['findings']!r}")
+
+
+def test_ac13a_cross_check_is_the_contract() -> None:
+    print("AC-13a — the cross-check is the contract")
+    rows = _load_convene_rows()
+    check("scrumia-design contributes a Designer row on this repo",
+          any(r.get("name") == "Designer" for r in rows),
+          "no Designer row")
+    for row in rows:
+        if row.get("name") == "Designer":
+            check("the Designer's extends: carries a full <source>:<module> key",
+                  any(re.match(r"^[^/:]+/[^/:]+:[^:]+$", k)
+                      for k in (row.get("extends") or [])),
+                  f"extends: is {row.get('extends')!r}")
+
+
 def main() -> int:
     try:
         import yaml  # noqa: F401
@@ -351,6 +517,11 @@ def main() -> int:
     test_ac18_the_cascade_reaches_what_the_template_wrote()
     test_ac18_the_three_layers_are_stated_in_order()
     test_claude_md_names_the_keys_its_config_declares()
+    test_ac8a_contribution_rows_carry_extends()
+    test_ac8b_empty_extends_is_a_finding()
+    test_ac8c_contributed_role_cross_checks_against_enablement()
+    test_ac8d_enabled_role_with_no_contribution_is_a_finding()
+    test_ac13a_cross_check_is_the_contract()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0
 
