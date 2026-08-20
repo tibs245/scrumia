@@ -9,6 +9,36 @@ A ticket goes in, a PR comes out. The human validates at the end of the chain, n
 
 Usage: `/scrumia-github-project:scrumia-ticket 42`
 
+## Preconditions — this skill does not isolate
+
+**This skill does not create a worktree.** It assumes the calling agent already sits
+on a working tree checked out to the ticket's branch. Whoever invoked it — the
+sprint orchestrator, a sub-agent it dispatched, or a human invoking the skill
+directly outside any sprint — is the orchestrator for that call and is the one that
+decides whether to isolate and how.
+
+The rule is stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) §
+*Isolation: the orchestrator decides the execution mode, the executor does not
+isolate itself*. A second `git worktree add` here would nest the ticket inside
+itself; this skill refuses to be that second layer and cites the rule instead.
+
+A relative worktree path the orchestrator used (`.worktrees/<type>/<n>-<slug>`)
+resolved against its own cwd — a directory Claude Code may own and tear down at the
+end of the session or on a sibling's return. **What carries the run's output is the
+branch, not the directory:** commit to the ticket's branch before yielding control
+to anyone — a role review, a sub-agent, a human verdict, a wait on a check —
+because a branch survives a torn-down tree and uncommitted work in one does not.
+That is the commit-before-yield rule applied here; it is not isolation, it is the
+durability of whatever isolation the orchestrator chose.
+
+**Invoked directly, outside any sprint.** The skill does not fail obscurely and does
+not isolate on its own. If the calling agent is a human invoking the skill directly,
+the human is the orchestrator: the working tree they hand the executor is whatever
+they chose (the main tree, a manually-created worktree, a fresh clone on a feature
+branch — all equivalent here). If the executor finds itself on the wrong branch or
+on no branch at all, it stops and comments on the issue rather than silently
+creating one.
+
 ## Step 0 — Refuse what isn't executable
 
 Read the issue (`gh issue view <n> --json title,body,labels`). Stop immediately if:
@@ -71,7 +101,7 @@ Now, not at PR time: the record has to survive a run that dies before opening on
 
 This record is written and never read back. It is evidence for editing the grid in `.scrumia/config.yaml`, not a precedent that changes what a cell answers today — the policy's answer stays the only way a model is chosen.
 
-**If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. This is the ticket's first `gh` call — stop here, before opening a worktree or touching the board: nothing half-started is easier to clean up than a stray branch and a stuck card.
+**If `gh` fails** — not authenticated: say so and point to `gh auth login`; the human runs it, this skill doesn't. Network or API error: retry once, then report and stop, don't loop on a flaky call. No repo or no remote: name the missing prerequisite (`.git`, a GitHub remote) and stop. This is the ticket's first `gh` call — stop here, before touching the board: nothing half-started is easier to clean up than a stray branch and a stuck card.
 
 ## Step 1 — Load the context, not the repo
 
@@ -88,32 +118,27 @@ Otherwise, read, in this order, and stop as soon as you know enough:
 
 Do not load all of the directory named by `specs_root`. The format exists so you don't have to.
 
-## Step 2 — Isolate
+## Step 2 — Confirm the branch and move the card
 
-Work in a dedicated worktree, never in the main working tree:
+The branch and the worktree are the calling agent's responsibility (see *Preconditions*
+above) — this skill neither creates them nor cleans them up. Confirm the executor sits
+on the ticket's branch before touching anything else:
 
 ```bash
-git worktree add .worktrees/<type>/<n>-<slug> -b <type>/<n>-<slug>
+git rev-parse --abbrev-ref HEAD
 ```
 
-During a sprint, several siblings run this same command concurrently against the same
-`.git` — by design. It is safe because `<type>/<n>-<slug>` makes each branch, path and
-worktree registration unique; the only shared state is transient lock files.
+If the branch is wrong, or there is no branch, **stop and comment on the issue**: a ticket
+that finds itself on the wrong branch has been handed an inconsistent invocation, and
+isolating here would be the drift the precondition refuses. The comment names what the
+calling agent was supposed to provide so the next reader can fix the call rather than
+guessing one.
 
-If the command fails with a `.lock: File exists` error, a sibling holds it briefly: retry,
-up to three times, a few seconds apart. If it still fails after that, the lock is stale —
-its owner died holding it. Report the lock file's path and stop; never delete a lock file
-in a shared `.git` yourself: four siblings may be live inside it.
+The branch naming follows the project's commit-type vocabulary from
+[`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary* —
+`<type>/<n>-<slug>` — but writing that branch is the orchestrator's job, not this skill's.
 
-`<type>` comes from the project's commit-type vocabulary — one list serving the branch prefix, the commit and the PR title. It is defined once, in [`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*; read it there rather than from a copy, and add nothing to it here. A project whose composition carries no such decision falls back to the neighbouring commits' own prefixes.
-
-Inside the project directory, not `../<repo>-<n>`: Claude Code's permissions are scoped to the project directory, and a worktree created outside it triggers extra prompts or fails outright in restricted modes. The cost is a folder to keep out of the diff — `.worktrees/` is gitignored by `scrumia-project-setup`.
-
-This isolation is what makes several tickets parallelizable without conflict. The number
-of siblings is `sprint.max_tickets`, a human-review cap — git is not the limiting factor.
-Raising it is a review-bandwidth decision, never a git one.
-
-Move the card to the `in_progress` step:
+Once the branch is right, move the card to the `in_progress` step:
 
 ```bash
 scrumia-board move <n> in_progress
@@ -123,7 +148,10 @@ The flow step maps to this board's actual column name through the config ([`proj
 
 ## Commit before you yield
 
-From here on, what carries this run's output is the branch created in Step 2 — not the working tree. The working tree belongs to whatever process happens to hold it, and that process can vanish while the run is paused. So commit to the ticket's branch before the run hands control to anyone else:
+From here on, what carries this run's output is the ticket's branch the calling agent put
+the executor on — not the working tree the orchestrator may later tear down. The branch
+survives a torn-down tree; uncommitted work in one does not. So commit to the ticket's
+branch before the run hands control to anyone else:
 
 ```bash
 git add -A && git commit -m "<type>(<scope>): <what changed>
@@ -268,11 +296,11 @@ If the move fails, continue anyway and say so in the final report: a dead column
 
 **You do not merge.** Final validation belongs to the human, except for a category explicitly listed in `autonomy.auto_merge` of `.scrumia/config.yaml` — and even then, CI must be green.
 
-Clean up the worktree once the PR is open:
-
-```bash
-git worktree remove .worktrees/<type>/<n>-<slug>
-```
+**You do not clean up the worktree.** The worktree is the calling agent's — the orchestrator
+created it (or chose not to) and the orchestrator owns its lifecycle. This skill's contract
+ends at the PR; the directory stays where it was until whoever handed the executor the
+branch decides otherwise. Saying that here, again, because a reader following Step 8 looking
+for `git worktree remove` would otherwise infer that the executor is the one to run it.
 
 ## When you're blocked
 
