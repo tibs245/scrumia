@@ -21,15 +21,19 @@ A slot is a question. A module is one answer.
 | `team` | Which standing roles, with what scope? | `scrumia-teams` |
 | `discovery` | How does an idea become framed work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
-| `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
 | `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a failure: it is a capability the project doesn't have, and agents adapt what they propose.
 
-Two slots are multiple, and both map app by app:
+One slot is multiple and maps app by app:
 
-- **`implementation`** — a SolidJS app and a Rust app don't share practices. One module per stack.
-- **`practices`** — cross-cutting practices (TDD, SOLID) that refine one named point of the implementation contract, shared across stacks. An implementation module *situates* each practice for its stack; where they disagree, **specific beats generic** — the implementation module wins, and the project override wins over both. See [ADR-0010](adr/0010-cross-cutting-practices.md).
+- **`implementation`** — a SolidJS app and a Rust app share no stack. One module per stack.
+
+An app lists more than its stack. A module that fills no slot at all — `scrumia-tdd`,
+`scrumia-solid-principles` — refines one named point of the implementation contract and is
+shared across stacks; the implementation module *situates* it for its own. Where they
+disagree, **specific beats generic** — the implementation module wins, and the project
+override wins over both. See [ADR-0019](adr/0019-extends-replaces-composition-and-practices.md).
 
 ## How modules connect
 
@@ -46,11 +50,11 @@ Two slots are multiple, and both map app by app:
 | Specs | `scrumia-specs` | Specs live in `features/`, per feature, as targeted files. |
 | Tracking | `scrumia-github-project` | Tickets, columns and PRs on GitHub. Nothing in the repo. |
 
-### Implementation and practices, per app
+### Per app
 
-| App | Path | Implementation | Practices |
-|---|---|---|---|
-| `web` | `apps/web` | `scrumia-impl-solidjs` | `scrumia-practice-tdd` |
+| App | Path | Modules |
+|---|---|---|
+| `web` | `apps/web` | `scrumia-impl-solidjs`, `scrumia-tdd` |
 <!-- scrumia:end -->
 ```
 
@@ -61,10 +65,10 @@ The agent reads this table like any project context. There is nothing to resolve
 The table above says *which* module applies to an app. It does not say how much of that module an agent loads to make one edit — loading a whole implementation module's reference set for a one-line fix would burn context for no benefit. The consumption model has three steps:
 
 1. **Resolve the app by path.** The file about to be touched is matched against `apps[].path`. Every app entry carries a `path`, precisely so this step never stalls for lack of a boundary to test against.
-2. **Open the index, not the module.** Each implementation and practice module exposes a skill index — its `SKILL.md` — and nothing else is read yet. A project can shortcut straight to it: `scrumia-init` can write, at `apps[].path`, a per-app `CLAUDE.md` stub naming the app's modules and pointing at their indexes, picked up by Claude Code's native nested-`CLAUDE.md` loading.
+2. **Open the index, not the module.** Each module an app draws on exposes a skill index — its `SKILL.md` — and nothing else is read yet. A project can shortcut straight to it: `scrumia-init` can write, at `apps[].path`, a per-app `CLAUDE.md` stub naming the app's modules and pointing at their indexes, picked up by Claude Code's native nested-`CLAUDE.md` loading.
 3. **Load only what the index routes to.** The index carries a routing table from kind-of-change to reference guide. Only the guides it selects for the task at hand are loaded — and only within the module's `section.json` globs, the file patterns it actually claims inside the app; outside them it has nothing to say.
 
-`scrumia-ticket`'s implementation step (Step 4) runs exactly this procedure before writing any code. **Specific beats generic** still governs once guides are loaded: implementation module over practice, project override (`.scrumia/impl/`, `.scrumia/practices/`) over both. See [ADR-0011](adr/0011-rules-hierarchy.md).
+`scrumia-ticket`'s implementation step (Step 4) runs exactly this procedure before writing any code. **Specific beats generic** still governs once guides are loaded: implementation module over the module it situates, project override (`.scrumia/overrides/`) over both. See [ADR-0011](adr/0011-rules-hierarchy.md).
 
 ### The specs contract
 
@@ -89,44 +93,44 @@ project:
   name: "my-project"
   repo: "tibs245/my-project"
 
-composition:
-  specs: scrumia-specs
-  tracker: scrumia-github-project
-  team: scrumia-teams
-  discovery: scrumia-discovery
-  design: null
+modules:
+  "tibs245/scrumia:scrumia-specs":
+    params:
+      root: "features"
+  "tibs245/scrumia:scrumia-github-project":
+    params:
+      project: "My project"
+      columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
+  "tibs245/scrumia:scrumia-teams":
+    params:
+      sprint:
+        max_tickets: 5
 
 apps:
   - name: web
     path: apps/web
     type: frontend
-    implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd]
+    modules:
+      "tibs245/scrumia:scrumia-impl-solidjs": {}
+      "tibs245/scrumia:scrumia-tdd": {}
   - name: api
     path: apps/api
     type: backend
-    implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+    modules:
+      "tibs245/scrumia:scrumia-impl-rust":
+        params:
+          test_runner: cargo
+      "tibs245/scrumia:scrumia-tdd":
+        params:
+          ac_mapping: strict
+      "tibs245/scrumia:scrumia-solid-principles": {}
 
 settings:
   autonomy:
     level: guided
     auto_merge: none
-  specs:
-    root: "features"
-  tracker:
-    project: "My project"
-    columns: [Backlog, Ready for dev, To dev, In progress, In review, Done]
   team:
     roles: [manager, business, tech]
-    sprint:
-      max_tickets: 5
-  implementation:
-    scrumia-impl-rust:
-      test_runner: cargo
-  practices:
-    scrumia-practice-tdd:
-      ac_mapping: strict
 
 paths:
   adr: "docs/adr"
@@ -134,15 +138,15 @@ paths:
 
 Two conventions that matter:
 
-- **An absent module is declared `null`**, not omitted. The difference between "not chosen yet" and "deliberately without" is otherwise lost.
-- **Each module documents the keys it reads** under `settings`. An implicit setting is a setting you can't change.
+- **A module the project does not run is simply not named.** Presence on disk is not participation: a module installed and named in no `modules` mapping is inert.
+- **Each module documents the keys it reads** under its own `params:`; `settings:` holds only what several modules read. An implicit setting is a setting you can't change.
 
 ## Overriding without forking
 
-A module must be adjustable by a project without being copied. Two mechanisms, available to every implementation and practice module:
+A module must be adjustable by a project without being copied. Two mechanisms, available to every module an app draws on:
 
-- **Declared settings** — the module documents what it reads under `settings.implementation.<module>` or `settings.practices.<module>`.
-- **Project override files** — `.scrumia/impl/<module>.md` and `.scrumia/practices/<module>.md`. Their content wins over the module's own rules.
+- **Declared settings** — the module documents what it reads under its own `params:`.
+- **Project override file** — `.scrumia/overrides/<module>.md`. Its content wins over the module's own rules.
 
 A module that provides neither will be forked at the first disagreement, and the fork will never receive updates.
 
@@ -167,7 +171,7 @@ The reference composition is only an example — the one its author uses.
 | Framed backlog, in production | `core` + `specs` + `tracker` + `team` + one implementation module per app |
 | Team already tooled on Jira | `core` + `specs` + a Jira tracker module to write |
 | Code conventions already stable | everything except `implementation` |
-| Legacy codebase to bring under test | add `scrumia-practice-tdd` and start with its audit |
+| Legacy codebase to bring under test | add `scrumia-tdd` and start with its audit |
 
 Writing a tracker module for Jira or Linear is bounded work: the slot is defined, the contract holds in three rules, and nothing else needs to change.
 

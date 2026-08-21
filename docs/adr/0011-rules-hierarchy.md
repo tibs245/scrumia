@@ -6,11 +6,11 @@
 
 Implementation and practice modules ship their standing rules as a **knowledge skill**: one `SKILL.md`, loaded whole the moment it triggers, plus a `references/` folder for anything too long to inline.
 
-`scrumia-rust` (`plugins/scrumia-impl-rust/skills/scrumia-rust/SKILL.md`) is representative: one file carries "how we test", "which design principles", "how the code is structured", "what we refuse", a "practices situated" section for whichever of `scrumia-practice-tdd` / `scrumia-practice-solid` is plugged in, the settings block and the override pointer — plus a single flat `references/conventions.md` for the file tree, code samples and lints. `scrumia-tdd` (`plugins/scrumia-practice-tdd/skills/scrumia-tdd/SKILL.md`) follows the same shape: the cycle, the AC-to-test mapping, the mock boundary, the scope boundary, the refusals, one flat `references/anti-patterns.md`. Loading either skill for "add one test" pulls in the refusals section and the settings block just the same as loading it for "review the whole test suite" would — there is no partial load.
+`scrumia-rust` (`plugins/scrumia-impl-rust/skills/scrumia-rust/SKILL.md`) is representative: one file carries "how we test", "which design principles", "how the code is structured", "what we refuse", a "practices situated" section for whichever of `scrumia-tdd` / `scrumia-solid-principles` is plugged in, the settings block and the override pointer — plus a single flat `references/conventions.md` for the file tree, code samples and lints. `scrumia-tdd` (`plugins/scrumia-tdd/skills/scrumia-tdd/SKILL.md`) follows the same shape: the cycle, the AC-to-test mapping, the mock boundary, the scope boundary, the refusals, one flat `references/anti-patterns.md`. Loading either skill for "add one test" pulls in the refusals section and the settings block just the same as loading it for "review the whole test suite" would — there is no partial load.
 
-This holds today because each module answers a handful of named points. It stops holding on three axes already visible in `docs/modules.md`: practice-situating sections multiply (Rust already situates two practices, a third — `scrumia-practice-hexagonal` — is under consideration); implementation modules multiply per stack; and a monorepo plugs several implementation and practice modules across apps that share nothing. A root `SKILL.md` then answers for apps it does not cover, reloaded whole regardless. It is the same growth curve, and the same failure mode, that `docs/format-feature.md` names for the monolithic PRD and that ADR-0003 rejected for a single cross-cutting architecture file: a document that only grows, gets reloaded in full to read three lines, accumulates sections nobody prunes, and past a point nobody verifies.
+This holds today because each module answers a handful of named points. It stops holding on three axes already visible in `docs/modules.md`: practice-situating sections multiply (Rust already situates two practices, a third — `scrumia-hexagonal` — is under consideration); implementation modules multiply per stack; and a monorepo plugs several implementation and practice modules across apps that share nothing. A root `SKILL.md` then answers for apps it does not cover, reloaded whole regardless. It is the same growth curve, and the same failure mode, that `docs/format-feature.md` names for the monolithic PRD and that ADR-0003 rejected for a single cross-cutting architecture file: a document that only grows, gets reloaded in full to read three lines, accumulates sections nobody prunes, and past a point nobody verifies.
 
-Separately, `.scrumia/config.yaml`'s `apps[]` already carries an app → implementation/practices mapping, and `scrumia-init` already tabulates it into `CLAUDE.md` — but nothing scopes a module's rules to the files inside a given app's path, and a project's own conventions have only one outlet: a single override file (`.scrumia/impl/<module>.md`, `.scrumia/practices/<module>.md`). That file is exactly the flat-file shape this ADR moves modules away from — a project with real house rules to record hits the same growth curve one file down.
+Separately, `.scrumia/config.yaml`'s `apps[]` already carries an app → implementation/practices mapping, and `scrumia-init` already tabulates it into `CLAUDE.md` — but nothing scopes a module's rules to the files inside a given app's path, and a project's own conventions have only one outlet: a single override file (`.scrumia/overrides/<module>.md`). That file is exactly the flat-file shape this ADR moves modules away from — a project with real house rules to record hits the same growth curve one file down.
 
 Prior art: [`fictional-guacamole`](https://github.com/tibs245/fictional-guacamole), same author, built for the `ovh/manager` monorepo. It structures sections as an index (`00-index.md`) acting as a routing table, numbered guides with a stated dependency graph, per-section decision records, and an interactive installer emitting per-IDE output (`.cursor/rules/*.mdc`, `.github/instructions/*.md`).
 
@@ -52,7 +52,7 @@ apps:
   - name: api
     path: apps/api          # required — anchors this app's globs and its CLAUDE.md stub
     implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd]
+    practices: [scrumia-tdd]
 ```
 
 `scrumia-init` keeps writing the app → modules mapping, now including each path, into the root `CLAUDE.md` (the "Implementation and practices, per app" table already does this; this ADR makes the path column load-bearing rather than decorative). It additionally **offers** a per-app stub at `<path>/CLAUDE.md`:
@@ -62,7 +62,7 @@ apps:
 ## This app's modules
 
 Implementation: `scrumia-impl-rust` — load `scrumia-rust` before writing code here.
-Practices: `scrumia-practice-tdd`.
+Practices: `scrumia-tdd`.
 Full composition: see the repository root `CLAUDE.md`.
 <!-- scrumia:end -->
 ```
@@ -81,7 +81,7 @@ A project can maintain its own sections, in the same shape, under `.scrumia/rule
 └── decisions/
 ```
 
-This does not replace the single-file overrides (`.scrumia/impl/<module>.md`, `.scrumia/practices/<module>.md`) — those stay the right tool for a short exception to an existing module. It is the outlet for house rules that either outgrow a single file or answer to no plugged module at all (a legacy subsystem's quirks, a security rule specific to this codebase). The tooling — scaffolding a new section, checking it against the same shape a module uses — is the new `scrumia-rules` module: optional, since the format needs no module to be written by hand, the same way `.scrumia/impl/<module>.md` needs none today.
+This does not replace the single-file overrides (`.scrumia/overrides/<module>.md`) — those stay the right tool for a short exception to an existing module. It is the outlet for house rules that either outgrow a single file or answer to no plugged module at all (a legacy subsystem's quirks, a security rule specific to this codebase). The tooling — scaffolding a new section, checking it against the same shape a module uses — is the new `scrumia-rules` module: optional, since the format needs no module to be written by hand, the same way `.scrumia/overrides/<module>.md` needs none today.
 
 Precedence is unchanged from ADR-0010: **specific beats generic**. A project-local section beats an implementation module, which beats a practice module, for any file its glob covers. What changes is scope, not order — a project can now out-argue a module with a rules hierarchy of its own instead of a single overflowing file.
 

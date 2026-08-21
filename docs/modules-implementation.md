@@ -15,13 +15,16 @@ apps:
   - name: web
     path: apps/web
     type: frontend
-    implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd]
+    modules:
+      "tibs245/scrumia:scrumia-impl-solidjs": {}
+      "tibs245/scrumia:scrumia-tdd": {}
   - name: api
     path: apps/api
     type: backend
-    implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+    modules:
+      "tibs245/scrumia:scrumia-impl-rust": {}
+      "tibs245/scrumia:scrumia-tdd": {}
+      "tibs245/scrumia:scrumia-solid-principles": {}
 ```
 
 An app without a module follows the neighboring code's conventions. That is normal behavior, not a gap — and often the right choice on a project whose conventions are already stable.
@@ -56,13 +59,13 @@ The expected tree, what goes where, what is not allowed to depend on what. Preci
 
 The most useful part, and the most often forgotten. The patterns this module rejects, with the reason for the rejection. An agent that knows what is refused corrects itself; an agent that only knows best practices applies them everywhere.
 
-## Composing with the `practices` slot
+## Composing with the modules beside it
 
-Some answers are not stack-specific: TDD answers "how we test" the same way in Rust and SolidJS — only tooling and examples change. Those answers live in **practice modules** (`scrumia-practice-tdd`, `scrumia-practice-solid`), plugged app by app alongside the implementation module. See [ADR-0010](adr/0010-cross-cutting-practices.md).
+Some answers are not stack-specific: TDD answers "how we test" the same way in Rust and SolidJS — only tooling and examples change. Those answers live in modules of their own (`scrumia-tdd`, `scrumia-solid-principles`), which fill no slot and are plugged in app by app alongside the implementation module. See [ADR-0019](adr/0019-extends-replaces-composition-and-practices.md).
 
-An implementation module's part of the bargain is a **"With the practices" section**: for each practice it knows, a short conditional paragraph — "if this practice is plugged into the app, here is how it lands on this stack". Tooling, idioms, exceptions. A practice the module doesn't know still applies, just unsituated: degraded, not broken.
+An implementation module's part of the bargain is an **"Alongside other modules" section**: for each one it knows, a short conditional paragraph — "if this module is plugged into the app, here is how it lands on this stack". Tooling, idioms, exceptions. A module it doesn't know still applies, just unsituated: degraded, not broken.
 
-The one precedence rule: **specific beats generic**. Where the implementation module restricts a practice — `scrumia-impl-rust` refuses dependency inversion between modules of the same crate, whatever SOLID says — the implementation module wins. The project override wins over both.
+The one precedence rule: **specific beats generic**. Where the implementation module restricts what another says — `scrumia-impl-rust` refuses dependency inversion between modules of the same crate, whatever SOLID says — the implementation module wins. The project override wins over both.
 
 ## How an agent actually loads this
 
@@ -85,7 +88,7 @@ settings:
       strict_mode: true
 ```
 
-**Project override file** — the module reads an optional file, `.scrumia/impl/<module>.md`, whose content wins over its own rules. A project adds a house convention this way without touching the module.
+**Project override file** — the module reads an optional file, `.scrumia/overrides/<module>.md`, whose content wins over its own rules. A project adds a house convention this way without touching the module.
 
 A module that provides neither will be forked at the first disagreement, and the fork will never receive updates.
 
@@ -103,9 +106,9 @@ So an implementation module does not answer "which blue", and the design module 
 
 1. Create `plugins/<name>/` with its `.claude-plugin/plugin.json`
 2. One main skill, loaded before writing code, covering the four points of the contract
-3. A "With the practices" section situating the known practices for your stack
+3. An "Alongside other modules" section situating the ones you know for your stack
 4. An audit skill, for plugging into existing code
-5. Document the settings read under `settings.implementation.<name>`
+5. Document the settings read under the module's own `params:`
 6. Provide for the project override
 7. Add the marketplace entry, validate (`claude plugin validate`)
 8. Plug it in app by app in `.scrumia/config.yaml`, then regenerate `CLAUDE.md` via `scrumia-init`

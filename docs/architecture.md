@@ -19,7 +19,6 @@ So: separate the questions, provide a replaceable answer to each one, and docume
 | `team` | Which standing roles, with what scope? | `scrumia-teams` |
 | `discovery` | How does an idea become scoped work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
-| `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid`, `scrumia-practice-tanstack-query` |
 | `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a breakdown: it is a capability the project does not have, and the agents adapt what they propose.

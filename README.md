@@ -27,12 +27,11 @@ A slot is a question. A module is one answer.
 | `team` | Which standing roles, with what scope? | `scrumia-teams` |
 | `discovery` | How does an idea become framed work? | `scrumia-discovery` |
 | `implementation` | How we code — **per app** | `scrumia-impl-rust`, `scrumia-impl-solidjs` |
-| `practices` | Which cross-cutting practices — **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid`, `scrumia-practice-tanstack-query` |
 | `design` | Where does the design system live? | `scrumia-design` |
 
 An empty slot is not a failure: it is a capability the project doesn't have, and agents adapt what they propose.
 
-`implementation` and `practices` are the two multiple slots, mapped app by app. An implementation module owns the stack-specific "how" (Rust, SolidJS); a practice module owns one cross-cutting answer (TDD, SOLID, TanStack Query) that the implementation module situates for its stack. Where they disagree, specific beats generic — see [ADR-0010](docs/adr/0010-cross-cutting-practices.md).
+`implementation` is the one slot that takes several modules, mapped app by app — and an app lists more than its stack. `scrumia-tdd`, `scrumia-solid-principles` and `scrumia-tanstack-query` fill no slot at all: each sharpens one named point of what the implementation module says, and the implementation module situates it for its stack. Where they disagree, specific beats generic — see [ADR-0019](docs/adr/0019-extends-replaces-composition-and-practices.md).
 
 Sitting beside `scrumia-core`, `scrumia-rules` fills no slot either: it is the rules-hierarchy format — index, guides, decisions — that lets a module's knowledge skill, or a project's own conventions, load only the guide a task routes to instead of one growing file. See [ADR-0011](docs/adr/0011-rules-hierarchy.md).
 
@@ -102,7 +101,7 @@ The remaining skills are reached by name. They run once, or on demand, and don't
 /scrumia-discovery:scrumia-brainstorm   # frame an idea until it can be split
 /scrumia-core:scrumia-compose           # what the composition is
 /scrumia-impl-rust:scrumia-rust-audit   # audit an app before plugging a module in
-/scrumia-practice-tdd:scrumia-tdd-audit
+/scrumia-tdd:scrumia-tdd-audit
 ```
 
 Roles are convened by `standup`, asked for in natural language — "ask the tech lead to review PR 17" — or run as a session's main agent:
@@ -122,14 +121,14 @@ Installing or updating a module that ships agents requires a **restart**: `/relo
 | Framed backlog, in production | all, plus one implementation module per app |
 | Team already on Jira | `core` + `specs` + a tracker module to write |
 | Stable code conventions | everything except `implementation` |
-| Legacy code to bring under test | add `scrumia-practice-tdd`, start with its audit |
+| Legacy code to bring under test | add `scrumia-tdd`, start with its audit |
 
 ## Documentation
 
 - [Composition](docs/composition.md) — the slots, the config, how to write a module
 - [Architecture](docs/architecture.md) — the intent and the choices
 - [Modules](docs/modules.md) — the twelve modules and their scope
-- [Implementation modules](docs/modules-implementation.md) — the contract and how practices compose
+- [Implementation modules](docs/modules-implementation.md) — the contract and how modules compose around it
 - [The three roles](docs/agents.md)
 - [Feature format](plugins/scrumia-specs/skills/scrumia-feature/docs/format-feature.md)
 - [Changelog format](docs/format-changelog.md)
@@ -151,9 +150,9 @@ ScrumIA/                              ← the repo is also the marketplace
 │   ├── scrumia-discovery/
 │   ├── scrumia-impl-rust/            ← implementation, per app
 │   ├── scrumia-impl-solidjs/
-│   ├── scrumia-practice-tdd/         ← cross-cutting practices, per app
-│   ├── scrumia-practice-solid/
-│   └── scrumia-practice-tanstack-query/
+│   ├── scrumia-tdd/                 ← slotless: refines one point, per app
+│   ├── scrumia-solid-principles/
+│   └── scrumia-tanstack-query/
 ├── docs/
 ├── site/                             ← static site, EN at root, FR under fr/
 ├── tools/validate.py                 ← marketplace validation, run by CI
