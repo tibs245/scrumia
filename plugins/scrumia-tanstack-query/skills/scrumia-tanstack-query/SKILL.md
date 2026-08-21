@@ -1,11 +1,11 @@
 ---
 name: scrumia-tanstack-query
-description: The ScrumIA TanStack Query reference — query keys, the queryOptions() factory, useQuery, select, useSuspenseQuery, useQueries, dependent queries, mutations, and testing, as nine guides loaded on demand. Load it before writing or reviewing data-fetching code in an app where the TanStack Query practice is plugged in.
+description: The ScrumIA TanStack Query reference — query keys, the queryOptions() factory, useQuery, select, useSuspenseQuery, useQueries, dependent queries, mutations, and testing, as nine guides loaded on demand. Load it before writing or reviewing data-fetching code in an app where this module is plugged in.
 ---
 
 # Coding with TanStack Query
 
-This practice refines one point of the implementation contract: **how server state is fetched, cached, and mutated.** It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module — nothing here assumes `scrumia-impl-solidjs`, `scrumia-impl-rust`, or any other module is present. When an implementation module for the app's framework does situate TanStack Query for its stack, its tooling takes precedence over the generic examples here; today none of this marketplace's implementation modules does, so the guides below are the whole answer.
+This module refines one point of the implementation contract: **how server state is fetched, cached, and mutated.** It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module — nothing here assumes `scrumia-impl-solidjs`, `scrumia-impl-rust`, or any other module is present. When an implementation module for the app's framework does situate TanStack Query for its stack, its tooling takes precedence over the generic examples here; today none of this marketplace's implementation modules does, so the guides below are the whole answer.
 
 > Entry point for an agent. Read this file first, then open only the guide(s) the task needs — loading all nine for a one-line fix defeats the point of splitting them.
 
@@ -82,9 +82,9 @@ Everything else follows from it: one factory reused by `useQuery`, `useSuspenseQ
 09-testing        ← requires 02, 04
 ```
 
-## Decisions (for humans challenging practices)
+## Decisions (for humans challenging the rules)
 
-The `decisions/` folder contains Architecture Decision Records (ADRs) explaining **why** each practice was chosen. Not needed for code generation — they exist for developers who want to understand, challenge, or evolve the practices via PR.
+The `decisions/` folder contains Architecture Decision Records (ADRs) explaining **why** each rule was chosen. Not needed for code generation — they exist for developers who want to understand, challenge, or evolve them via PR.
 
 | ADR | Decision | Related guide |
 |-----|----------|---------------|
@@ -104,23 +104,28 @@ The `decisions/` folder contains Architecture Decision Records (ADRs) explaining
 
 ## Framework notes
 
-Every guide's code examples use `@tanstack/react-query` — the richest surface to illustrate (Suspense boundaries, `useQueries`, hook destructuring). The rules themselves — the query key hierarchy, `queryOptions()` as the mandatory factory, the invalidation strategy, the mock boundary in tests — hold unchanged for `@tanstack/solid-query` and any other TanStack Query adapter. Each guide that touches a hook carries a one-line note on where the Solid primitive differs (mainly: `create*` instead of `use*`, and no destructuring the result). This marketplace currently ships `scrumia-impl-solidjs` as an implementation module and no `scrumia-impl-react` — this practice module does not assume either is present, and does not need one to apply.
+Every guide's code examples use `@tanstack/react-query` — the richest surface to illustrate (Suspense boundaries, `useQueries`, hook destructuring). The rules themselves — the query key hierarchy, `queryOptions()` as the mandatory factory, the invalidation strategy, the mock boundary in tests — hold unchanged for `@tanstack/solid-query` and any other TanStack Query adapter. Each guide that touches a hook carries a one-line note on where the Solid primitive differs (mainly: `create*` instead of `use*`, and no destructuring the result). This marketplace currently ships `scrumia-impl-solidjs` as an implementation module and no `scrumia-impl-react` — this module does not assume either is present, and does not need one to apply.
 
 ## Settings
 
-Under `settings.practices.scrumia-practice-tanstack-query` in `.scrumia/config.yaml`:
+Under this module's own `params:` in `.scrumia/config.yaml`, beside the key of the app
+that lists it:
 
 ```yaml
-settings:
-  practices:
-    scrumia-practice-tanstack-query:
-      data_root: src/data      # where queryKeys.ts and *.queries.ts live
-      adapter: react            # react | solid — which TanStack Query package this app imports
+apps:
+  - name: web
+    modules:
+      "tibs245/scrumia:scrumia-tanstack-query":
+        params:
+          data_root: src/data  # where queryKeys.ts and *.queries.ts live
+          adapter: react       # react | solid — which TanStack Query package this app imports
 ```
+
+Read the effective value through `scrumia-extends --settings`, never out of the file — historically this sat under `settings.practices`, which the resolver still reconciles for the deprecation window.
 
 ## Project override
 
-If `.scrumia/practices/scrumia-practice-tanstack-query.md` exists, its content takes precedence over this skill. A project records its house exceptions there without forking the module.
+If `.scrumia/overrides/scrumia-tanstack-query.md` exists, its content takes precedence over this skill. A project records its house exceptions there without forking the module.
 
 ## Scaffolding a new feature
 

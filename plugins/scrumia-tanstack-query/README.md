@@ -1,6 +1,6 @@
-# scrumia-practice-tanstack-query
+# scrumia-tanstack-query
 
-The practices slot, for apps that hold server state in a
+For apps that hold server state in a
 [TanStack Query](https://tanstack.com/query) cache — `@tanstack/react-query`,
 `@tanstack/solid-query`, or any other adapter of the same core library. Plugs in app by
 app, alongside an implementation module or without one.
@@ -34,27 +34,27 @@ decisions, one artifact at a time.
 
 ## Settings it reads
 
-Under `settings.practices.scrumia-practice-tanstack-query` in `.scrumia/config.yaml`:
+Under this module's own `params:` in `.scrumia/config.yaml`:
 `data_root` and `adapter` (`react` or `solid`).
 
 ## What it expects to find
 
-An app that lists `scrumia-practice-tanstack-query` in its own `extends`. This
+An app that lists `scrumia-tanstack-query` in its own `extends`. This
 marketplace ships `scrumia-impl-solidjs` and no `scrumia-impl-react`; a SolidJS app gets
 the React-first reference with the Solid deltas called out, a React app gets it at face
-value. An optional `.scrumia/practices/scrumia-practice-tanstack-query.md` records house
+value. An optional `.scrumia/overrides/scrumia-tanstack-query.md` records house
 exceptions without forking the module.
 
 ## Decisions
 
 Thirteen, `D-01` through `D-13` — every guide closes on the one behind its rule, for
-developers who want to understand, challenge or evolve a practice via PR rather than take
+developers who want to understand, challenge or evolve a rule via PR rather than take
 it on faith. See [`skills/scrumia-tanstack-query/SKILL.md`](skills/scrumia-tanstack-query/SKILL.md)
 for the full index.
 
 ## Not shipped yet
 
-`scrumia-practice-tdd` and `scrumia-practice-solid` each ship a reference, an `-audit` and
+`scrumia-tdd` and `scrumia-solid-principles` each ship a reference, an `-audit` and
 a `-refactor`. This module ships the reference and a scaffold only — no
 `scrumia-tanstack-query-audit`, no `scrumia-tanstack-query-refactor`. On a codebase that
 predates this module, there is no automated pass to find inline `queryKey`/`queryFn`,

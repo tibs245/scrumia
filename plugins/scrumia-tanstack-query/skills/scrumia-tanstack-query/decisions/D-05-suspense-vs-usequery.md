@@ -53,7 +53,7 @@ The question: which should be the default recommendation for new code?
 
 ## Related decisions
 
-- **Suspense Boundary Pattern** (project-structure practice module, D-01 — not yet ported into this marketplace): documents the Shell + Content file split that implements this decision in practice. When adopting `useSuspenseQuery`, the component architecture follows the Shell (`.page.tsx` / `.component.tsx`) + Content (`.content.tsx`) pattern. Once that module lands, replace this note with a real link.
+- **Suspense Boundary Pattern** (project-structure module, D-01 — not yet ported into this marketplace): documents the Shell + Content file split that implements this decision in practice. When adopting `useSuspenseQuery`, the component architecture follows the Shell (`.page.tsx` / `.component.tsx`) + Content (`.content.tsx`) pattern. Once that module lands, replace this note with a real link.
 
 ## History
 
