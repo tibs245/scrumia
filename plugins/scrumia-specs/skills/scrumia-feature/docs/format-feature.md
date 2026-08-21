@@ -101,9 +101,10 @@ nested feature reads its parent first, and a reader who lands on a sibling does 
 need to. Getting it wrong makes one of those two reads wasted, every time.
 
 Two constraints keep it from becoming a folder tree: a parent is a full feature with
-content of its own — this format has no grouping directory — and nesting stops at one
-level. A child of a child means the middle level was really the feature. The test and
-its rules are the catalog's.
+content of its own — this format has no grouping directory at any depth — and every
+node in a nesting chain is itself a feature in its own right. Depth is bounded by
+structure, not by a number; the same test applies at every level. The test and its
+rules are the catalog's.
 
 The catalog is open. Three rules so it does not sprawl: a new angle must have a
 **distinct reader** (otherwise it is a section, not an angle); it ships the full

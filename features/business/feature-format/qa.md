@@ -200,13 +200,12 @@ And a feature sits inside another only when the parent states what any answer
   to its question is held to and the child is one such answer
 ```
 
-### AC-19 — A nested feature is declared on both sides, and nesting stops at one level
+### AC-19 — A nested feature is declared on both sides
 
 ```gherkin
 Given a feature that sits inside another
 When its index and its parent's are read
 Then the child declares the parent and the parent declares the child
-And no third level exists below the child
 And the parent carries every mandatory file with content of its own
 ```
 
@@ -227,6 +226,17 @@ When the writing is reported
 Then each declined subject is named with the answer that declined it
 And a subject absent from that report cannot be told apart from one nobody
   considered
+```
+
+### AC-22 — Nesting depth is bounded by structure, not by a numeric limit
+
+```gherkin
+Given a feature nested more than one level below another
+When the features tree is checked
+Then no error is raised on depth alone
+And an error is still raised when a directory holds a child but carries no
+  content of its own
+And an error is still raised when a structural link is declared on one side only
 ```
 
 ## Out of scope
