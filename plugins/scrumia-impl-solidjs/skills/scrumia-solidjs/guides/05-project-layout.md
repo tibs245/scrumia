@@ -53,4 +53,4 @@ Global state must be justified by two unrelated consumers, and it lives in a nam
 
 ---
 
-> These rules are structural defaults; `.scrumia/impl/scrumia-impl-solidjs.md`, if present, may record a project's exceptions (see the skill's [Project override](../SKILL.md#project-override) section).
+> These rules are structural defaults; `.scrumia/overrides/scrumia-impl-solidjs.md`, if present, may record a project's exceptions (see the skill's [Project override](../SKILL.md#project-override) section).
