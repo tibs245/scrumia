@@ -11,7 +11,7 @@ existing code (measure the step), and **routinely** (check the step isn't re-for
 
 The audited rules are those of the `scrumia-reactjs` skill
 (`${CLAUDE_SKILL_DIR}/../scrumia-reactjs/SKILL.md`); the project override
-(`.scrumia/impl/scrumia-impl-reactjs.md`) may exempt some — read it first, an exempted
+(`.scrumia/overrides/scrumia-impl-reactjs.md`) may exempt some — read it first, an exempted
 gap is not a finding.
 
 ## The passes, mechanical to structural
@@ -110,7 +110,7 @@ Enforces [06-testing](${CLAUDE_SKILL_DIR}/../scrumia-reactjs/guides/06-testing.m
 - Importing a Server Component into a client unit test — fails at import time and
   belongs to the framework's RSC test harness.
 - If the project writes acceptance criteria: `AC-n` without a citing test.
-- If the TDD practice is plugged into this app, its audit (`scrumia-tdd-audit`) owns
+- If `scrumia-tdd` is plugged into this app, its audit (`scrumia-tdd-audit`) owns
   the suite-value passes — offer it instead of duplicating them here.
 
 ### 7. Project layout

@@ -100,6 +100,6 @@ line marks the boundary (a `"use client"` directive vs a module name).
 
 ---
 
-> These rules are structural defaults; `.scrumia/impl/scrumia-impl-reactjs.md`, if
+> These rules are structural defaults; `.scrumia/overrides/scrumia-impl-reactjs.md`, if
 > present, may record a project's exceptions (see the skill's [Project override](../SKILL.md#project-override)
 > section).

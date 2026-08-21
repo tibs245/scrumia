@@ -107,9 +107,9 @@ does — through a built app — and asserts on the rendered DOM.
 
 ---
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-tdd`** — the cycle runs on Vitest (`test_runner` setting). For a
+**`scrumia-tdd`** — the cycle runs on Vitest (`test_runner` setting). For a
 component: start from the acceptance criterion, write the failing Testing Library test
 (`getByRole`, user events — Rule 1 above), then implement. Hooks follow the classic
 unit cycle (Rule 3). Playwright journeys stay **outside** the red-green loop — too slow

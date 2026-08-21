@@ -3,6 +3,13 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- **Breaking — the project override moves to `.scrumia/overrides/scrumia-impl-reactjs.md`,
+  from `.scrumia/impl/scrumia-impl-reactjs.md`.** `.scrumia/impl/` and
+  `.scrumia/practices/` only ever differed by a category of module that no longer
+  exists, so they collapse into one directory
+  ([ADR-0024](https://github.com/tibs245/scrumia/blob/main/docs/adr/0024-no-category-of-module.md)).
+  A project with an override file must move it; left where it is, it is not read.
 
 ## [0.1.0] - 2026-08-13
 ### Added

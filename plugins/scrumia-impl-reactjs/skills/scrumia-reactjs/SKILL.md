@@ -1,6 +1,6 @@
 ---
 name: scrumia-reactjs
-description: ScrumIA's React 19 practices — Server Components by default, Actions and useActionState for mutations and forms, derived state calculated during render, behaviour-first component tests, feature-based structure, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-reactjs.
+description: The ScrumIA React 19 reference — Server Components by default, Actions and useActionState for mutations and forms, derived state calculated during render, behaviour-first component tests, feature-based structure, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-reactjs.
 ---
 
 # Coding in React 19
@@ -124,7 +124,7 @@ settings:
 
 ## Project override
 
-If `.scrumia/impl/scrumia-impl-reactjs.md` exists, its content takes precedence over this
+If `.scrumia/overrides/scrumia-impl-reactjs.md` exists, its content takes precedence over this
 skill and its guides. A project records its house exceptions there — a legacy state
 library, a different data layer, a framework choice that pre-dates Server Components —
 without forking the module.
