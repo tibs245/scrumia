@@ -280,7 +280,7 @@ neighbouring line, and diffing as exactly what changed.
   second route to one directory costs — is `features/business/local-extension/`'s
   `tech.md`, which is where that resolution is stated.
 
-## Practices for writing an extension
+## Writing an extension
 
 - **One fragment, one scope.** A guide covering three principles can only be contributed
   whole, to every register at once, at whatever obligation fits the loosest of the three.

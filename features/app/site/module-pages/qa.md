@@ -196,8 +196,8 @@ which is reserved for a degradation; an unfilled register is not a loss.
 
 **Derived from the modules' own declarations, not from this repository's
 composition.** `scrumia-extends` answers for the modules a project runs; this
-repository runs five of the twelve, so reading it would leave the implementation
-and practice modules showing nothing while they in fact declare contributions to
+repository runs five of the twelve, so reading it would leave the modules an app
+draws on showing nothing while they in fact declare contributions to
 `implement`, `review` and `audit`.
 
 This section says what is mechanically true and stops there. On today's twelve

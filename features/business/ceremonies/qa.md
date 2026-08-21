@@ -147,7 +147,7 @@ Then it is refused, and the refusal names which of the three reasons in `busines
 Given a candidate capability whose question no existing slot asks, and which would still
   have something to do with the tracker slot empty
 When it is checked against those same three reasons
-Then none of them refuses it, and the answer to "module or practice" is reopened rather
+Then none of them refuses it, and the answer to "which module owns it" is reopened rather
   than settled by this feature's precedent
 ```
 

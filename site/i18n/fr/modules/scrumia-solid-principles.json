@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-solid-principles — ScrumIA",
+  "meta_description": "scrumia-solid-principles : un module ScrumIA — cinq principes, chacun avec sa limite d'application.",
+  "og_title": "scrumia-solid-principles — ScrumIA",
+  "tagline": "Un point nommé du contrat d'implémentation : quels principes de conception.",
+  "responsibilities": "<p>Affine quels principes s'appliquent et, plus utile encore, où chacun s'arrête. Les cinq, chacun avec sa limite d'application, plus un audit qui signale la sur-application exactement au même niveau que la violation, et une compétence de refactorisation pour refermer ce qu'il trouve.</p>",
+  "refusals": "<p>Il refuse de traiter un principe comme universel, et refuse d'arbitrer une question de pile qui appartient au module d'implémentation.</p>",
+  "philosophy": "<p>Présume qu'un principe sans limite énoncée dégénère en cérémonie. Coûte des arbitrages que l'audit ne peut pas trancher seul.</p>"
+}

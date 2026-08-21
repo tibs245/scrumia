@@ -4,13 +4,13 @@
 
 | Feature | Stratum | Status | In brief |
 |---|---|---|---|
-| [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same seven slots the slot-index feature reports, offered as choices. |
+| [composer](app/site/composer/index.md) | app/site | active | The #composer section of the home page: the same six slots the slot-index feature reports, offered as choices. |
 | [extends-map](app/site/extends-map/index.md) | app/site | active | The #extends section of the home page: how a skill declares an extension point, how any module contributes to it as data, and how the table… |
 | [ground-and-shell](app/site/ground-and-shell/index.md) | app/site | active | Everything on the site that is not a section: the token vocabulary the pages are written in, the lit ground they sit on, and the chrome… |
 | [hero](app/site/hero/index.md) | app/site | active | The first thing a reader sees: an eyebrow, a three-line architecture-scale headline, one sentence of lead copy, one filled control, Hop's… |
 | [module-pages](app/site/module-pages/index.md) | app/site | active | One page per marketplace module, in every language the site ships, generated rather than written. |
 | [run-horizon](app/site/run-horizon/index.md) | app/site | active | The #flow section of the home page: one reference run, seven steps, drawn as a single hairline with human steps standing above it and agent… |
-| [slot-index](app/site/slot-index/index.md) | app/site | active | The #slots section of the home page: the seven questions modular-composition defines, each row showing what currently answers it in this… |
+| [slot-index](app/site/slot-index/index.md) | app/site | active | The #slots section of the home page: the six questions modular-composition defines, each row showing what currently answers it in this… |
 | [agent-team](business/agent-team/index.md) | business | active | Standing roles carry ScrumIA's execution: what each owns, what it explicitly refuses, when it activates, and what escalates to the human… |
 | [ceremonies](business/ceremonies/index.md) | business | active | Which occasions beside the ticket path this project keeps, and on what terms — as distinct from a gate, which decides on one change in… |
 | [compound-components](business/compound-components/index.md) | business | draft | The compound component pattern, framework-agnostic. |

@@ -1,6 +1,6 @@
 ---
 name: scrumia-solidjs
-description: ScrumIA's SolidJS practices — behaviour-first component tests, fine-grained reactivity without React reflexes, feature-based structure, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-solidjs.
+description: The ScrumIA SolidJS reference — behaviour-first component tests, fine-grained reactivity without React reflexes, feature-based structure, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-solidjs.
 ---
 
 # Coding in SolidJS
@@ -104,7 +104,7 @@ settings:
 
 ## Project override
 
-If `.scrumia/impl/scrumia-impl-solidjs.md` exists, its content takes precedence over this skill and its guides. A project records its house exceptions there — a legacy state library, a different data layer — without forking the module.
+If `.scrumia/overrides/scrumia-impl-solidjs.md` exists, its content takes precedence over this skill and its guides. A project records its house exceptions there — a legacy state library, a different data layer — without forking the module.
 
 ## The module's other skill
 

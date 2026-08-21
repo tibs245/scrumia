@@ -47,7 +47,7 @@ extends:
 apps:
   - name: api
     path: apps/api
-    extends: [scrumia-impl-rust, scrumia-practice-tdd, scrumia-practice-solid]
+    extends: [scrumia-impl-rust, scrumia-tdd, scrumia-solid-principles]
   - name: prototype
     path: apps/prototype
     extends: [scrumia-impl-solidjs]

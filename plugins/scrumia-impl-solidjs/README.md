@@ -35,7 +35,7 @@ Under `settings.implementation.scrumia-impl-solidjs` in `.scrumia/config.yaml`:
 
 An app that lists `scrumia-impl-solidjs` in its own `extends`; within it, `src/**/*.ts`
 and `src/**/*.tsx` are what the guides apply to. An optional
-`.scrumia/impl/scrumia-impl-solidjs.md` records a project's house exceptions without
+`.scrumia/overrides/scrumia-impl-solidjs.md` records a project's house exceptions without
 forking the module.
 
 ## Decisions

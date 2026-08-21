@@ -990,7 +990,7 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 
 /* A reporting row holds one fill and can afford `flex: none`. A choosable one
-   holds up to three module names — the practices row in French is the worst
+   holds several module names — the implementation row in French is the worst
    case — so it shrinks and wraps rather than pushing the row off its edge. */
 .slots-choose .slot-fill {
   display: flex; flex-wrap: wrap; justify-content: flex-end;

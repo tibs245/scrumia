@@ -34,6 +34,6 @@ Composition and layout, no business logic. The boundary discipline extends to ro
 
 Testing this boundary — mocking `api.ts` rather than `fetch` — is covered in [06-testing.md](06-testing.md), Rule 4.
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-solid`** — situated here: **D** — the domain doesn't import the fetch layer; the `api/` module is the boundary and injects at the edges (Rule 1 above).
+**`scrumia-solid-principles`** — situated here: **D** — the domain doesn't import the fetch layer; the `api/` module is the boundary and injects at the edges (Rule 1 above).

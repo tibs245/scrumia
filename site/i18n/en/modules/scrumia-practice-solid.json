@@ -1,9 +1,0 @@
-{
-  "title": "scrumia-practice-solid — ScrumIA",
-  "meta_description": "scrumia-practice-solid: the ScrumIA practices slot — five principles, each with its application limit.",
-  "og_title": "scrumia-practice-solid — ScrumIA",
-  "tagline": "One named point of the implementation contract: which design principles.",
-  "responsibilities": "<p>Refines which principles apply and, more usefully, where each one stops. The five, each with its application limit, plus an audit that reports over-application on exactly the same footing as violation, and a refactor skill to close what it finds.</p>",
-  "refusals": "<p>It refuses to treat a principle as universal, and it refuses to arbitrate a stack question that belongs to the implementation module.</p>",
-  "philosophy": "<p>Assumes a principle without a stated limit degrades into ceremony. Costs judgement calls the audit cannot settle on its own.</p>"
-}

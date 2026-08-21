@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ScrumIA — compose your AI dev team from replaceable Claude Code modules</title>
-<meta name="description" content="A method and a marketplace of Claude Code plugins to run a project with AI agents: specs, tickets, standing roles, coding practices. Every module can be swapped.">
+<meta name="description" content="A method and a marketplace of Claude Code plugins to run a project with AI agents: specs, tickets, standing roles, coding modules. Every module can be swapped.">
 <link rel="canonical" href="https://tibs245.github.io/scrumia/">
 <link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/">
 <link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/">
 <link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ScrumIA — compose your AI dev team">
-<meta property="og:description" content="A method and a marketplace of Claude Code plugins to run a project with AI agents: specs, tickets, standing roles, coding practices. Every module can be swapped.">
+<meta property="og:description" content="A method and a marketplace of Claude Code plugins to run a project with AI agents: specs, tickets, standing roles, coding modules. Every module can be swapped.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
@@ -206,7 +206,7 @@
   <h2>Slots</h2>
   <p class="section-intro">A slot is a question. A module is one answer. Below is this repo's real composition, read from <code>.scrumia/config.yaml</code> — nothing is faked in their place.</p>
 
-  <!-- name="slot" groups the seven rows into one native accordion: opening one
+  <!-- name="slot" groups the six rows into one native accordion: opening one
        closes the last, with no script reading or writing that state. -->
   <div class="slots summon">
     <details class="slot" name="slot">
@@ -261,7 +261,7 @@
       <p class="slot-answer"><code>scrumia-discovery</code> is installed here. An idea gets a scoping pass before it becomes a ticket: <code>scrumia-brainstorm</code> opens the question, <code>scrumia-split</code> cuts what comes out of it into issues.</p>
     </details>
 
-    <!-- Two of seven are genuinely empty in this repo's own composition —
+    <!-- One of six is genuinely empty in this repo's own composition —
          see .scrumia/config.yaml. Nothing below is a hypothetical. -->
     <details class="slot slot-empty" name="slot">
       <summary>
@@ -274,19 +274,6 @@
         </h3>
       </summary>
       <p class="slot-answer">This product ships markdown. Its two code apps — a static site and a validation script — carry no implementation module, so the instruction is to follow the neighbouring code instead of inventing a doctrine.</p>
-    </details>
-
-    <details class="slot slot-empty" name="slot">
-      <summary>
-        <h3 class="slot-row">
-          <span class="slot-sign" aria-hidden="true">+</span>
-          <span class="label-register slot-name" data-size="sm">practices</span>
-          <span class="slot-q">Which cross-cutting practices, per app?</span>
-          <span class="slot-lead" aria-hidden="true"></span>
-          <span class="slot-fill">nothing installed</span>
-        </h3>
-      </summary>
-      <p class="slot-answer">None here. TDD, SOLID and TanStack Query are on the shelf — a repository of prose doesn't need them, and pretending otherwise would cost every agent context it could spend on the work.</p>
     </details>
 
     <details class="slot" name="slot">
@@ -306,7 +293,7 @@
 
 <section id="composer">
   <h2>Compose your team</h2>
-  <p class="section-intro">Seven slots, seven decisions — including the ones you leave empty on purpose. Same index as above, except here you answer it: the rows write your install commands and the <code>.scrumia/config.yaml</code> that <code>scrumia-init</code> verifies.</p>
+  <p class="section-intro">Six slots, six decisions — including the ones you leave empty on purpose. Same index as above, except here you answer it: the rows write your install commands and the <code>.scrumia/config.yaml</code> that <code>scrumia-init</code> verifies.</p>
 
   <!-- A div, not a form: nothing here is submitted anywhere, and a <form> with
        no action is a control that implies a round trip it will never make. -->
@@ -322,7 +309,7 @@
       <button type="button" class="preset" data-preset="othertracker">Team on Jira / other</button>
     </div>
 
-    <!-- The same seven rows as #slots, in their choosable state: <details> owns
+    <!-- The same six rows as #slots, in their choosable state: <details> owns
          what is open, the radios and checkboxes own what is chosen, and :has()
          owns what the fill reports. No script is involved in any of that.
          name="composer-slot" and not "slot": the two indexes must not fuse into
@@ -436,9 +423,9 @@
         </div>
       </details>
 
-      <!-- implementation and practices are the two slots that repeat per app,
-           so they are the two that take checkboxes. Nothing checked is the
-           empty state; `something else` adds an app without adding a module. -->
+      <!-- implementation is the one slot that repeats per app, so it is the
+           one that takes checkboxes. Nothing checked is the empty state;
+           `something else` adds an app without adding a module. -->
       <details class="slot slot-multi" name="composer-slot">
         <summary>
           <h3 class="slot-row">
@@ -473,38 +460,6 @@
         </div>
       </details>
 
-      <details class="slot slot-multi" name="composer-slot">
-        <summary>
-          <h3 class="slot-row">
-            <span class="slot-sign" aria-hidden="true">+</span>
-            <span class="label-register slot-name" data-size="sm">practices</span>
-            <span class="slot-q" id="cq-practices">Which cross-cutting practices, per app?</span>
-            <span class="slot-lead" aria-hidden="true"></span>
-            <span class="slot-fill">
-              <span class="fill-1">scrumia-practice-tdd</span>
-              <span class="fill-2">scrumia-practice-solid</span>
-              <span class="fill-3">scrumia-practice-tanstack-query</span>
-              <span class="fill-none">nothing installed</span>
-            </span>
-          </h3>
-        </summary>
-        <div class="shelf" role="group" aria-labelledby="cq-practices">
-          <label class="opt opt-1 opt-mod">
-            <input type="checkbox" name="c-practice" value="tdd" checked>
-            <b>TDD</b><span>Red-green-refactor, audit and refactor skills included.</span>
-          </label>
-          <label class="opt opt-2 opt-mod">
-            <input type="checkbox" name="c-practice" value="solid">
-            <b>SOLID</b><span>Situated principles — over-application audited too.</span>
-          </label>
-          <label class="opt opt-3 opt-mod">
-            <input type="checkbox" name="c-practice" value="tanstack">
-            <b>TanStack Query</b><span>Query keys, invalidation, optimistic updates — the server/client boundary.</span>
-          </label>
-          <p class="opt-hint">Empty: no cross-cutting discipline is imposed. Nothing makes tests come first or keeps a pattern consistent across apps — what the implementation module does not say, nobody says.</p>
-        </div>
-      </details>
-
       <details class="slot" name="composer-slot">
         <summary>
           <h3 class="slot-row">
@@ -531,7 +486,7 @@
       </details>
     </div>
 
-    <!-- Not an eighth slot: no sign, no leader, no fill, no <details>. The seven
+    <!-- Not a seventh slot: no sign, no leader, no fill, no <details>. The six
          above are choices between alternatives and these are not, so they take
          none of the row's anatomy — only the .shelf and .opt those rows open
          into. The options are derived from site/modules.json by
@@ -544,6 +499,18 @@
         <label class="opt opt-add">
           <input type="checkbox" name="c-add" value="scrumia-rules">
           <b>scrumia-rules</b><span>The rules-hierarchy format itself: index, guides, decisions.</span>
+        </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-tdd">
+          <b>scrumia-tdd</b><span>One named point of the implementation contract: how we test.</span>
+        </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-solid-principles">
+          <b>scrumia-solid-principles</b><span>One named point of the implementation contract: which design principles.</span>
+        </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-tanstack-query">
+          <b>scrumia-tanstack-query</b><span>One named point of the implementation contract: how the app talks to the server.</span>
         </label>
         <label class="opt opt-add">
           <input type="checkbox" name="c-add" value="scrumia-html-css">
@@ -564,7 +531,7 @@
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
-             nothing under seven rows that all work is the worse failure. -->
+             nothing under six rows that all work is the worse failure. -->
         <div class="opt opt-free">
           <input type="checkbox" name="c-free" id="add-free">
           <label class="opt-free-head" for="add-free">
@@ -608,7 +575,6 @@
 /plugin install scrumia-design@scrumia
 /plugin install scrumia-impl-rust@scrumia
 /plugin install scrumia-impl-solidjs@scrumia
-/plugin install scrumia-practice-tdd@scrumia
 
 <span class="c"># then, inside the repo to set up</span>
 /scrumia-core:scrumia-init</pre>
@@ -638,20 +604,17 @@ apps:
     type: backend
     modules:
       "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: web
     path: apps/web
     type: frontend
     modules:
-      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}</pre>
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}</pre>
     </div>
   </div>
 
-  <!-- Pre-rendered like the two files above, and for the same reason: the
-       default composition checks a practice and declares two apps, so this note
-       applies from load. composer.js replaces the whole element on any change. -->
-  <p class="composer-note" id="composer-note"><span>Practices apply app by app, and only to the app types they speak for. Where one disagrees with the implementation module, the implementation module wins.</span></p>
+  <!-- Empty at load: no note the composer can raise applies to the composition
+       the rows load with. composer.js replaces the whole element on any change. -->
+  <p class="composer-note" id="composer-note"></p>
   <p class="composer-live" id="composer-live" aria-live="polite"></p>
 
   <!-- The strings composer.js writes into the two files. They live on the
@@ -666,8 +629,6 @@ apps:
        data-project="# replace these two with yours"
        data-note-own-tracker="The tracker slot has a defined contract, so writing a Jira or Linear module is bounded work. Until it exists, the ticket and board skills degrade to text output and say so."
        data-note-own-impl="No implementation module for that stack: the app follows the conventions of the code next to it. Normal behaviour, not a gap — and the contract for writing your own fits on one page."
-       data-note-practices="Practices apply app by app, and only to the app types they speak for. Where one disagrees with the implementation module, the implementation module wins."
-       data-note-practices-noapp="Practices attach to apps. With no app declared they install and activate nothing until apps appear in the file."
        data-note-own-module="Your own module is in the config and in none of the install commands. The site ships no way to install it, and a command invented for it would make the others unverifiable — install it however it is distributed, then run scrumia-init."
        data-app-empty="# no module of its own — agents follow the code next to it"></div>
 </section>
@@ -853,39 +814,39 @@ apps:
       <div class="mod-head">
         <span class="mod-ico">🔴</span>
         <span class="mod-id">
-          <a class="mod-name" href="modules/scrumia-practice-tdd.html">scrumia-practice-tdd</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="modules/scrumia-tdd.html">scrumia-tdd</a>
+          <span class="mod-slot">no slot</span>
         </span>
       </div>
       <p class="mod-desc">The cycle operationalized for an agent, the mock boundary, AC-to-test mapping. Reference, audit, refactor.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">3 skills</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-tdd@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-tdd@scrumia</code>
     </div>
 
     <div class="mod">
       <div class="mod-head">
         <span class="mod-ico">🧭</span>
         <span class="mod-id">
-          <a class="mod-name" href="modules/scrumia-practice-solid.html">scrumia-practice-solid</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="modules/scrumia-solid-principles.html">scrumia-solid-principles</a>
+          <span class="mod-slot">no slot</span>
         </span>
       </div>
       <p class="mod-desc">The five principles, each with its limit. Audits violations and over-applications alike. Reference, audit, refactor.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">3 skills</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-solid@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-solid-principles@scrumia</code>
     </div>
 
     <div class="mod">
       <div class="mod-head">
         <span class="mod-ico">🔄</span>
         <span class="mod-id">
-          <a class="mod-name" href="modules/scrumia-practice-tanstack-query.html">scrumia-practice-tanstack-query</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="modules/scrumia-tanstack-query.html">scrumia-tanstack-query</a>
+          <span class="mod-slot">no slot</span>
         </span>
       </div>
       <p class="mod-desc">Query keys, options, mutations, testing — 9 guides, 13 decisions, ported from real monorepo use.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-tanstack-query@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-tanstack-query@scrumia</code>
     </div>
 
     <div class="mod">

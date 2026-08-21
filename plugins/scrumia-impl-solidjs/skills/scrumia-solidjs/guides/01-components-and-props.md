@@ -56,9 +56,9 @@ Deep wrapper hierarchies — components whose only job is to pass props down —
 
 ---
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-solid`** — situated here:
+**`scrumia-solid-principles`** — situated here:
 - **S**: one component, one rendering responsibility; logic extracted into primitives ([05-project-layout](05-project-layout.md)).
 - **O**: variation through composition — props, `children` — not through boolean-prop proliferation (Rule 4 above).
 - **L**: a component that accepts another's props honours their contract.

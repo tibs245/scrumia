@@ -40,7 +40,7 @@ Under `settings.implementation.scrumia-impl-reactjs` in `.scrumia/config.yaml`:
 
 An app that lists `scrumia-impl-reactjs` in its own `extends`; within it, `src/**/*.tsx`
 and `src/**/*.ts` are what the guides apply to. An optional
-`.scrumia/impl/scrumia-impl-reactjs.md` records a project's house exceptions without
+`.scrumia/overrides/scrumia-impl-reactjs.md` records a project's house exceptions without
 forking the module.
 
 ## Decisions

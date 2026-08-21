@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-tdd — ScrumIA</title>
+<meta name="description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-tdd — ScrumIA">
+<meta property="og:description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  root.classList.add('has-js');
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../../assets/theme.js"></script>
+<script defer src="../../assets/motion.js"></script>
+<script defer src="../../assets/header.js"></script>
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="../../modules/scrumia-tdd.html" lang="en">EN</a>
+        <a href="scrumia-tdd.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">🔴</span> <code>scrumia-tdd</code></h1>
+<p class="section-intro">Un point nommé du contrat d'implémentation : comment nous testons.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · aucun</span>
+  <span class="pill">version · 0.4.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume qu'un test qui échoue est la spécification la moins chère à écrire. Coûte une première passe plus lente, remboursée seulement si le code survit au sprint qui l'a produit.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>scrumia-tdd</code></li><li><code>scrumia-tdd-audit</code></li><li><code>scrumia-tdd-refactor</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>tdd</li> <li>tests</li> <li>testing</li></ul>
+</section>
+
+<section id="plugs-into">
+  <h2>Ce à quoi il se branche</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Registre</th><th>Sens</th><th>Module</th></tr></thead>
+      <tbody><tr><td><code>audit</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>implement</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>review</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-tdd@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-tdd">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+    <span>ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

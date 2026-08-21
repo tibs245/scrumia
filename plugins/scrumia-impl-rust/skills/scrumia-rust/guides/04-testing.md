@@ -71,6 +71,6 @@ An invariant encoded in a type (see [02-domain-types](02-domain-types.md)) needs
 
 The clock and randomness are injected (a `now: DateTime` parameter or a `Clock` trait at the boundary) — a test that depends on the system time will fail on a February 29th.
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-tdd`** — the cycle is tooled with `cargo test` (or `cargo nextest run`, depending on `test_runner`). Rust particularity: red has **two legitimate forms** — the test that fails, and the test that **does not compile yet** because the type or the signature does not exist. Writing the signature to make the test compile is already the green step beginning. `proptest` properties enter the cycle like any other test: the property first, red, then the implementation.
+**`scrumia-tdd`** — the cycle is tooled with `cargo test` (or `cargo nextest run`, depending on `test_runner`). Rust particularity: red has **two legitimate forms** — the test that fails, and the test that **does not compile yet** because the type or the signature does not exist. Writing the signature to make the test compile is already the green step beginning. `proptest` properties enter the cycle like any other test: the property first, red, then the implementation.

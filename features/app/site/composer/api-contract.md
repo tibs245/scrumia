@@ -19,7 +19,7 @@ value to put there.
 
 **A module filling no slot is an ordinary key.** The `modules:` mapping declares
 what the project runs, and nothing in it records which slot — if any — a module
-answers. An addition is therefore one more entry beside the seven slots' own,
+answers. An addition is therefore one more entry beside the six slots' own,
 indistinguishable from them in the file, which is why it costs no mechanism.
 
 **A module this site does not ship reaches the config and nothing else.** The

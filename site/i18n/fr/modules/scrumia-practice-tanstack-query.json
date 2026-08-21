@@ -1,9 +1,0 @@
-{
-  "title": "scrumia-practice-tanstack-query — ScrumIA",
-  "meta_description": "scrumia-practice-tanstack-query : le slot practices de ScrumIA — query keys, invalidation, limite état serveur/client.",
-  "og_title": "scrumia-practice-tanstack-query — ScrumIA",
-  "tagline": "Un point nommé du contrat d'implémentation : comment l'app parle au serveur.",
-  "responsibilities": "<p>Affine la récupération et le cache des données : la fabrique <code>queryOptions()</code>, les query keys, l'invalidation, les optimistic updates, et la limite qui sépare l'état serveur de l'état purement client. Porté d'un usage réel en monorepo — neuf guides, treize décisions.</p>",
-  "refusals": "<p>L'état serveur n'est pas recopié dans l'état client, et le module refuse de parler pour une pile que TanStack Query ne livre pas.</p>",
-  "philosophy": "<p>Présume une pile que la bibliothèque prend en charge — React, Solid, Vue, Svelte. Coûte un modèle de cache à apprendre, et aujourd'hui les compétences d'audit et de refactorisation qui mesureraient l'écart ne sont pas encore construites.</p>"
-}

@@ -7,7 +7,7 @@ description: Measures the gap between an existing Rust app and the scrumia-impl-
 
 An audit records findings, it does not fix. The deliverable is a list of situated findings that the user turns into tickets. This skill serves two moments: **before plugging** the module into existing code (measuring the step), and **as routine** (checking that the step does not re-form).
 
-The audited rules are those of the `scrumia-rust` skill (`${CLAUDE_SKILL_DIR}/../scrumia-rust/SKILL.md`); the project override (`.scrumia/impl/scrumia-impl-rust.md`) may exempt some — read it first, an exempted gap is not a finding.
+The audited rules are those of the `scrumia-rust` skill (`${CLAUDE_SKILL_DIR}/../scrumia-rust/SKILL.md`); the project override (`.scrumia/overrides/scrumia-impl-rust.md`) may exempt some — read it first, an exempted gap is not a finding.
 
 ## The passes, from mechanical to structural
 
@@ -59,7 +59,7 @@ Enforces [04-testing](${CLAUDE_SKILL_DIR}/../scrumia-rust/guides/04-testing.md).
 
 - Integration tests importing private items, tests named `test_<function>` rather than by invariant, central invariants without a test.
 - If the project writes acceptance criteria: `AC-n`s with no test citing them.
-- If the TDD practice is plugged into the app, its audit (`scrumia-tdd-audit`) is the authority on the suite's value — propose it instead of duplicating its passes here.
+- If `scrumia-tdd` is plugged into the app, its audit (`scrumia-tdd-audit`) is the authority on the suite's value — propose it instead of duplicating its passes here.
 
 ## The deliverable
 

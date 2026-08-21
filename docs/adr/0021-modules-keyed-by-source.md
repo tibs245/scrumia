@@ -46,7 +46,7 @@ apps:
     path: apps/api
     modules:
       "tibs245/scrumia:scrumia-impl-rust": {}
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
 ```
 
 ### The key is `<source>:<module>`, always

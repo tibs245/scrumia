@@ -123,8 +123,8 @@ Splitting early produces a routing table that routes to itself — one index, on
 One rule, applied at every level a section can appear:
 
 - **Project-local beats module-shipped** on the same concern — `.scrumia/rules/<section>/` overrides a module's `sections/<topic>/` when both exist for the same globs.
-- **A more specific module beats a more generic one it situates** — an implementation module's guide wins over a practice module's generic one where they conflict, because the specific module knows the terrain the generic one can't.
-- **A project override file beats both**, where a module defines one for itself (each module documents its own override path, e.g. `.scrumia/impl/<module>.md`).
+- **A more specific module beats a more generic one it situates** — an implementation module's guide wins over the generic one of a module it situates, where they conflict, because the specific module knows the terrain the generic one can't.
+- **A project override file beats both**, where a module defines one for itself (each module documents its own override path, e.g. `.scrumia/overrides/<module>.md`).
 
 No resolution mechanism decides this automatically — an agent applies the rule by inspection: is there a project-local section covering these globs? If yes, it wins outright; if no, fall through to whichever module-shipped section is more specific to the code being touched.
 

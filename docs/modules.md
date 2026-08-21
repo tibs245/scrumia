@@ -24,7 +24,7 @@ The rules-hierarchy format itself, not a topic: an **index** an agent reads firs
 | `scrumia-rules-update` | Evolves a rule: challenges its decision, refines or supersedes it, updates the guide, logs the change |
 
 **What it assumes**: nothing beyond `scrumia-core`.
-**What it costs**: more files per rule — a guide and a decision instead of one paragraph — accepted so loading a rule for one task doesn't reload a whole corpus. Precedence itself is unchanged: **specific beats generic** still means project-local section over implementation module over practice module, per [ADR-0010](adr/0010-cross-cutting-practices.md). See [ADR-0011](adr/0011-rules-hierarchy.md).
+**What it costs**: more files per rule — a guide and a decision instead of one paragraph — accepted so loading a rule for one task doesn't reload a whole corpus. Precedence itself is unchanged: **specific beats generic** still means project-local section over implementation module over the module it situates, per [ADR-0019](adr/0019-extends-replaces-composition-and-practices.md). See [ADR-0011](adr/0011-rules-hierarchy.md).
 
 ## `scrumia-specs` — `specs` slot
 
@@ -105,7 +105,7 @@ How we code in SolidJS: fine-grained reactivity without React reflexes, behaviou
 **What it assumes**: Vitest available; Playwright if journeys are wanted.
 **What it costs**: refuses habits imported from React, even comfortable ones.
 
-## `scrumia-practice-tdd` — `practices` slot
+## `scrumia-tdd` — no slot
 
 Test-driven development, situated for an agent. Refines one point of the implementation contract: **how we test**.
 
@@ -115,7 +115,7 @@ Test-driven development, situated for an agent. Refines one point of the impleme
 | `scrumia-tdd-audit` | The state of an app's test safety net |
 | `scrumia-tdd-refactor` | Puts a zone under test before touching it |
 
-## `scrumia-practice-solid` — `practices` slot
+## `scrumia-solid-principles` — no slot
 
 The SOLID principles, each with its application limit. Refines one point of the implementation contract: **which design principles**.
 
@@ -125,7 +125,7 @@ The SOLID principles, each with its application limit. Refines one point of the 
 | `scrumia-solid-audit` | Violations **and** over-applications, on equal footing |
 | `scrumia-solid-refactor` | Resolves one finding, in safe steps |
 
-## `scrumia-practice-tanstack-query` — `practices` slot
+## `scrumia-tanstack-query` — no slot
 
 TanStack Query as the answer to server state. Refines one point of the implementation contract: **how server state is fetched, cached and mutated**. One rule underneath it all: every query goes through a `queryOptions()` factory built on a key from a centralized `queryKeys.ts` — never an inline `queryKey`/`queryFn` pair.
 
@@ -153,11 +153,11 @@ This is the one module that ships a standing role from outside the `team` slot �
 **What it assumes**: an identity someone can state. Setup stops rather than inventing one.
 **What it costs**: the remote mirror can go stale, and syncing is deliberately component by component — a wholesale replace is a sync that skipped the review.
 
-## How `implementation` and `practices` compose
+## How an app's modules compose
 
-Both slots are multiple and map app by app. The implementation module owns the stack-specific "how"; a practice module owns one cross-cutting answer (how we test, which design principles) shared across stacks. The implementation module **situates** each practice for its stack — `scrumia-rust` explains what red-green looks like when the compiler is part of the safety net; `scrumia-solidjs` explains what SOLID means for components.
+An app lists every module it draws on, and the list is per app. The implementation module owns the stack-specific "how"; the ones beside it own one cross-cutting answer each (how we test, which design principles) shared across stacks. The implementation module **situates** each for its stack — `scrumia-rust` explains what red-green looks like when the compiler is part of the safety net; `scrumia-solidjs` explains what SOLID means for components.
 
-One precedence rule: **specific beats generic**. Implementation module over practice, project override (`.scrumia/impl/`, `.scrumia/practices/`) over both. See [ADR-0010](adr/0010-cross-cutting-practices.md).
+One precedence rule: **specific beats generic**. Implementation module over the module it situates, project override (`.scrumia/overrides/`) over both. See [ADR-0019](adr/0019-extends-replaces-composition-and-practices.md).
 
 Consumption doesn't mean loading every module's full reference. Following the rules-hierarchy format ([ADR-0011](adr/0011-rules-hierarchy.md)), a knowledge skill's `SKILL.md` stops carrying content directly and becomes an **index**: a routing table (task phrasing → guide) plus a decisions table, with the actual content split into `guides/` (loaded on demand, one concern each) and `decisions/` (loaded only when a rule is challenged). An agent reads the index first, then opens only the guide its task routes it to — not the whole corpus. `scrumia-rules` (see above) is that format itself, plus the tooling to scaffold and evolve a project-local section in the same shape.
 
@@ -174,13 +174,13 @@ Consumption doesn't mean loading every module's full reference. Following the ru
 | Framed backlog, in production | all, plus one implementation module per app |
 | Team already on Jira | `core` + `specs` + a tracker module to write |
 | Stable code conventions | everything except `implementation` |
-| Legacy code to bring under test | add `scrumia-practice-tdd`, start with its audit |
+| Legacy code to bring under test | add `scrumia-tdd`, start with its audit |
 
 ## Adding a module
 
 A new module is justified when **a real project would want to fill that slot differently**. Otherwise, it's one more skill in an existing module.
 
-**Which existing module is decided by placement, not by prose: a skill sits in the module that owns the knowledge its finding needs, never in the module that owns its output.** Every shipped audit skill is the proof — `scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`, `scrumia-solidjs-audit`, `scrumia-design-audit` sit in `practices`, `implementation` and `design`, none in `tracker`, even though every one of them ends in issues filed there. "The module that already owns the output" would put a debt audit in `tracker` and force it to carry Rust, SOLID and design signal all at once, or reduce to a wrapper over skills that already exist — check a proposed placement against `ls plugins/*/skills/` before accepting it, since the capability it describes is often already shipped.
+**Which existing module is decided by placement, not by prose: a skill sits in the module that owns the knowledge its finding needs, never in the module that owns its output.** Every shipped audit skill is the proof — `scrumia-tdd-audit`, `scrumia-solid-audit`, `scrumia-rust-audit`, `scrumia-solidjs-audit`, `scrumia-design-audit` sit in the modules that own testing, the stacks and design, none in `tracker`, even though every one of them ends in issues filed there. "The module that already owns the output" would put a debt audit in `tracker` and force it to carry Rust, SOLID and design signal all at once, or reduce to a wrapper over skills that already exist — check a proposed placement against `ls plugins/*/skills/` before accepting it, since the capability it describes is often already shipped.
 
 1. Create `plugins/scrumia-<name>/` with its `.claude-plugin/plugin.json`
 2. Fill a slot — existing, or new and documented
@@ -194,7 +194,7 @@ And the prohibition that matters: **never assume another module is present**. If
 
 - **`scrumia-migrate`** — convert an existing project to the specs format. Used only once.
 - **`scrumia-tracker-local`** — a file-based tracker for projects without a remote. Would fill the same slot as `scrumia-github-project`, with the opposite trade-off — and writing it is the real test that the `tracker` slot is replaceable.
-- **`scrumia-practice-hexagonal`** — ports-and-adapters as a practice module, refining "how the code is structured". A candidate third practice once the first two have survived a pilot.
+- **`scrumia-hexagonal`** — ports-and-adapters, refining "how the code is structured". A candidate once `scrumia-tdd` and `scrumia-solid-principles` have survived a pilot.
 
 ## Considered and not built
 

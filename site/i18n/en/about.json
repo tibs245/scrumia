@@ -2,27 +2,22 @@
   "title": "About — ScrumIA",
   "meta_description": "Where ScrumIA comes from, what it borrows from BMAD, and what it deliberately does not claim.",
   "og_title": "About ScrumIA",
-
   "page_kicker": "why this exists",
   "heading": "About",
   "page_lead": "Where ScrumIA comes from, the premise it runs on, and what it deliberately leaves for you to decide.",
-
   "origin_title": "Origin",
   "origin_p1": "ScrumIA comes out of six months building with Claude Code and BMAD, on personal projects. It is maintained by <a href=\"https://github.com/tibs245\">tibs245</a>.",
   "origin_p2": "BMAD supplied the foundations that are still here: a modular base, versioned installs, and tooling kept separate from the projects that consume it.",
-
   "premise_title": "Starting premise",
   "premise_p1": "There is no single right way to run a project with an AI. What works on a five-app monorepo doesn't work on a personal script; what suits a regulated team doesn't suit a weekend prototype.",
   "premise_p2": "A method that answers every question at once has to be taken whole or left. In practice it gets taken, adapted, drifts, and ends as a fork that stops receiving updates.",
   "premise_p3": "ScrumIA separates the questions and gives each one a replaceable module. <strong>The reusable part is the composition, not the answers put into it.</strong>",
-
   "claims_title": "What this does not claim",
   "claims_li1": "That these boundaries between slots are the right ones for everyone",
   "claims_li2": "That a per-feature file catalogue beats other spec formats",
   "claims_li3": "That this set of roles is the right one",
   "claims_li4": "That state must live outside the repository",
   "claims_note": "Each of those is a choice made for a context, documented with its alternatives in the <a href=\"https://github.com/tibs245/scrumia/tree/main/docs/adr\">architecture decision records</a>. A module-level decision is contested by writing another module, not by arguing about this one.",
-
   "status_title": "Status",
   "status_th_item": "Item",
   "status_th_state": "State",
@@ -32,7 +27,7 @@
   "status_r2_state": "Functional, validated, loaded",
   "status_r3_item": "Implementation modules (Rust, SolidJS)",
   "status_r3_state": "Built, with audit skills",
-  "status_r4_item": "Practice modules (TDD, SOLID)",
+  "status_r4_item": "Cross-cutting modules (TDD, SOLID)",
   "status_r4_state": "Built — reference, audit, refactor",
   "status_r5_item": "Design module",
   "status_r5_state": "Built — shipping the redesigned site",
@@ -42,13 +37,11 @@
   "status_r7_state": "Adopted — modules restructured",
   "status_note_title": "The real test of the architecture",
   "status_note_p": "As long as a single module fills a slot, nothing proves that slot is genuinely replaceable. Writing a second <code>tracker</code> module — even a minimal file-based one — would tell us more than adding another implementation module.",
-
   "related_title": "Related",
   "related_rex_title": "Claude Code REX",
   "related_rex_p": "A slide deck on lessons learned with Claude Code and the model family — divide and conquer, sub-agents, right-sizing models. Same author.",
   "related_bmad_title": "BMAD Method",
   "related_bmad_p": "The full-lifecycle framework ScrumIA borrows its modular base from. Broader in scope and supports several tools.",
-
   "license_title": "Licence",
   "license_p": "MIT. Fork it, strip it down, replace the modules that don't suit you."
 }

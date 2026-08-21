@@ -62,7 +62,7 @@ Then propose a composition. A need nothing covers is acceptable — the project 
 | Standing roles and sprint execution | `scrumia-teams` |
 | Scoping an idea into framed work | `scrumia-discovery` |
 | How we code, **per app** | one module per stack (`scrumia-impl-rust`, `scrumia-impl-solidjs`) |
-| Cross-cutting practices, **per app** | `scrumia-practice-tdd`, `scrumia-practice-solid` |
+| What sharpens how we code, **per app** | `scrumia-tdd`, `scrumia-solid-principles` |
 | The design system | `scrumia-design` |
 
 The last two are declared **per app** rather than once for the project: a SolidJS app and a Rust app share no stack, and TDD can apply to the API and not to the prototype next door. Each app carries its own `modules` mapping for exactly that.
@@ -184,7 +184,7 @@ Two retired shapes exist, and both are still read, with a warning on every call.
 |---|---|
 | `extends: [<name>, …]` | one `modules:` key per name, each sourced |
 | `composition: {<slot>: <name>}` and `practices: [<name>]` | the same, slots discarded — `practices` is not a slot |
-| `apps[].extends: []` / `apps[].implementation` + `apps[].practices` | that app's `modules: {}` |
+| `apps[].extends: []`, or the retired `apps[].implementation` and `apps[].practices` | that app's `modules: {}` |
 | `settings.<block>` read by exactly one module | that module's `params:`, with the nest kept as written |
 | `settings.<block>` several modules read | left in `settings:` |
 
@@ -246,7 +246,7 @@ The kernel does not know the modules' needs. For each plugged module, invoke its
 | `scrumia-github-project` | `scrumia-project-setup` | Labels, issue templates, columns |
 | `scrumia-teams` | `scrumia-team-setup` | Active roles, their models, escalation |
 
-A module without a setup skill has nothing to create — implementation and practice modules configure nothing, they are loaded when coding. Never create in a module's place: the kernel must not know the specs format or the column names.
+A module without a setup skill has nothing to create — a module loaded when coding configures nothing. Never create in a module's place: the kernel must not know the specs format or the column names.
 
 ## Step 5 — Write the composition into `CLAUDE.md`
 
@@ -282,8 +282,8 @@ them per-machine.
 
 | App | Path | Modules |
 |---|---|---|
-| `web` | `apps/web` | `tibs245/scrumia:scrumia-impl-solidjs`, `tibs245/scrumia:scrumia-practice-tdd` |
-| `api` | `apps/api` | `tibs245/scrumia:scrumia-impl-rust`, `tibs245/scrumia:scrumia-practice-tdd`, `tibs245/scrumia:scrumia-practice-solid` |
+| `web` | `apps/web` | `tibs245/scrumia:scrumia-impl-solidjs`, `tibs245/scrumia:scrumia-tdd` |
+| `api` | `apps/api` | `tibs245/scrumia:scrumia-impl-rust`, `tibs245/scrumia:scrumia-tdd`, `tibs245/scrumia:scrumia-solid-principles` |
 
 ### What rules apply, and where they are written
 
@@ -367,9 +367,9 @@ For each app whose own `modules` mapping carries at least one key, offer to writ
 
 ```markdown
 <!-- scrumia:start -->
-This app follows `scrumia-impl-solidjs`, `scrumia-practice-tdd`.
+This app follows `scrumia-impl-solidjs`, `scrumia-tdd`.
 Before writing code here, read plugins/scrumia-impl-solidjs/skills/scrumia-solidjs/SKILL.md
-and plugins/scrumia-practice-tdd/skills/scrumia-tdd/SKILL.md — load only the guides you need.
+and plugins/scrumia-tdd/skills/scrumia-tdd/SKILL.md — load only the guides you need.
 <!-- scrumia:end -->
 ```
 

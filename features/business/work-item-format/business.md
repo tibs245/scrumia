@@ -102,13 +102,13 @@ open. Bringing them into line is work someone decides to do, on the issues they 
 The form declares that a work item carries a definition of ready and a definition of done.
 It does not write their content.
 
-That content is contributed by the modules the project runs — the practices, the
+That content is contributed by the modules the project runs — the testing rules, the
 implementation modules, the compliance ones — each declaring what it requires before work
 starts in its territory and what it requires before work is called finished. A project
 whose apps run different modules gets different lists per app without anyone maintaining
 two forms.
 
-A form that wrote those lists itself would be a form that has to know every practice a
+A form that wrote those lists itself would be a form that has to know every rule a
 project might adopt. That is the coupling this rule exists to prevent.
 
 ## BR-7 — A condition must be decidable without reading the rule it guards

@@ -10,11 +10,11 @@ Duplicating those answers in every implementation module guarantees their diverg
 
 Three designs were on the table.
 
-**Child plugins with declared dependencies.** An implementation module declares it depends on `scrumia-practice-tdd`; installing it installs its children. This is the most visible composition, but it relies on a mechanism Claude Code plugins do not have — it would have had to be emulated in the install skills. Above all, it contradicts the founding prohibition: *a module never assumes another is present*.
+**Child plugins with declared dependencies.** An implementation module declares it depends on `scrumia-tdd`; installing it installs its children. This is the most visible composition, but it relies on a mechanism Claude Code plugins do not have — it would have had to be emulated in the install skills. Above all, it contradicts the founding prohibition: *a module never assumes another is present*.
 
 **Deliberate duplication.** Each implementation module embeds its TDD section, its SOLID section. Simple, self-contained — and wrong from the second fix onward: an improvement to the TDD chapter would have to be propagated to N modules, and it will not be.
 
-**A `practices` slot, multiple and per app.** A practice becomes an ordinary module, occupying a new slot under the same regime as `implementation`: several modules at once, plugged in app by app. The implementation module stays purely technological and **situates** the practice for its technology — a conditional section: "if `scrumia-practice-tdd` is plugged in on this app, here is how the cycle is tooled in Rust".
+**A `practices` slot, multiple and per app.** A practice becomes an ordinary module, occupying a new slot under the same regime as `implementation`: several modules at once, plugged in app by app. The implementation module stays purely technological and **situates** the practice for its technology — a conditional section: "if `scrumia-tdd` is plugged in on this app, here is how the cycle is tooled in Rust".
 
 ## Decision
 
@@ -25,7 +25,7 @@ apps:
   - name: api
     path: apps/api
     implementation: scrumia-impl-rust
-    practices: [scrumia-practice-tdd, scrumia-practice-solid]
+    practices: [scrumia-tdd, scrumia-solid-principles]
 ```
 
 `scrumia-init` carries the practices into the "Implementation per app" table of `CLAUDE.md`. The agent about to code loads the app's implementation module **and** its practices — that is the documented composition of ADR-0009, nothing more.
@@ -37,7 +37,7 @@ A practice module follows four rules:
 3. **It provides three skills**: the reference (loaded before writing code), the audit (finding the gaps), the refactor (closing a found gap).
 4. **It documents its settings** under `settings.practices.<module>`.
 
-And one precedence rule, the only one: **specific beats generic**. When an implementation module contradicts a practice — SOLID recommends dependency inversion, `scrumia-impl-rust` refuses it between modules of the same crate — the implementation module wins, because it knows the terrain. The project override (`.scrumia/impl/<module>.md`) beats both.
+And one precedence rule, the only one: **specific beats generic**. When an implementation module contradicts a practice — SOLID recommends dependency inversion, `scrumia-impl-rust` refuses it between modules of the same crate — the implementation module wins, because it knows the terrain. The project override (`.scrumia/overrides/<module>.md`) beats both.
 
 ## Consequences
 

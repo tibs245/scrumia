@@ -2,26 +2,20 @@
   "title": "Workflow — ScrumIA",
   "meta_description": "How a project runs end to end with the reference composition: brief, scoping, refinement, sprint, review. Each step names the module that carries it.",
   "og_title": "Workflow — ScrumIA",
-
   "page_kicker": "the run, in detail",
   "hero_title": "A full run, end to end",
   "hero_intro": "The reference composition, step by step. Each step names the module behind it.",
-
   "shape_title": "The shape of it",
-  "shape_diagram": "Human     │ brief, challenge, brainstorm\n          ▼\ndiscovery │ scoping → issues + branch carrying the specs\n          ▼\ntracker   │ refinement → Ready for dev, or sub-issues per context\n   ↕      │   ↳ pulls in roles when their answer changes the ticket\nteam      │\n          ▼\nHuman     │ signs off on designs that are doubtful, critical or risky\n          ▼\nteam      │ manager builds the sprint with the team → To dev\n          ▼\nteam      │ dynamic workflows: implementation, review, QA\n   ↕      │   ↳ implementation follows the app's own module\nimpl      │     and the practices plugged into the app\n          ▼\nHuman     │ review PR, test → Done",
-
+  "shape_diagram": "Human     │ brief, challenge, brainstorm\n          ▼\ndiscovery │ scoping → issues + branch carrying the specs\n          ▼\ntracker   │ refinement → Ready for dev, or sub-issues per context\n   ↕      │   ↳ pulls in roles when their answer changes the ticket\nteam      │\n          ▼\nHuman     │ signs off on designs that are doubtful, critical or risky\n          ▼\nteam      │ manager builds the sprint with the team → To dev\n          ▼\nteam      │ dynamic workflows: implementation, review, QA\n   ↕      │   ↳ implementation follows the app's own module\nimpl      │     and the modules plugged into the app\n          ▼\nHuman     │ review PR, test → Done",
   "steps_title": "Step by step",
   "badge_human": "human",
   "badge_agent": "agent",
-
   "step1_title": "A human brings a brief",
   "step1_p1": "An idea, a problem, a hunch. Scoping pushes back: does the problem exist? does this solve it? what becomes impossible? where are the edge cases? what is assumed but unsaid?",
   "step1_p2": "The one point where sustained human attention pays — and where it costs least.",
-
   "step2_title": "Scoping produces issues and a specs branch",
   "step2_p1": "Business features first, then app features — one per app, never two. Then the issues.",
   "step2_p2": "Specs ship on a <code>specs/&lt;slug&gt;</code> branch in an open PR: design gets reviewed in the same tool as code, and refinement starts from something fixed rather than a remembered conversation.",
-
   "step3_title": "Refinement makes the ticket executable",
   "step3_p1": "Four conditions, all checkable:",
   "step3_li1": "A feature it belongs to exists and is current",
@@ -29,28 +23,22 @@
   "step3_li3": "The blast radius is known: which apps, which files",
   "step3_li4": "No open question blocks the start",
   "step3_p2": "Roles with the wider view get pulled in <strong>when their answer changes the ticket</strong> — not to rubber-stamp it. The ticket may split into sub-issues by context: one per app, since the implementation context differs.",
-
   "step4_title": "A human signs off where it matters",
   "step4_p1": "Escalated: a business rule had to be invented, the split changed the ask, the ticket is wide-reaching, or a role raised a reservation. Everything else moves to Ready for dev on its own.",
-
   "step5_title": "The manager builds the sprint",
   "step5_p1": "A batch of tickets that <strong>don't collide</strong> — two tickets on the same files either serialise or merge. The human approves the batch explicitly.",
-
   "step6_title": "Dynamic workflows consume the sprint",
   "step6_p1": "One workflow per ticket, in parallel, each in its own worktree. Each gets a ticket number and nothing else — it loads its own context.",
   "step6_li1": "Load context through the specs module",
   "step6_li2": "<strong>Update the spec before the code</strong>, if behaviour changes",
-  "step6_li3": "Implement <strong>following the app's implementation module and its practices</strong> — specific beats generic",
+  "step6_li3": "Implement <strong>following the app's implementation module and the modules plugged in beside it</strong> — specific beats generic",
   "step6_li4": "Cover each <code>AC-n</code> with a test that can fail",
   "step6_li5": "Self-review, then role review based on blast radius",
   "step6_li6": "Open the PR",
-
   "step7_title": "Human reviews and merges",
   "step7_p1": "The PR carries the criterion-by-criterion mapping, the specs it changed, review verdicts, and open reservations with their issues. <strong>Agents don't merge</strong>, except for categories explicitly listed in config.",
-
   "spec_note_title": "Why the spec goes first",
   "spec_note_p": "Writing the spec first surfaces contradictions before they get encoded — where fixing them is cheapest. If one shows up against another feature, execution stops and asks the business role. It never settles a rule on its own: a rule invented mid-flight becomes everyone's reference without anyone having decided it.",
-
   "gates_title": "Three gates",
   "gates_intro": "Validation cost tracks risk, rather than being uniform.",
   "gates_th_gate": "Gate",
@@ -67,7 +55,6 @@
   "gates_r3_when": "The merge, unless explicitly delegated.",
   "gates_note_title": "When two roles disagree",
   "gates_note_p": "The disagreement is passed through as-is, not blended into an average. It's precisely the case that needs a human call — smoothing it destroys the signal.",
-
   "auto_title": "Dialling autonomy",
   "auto_intro": "An explicit setting in <code>.scrumia/config.yaml</code>, not an implicit property.",
   "auto_th_level": "Level",
@@ -82,7 +69,6 @@
   "auto_c1": "# a PR touching documentation and nothing else",
   "auto_note_title": "One scalar, not a whitelist",
   "auto_note_p": "<code>auto_merge</code> is a single setting for the whole project, not a per-category list: <code>none</code> (nothing merges unattended, the default), <code>docs-only</code> (a PR touching documentation and nothing else), or <code>all</code>.",
-
   "human_title": "What the human does",
   "human1_title": "1 — Scope and arbitrate",
   "human1_desc": "The AI challenges and proposes; the human settles the blocking points.",

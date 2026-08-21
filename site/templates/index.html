@@ -138,7 +138,7 @@
   <h2>{{slots_title}}</h2>
   <p class="section-intro">{{slots_intro}}</p>
 
-  <!-- name="slot" groups the seven rows into one native accordion: opening one
+  <!-- name="slot" groups the six rows into one native accordion: opening one
        closes the last, with no script reading or writing that state. -->
   <div class="slots summon">
     <details class="slot" name="slot">
@@ -193,7 +193,7 @@
       <p class="slot-answer">{{slot_discovery_a}}</p>
     </details>
 
-    <!-- Two of seven are genuinely empty in this repo's own composition —
+    <!-- One of six is genuinely empty in this repo's own composition —
          see .scrumia/config.yaml. Nothing below is a hypothetical. -->
     <details class="slot slot-empty" name="slot">
       <summary>
@@ -206,19 +206,6 @@
         </h3>
       </summary>
       <p class="slot-answer">{{slot_impl_a}}</p>
-    </details>
-
-    <details class="slot slot-empty" name="slot">
-      <summary>
-        <h3 class="slot-row">
-          <span class="slot-sign" aria-hidden="true">+</span>
-          <span class="label-register slot-name" data-size="sm">practices</span>
-          <span class="slot-q">{{slot_practices_q}}</span>
-          <span class="slot-lead" aria-hidden="true"></span>
-          <span class="slot-fill">{{slot_empty_fill}}</span>
-        </h3>
-      </summary>
-      <p class="slot-answer">{{slot_practices_a}}</p>
     </details>
 
     <details class="slot" name="slot">
@@ -254,7 +241,7 @@
       <button type="button" class="preset" data-preset="othertracker">{{comp_preset_othertracker}}</button>
     </div>
 
-    <!-- The same seven rows as #slots, in their choosable state: <details> owns
+    <!-- The same six rows as #slots, in their choosable state: <details> owns
          what is open, the radios and checkboxes own what is chosen, and :has()
          owns what the fill reports. No script is involved in any of that.
          name="composer-slot" and not "slot": the two indexes must not fuse into
@@ -368,9 +355,9 @@
         </div>
       </details>
 
-      <!-- implementation and practices are the two slots that repeat per app,
-           so they are the two that take checkboxes. Nothing checked is the
-           empty state; `something else` adds an app without adding a module. -->
+      <!-- implementation is the one slot that repeats per app, so it is the
+           one that takes checkboxes. Nothing checked is the empty state;
+           `something else` adds an app without adding a module. -->
       <details class="slot slot-multi" name="composer-slot">
         <summary>
           <h3 class="slot-row">
@@ -405,38 +392,6 @@
         </div>
       </details>
 
-      <details class="slot slot-multi" name="composer-slot">
-        <summary>
-          <h3 class="slot-row">
-            <span class="slot-sign" aria-hidden="true">+</span>
-            <span class="label-register slot-name" data-size="sm">practices</span>
-            <span class="slot-q" id="cq-practices">{{slot_practices_q}}</span>
-            <span class="slot-lead" aria-hidden="true"></span>
-            <span class="slot-fill">
-              <span class="fill-1">scrumia-practice-tdd</span>
-              <span class="fill-2">scrumia-practice-solid</span>
-              <span class="fill-3">scrumia-practice-tanstack-query</span>
-              <span class="fill-none">{{slot_empty_fill}}</span>
-            </span>
-          </h3>
-        </summary>
-        <div class="shelf" role="group" aria-labelledby="cq-practices">
-          <label class="opt opt-1 opt-mod">
-            <input type="checkbox" name="c-practice" value="tdd" checked>
-            <b>TDD</b><span>{{comp_practice_tdd_d}}</span>
-          </label>
-          <label class="opt opt-2 opt-mod">
-            <input type="checkbox" name="c-practice" value="solid">
-            <b>SOLID</b><span>{{comp_practice_solid_d}}</span>
-          </label>
-          <label class="opt opt-3 opt-mod">
-            <input type="checkbox" name="c-practice" value="tanstack">
-            <b>TanStack Query</b><span>{{comp_practice_tanstack_d}}</span>
-          </label>
-          <p class="opt-hint">{{comp_practices_empty}}</p>
-        </div>
-      </details>
-
       <details class="slot" name="composer-slot">
         <summary>
           <h3 class="slot-row">
@@ -463,7 +418,7 @@
       </details>
     </div>
 
-    <!-- Not an eighth slot: no sign, no leader, no fill, no <details>. The seven
+    <!-- Not a seventh slot: no sign, no leader, no fill, no <details>. The six
          above are choices between alternatives and these are not, so they take
          none of the row's anatomy — only the .shelf and .opt those rows open
          into. The options are derived from site/modules.json by
@@ -477,7 +432,7 @@
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
-             nothing under seven rows that all work is the worse failure. -->
+             nothing under six rows that all work is the worse failure. -->
         <div class="opt opt-free">
           <input type="checkbox" name="c-free" id="add-free">
           <label class="opt-free-head" for="add-free">
@@ -521,7 +476,6 @@
 /plugin install scrumia-design@scrumia
 /plugin install scrumia-impl-rust@scrumia
 /plugin install scrumia-impl-solidjs@scrumia
-/plugin install scrumia-practice-tdd@scrumia
 
 <span class="c">{{comp_c_then}}</span>
 /scrumia-core:scrumia-init</pre>
@@ -551,20 +505,17 @@ apps:
     type: backend
     modules:
       "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
   - name: web
     path: apps/web
     type: frontend
     modules:
-      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}</pre>
+      "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}</pre>
     </div>
   </div>
 
-  <!-- Pre-rendered like the two files above, and for the same reason: the
-       default composition checks a practice and declares two apps, so this note
-       applies from load. composer.js replaces the whole element on any change. -->
-  <p class="composer-note" id="composer-note"><span>{{comp_note_practices}}</span></p>
+  <!-- Empty at load: no note the composer can raise applies to the composition
+       the rows load with. composer.js replaces the whole element on any change. -->
+  <p class="composer-note" id="composer-note"></p>
   <p class="composer-live" id="composer-live" aria-live="polite"></p>
 
   <!-- The strings composer.js writes into the two files. They live on the
@@ -579,8 +530,6 @@ apps:
        data-project="{{comp_c_project}}"
        data-note-own-tracker="{{comp_note_own_tracker}}"
        data-note-own-impl="{{comp_note_own_impl}}"
-       data-note-practices="{{comp_note_practices}}"
-       data-note-practices-noapp="{{comp_note_practices_noapp}}"
        data-note-own-module="{{comp_note_own_module}}"
        data-app-empty="{{comp_app_empty_yaml}}"></div>
 </section>
@@ -764,41 +713,41 @@ apps:
 
     <div class="mod">
       <div class="mod-head">
-        <span class="mod-ico">{{@emoji_scrumia-practice-tdd}}</span>
+        <span class="mod-ico">{{@emoji_scrumia-tdd}}</span>
         <span class="mod-id">
-          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-practice-tdd}}">scrumia-practice-tdd</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-tdd}}">scrumia-tdd</a>
+          <span class="mod-slot">{{mod_slot_tdd}}</span>
         </span>
       </div>
       <p class="mod-desc">{{mod_tdd_d}}</p>
       <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_skills}}</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-tdd@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-tdd@scrumia</code>
     </div>
 
     <div class="mod">
       <div class="mod-head">
-        <span class="mod-ico">{{@emoji_scrumia-practice-solid}}</span>
+        <span class="mod-ico">{{@emoji_scrumia-solid-principles}}</span>
         <span class="mod-id">
-          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-practice-solid}}">scrumia-practice-solid</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-solid-principles}}">scrumia-solid-principles</a>
+          <span class="mod-slot">{{mod_slot_solid}}</span>
         </span>
       </div>
       <p class="mod-desc">{{mod_solid_d}}</p>
       <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">3 {{pill_skills}}</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-solid@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-solid-principles@scrumia</code>
     </div>
 
     <div class="mod">
       <div class="mod-head">
-        <span class="mod-ico">{{@emoji_scrumia-practice-tanstack-query}}</span>
+        <span class="mod-ico">{{@emoji_scrumia-tanstack-query}}</span>
         <span class="mod-id">
-          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-practice-tanstack-query}}">scrumia-practice-tanstack-query</a>
-          <span class="mod-slot">practices</span>
+          <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-tanstack-query}}">scrumia-tanstack-query</a>
+          <span class="mod-slot">{{mod_slot_tanstack}}</span>
         </span>
       </div>
       <p class="mod-desc">{{mod_tanstack_d}}</p>
       <div class="mod-foot"><span class="pill pill-ok">{{pill_available}}</span><span class="pill">1 {{pill_skills}}</span></div>
-      <code class="mod-cmd">/plugin install scrumia-practice-tanstack-query@scrumia</code>
+      <code class="mod-cmd">/plugin install scrumia-tanstack-query@scrumia</code>
     </div>
 
     <div class="mod">

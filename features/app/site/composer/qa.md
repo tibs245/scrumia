@@ -9,7 +9,7 @@ One scenario per rule in `ux.md`, `tech.md`, `business.md` and `api-contract.md`
 ```gherkin
 Given the `#composer` section of the home page
 When it is inspected
-Then it draws seven rows with `slot-index`'s anatomy — sign, name, question,
+Then it draws six rows with `slot-index`'s anatomy — sign, name, question,
   leader, fill — one per slot of `modular-composition`, and no `<fieldset>`,
   `<legend>` or step number survives
 And every row's fill restates the current composition, so answering a question
@@ -19,7 +19,7 @@ And every row's fill restates the current composition, so answering a question
 ### AC-2 — Leaving a slot empty is offered as a choice, and its consequence is stated
 
 ```gherkin
-Given any of the seven slots
+Given any of the six slots
 When its row is opened
 Then a `leave it empty` option is among its choices, and its description states
   what that absence costs — a named degradation, never a claim that the agents
@@ -37,11 +37,11 @@ parsed as configuration. A project-level comment is the whole of its line; the
 one an emptied app carries trails its `modules: {}` on the same line, and loses
 that line to a parse error rather than to a misreading.
 
-An app that keeps an implementation module but no practice carries no separate
+An app that keeps an implementation module and nothing else carries no separate
 comment. The mapping it does carry already names what runs, and this feature
 takes a note asserting a second thing is absent, beside a key stating what is
-present, to be worth less than the noise it adds to every app block. The two
-per-app slots reach the file through that mapping or not at all.
+present, to be worth less than the noise it adds to every app block. What an app
+draws on reaches the file through that mapping or not at all.
 
 ### AC-3 — The output is copyable and carries the shape ADR-0021 defines
 
@@ -49,12 +49,11 @@ per-app slots reach the file through that mapping or not at all.
 Given a composition chosen in the composer
 When the two artifacts are read
 Then the install block lists `/plugin install` for exactly the modules the
-  seven rows name, and the config block carries `project:`, a `modules:` mapping
+  six rows name, and the config block carries `project:`, a `modules:` mapping
   carrying one `<source>:<module>` key per module those rows chose, and one
   `apps[]` entry per chosen stack with `name`, `path`, `type` and its own
   `modules:` mapping
 And no key is emitted for a slot left empty, and no key is a bare name
-And a practice appears only under the apps whose type it applies to
 And each artifact has its own copy button, which copies that artifact's text
 And with JavaScript disabled both artifacts still show the default
   composition's real output, not an empty block
@@ -126,10 +125,10 @@ Then `#slots`' fill computes to `--text-soft` and `#composer`'s computes to
   `--human`, in both the light and the dark theme
 ```
 
-### AC-9 — A composition can be extended past the seven slots
+### AC-9 — A composition can be extended past the six slots
 
 ```gherkin
-Given a visitor who has answered the seven slots
+Given a visitor who has answered the six slots
 When they look for a module that adds a capability without replacing any of them
 Then the composer offers the modules that fill no slot, stated as additions rather
   than as an eighth slot, and picking one changes both artifacts it takes away —
@@ -140,11 +139,11 @@ And the block carries no sign, no leader, no fill and no `<details>` — it is a
   shelf of options, drawn as the body of a slot row without the row
 ```
 
-The seven rows are choices between alternatives; an addition is not. The last
+The six rows are choices between alternatives; an addition is not. The last
 clause is not styling: `design/components/slot-index/spec.md` refuses *"a row with
 a claim where its question should be"* and refuses a second way to draw a slot, so
 three of the row's five cells would have nothing true in them. `.shelf` and `.opt`
-are what the seven rows already open into, so the shelf reads as continuous with
+are what the six rows already open into, so the shelf reads as continuous with
 them without impersonating one.
 
 ### AC-10 — A visitor's own module reaches the config, and only the config
@@ -173,14 +172,14 @@ separate origin — that pairing is what ADR-0021 rejected.
 Given the home page with JavaScript disabled
 When the additions block is rendered
 Then the free entry is not present, while every other choice in `#composer` — the
-  seven rows and the shelf of known additions — still works through `:has()` alone
+  six rows and the shelf of known additions — still works through `:has()` alone
 Given the page with script
 Then the free entry appears as the last option of the shelf and reveals its field
   only when checked, so the section's resting state contains no empty box
 ```
 
 Text cannot become YAML through `:has()`. Without the gate a no-JS visitor meets a
-field that silently does nothing under seven rows that all work — the precedent for
+field that silently does nothing under six rows that all work — the precedent for
 the fix is two rules away, `.presets { display: none } .js .presets { … }`.
 
 Siting it as the last `.opt` is what keeps AC-1 true: a free-text field is a
@@ -197,7 +196,7 @@ which needs no module and no slot at all.
 
 ## Out of scope
 
-- What the seven slots are, their questions, and what an absent capability
+- What the six slots are, their questions, and what an absent capability
   means — owned by `features/business/modular-composition/`.
 - The `#slots` section that reports this repo's own composition — owned by
   `features/app/site/slot-index/`.

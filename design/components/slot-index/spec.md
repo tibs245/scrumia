@@ -87,8 +87,8 @@ variant.
 
 - **A "coming soon" state.** A slot is filled or it is not. Roadmap belongs on
   the module, which can say `soon`; the slot only reports today.
-- **A count.** Several modules may fill one slot (`implementation`,
-  `practices`); they are listed in `.slot-fill`, never summarised as a number.
+- **A count.** Several modules may fill one slot (`implementation`); they are
+  listed in `.slot-fill`, never summarised as a number.
 - **Dashes as the only signal.** `.slot-fill` spells the state out in words,
   because a dashed leader is not perceivable to everyone.
 - **A second way to draw a slot.** One drawing exists in `design/`, here —

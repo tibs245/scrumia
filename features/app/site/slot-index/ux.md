@@ -9,10 +9,9 @@ case, not restated here.
 
 ## States
 
-**Exactly seven rows, no eighth example.** Every row is one of the project's
+**Exactly six rows, no seventh example.** Every row is one of the project's
 real slots, read from `.scrumia/config.yaml` at the time this was written —
-`specs`, `tracker`, `team`, `discovery`, `implementation`, `practices`,
-`design`. None is illustrative; a made-up "and if you leave a slot empty?"
+`specs`, `tracker`, `team`, `discovery`, `implementation`, `design`. None is illustrative; a made-up "and if you leave a slot empty?"
 row would be exactly the kind of claim `design/identity.md`'s "mechanism over
 claim" rule exists to block.
 

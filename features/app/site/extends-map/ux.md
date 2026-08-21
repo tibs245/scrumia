@@ -10,7 +10,7 @@ just made, then `#modules` shows what exists and `#install` closes.
 own intro reads "Same index as above", and `composer` AC-8 compares the two indexes' fills
 on the rendered page. A dense figure wedged between them costs the composer its setup.
 
-**Not folded into `#slots`.** That section is seven rows and one argument; a register figure
+**Not folded into `#slots`.** That section is six rows and one argument; a register figure
 inside it makes it answer two questions and the index stops being the whole of it.
 
 ## Reading order
@@ -39,7 +39,7 @@ The figure — three labelled columns, the deck idiom `design/identity.md` alrea
 ```
 DECLARES              REGISTER                CONTRIBUTES
 scrumia-github-       implement  ············  scrumia-impl-rust
-project                                        scrumia-practice-tdd
+project                                        scrumia-tdd
                                                scrumia-specs
 scrumia-teams         sprint     - - - - - - -  no contribution
 ```
@@ -93,7 +93,7 @@ hypothetical to be illustrated, it is available for free and it is the more inst
 half of the mechanism.
 
 **Nothing here opens or closes.** The section has no disclosure, no tab and no state
-beyond what the page loads with. `slot-index` earns its `<details>` by having seven rows
+beyond what the page loads with. `slot-index` earns its `<details>` by having six rows
 whose answers are long; three beats and one figure do not.
 
 ## Constraints inherited from the rest of the site
@@ -105,7 +105,7 @@ whose answers are long; three beats and one figure do not.
 - **It turns, it does not scroll.** Below the width where three columns fit, the figure
   becomes a vertical list — register, then its contributors indented under it — same rows,
   same order, same words, nothing cut. `run-horizon`'s spec states the reason and this
-  section inherits it: *four of seven columns in view is the ratio telling a lie until the
+  section inherits it: *four of six columns in view is the ratio telling a lie until the
   reader drags*. Here the column that would fall off is the contributors, which is half the
   argument. Only the third beat's table may scroll inside itself, in the `.table-wrap` that
   already exists.

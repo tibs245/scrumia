@@ -1,4 +1,4 @@
-/* Composer: writes the two files the seven slot rows imply.
+/* Composer: writes the two files the six slot rows imply.
 
    It does not open a row, record a choice, or decide what a row reports —
    <details>, the native inputs and CSS :has() do all three, so the section
@@ -42,15 +42,6 @@
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
     solidjs: { name: 'web', path: 'apps/web', type: 'frontend', impl: 'scrumia-impl-solidjs' },
     other: { name: 'app', path: 'apps/app', type: 'backend', impl: null }
-  };
-
-  /* A practice attaches to the app types it actually speaks for. Copying every
-     checked practice onto every app is how a backend ends up declaring a
-     frontend data-fetching practice. */
-  var PRACTICES = {
-    tdd: { module: 'scrumia-practice-tdd', types: ['backend', 'frontend'] },
-    solid: { module: 'scrumia-practice-solid', types: ['backend', 'frontend'] },
-    tanstack: { module: 'scrumia-practice-tanstack-query', types: ['frontend'] }
   };
 
   var PRESETS = {
@@ -101,18 +92,13 @@
     SINGLE.forEach(function (s) { slots[s] = picked(s); });
 
     var stacks = pickedAll('impl');
-    var practices = pickedAll('practice').map(function (i) { return PRACTICES[i.value]; });
     // Each option's value is the module's own name, so no table of the additions
     // lives here: build_site.py derives them, and nothing here can fall behind it.
     var additions = pickedAll('add').map(function (i) { return i.value; });
 
     var apps = stacks.map(function (input) {
       var a = APPS[input.value];
-      return {
-        name: a.name, path: a.path, type: a.type, impl: a.impl,
-        practices: practices.filter(function (p) { return p.types.indexOf(a.type) !== -1; })
-                            .map(function (p) { return p.module; })
-      };
+      return { name: a.name, path: a.path, type: a.type, impl: a.impl };
     });
 
     var modules = ['scrumia-core'];
@@ -123,7 +109,6 @@
     });
     additions.forEach(function (m) { modules.push(m); });
     apps.forEach(function (a) { if (a.impl) modules.push(a.impl); });
-    practices.forEach(function (p) { modules.push(p.module); });
 
     modules = dedupe(modules);
     // A key already standing is not emitted twice: a duplicate mapping key is a
@@ -134,7 +119,7 @@
         && modules.indexOf(ownEntry.slice(mine.length)) !== -1) ownEntry = '';
 
     // Absent from `modules`: that list is what the install block prints.
-    return { slots: slots, apps: apps, practices: practices, stacks: stacks,
+    return { slots: slots, apps: apps, stacks: stacks,
              additions: additions, own: ownEntry, modules: modules };
   }
 
@@ -213,7 +198,7 @@
         if (index) parts.push('\n');
         parts.push('  - name: ' + app.name + '\n    path: ' + app.path +
                    '\n    type: ' + app.type + '\n    modules:');
-        var own = (app.impl ? [app.impl] : []).concat(app.practices);
+        var own = app.impl ? [app.impl] : [];
         // `modules:` alone parses as null — a value, not the absence of one. The
         // comment rides the same line so the cost survives the paste here too.
         if (!own.length) parts.push(' {}   ', { t: S.appEmpty, c: 'c' });
@@ -234,9 +219,6 @@
     // what the other commands' trustworthiness rests on.
     if (result.own) lines.push(S.noteOwnModule);
     if (result.stacks.some(function (i) { return i.value === 'other'; })) lines.push(S.noteOwnImpl);
-    if (result.practices.length) {
-      lines.push(result.apps.length ? S.notePractices : S.notePracticesNoapp);
-    }
     notes.textContent = '';
     lines.forEach(function (line) {
       var el = document.createElement('span');

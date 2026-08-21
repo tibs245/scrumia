@@ -1,9 +1,0 @@
-{
-  "title": "scrumia-practice-tanstack-query — ScrumIA",
-  "meta_description": "scrumia-practice-tanstack-query: the ScrumIA practices slot — query keys, invalidation, the server/client state boundary.",
-  "og_title": "scrumia-practice-tanstack-query — ScrumIA",
-  "tagline": "One named point of the implementation contract: how the app talks to the server.",
-  "responsibilities": "<p>Refines data fetching and caching: the <code>queryOptions()</code> factory, query keys, invalidation, optimistic updates, and the boundary that separates server state from client-only state. Ported from real monorepo use — nine guides, thirteen decisions.</p>",
-  "refusals": "<p>Server state does not get copied into client state, and the module declines to speak for a stack TanStack Query does not ship for.</p>",
-  "philosophy": "<p>Assumes a stack the library supports — React, Solid, Vue, Svelte. Costs a caching model to learn, and today the audit and refactor skills that would measure the gap are not built yet.</p>"
-}

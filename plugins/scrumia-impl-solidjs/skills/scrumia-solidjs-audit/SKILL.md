@@ -7,7 +7,7 @@ description: Measures the gap between an existing SolidJS app and scrumia-impl-s
 
 An audit states findings, it doesn't fix. The output is a list of situated findings the user turns into tickets. It serves two moments: **before plugging** the module into existing code (measure the step), and **routinely** (check the step isn't re-forming).
 
-The audited rules are those of the `scrumia-solidjs` skill (`${CLAUDE_SKILL_DIR}/../scrumia-solidjs/SKILL.md`); the project override (`.scrumia/impl/scrumia-impl-solidjs.md`) may exempt some — read it first, an exempted gap is not a finding.
+The audited rules are those of the `scrumia-solidjs` skill (`${CLAUDE_SKILL_DIR}/../scrumia-solidjs/SKILL.md`); the project override (`.scrumia/overrides/scrumia-impl-solidjs.md`) may exempt some — read it first, an exempted gap is not a finding.
 
 ## The passes, mechanical to structural
 
@@ -67,7 +67,7 @@ Enforces [06-testing](${CLAUDE_SKILL_DIR}/../scrumia-solidjs/guides/06-testing.m
 - Tests reading signals directly instead of asserting rendered output.
 - Components with behaviour and no test; primitives without their unit test.
 - If the project writes acceptance criteria: `AC-n` without a citing test.
-- If the TDD practice is plugged into this app, its audit (`scrumia-tdd-audit`) owns the suite-value passes — offer it instead of duplicating them here.
+- If `scrumia-tdd` is plugged into this app, its audit (`scrumia-tdd-audit`) owns the suite-value passes — offer it instead of duplicating them here.
 
 ## The output
 

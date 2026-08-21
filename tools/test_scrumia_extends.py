@@ -105,26 +105,26 @@ def rows_in(config: Path, register: str = "implement") -> list[dict]:
 MARKETPLACE = """
 project: { name: "Keyed" }
 modules:
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
 """
 
 WRONG_SOURCE = """
 project: { name: "Elsewhere" }
 modules:
-  "acme/other:scrumia-practice-tdd": {}
+  "acme/other:scrumia-tdd": {}
 """
 
 LOCAL_AND_SHARED = """
 project: { name: "Nearby" }
 modules:
-  "local:scrumia-practice-tdd": {}
+  "local:scrumia-tdd": {}
   "shared:scrumia-design": {}
 """
 
 BARE_NAME = """
 project: { name: "Bare" }
 modules:
-  "scrumia-practice-tdd": {}
+  "scrumia-tdd": {}
   ":scrumia-specs": {}
   "github:scrumia-teams": {}
   "a/b/c:scrumia-discovery": {}
@@ -133,7 +133,7 @@ modules:
 
 # The four keys BARE_NAME's grammar refuses. Named once: the pattern is written in three
 # places, and a copy loosened on its own contradicts the notice printed beside it.
-REFUSED = ["scrumia-practice-tdd", ":scrumia-specs", "github:scrumia-teams",
+REFUSED = ["scrumia-tdd", ":scrumia-specs", "github:scrumia-teams",
            "a/b/c:scrumia-discovery"]
 
 EMPTY_MAPPING = """
@@ -156,7 +156,7 @@ apps:
 RETIRED_LIST = """
 project: { name: "Retired" }
 extends:
-  - scrumia-practice-tdd
+  - scrumia-tdd
 """
 
 PER_APP = """
@@ -167,7 +167,7 @@ apps:
   - name: "web"
     path: "apps/web"
     modules:
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
 """
 
 CASCADE = """
@@ -209,10 +209,10 @@ def test_ac17_a_module_is_declared_by_source() -> None:
 
     market = config_with(MARKETPLACE)
     check("a marketplace key resolves the module that claims that source",
-          "scrumia-practice-tdd" in modules_in(market), modules_in(market))
+          "scrumia-tdd" in modules_in(market), modules_in(market))
     rows = rows_in(market)
     check("every row carries the key it was declared by",
-          all(r["declared_as"] == "tibs245/scrumia:scrumia-practice-tdd" for r in rows),
+          all(r["declared_as"] == "tibs245/scrumia:scrumia-tdd" for r in rows),
           {r["declared_as"] for r in rows})
     check("and the location reported is the one in the key",
           all(r["source"] == "tibs245/scrumia" for r in rows), {r["source"] for r in rows})
@@ -230,7 +230,7 @@ def test_ac17_a_module_is_declared_by_source() -> None:
 
     apps = config_with(PER_APP)
     check("an app's own mapping is keyed the same way and reaches only that app",
-          modules_in(apps, app="web") == {"scrumia-design", "scrumia-practice-tdd"}
+          modules_in(apps, app="web") == {"scrumia-design", "scrumia-tdd"}
           and modules_in(apps) == {"scrumia-design"},
           (modules_in(apps, app="web"), modules_in(apps)))
     os.unlink(apps)
@@ -243,10 +243,10 @@ def test_ac17_a_bare_name_is_not_a_declaration() -> None:
     code, out, err = run(["implement", "--json"], bare)
     resolved = {row["module"] for row in json.loads(out)}
     check("the bare name resolves nothing",
-          "scrumia-practice-tdd" not in resolved, resolved)
+          "scrumia-tdd" not in resolved, resolved)
     check("the sourced key beside it still resolves",
           "scrumia-design" in resolved, resolved)
-    check("the key is named in the report", "'scrumia-practice-tdd'" in err, err.strip())
+    check("the key is named in the report", "'scrumia-tdd'" in err, err.strip())
     check("and it is called what it is",
           "is not a declaration" in err and "<source>:<module>" in err, err.strip())
     check("a key whose source half is missing is refused too",
@@ -294,7 +294,7 @@ def test_ac17_the_retired_list_is_still_read() -> None:
     retired = config_with(RETIRED_LIST)
     code, out, err = run(["implement", "--json"], retired)
     check("its bare names still resolve, since they predate the grammar",
-          "scrumia-practice-tdd" in {r["module"] for r in json.loads(out)}, out[:200])
+          "scrumia-tdd" in {r["module"] for r in json.loads(out)}, out[:200])
     check("the reader is told to migrate", "migrate to 'modules:'" in err, err.strip())
     check("and is not told its names are malformed",
           "is not a declaration" not in err, err.strip())
@@ -370,7 +370,7 @@ def test_ac18_a_setting_resolves_through_three_layers() -> None:
 THREE_LOCATIONS = """
 project: { name: "Three" }
 modules:
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
   "shared:acme-conventions": {}
   "local:acme-docs-rules": {}
 """
@@ -396,7 +396,7 @@ extends:
 SHADOWED = """
 project: { name: "Promoting" }
 modules:
-  "shared:scrumia-practice-tdd": {}
+  "shared:scrumia-tdd": {}
 """
 
 PROJECT_DIRECTIVE = """
@@ -422,11 +422,11 @@ def test_ac1_ac2_each_source_resolves_from_its_own_location() -> None:
     check("the in-project module's directive is in the table",
           "acme-docs-rules" in by_module, sorted(by_module))
     check("a marketplace module beside them still resolves",
-          "scrumia-practice-tdd" in by_module, sorted(by_module))
+          "scrumia-tdd" in by_module, sorted(by_module))
     check("nothing distinguishes the three rows but the location reported alongside them",
           {m: r["location"] for m, r in by_module.items()} ==
           {"acme-conventions": "shared", "acme-docs-rules": "local",
-           "scrumia-practice-tdd": "marketplace"},
+           "scrumia-tdd": "marketplace"},
           {m: r["location"] for m, r in by_module.items()})
 
     # BR-6: the path is per-machine and reaches the tool through the environment, so the
@@ -455,7 +455,7 @@ def test_ac3_resolution_states_where_each_module_came_from() -> None:
     check("every declaration is reported", len(reported) == 3, sorted(reported))
     check("each carries the location it resolved from",
           {k: r["location"] for k, r in reported.items()} ==
-          {"tibs245/scrumia:scrumia-practice-tdd": "marketplace",
+          {"tibs245/scrumia:scrumia-tdd": "marketplace",
            "shared:acme-conventions": "shared", "local:acme-docs-rules": "local"},
           {k: r["location"] for k, r in reported.items()})
     check("and the directory it resolved to",
@@ -584,7 +584,7 @@ def test_ac5_identity_and_declaration_settle_the_other_two_cases() -> None:
     # declared. module-authoring BR-3 is only affordable if that is not a fault.
     promoting = project_with(SHADOWED)
     checkout = Path(tempfile.mkdtemp(prefix="scrumia-shared-"))
-    make_module(checkout / "scrumia-practice-tdd", "scrumia-practice-tdd")
+    make_module(checkout / "scrumia-tdd", "scrumia-tdd")
     _, out, err = run(["--modules", "--json"], promoting / ".scrumia" / "config.yaml",
                       shared=checkout)
     row = json.loads(out)[0]
@@ -659,7 +659,7 @@ def test_ac9_ac10_no_versioned_path_and_no_installation() -> None:
 CLAIMED = """
 project: { name: "Claiming" }
 modules:
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
   "shared:acme-conventions": {}
 """
 
@@ -702,7 +702,7 @@ def test_ac6_a_clone_that_cannot_reach_the_module_is_told_and_still_works() -> N
     rows = json.loads(out)
     check("the register renders without it", code == 0 and rows, code)
     check("carrying the modules that did resolve, and not the one that did not",
-          {r["module"] for r in rows} == {"scrumia-practice-tdd"}, rows)
+          {r["module"] for r in rows} == {"scrumia-tdd"}, rows)
 
     for args in (["--list"], ["--check"]):
         code, _, err = run(args, config)
@@ -727,7 +727,7 @@ def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
     make_module(shared / "acme-conventions", "acme-conventions")
     claude = project / "CLAUDE.md"
     bare = ("## ScrumIA composition\n\n| Module | What to know |\n|---|---|\n"
-            "| `scrumia-practice-tdd` | Tests first. |\n"
+            "| `scrumia-tdd` | Tests first. |\n"
             "| `acme-conventions` | Tabs, not spaces. |\n")
     claude.write_text(bare, encoding="utf-8")
 
@@ -740,7 +740,7 @@ def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
     check("with the module, its state and where it would have come from",
           "acme-conventions" in err and "absent" in err and "shared:" in err, err.strip())
     check("and the honoured one is not swept up with it",
-          "| `tibs245/scrumia:scrumia-practice-tdd` | marketplace | resolved | yes | honoured |"
+          "| `tibs245/scrumia:scrumia-tdd` | marketplace | resolved | yes | honoured |"
           in out, out[:400])
 
     # The same file, saying where the module comes from. Nothing about the composition
@@ -768,9 +768,9 @@ def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
 project: { name: "Refused" }
 modules:
   "foo:": {}
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
 """)
-    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests first. |\n",
+    (project / "CLAUDE.md").write_text("| `scrumia-tdd` | Tests first. |\n",
                                        encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
     check("a key that is not a declaration is not reconciled against anything",
@@ -788,13 +788,13 @@ project: { name: "Edges" }
 modules:
   "shared:tools": {}
   "shared:acme": {}
-  "shared:scrumia-practice": {}
+  "shared:scrumia": {}
 """)
     (project / "CLAUDE.md").write_text(
         "Run `python3 tools/validate.py` before pushing.\n"
         "| `acme-lint` | Lints. |\n"
-        "| `scrumia-practice-tdd` | Tests first. |\n"
-        "We use `shared:tools`, `shared:acme`, and `shared:scrumia-practice` here.\n",
+        "| `scrumia-tdd` | Tests first. |\n"
+        "We use `shared:tools`, `shared:acme`, and `shared:scrumia` here.\n",
         encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
     check("a name inside a path is not a claim about the module of that name",
@@ -863,16 +863,16 @@ modules:
     project = project_with("""
 project: { name: "Shadowed and stale" }
 modules:
-  "local:scrumia-practice-tdd": {}
-  "shared:scrumia-practice-tdd": {}
+  "local:scrumia-tdd": {}
+  "shared:scrumia-tdd": {}
 """)
-    make_module(project / ".scrumia" / "modules" / "scrumia-practice-tdd",
-                "scrumia-practice-tdd")
-    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests first. |\n",
+    make_module(project / ".scrumia" / "modules" / "scrumia-tdd",
+                "scrumia-tdd")
+    (project / "CLAUDE.md").write_text("| `scrumia-tdd` | Tests first. |\n",
                                        encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
     stale = [line for line in out.splitlines()
-             if line.startswith("| `shared:scrumia-practice-tdd`")]
+             if line.startswith("| `shared:scrumia-tdd`")]
     check("a module a shadow bound is reachable for the stale key beside it",
           code == 0 and len(stale) == 1 and stale[0].endswith("| reachable |"),
           f"exit {code}: {stale or out[:400]}")
@@ -962,19 +962,19 @@ def test_claims_answers_for_a_shadow_a_conflict_and_a_named_file() -> None:
     project = project_with("""
 project: { name: "Twice" }
 modules:
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
 apps:
   - name: "web"
     path: "apps/web"
     modules:
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
 """)
-    (project / "CLAUDE.md").write_text("| `scrumia-practice-tdd` | Tests. |\n",
+    (project / "CLAUDE.md").write_text("| `scrumia-tdd` | Tests. |\n",
                                        encoding="utf-8")
     config = project / ".scrumia" / "config.yaml"
     code, out, _ = run(["--claims"], config)
     check("a module declared in two scopes is reconciled once",
-          code == 0 and out.count("scrumia-practice-tdd") == 1, out[:400])
+          code == 0 and out.count("scrumia-tdd") == 1, out[:400])
 
     # A file the caller named is an assertion it is there. Read as empty it would clear
     # every claim and exit clean, which is the answer this surface must never give.
@@ -1068,7 +1068,7 @@ def test_ac8_local_material_without_a_module_is_not_a_malformed_module() -> None
     project = project_with("""
 project: { name: "No module of its own" }
 modules:
-  "tibs245/scrumia:scrumia-practice-tdd": {}
+  "tibs245/scrumia:scrumia-tdd": {}
 """)
     config = project / ".scrumia" / "config.yaml"
     rules = project / "docs" / "house-rules.md"
