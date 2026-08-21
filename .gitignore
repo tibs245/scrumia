@@ -6,6 +6,8 @@ node_modules/
 __pycache__/
 *.pyc
 .worktrees/
+# The harness places its own worktrees here; each is a checkout of this repo.
+.claude/worktrees/
 
 # check_run_horizon.py measures a page in place, so its scratch copy lands next to
 # the real one — and site/ is what Pages publishes.
