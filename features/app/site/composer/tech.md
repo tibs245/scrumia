@@ -13,7 +13,7 @@ or empty takeaway.
 **One thing needs script, and is absent without it.** The free entry where a
 visitor names their own module is the exception, and it is gated rather than
 degraded: text cannot become YAML through `:has()`, so a field left standing
-with no script would be a control that silently does nothing under seven rows
+with no script would be a control that silently does nothing under six rows
 that all work. It is hidden until `composer.js` marks `#composer-choices` as
 running — its own marker, not the root `.js` class, which `partials/head.html`
 also withholds from a reader who asked for reduced motion. A motion preference

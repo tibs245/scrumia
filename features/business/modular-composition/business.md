@@ -37,7 +37,7 @@ apps:
     path: apps/api
     modules:
       "tibs245/scrumia:scrumia-impl-rust": {}
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
 ```
 
 **The key is `<source>:<module>`, always** — one grammar, no bare name. The source is a
@@ -123,12 +123,13 @@ resolve, because there the default is indistinguishable from a resolved answer. 
 its keys is which is the module's own to state, in its README — the rule here is only that
 the second kind stops it and the first kind is said out loud.
 
-## `practices` is retired as a named slot
+## A module that refines another is a module like any other
 
-`implementation` and `practices` were always two answers to the same question — how an
-app is built — at two granularities. `practices` does not survive as its own key: a
-practice module is declared in an app's own `modules`, alongside the implementation
-module:
+`implementation` and the retired `practices` were always two answers to the same question
+— how an app is built — at two granularities. Nothing distinguishes a module that only
+carries good practice for extending a stack from any other: it is declared in an app's own
+`modules`, alongside the implementation module, and no key, category or vocabulary sets it
+apart.
 
 ```yaml
 apps:
@@ -136,7 +137,7 @@ apps:
     path: apps/api
     modules:
       "tibs245/scrumia:scrumia-impl-rust": {}
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
   - name: prototype
     path: apps/prototype
     modules:
@@ -144,16 +145,16 @@ apps:
 ```
 
 TDD applies to `api`, not to `prototype` next to it, because each app's `modules` mapping
-is its own — the per-app axis the former `practices` slot carried is what makes this a
-per-app declaration and not a single project-wide list.
+is its own — that per-app axis is what makes this a per-app declaration and not a single
+project-wide list.
 
-**The one precedence rule the retired slot carried is unchanged: specific beats
-generic, and a project override beats both.** What changes is where it is expressed: no
+**The one precedence rule is unchanged: specific beats generic, and a project override
+beats both.** What changes is where it is expressed: no
 longer in prose a reader has to remember, but in the order the directive table prints —
 project-local first, then the app's own modules, then the project-wide ones (§ *A skill
 is extended by data*, below). A module never ranks itself.
 
-Every other rule a practice module owes is unchanged: it refines a named point of the
+Every other rule such a module owes is unchanged: it refines a named point of the
 implementation contract, it works on its own even without an implementation module
 present, it ships a reference/audit/refactor skill trio, it documents the settings it
 reads.
@@ -203,8 +204,8 @@ and that is reported rather than arbitrated.
 name, its type, whether it is required, one line of what it says, and the fragment to
 open. It does not declare, and cannot encode, which skill will take it. That is what
 lets one fragment serve implementation, review and audit without being written three
-times, and it is why adding an implementation module does not reopen every practice
-module.
+times, and it is why adding an implementation module does not reopen every module that
+refines one.
 
 **A contribution is data and nothing else.** No executable, no condition, no logic: a
 module is discovered from the environment the harness already provides, so contributing

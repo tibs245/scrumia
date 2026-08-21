@@ -77,8 +77,8 @@ And the form module carries neither list in its own files
 ### AC-8 — A rule that does not apply is not read
 
 ```gherkin
-Given a project that runs no testing practice module
-And a contributed rule whose condition names a testing practice
+Given a project that runs no testing module
+And a contributed rule whose condition names a testing module
 When the rules for writing an issue are assembled
 Then that rule is absent from what the reader receives
 ```

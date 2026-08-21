@@ -268,7 +268,7 @@ this section is the decision's only home, and a spec carries only its current ve
 is [`docs/modules.md`](../../../docs/modules.md)'s own default for a capability that fills
 no slot differently, and the composition answers *which* module by placement rather than
 by rule: a skill lives where the **knowledge its findings need** lives. That is why five
-audits sit in the `practices`, `implementation` and `design` slots and none in the
+audits sit in the modules that own testing, the stacks and design, and none in the
 `tracker`, though every one of them ends in issues. Where the output is filed is not who
 knows how to produce it.
 

@@ -4,11 +4,11 @@
 
 ## In brief
 
-The `#composer` section of the home page: the same seven slots the `slot-index`
+The `#composer` section of the home page: the same six slots the `slot-index`
 feature *reports*, offered as choices. The visitor answers each slot — or leaves
 it empty on purpose — and takes away two artifacts: the install commands for the
 modules they picked, and the `.scrumia/config.yaml` that declares the
-composition. Past the seven, a shelf of the modules that fill no slot, and a
+composition. Past the six, a shelf of the modules that fill no slot, and a
 field where a visitor names one of their own — which reaches the config and
 never the install commands.
 
@@ -24,7 +24,7 @@ form being filled.
   and are referenced, not copied, from `business.md`.
 - Authority:
   - `features/business/modular-composition/index.md` — what a slot is, and
-    which seven exist
+    which six exist
   - `features/business/modular-composition/business.md` (BR-3) — what an empty
     slot costs, and in whose voice it is said
   - `design/components/slot-index/spec.md` — how a slot row is drawn, and its

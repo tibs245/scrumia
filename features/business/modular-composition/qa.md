@@ -81,20 +81,20 @@ Then it reflects the change immediately, with no build step, no artefact in the
 
 ## Edge cases
 
-### AC-7 — A practice is declared per app, not project-wide
+### AC-7 — An app's own module is declared per app, not project-wide
 
 ```gherkin
 Given a monorepo with two apps, one needing TDD applied and one not
 When each app declares its own `extends` list under `apps:`
-Then the app that lists `scrumia-practice-tdd` receives its directives, the app that
-  does not receives none, and no project-level entry can apply a practice module to an
-  app that did not declare it
+Then the app that lists `scrumia-tdd` receives its directives, the app that
+  does not receives none, and no project-level entry can apply a module to an app that
+  did not declare it
 ```
 
 ### AC-8 — Specific beats generic; a project override beats both
 
 ```gherkin
-Given an implementation module and a practice module contributing to the same register
+Given an implementation module and a module refining it contributing to the same register
   for the same app, and a project that has written its own row for the contested point
 When the directives are asked for
 Then the project's own row is printed first, then the app's modules, then the

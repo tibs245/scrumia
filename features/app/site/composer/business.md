@@ -10,7 +10,7 @@ modularity claim stated everywhere else on the site is abstract until
 someone builds with it — the composer is where "swap a module" stops being a
 sentence and becomes something the visitor just did. Measured: not
 instrumented today — no analytics track how far a visitor gets through the
-seven slots or whether they copy an artifact.
+six slots or whether they copy an artifact.
 
 Business parent: none beyond the site epic.
 
@@ -29,7 +29,7 @@ decided absence — which is why `design` is a question here and not a silent
 default.
 
 **An addition is offered, never asked.** The modules that fill no slot are
-offered past the seven, and picking none of them is a complete composition
+offered past the six, and picking none of them is a complete composition
 rather than an unanswered question — which is the whole difference between an
 addition and a slot. The kernel is not among them: it is installed
 unconditionally, and offering a choice that cannot be declined would misstate

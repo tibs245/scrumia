@@ -17,14 +17,14 @@ applied, not a decoration.
 **An addition is a shelf without a row.** The modules that fill no slot are not
 a choice between alternatives, so they take none of the anatomy that exists to
 frame one: no sign, no leader, no fill, no `<details>`. They reuse `.shelf` and
-`.opt` — what the seven rows already open into — so the block reads as
+`.opt` — what the six rows already open into — so the block reads as
 continuous with them without impersonating one. Three of a row's five cells
 would have nothing true in them, and `design/components/slot-index/spec.md`
 refuses both a second drawing of a slot and *"a row with a claim where its
 question should be"*.
 
 The block carries a heading, and that is not decoration. Without one, a shelf
-appearing straight after the seventh `</details>`, at the shelf's own indent, is
+appearing straight after the sixth `</details>`, at the shelf's own indent, is
 exactly what an *open row's body* looks like — a visitor who left `design` open
 reads `scrumia-rules` as one of its options. The heading wears the label
 register `.presets-label` already uses, never `slot-name`'s: borrowing the row's
@@ -51,7 +51,7 @@ consequence on its empty mapping.
 
 ## Interface constraints
 
-**`implementation` and `practices` are per app.** They are the two slots
-that repeat, so they are checkbox rows, and a practice attaches only to the
-app types it applies to. Assigning a frontend data-fetching practice to a
-backend app is the bug this rule exists to prevent.
+**`implementation` is per app.** It is the slot that repeats, so it is a
+checkbox row. Every other module a visitor can add is offered once, on the
+additions shelf: the composer draws no distinction between a module that fills
+a slot and one that only refines what another says.

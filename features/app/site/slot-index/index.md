@@ -4,7 +4,7 @@
 
 ## In brief
 
-The `#slots` section of the home page: the seven questions `modular-composition`
+The `#slots` section of the home page: the six questions `modular-composition`
 defines, each row showing what currently answers it in this repo's own
 `.scrumia/config.yaml` — or that nothing does. Orbit's contribution here was to
 replace a grid of eight cards with one typographic index: name, question, dotted
@@ -17,7 +17,7 @@ leader, fill, with the answer opening in a native `<details name="slot">`.
   business concept without being its implementation.
 - Authority:
   - `features/business/modular-composition/index.md` — what a slot is, and
-    which seven exist
+    which six exist
   - `design/components/slot-index/spec.md` — how a slot row is drawn, and the
     refusals that keep it the only drawing (no card alongside it, no script for
     open/close)

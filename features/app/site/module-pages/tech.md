@@ -84,7 +84,7 @@ unused-string guard doesn't flag it as a leftover.
 `load_extends_map`, already walking `plugins/*/registers.json` and `extends.json` for the
 home page's `#extends` figure, takes the module list it walks as a parameter now: the
 figure still passes its own composition (`load_project_modules()`), a module page passes
-every marketplace plugin. Reading the project-scoped map here would leave the seven
+every marketplace plugin. Reading the project-scoped map here would leave the six
 modules this repository doesn't run showing no connection while their own files declare
 one — the very substitution AC-12's own issue names as the one thing not to do. A register
 opened with no contributor still gets a row, spelled out (`BR-1`); a module opening and

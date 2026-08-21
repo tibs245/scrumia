@@ -10,8 +10,8 @@ inert. A main skill declares what it is for and stops — what it must apply is 
 by other modules as **data**, keyed by a **register** (a named extension point), and
 rendered into one table at the moment the skill asks for it. A contribution names no
 consumer, which is what lets one fragment serve implementation, review and audit without
-being written three times. Implementation and cross-cutting practices are declared in an
-app's own `modules`; nothing forces a project to take the whole composition to get one
+being written three times. Whatever an app is built with — its stack, and whatever refines
+it — is declared in that app's own `modules`; nothing forces a project to take the whole composition to get one
 part of it, and nothing is stored, so nothing can go stale. A module's own settings
 cascade through three layers, the last of them per-machine. `business.md` § *Vocabulary* is the authority on
 "slot", "register", "directive" and "fragment".
@@ -37,7 +37,7 @@ cascade through three layers, the last of them per-machine. `business.md` § *Vo
 | File | Read it when |
 |---|---|
 | `business.md` | Deciding what `extends` is, what a register or a directive is, or what a module owes to be pluggable and to contribute |
-| `tech.md` | Understanding how the mechanism resolves — the pipeline, where the order comes from, what fails and what reports it, and the practices for writing an extension |
+| `tech.md` | Understanding how the mechanism resolves — the pipeline, where the order comes from, what fails and what reports it, and how to write an extension |
 | `qa.md` | Checking the composition mechanism's own acceptance criteria, including how a missing capability degrades |
 | `CHANGELOG.md` | Checking history of changes to this spec |
 
