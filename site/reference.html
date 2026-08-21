@@ -308,6 +308,19 @@
   </div>
 </section>
 
+<section id="gradle">
+  <h3><a href="modules/scrumia-gradle.html"><code>scrumia-gradle</code></a> — no slot</h3>
+  <p>Gradle the build tool, stated in Gradle's terms. Eight refusals or norms: Kotlin DSL over Groovy, version catalog as the one place versions live, the shape of a convention plugin (precompiled script plugin in a <code>build-logic</code> composite), lazy task configuration, the build and configuration caches, composite builds for local siblings, <code>pluginManagement</code>, and documentation tasks wired into the lifecycle. The Kotlin Multiplatform-specific application of these rules belongs to <code>scrumia-kotlin-multiplatform-mobile</code>, cited here only as where the shape is applied.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-gradle-audit</code></td><td>Audits an existing Gradle project against the eight rules — find each <code>.gradle</code> Groovy file, each literal version, each eager <code>tasks.create</code>, each missing cache flag, each plugin version declared in the wrong place</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>

@@ -528,6 +528,10 @@
           <input type="checkbox" name="c-add" value="scrumia-zod">
           <b>scrumia-zod</b><span>Le schéma fait autorité ; le parsing se fait à la couture.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-gradle">
+          <b>scrumia-gradle</b><span>Gradle l&#x27;outil, énoncé dans ses termes — format du script de build, catalogue de versions, forme du plugin de convention.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -912,6 +916,19 @@ apps:
       <p class="mod-desc">Éléments sémantiques plutôt que rôles ARIA, élément qui suit le rôle qu'il joue, tests qui passent par la couche que rencontre l'utilisateur — trois règles de refus, une compétence d'audit.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">claude plugin install scrumia-html-css@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">⚙️</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-gradle.html">scrumia-gradle</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Gradle l'outil de build, énoncé dans ses termes — DSL Kotlin plutôt que Groovy, catalogues de versions, forme des plugins de convention, configuration paresseuse des tâches, caches de build et de configuration, builds composites, pluginManagement. Huit règles, une compétence d'audit qui mesure un projet Gradle existant contre elles.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-gradle@scrumia</code>
     </div>
 
   </div>
