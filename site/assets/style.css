@@ -649,6 +649,21 @@ section > h2::before {
 
 .slots { margin: var(--space-6) 0 0; }
 
+/* ---------- Label register ---------- *
+ * The mono, uppercase, faint-tracked register that names what the nearby
+ * controls are for. Five declarations, five call sites — the call sites
+ * consume the class and add only their own contextual layout. Documented as
+ * design/components/label-register/spec.md; the variant API is the
+ * attribute selector, after the site-header precedent. */
+
+.label-register {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--text-faint);
+}
+.label-register[data-weight="medium"] { font-weight: var(--weight-medium); }
+.label-register[data-size="sm"] { font-size: var(--text-sm); }
+
 /* The four declarations that tell the states apart are held as custom
    properties, so a row's state is one block that sets them rather than four
    selectors repeated per state. #56 added a third state — choosable — and
@@ -691,11 +706,7 @@ section > h2::before {
   transition: transform var(--dur-2) var(--ease-summon), color var(--dur-2);
 }
 .slot[open] .slot-sign { transform: rotate(45deg); color: var(--accent); }
-.slot-name {
-  font-family: var(--font-mono); font-size: var(--text-sm);
-  letter-spacing: var(--tracking-label); text-transform: uppercase;
-  color: var(--slot-name-color); width: 9.5rem; flex: none;
-}
+.slot-name { color: var(--slot-name-color); width: 9.5rem; flex: none; }
 .slot-q { color: var(--text-soft); }
 .slot-lead {
   flex: 1 1 40px; min-width: 24px; height: 0;
@@ -742,8 +753,6 @@ section > h2::before {
 
 .ext-label {
   display: inline-block; min-width: var(--ext-label-w); flex: none;
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-faint);
 }
 .ext-declares { margin: 0; }
 .ext-declares code, .ext-register code { color: var(--text); font-size: var(--text-base); }
@@ -956,11 +965,7 @@ tbody tr:last-child td { border-bottom: 0; }
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
   margin: 0 0 var(--space-2);
 }
-.presets-label {
-  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-faint);
-  letter-spacing: var(--tracking-label); text-transform: uppercase;
-  margin-right: var(--space-1);
-}
+.presets-label { margin-right: var(--space-1); }
 .preset {
   font-family: var(--font-body); font-size: var(--text-sm);
   padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill);
@@ -1078,12 +1083,7 @@ tbody tr:last-child td { border-bottom: 0; }
  */
 .additions { margin: var(--space-8) 0 0; padding-left: var(--shelf-indent); }
 .additions .shelf { padding-left: 0; margin-bottom: 0; }
-.shelf-label {
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label); text-transform: uppercase;
-  color: var(--text-faint); font-weight: var(--weight-medium);
-  margin: 0 0 var(--space-2);
-}
+.shelf-label { margin: 0 0 var(--space-2); }
 .additions-intro {
   margin: 0 0 var(--space-3); max-width: var(--measure);
   font-size: var(--text-sm); color: var(--text-soft);
@@ -1115,11 +1115,8 @@ tbody tr:last-child td { border-bottom: 0; }
   animation: fill-in var(--dur-2) var(--ease-summon) both;
 }
 
-.key-entry-label {
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label); text-transform: uppercase;
-  color: var(--text-faint);
-}
+/* .key-entry-label takes the typography from .label-register; the class is
+   the whole rule. */
 
 /* Every UA default is overwritten: an input keeping its browser chrome is the
    one thing in this section that would genuinely read as an OS form.

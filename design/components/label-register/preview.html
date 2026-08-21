@@ -1,0 +1,77 @@
+<!-- @dsCard group="Typography" -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>label-register — ScrumIA design system</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../site/assets/style.css">
+<style>
+  body { padding: var(--space-8); }
+  h1 { font-size: var(--text-xl); margin: 0 0 var(--space-6); font-family: var(--font-display); }
+  h2 { font-size: var(--text-base); font-family: var(--font-mono); color: var(--text-faint);
+       margin: var(--space-8) 0 var(--space-3); text-transform: uppercase;
+       letter-spacing: var(--tracking-label); }
+  h2::before { content: none; }
+  .preview-bar { display: flex; align-items: center; gap: var(--space-3);
+       margin: 0 0 var(--space-8); font-family: var(--font-mono); font-size: var(--text-xs);
+       color: var(--text-faint); }
+  .row { display: flex; align-items: center; gap: var(--space-3);
+         padding: var(--space-3) 0; border-bottom: 1px solid var(--border); }
+  .row:last-of-type { border-bottom: none; }
+  .row .body { color: var(--text-soft); font-size: var(--text-base); }
+  /* The slot-name preview goes inside a .slot, the only way its colour
+     override is exercised. The other four call sites are bare. */
+  .slot { display: flex; align-items: center; gap: var(--space-3);
+          padding: var(--space-3) 0; border-bottom: 1px solid var(--border); }
+  .slot-empty { --slot-name-color: var(--text-faint); }
+  .slot-name { color: var(--slot-name-color); }
+</style>
+</head>
+<body>
+
+<h1>label-register</h1>
+
+<div class="preview-bar">
+  <span>theme</span>
+  <button class="copy-btn" type="button" id="t">dark / light</button>
+</div>
+<script>
+  // Themes are token redefinitions on :root, so the switch has to happen there —
+  // a variant rendered inside a themed <div> would not pick the palette up.
+  document.getElementById('t').addEventListener('click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+
+<h2>The register, bare — the four call sites that restate nothing</h2>
+<div class="row">
+  <span class="label-register">presets-label</span>
+  <span class="body">Start from</span>
+</div>
+<div class="row">
+  <span class="label-register">ext-label</span>
+  <span class="body">Declares</span>
+</div>
+<div class="row">
+  <span class="label-register">key-entry-label</span>
+  <span class="body">module key</span>
+</div>
+
+<h2>The medium-weight variant — .shelf-label on an actual &lt;h3&gt;</h2>
+<h3 class="label-register" data-weight="medium">Additions</h3>
+
+<h2>The size-sm variant — .slot-name inside a .slot</h2>
+<div class="slot">
+  <span class="label-register slot-name" data-size="sm">specs</span>
+  <span class="body">the defaults, in short</span>
+</div>
+<div class="slot slot-empty">
+  <span class="label-register slot-name" data-size="sm">tracker</span>
+  <span class="body">empty slot — colour falls to --text-faint via --slot-name-color</span>
+</div>
+
+</body>
+</html>
