@@ -2,26 +2,20 @@
   "title": "Workflow — ScrumIA",
   "meta_description": "Comment un projet se déroule de bout en bout avec la composition de référence : demande, cadrage, affinement, sprint, revue. Chaque étape nomme le module qui la porte.",
   "og_title": "Workflow — ScrumIA",
-
   "page_kicker": "l'exécution, en détail",
   "hero_title": "Un déroulé complet",
   "hero_intro": "La composition de référence, étape par étape. Chaque étape nomme le module qui la porte.",
-
   "shape_title": "Sa forme",
-  "shape_diagram": "Human     │ demande, défi, brainstorm\n          ▼\ndiscovery │ cadrage → issues + branche portant les specs\n          ▼\ntracker   │ affinement → Ready for dev, ou sous-issues par contexte\n   ↕      │   ↳ mobilise les rôles quand leur réponse change le ticket\nteam      │\n          ▼\nHuman     │ valide les designs qui sont douteux, critiques ou risqués\n          ▼\nteam      │ manager construit le sprint avec l'équipe → To dev\n          ▼\nteam      │ workflows dynamiques : implémentation, revue, QA\n   ↕      │   ↳ l'implémentation suit le module d'implémentation de l'app\nimpl      │     et les pratiques intégrées dans l'app\n          ▼\nHuman     │ revue PR, test → Done",
-
+  "shape_diagram": "Human     │ demande, défi, brainstorm\n          ▼\ndiscovery │ cadrage → issues + branche portant les specs\n          ▼\ntracker   │ affinement → Ready for dev, ou sous-issues par contexte\n   ↕      │   ↳ mobilise les rôles quand leur réponse change le ticket\nteam      │\n          ▼\nHuman     │ valide les designs qui sont douteux, critiques ou risqués\n          ▼\nteam      │ manager construit le sprint avec l'équipe → To dev\n          ▼\nteam      │ workflows dynamiques : implémentation, revue, QA\n   ↕      │   ↳ l'implémentation suit le module d'implémentation de l'app\nimpl      │     et les modules intégrés dans l'app\n          ▼\nHuman     │ revue PR, test → Done",
   "steps_title": "Étape par étape",
   "badge_human": "humain",
   "badge_agent": "agent",
-
   "step1_title": "Un humain apporte une demande",
   "step1_p1": "Une idée, un problème, une intuition. Le cadrage met en question : le problème existe-t-il ? cela le résout-il ? qu'est-ce qui devient impossible ? où sont les cas limites ? qu'est-ce qui est supposé mais non dit ?",
   "step1_p2": "Le point unique où l'attention humaine soutenue paie — et où elle coûte le moins.",
-
   "step2_title": "Le cadrage produit des issues et une branche de specs",
   "step2_p1": "Les features business d'abord, puis les features app — une par app, jamais deux. Puis les issues.",
   "step2_p2": "Les specs sont expédiées sur une branche <code>specs/&lt;slug&gt;</code> dans une PR ouverte : le design est examiné dans le même outil que le code, et l'affinement commence à partir de quelque chose de fixe plutôt qu'une conversation mémorisée.",
-
   "step3_title": "L'affinement rend le ticket exécutable",
   "step3_p1": "Quatre conditions, toutes vérifiables :",
   "step3_li1": "Une feature de rattachement existe et est à jour",
@@ -29,28 +23,22 @@
   "step3_li3": "Le périmètre d'impact est connu : quelles apps, quels fichiers",
   "step3_li4": "Aucune question ouverte ne bloque le début",
   "step3_p2": "Les rôles avec la vue plus large sont mobilisés <strong>quand leur réponse change le ticket</strong> — pas pour le valider simplement. Le ticket peut se diviser en sous-issues par contexte : un par app, puisque le contexte d'implémentation diffère.",
-
   "step4_title": "Un humain valide où cela compte",
   "step4_p1": "Escaladé : une règle métier a dû être inventée, le découpage a changé la demande, le ticket a une large portée, ou un rôle a soulevé une réserve. Tout le reste passe à Ready for dev.",
-
   "step5_title": "Le manager construit le sprint",
   "step5_p1": "Un lot de tickets qui <strong>ne se heurtent pas</strong> — deux tickets sur les mêmes fichiers soit se sérialisent soit fusionnent. L'humain approuve le lot explicitement.",
-
   "step6_title": "Les workflows dynamiques consomment le sprint",
   "step6_p1": "Un workflow par ticket, en parallèle, chacun dans son propre worktree. Chacun obtient un numéro de ticket et rien d'autre — il charge son propre contexte.",
   "step6_li1": "Charger le contexte par le module de specs",
   "step6_li2": "<strong>Mettre à jour la spec avant le code</strong>, si le comportement change",
-  "step6_li3": "Implémenter <strong>en suivant le module d'implémentation de l'app et ses pratiques</strong> — spécifique bat générique",
+  "step6_li3": "Implémenter <strong>en suivant le module d'implémentation de l'app et les modules branchés à côté</strong> — spécifique bat générique",
   "step6_li4": "Couvrir chaque <code>AC-n</code> avec un test qui peut échouer",
   "step6_li5": "Autorevue, puis revue par les rôles selon le périmètre d'impact",
   "step6_li6": "Ouvrir la PR",
-
   "step7_title": "L'humain revoit et fusionne",
   "step7_p1": "La PR porte la correspondance critère par critère, les specs qu'elle a changées, les verdicts de revue, et les réserves ouvertes avec leurs issues. <strong>Les agents ne fusionnent pas</strong>, sauf pour les catégories explicitement listées dans config.",
-
   "spec_note_title": "Pourquoi la spec en premier",
   "spec_note_p": "Écrire la spec d'abord fait remonter les contradictions avant qu'elles ne soient codées — où les corriger coûte le moins. Si une surgit contre une autre feature, l'exécution s'arrête et demande au rôle métier. Elle ne résout jamais une règle d'elle-même : une règle inventée en vol devient la référence de tout le monde sans que personne ne l'ait décidée.",
-
   "gates_title": "Trois portes",
   "gates_intro": "Le coût de validation suit le risque, plutôt que d'être uniforme.",
   "gates_th_gate": "Porte",
@@ -67,7 +55,6 @@
   "gates_r3_when": "La fusion, sauf délégation explicite.",
   "gates_note_title": "Quand deux rôles ne sont pas d'accord",
   "gates_note_p": "Le désaccord est transmis tel quel, non mélangé dans une moyenne. C'est précisément le cas qui a besoin d'un appel humain — le lisser détruit le signal.",
-
   "auto_title": "Composer l'autonomie",
   "auto_intro": "Un réglage explicite dans <code>.scrumia/config.yaml</code>, pas une propriété implicite.",
   "auto_th_level": "Niveau",
@@ -82,7 +69,6 @@
   "auto_c1": "# une PR qui touche seulement de la documentation",
   "auto_note_title": "Un scalaire, pas une liste blanche",
   "auto_note_p": "<code>auto_merge</code> est un réglage unique pour tout le projet, pas une liste par catégorie : <code>none</code> (rien ne fusionne sans surveillance, par défaut), <code>docs-only</code> (une PR qui touche seulement de la documentation), ou <code>all</code>.",
-
   "human_title": "Ce que fait l'humain",
   "human1_title": "1 — Cadrer et arbitrer",
   "human1_desc": "L'IA conteste et propose ; l'humain résout les points bloquants.",

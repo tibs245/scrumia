@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>scrumia-practice-tdd — ScrumIA</title>
-<meta name="description" content="scrumia-practice-tdd : le slot practices de ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
-<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-practice-tdd.html">
-<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-practice-tdd.html">
-<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-practice-tdd.html">
-<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-practice-tdd.html">
+<title>scrumia-solid-principles — ScrumIA</title>
+<meta name="description" content="scrumia-solid-principles : un module ScrumIA — cinq principes, chacun avec sa limite d'application.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-solid-principles.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-solid-principles.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-solid-principles.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-solid-principles.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="scrumia-practice-tdd — ScrumIA">
-<meta property="og:description" content="scrumia-practice-tdd : le slot practices de ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
-<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-practice-tdd.html">
+<meta property="og:title" content="scrumia-solid-principles — ScrumIA">
+<meta property="og:description" content="scrumia-solid-principles : un module ScrumIA — cinq principes, chacun avec sa limite d'application.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-solid-principles.html">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
@@ -67,8 +67,8 @@
       <a href="https://github.com/tibs245/scrumia">GitHub</a>
       <span class="nav-rail" aria-hidden="true"></span>
       <span class="lang">
-        <a href="../../modules/scrumia-practice-tdd.html" lang="en">EN</a>
-        <a href="scrumia-practice-tdd.html" aria-current="true" lang="fr">FR</a>
+        <a href="../../modules/scrumia-solid-principles.html" lang="en">EN</a>
+        <a href="scrumia-solid-principles.html" aria-current="true" lang="fr">FR</a>
       </span>
       <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
     </nav>
@@ -79,37 +79,37 @@
 
 <p><a href="../reference.html">← Tous les modules</a></p>
 
-<h1><span class="mod-ico">🔴</span> <code>scrumia-practice-tdd</code></h1>
-<p class="section-intro">Un point nommé du contrat d'implémentation : comment nous testons.</p>
+<h1><span class="mod-ico">🧭</span> <code>scrumia-solid-principles</code></h1>
+<p class="section-intro">Un point nommé du contrat d'implémentation : quels principes de conception.</p>
 
 <p class="mod-foot">
-  <span class="pill">slot · <code>practices</code></span>
+  <span class="pill">slot · aucun</span>
   <span class="pill">version · 0.4.0</span>
 </p>
 
 <section id="responsibilities">
   <h2>Ce dont il est responsable</h2>
-  <p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer.</p>
+  <p>Affine quels principes s'appliquent et, plus utile encore, où chacun s'arrête. Les cinq, chacun avec sa limite d'application, plus un audit qui signale la sur-application exactement au même niveau que la violation, et une compétence de refactorisation pour refermer ce qu'il trouve.</p>
 </section>
 
 <section id="refusals">
   <h2>Ce qu'il refuse</h2>
-  <p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne.</p>
+  <p>Il refuse de traiter un principe comme universel, et refuse d'arbitrer une question de pile qui appartient au module d'implémentation.</p>
 </section>
 
 <section id="philosophy">
   <h2>L'hypothèse qu'il fait</h2>
-  <p>Présume qu'un test qui échoue est la spécification la moins chère à écrire. Coûte une première passe plus lente, remboursée seulement si le code survit au sprint qui l'a produit.</p>
+  <p>Présume qu'un principe sans limite énoncée dégénère en cérémonie. Coûte des arbitrages que l'audit ne peut pas trancher seul.</p>
 </section>
 
 <section id="skills">
   <h2>Ses compétences</h2>
-  <ul class="mod-skills"><li><code>scrumia-tdd</code></li><li><code>scrumia-tdd-audit</code></li><li><code>scrumia-tdd-refactor</code></li></ul>
+  <ul class="mod-skills"><li><code>scrumia-solid-audit</code></li><li><code>scrumia-solid-principles</code></li><li><code>scrumia-solid-refactor</code></li></ul>
 </section>
 
 <section id="tags">
   <h2>Étiquettes</h2>
-  <ul class="mod-tags"><li>scrumia</li> <li>practice</li> <li>tdd</li> <li>tests</li></ul>
+  <ul class="mod-tags"><li>scrumia</li> <li>solid</li> <li>design-principles</li> <li>architecture</li></ul>
 </section>
 
 <section id="plugs-into">
@@ -126,8 +126,8 @@
 
 <section id="install">
   <h2>L'installer</h2>
-  <code class="mod-cmd">/plugin install scrumia-practice-tdd@scrumia</code>
-  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-practice-tdd">Lire le source sur GitHub</a></p>
+  <code class="mod-cmd">/plugin install scrumia-solid-principles@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-solid-principles">Lire le source sur GitHub</a></p>
 </section>
 
 </main>

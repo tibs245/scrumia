@@ -13,8 +13,8 @@ correct with no script running. Nothing in the browser keeps those two in step
 edited on one side and not the other ships a page whose install commands do not
 match the composition it claims. That is what these checks are for.
 
-The module and practice tables are read out of composer.js rather than restated
-here: re-deriving them would test the test.
+The module table is read out of composer.js rather than restated here:
+re-deriving it would test the test.
 """
 
 import json
@@ -82,7 +82,6 @@ def js_regex(name: str) -> re.Pattern:
 
 
 APPS = js_object("APPS")
-PRACTICES = js_object("PRACTICES")
 SOURCE = js_string("SOURCE")
 
 
@@ -175,8 +174,6 @@ def expected_modules(c: Composer) -> list[str]:
         impl = APPS[stack]["impl"]
         if impl:
             modules.append(impl)
-    for practice in c.checked("c-practice"):
-        modules.append(PRACTICES[practice]["module"])
     return list(dict.fromkeys(modules))
 
 
@@ -218,17 +215,13 @@ def test_ac3_config_block_matches_the_rows() -> None:
               names == [APPS[s]["name"] for s in stacks],
               f"{names} != {[APPS[s]['name'] for s in stacks]}")
 
-        # A practice belongs only under the app types it speaks for: a backend
-        # declaring a frontend data-fetching practice is the bug this catches.
-        chosen = [PRACTICES[p] for p in c.checked("c-practice")]
+        # An app declares its own stack and nothing another app chose.
         for stack, app in zip(stacks, apps, strict=True):
             impl = APPS[stack]["impl"]
             app_type = app.get("type")
-            want = [source_key(m) for m in
-                    ([impl] if impl else []) +
-                    [p["module"] for p in chosen if app_type in p["types"]]]
+            want = [source_key(impl)] if impl else []
             got = list((app.get("modules") or {}).keys())
-            check(f"{lang}: the {app_type} app declares its stack and only its own practices",
+            check(f"{lang}: the {app_type} app declares its own stack and nothing else",
                   got == want, f"{got} != {want}")
 
 
@@ -259,8 +252,8 @@ def test_ac5_the_two_indexes_stay_two_accordions() -> None:
     print("AC-5 the composer's rows are grouped apart from the reporting index")
     for lang, page in PAGES.items():
         c = read(page)
-        check(f"{lang}: seven rows, all named composer-slot",
-              c.details_names == ["composer-slot"] * 7, str(c.details_names))
+        check(f"{lang}: six rows, all named composer-slot",
+              c.details_names == ["composer-slot"] * 6, str(c.details_names))
 
 
 def test_ac6_no_slot_is_answered_without_being_asked() -> None:
@@ -271,8 +264,8 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
             picked = c.checked("c-" + slot)
             check(f"{lang}: {slot} has exactly one default answer",
                   len(picked) == 1, f"{len(picked)} checked")
-        check(f"{lang}: no input group beyond the seven slots and the additions block",
-              c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-practice", "c-add", "c-free"},
+        check(f"{lang}: no input group beyond the six slots and the additions block",
+              c.groups() == {"c-" + s for s in SINGLE} | {"c-impl", "c-add", "c-free"},
               str(sorted(c.groups())))
 
         # The note is the whole of its line now: one that lost its `#` is parsed
@@ -295,7 +288,7 @@ def test_ac6_no_slot_is_answered_without_being_asked() -> None:
 
 
 def offered_additions() -> list[str]:
-    """The modules the composer must offer past the seven slots, derived the way
+    """The modules the composer must offer past the six slots, derived the way
     build_site.py derives them: everything filling no slot, minus the kernel.
 
     Derived here too, deliberately. A test naming `scrumia-rules` would go on
@@ -384,7 +377,7 @@ def test_ac10_a_key_with_no_source_is_refused() -> None:
 
 
 def test_ac11_the_free_entry_is_the_only_thing_gated_on_script() -> None:
-    print("AC-11 the free entry needs script; the seven rows and the shelf do not")
+    print("AC-11 the free entry needs script; the six rows and the shelf do not")
     # Prose discusses these selectors, and a sentence is not a rule.
     css = re.sub(r"/\*.*?\*/", "", STYLE_CSS.read_text(encoding="utf-8"), flags=re.DOTALL)
     head = (REPO / "site" / "templates" / "partials" / "head.html").read_text(encoding="utf-8")
@@ -401,7 +394,7 @@ def test_ac11_the_free_entry_is_the_only_thing_gated_on_script() -> None:
              for s in chunk.split(",") if ".has-js" in s]
     check("the capability gate is used", bool(gated))
     # The class, not the instances: anything else put behind this gate later fails
-    # here, because the seven rows and the known additions must keep working alone.
+    # here, because the six rows and the known additions must keep working alone.
     for selector in gated:
         check(f"only the free entry sits behind the gate: {selector!r}", "opt-free" in selector)
     check("nothing about the free entry is gated on the motion class instead",

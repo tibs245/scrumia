@@ -1105,23 +1105,6 @@ footer a:hover { color: var(--text); }
       </p>
     </details>
 
-    <details class="slot slot-empty" name="slot">
-      <summary>
-        <h3 class="slot-row">
-          <span class="slot-sign" aria-hidden="true">+</span>
-          <span class="slot-name">practices</span>
-          <span class="slot-q">Which cross-cutting practices, per app?</span>
-          <span class="slot-lead" aria-hidden="true"></span>
-          <span class="slot-fill">nothing installed</span>
-        </h3>
-      </summary>
-      <p class="slot-answer">
-        None here. TDD, SOLID and TanStack Query are on the shelf; a repository of
-        prose does not need them, and pretending otherwise would cost every agent
-        context it could spend on the work.
-      </p>
-    </details>
-
     <details class="slot" name="slot">
       <summary>
         <h3 class="slot-row">
@@ -1157,8 +1140,7 @@ footer a:hover { color: var(--text); }
   <span class="k">design:</span>    <span class="v">scrumia-design</span>
 <span class="k">apps:</span>
   - <span class="k">name:</span> <span class="v">"site"</span>
-    <span class="k">implementation:</span> <span class="n">null</span>
-    <span class="k">practices:</span> <span class="n">[]</span></pre>
+    <span class="k">modules:</span> <span class="n">{}</span></pre>
       </div>
     </div>
   </div>
@@ -1285,9 +1267,9 @@ footer a:hover { color: var(--text); }
     <li class="mod"><span class="mod-slot">discovery</span><span class="mod-name">scrumia-discovery</span><p class="mod-d">Challenges an idea until it can be split, then ships the specs on a branch.<span class="tag">not installed here</span></p></li>
     <li class="mod"><span class="mod-slot">implementation</span><span class="mod-name">scrumia-rust</span><p class="mod-d">Invalid states unrepresentable, typed errors per layer, one test per invariant.</p></li>
     <li class="mod"><span class="mod-slot">implementation</span><span class="mod-name">scrumia-solidjs</span><p class="mod-d">Fine-grained reactivity without React reflexes; behaviour-first component tests.</p></li>
-    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-tdd</span><p class="mod-d">The cycle operationalised for an agent: the mock boundary, AC-to-test mapping.</p></li>
-    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-solid</span><p class="mod-d">Five principles, each with its limit. Audits over-application as readily as violation.</p></li>
-    <li class="mod"><span class="mod-slot">practices</span><span class="mod-name">scrumia-tanstack-query</span><p class="mod-d">Query keys, invalidation, optimistic updates — the server/client boundary.</p></li>
+    <li class="mod"><span class="mod-slot">no slot</span><span class="mod-name">scrumia-tdd</span><p class="mod-d">The cycle operationalised for an agent: the mock boundary, AC-to-test mapping.</p></li>
+    <li class="mod"><span class="mod-slot">no slot</span><span class="mod-name">scrumia-solid-principles</span><p class="mod-d">Five principles, each with its limit. Audits over-application as readily as violation.</p></li>
+    <li class="mod"><span class="mod-slot">no slot</span><span class="mod-name">scrumia-tanstack-query</span><p class="mod-d">Query keys, invalidation, optimistic updates — the server/client boundary.</p></li>
     <li class="mod"><span class="mod-slot">design</span><span class="mod-name">scrumia-design</span><p class="mod-d">Identity, tokens and components in the repo, plus an audit that reports drift and mutedness alike.</p></li>
   </ul>
 </section>

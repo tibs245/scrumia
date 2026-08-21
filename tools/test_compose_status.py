@@ -156,7 +156,7 @@ extends:
 apps:
   - name: "web"
     path: "apps/web"
-    extends: [scrumia-impl-solidjs, scrumia-practice-tdd, scrumia-practice-solid, scrumia-practice-tanstack-query]
+    extends: [scrumia-impl-solidjs, scrumia-tdd, scrumia-solid-principles, scrumia-tanstack-query]
 """
 
 # The retired shape, tolerated for one minor: read, and said out loud.
@@ -171,7 +171,7 @@ apps:
   - name: "web"
     path: "apps/web"
     implementation: scrumia-impl-solidjs
-    practices: [scrumia-practice-tdd]
+    practices: [scrumia-tdd]
 """
 
 # Nothing plugged in: a flat list has no per-slot key to leave empty, so the
@@ -199,7 +199,7 @@ apps:
   - name: "web"
     path: "apps/web"
     modules:
-      "tibs245/scrumia:scrumia-practice-tdd": {}
+      "tibs245/scrumia:scrumia-tdd": {}
 """
 
 UNSOURCED_CONFIG = """
@@ -264,9 +264,9 @@ def test_ac1_narrow_terminal() -> None:
         out = ANSI.sub("", run_tty(env_for(crowded, COLUMNS=str(cols)))).replace("\r\n", "\n")
         over = [l for l in out.split("\n") if len(l) > cols and foldable(l)]
         check(f"a crowded apps table still fits {cols} columns", not over, f"{over[:1]!r}")
-        check(f"every practice is still named at {cols} columns",
-              all(p in out for p in ("scrumia-practice-tdd", "scrumia-practice-solid",
-                                     "scrumia-practice-tanstack-query")))
+        check(f"every module is still named at {cols} columns",
+              all(p in out for p in ("scrumia-tdd", "scrumia-solid-principles",
+                                     "scrumia-tanstack-query")))
     os.unlink(crowded)
 
 
@@ -340,7 +340,7 @@ def test_ac3_the_retired_shape_is_read_and_said_out_loud() -> None:
     check("a null entry contributes nothing rather than a row",
           "null" not in out and "none" not in out.split("Extends")[0])
     check("the per-app implementation and practices fold into that app's extends",
-          "scrumia-impl-solidjs" in out and "scrumia-practice-tdd" in out)
+          "scrumia-impl-solidjs" in out and "scrumia-tdd" in out)
     # The report is what the site publishes verbatim; a migration is the reader's
     # business and belongs on the stream a published artefact does not carry.
     check("the reader is told the shape is retired", "retired" in err, err.strip())
@@ -382,7 +382,7 @@ def test_ac17_the_key_carries_the_source() -> None:
                 "local:acme-docs-rules"):
         check(f"{key} is reported by its key, source included", key in out, out[:300])
     check("an app's own modules are keyed the same way",
-          "tibs245/scrumia:scrumia-practice-tdd" in out, out[:400])
+          "tibs245/scrumia:scrumia-tdd" in out, out[:400])
     # Never "runs": this resolves nothing, and BR-6 forbids one tool claiming present what
     # the resolver reports absent.
     check("the heading claims a declaration, not a presence it did not check",

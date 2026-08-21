@@ -3,7 +3,7 @@
   "owner": {
     "name": "tibs245"
   },
-  "description": "A composition of Claude Code modules to run a project: per-feature specs, tracking, an agent team, per-stack implementation practices. Every module is replaceable.",
+  "description": "A composition of Claude Code modules to run a project: per-feature specs, tracking, an agent team, per-stack implementation modules. Every module is replaceable.",
   "version": "0.4.0",
   "plugins": [
     {
@@ -88,30 +88,30 @@
       "author": { "name": "tibs245" }
     },
     {
-      "name": "scrumia-practice-tdd",
-      "source": "./plugins/scrumia-practice-tdd",
-      "description": "The practices slot — test-driven development, situated for an agent: the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills.",
+      "name": "scrumia-tdd",
+      "source": "./plugins/scrumia-tdd",
+      "description": "Test-driven development, situated for an agent — the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "practice", "tdd", "tests"],
+      "tags": ["scrumia", "tdd", "tests", "testing"],
       "author": { "name": "tibs245" }
     },
     {
-      "name": "scrumia-practice-solid",
-      "source": "./plugins/scrumia-practice-solid",
-      "description": "The practices slot — SOLID principles, each with its application limit. Audits violations and over-applications alike. Reference, audit and refactor skills.",
+      "name": "scrumia-solid-principles",
+      "source": "./plugins/scrumia-solid-principles",
+      "description": "SOLID principles, each with its application limit — audits violations and over-applications alike. Reference, audit and refactor skills. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "practice", "solid", "design"],
+      "tags": ["scrumia", "solid", "design-principles", "architecture"],
       "author": { "name": "tibs245" }
     },
     {
-      "name": "scrumia-practice-tanstack-query",
-      "source": "./plugins/scrumia-practice-tanstack-query",
-      "description": "The practices slot — TanStack Query situated for an agent: the queryOptions() factory, query keys, useQuery through testing. Reference skill now; audit and refactor land next.",
+      "name": "scrumia-tanstack-query",
+      "source": "./plugins/scrumia-tanstack-query",
+      "description": "TanStack Query, situated for an agent — the queryOptions() factory, query keys, useQuery through testing. Reference skill now; audit and refactor land next. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "practice", "tanstack-query", "data-fetching"],
+      "tags": ["scrumia", "tanstack-query", "data-fetching", "frontend"],
       "author": { "name": "tibs245" }
     },
     {

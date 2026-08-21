@@ -215,7 +215,7 @@
     </table>
   </div>
 
-  <h3><a href="modules/scrumia-practice-tdd.html"><code>scrumia-practice-tdd</code></a> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-tdd.html"><code>scrumia-tdd</code></a> — no slot</h3>
   <p>Refines one point of the implementation contract: <strong>how we test</strong>. The cycle operationalized for an agent, the mock boundary, AC-to-test mapping.</p>
   <div class="table-wrap">
     <table>
@@ -228,7 +228,7 @@
     </table>
   </div>
 
-  <h3><a href="modules/scrumia-practice-solid.html"><code>scrumia-practice-solid</code></a> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-solid-principles.html"><code>scrumia-solid-principles</code></a> — no slot</h3>
   <p>Refines one point of the implementation contract: <strong>which design principles</strong>. The five principles, each with its application limit — over-application is audited on equal footing with violations.</p>
   <div class="table-wrap">
     <table>
@@ -240,7 +240,7 @@
       </tbody>
     </table>
   </div>
-  <h3><a href="modules/scrumia-practice-tanstack-query.html"><code>scrumia-practice-tanstack-query</code></a> — slot <code>practices</code></h3>
+  <h3><a href="modules/scrumia-tanstack-query.html"><code>scrumia-tanstack-query</code></a> — no slot</h3>
   <p>Refines one point of the implementation contract: <strong>how the app talks to the server and caches what it gets back</strong> — query keys, invalidation, optimistic updates, the boundary against client-only state. Ported from real monorepo use: 9 guides, 13 decisions. <strong>Assumes</strong> a stack TanStack Query ships for (React, Solid, Vue, Svelte). <strong>Costs</strong> a caching model to learn — the audit and refactor skills that would measure and close the gap aren't built yet.</p>
   <div class="table-wrap">
     <table>
@@ -329,14 +329,14 @@ apps:
     type: frontend
     modules:
       "tibs245/scrumia:<span class="m">scrumia-impl-solidjs</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-tdd</span>": {}
   - name: api
     path: apps/api
     type: backend
     modules:
       "tibs245/scrumia:<span class="m">scrumia-impl-rust</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-tdd</span>": {}
-      "tibs245/scrumia:<span class="m">scrumia-practice-solid</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-tdd</span>": {}
+      "tibs245/scrumia:<span class="m">scrumia-solid-principles</span>": {}
 
 settings:
   autonomy:
@@ -355,8 +355,8 @@ settings:
 </section>
 
 <section id="impl">
-  <h2>Implementation modules and practices</h2>
-  <p>The most personal slots. <code>implementation</code> and <code>practices</code> both take several modules at once, mapped app by app. Two competent developers can hold opposite views here and neither is wrong, which is exactly why these are replaceable modules rather than kernel rules.</p>
+  <h2>Implementation modules and the modules that refine them</h2>
+  <p>The most personal choice. An app lists the modules it draws on — its implementation module, and any number of others that sharpen one point of what that module says. Two competent developers can hold opposite views here and neither is wrong, which is exactly why these are replaceable modules rather than kernel rules.</p>
 
   <h3>The contract</h3>
   <p>A skill the agent loads <strong>before writing code</strong> in that app, covering four things:</p>
@@ -367,11 +367,11 @@ settings:
     <li><strong>What is refused</strong> — the most useful part, and the most often skipped. An agent that knows what's rejected self-corrects</li>
   </ol>
 
-  <h3>How practices compose</h3>
-  <p>A practice module refines <strong>one named point</strong> of that contract — TDD refines "how you test", SOLID refines "which design principles" — and ships three skills: the reference, the audit, the refactor. The implementation module <em>situates</em> each practice for its stack. One precedence rule: <strong>specific beats generic</strong> — implementation module over practice, project override over both.</p>
+  <h3>How they compose</h3>
+  <p>A module can refine <strong>one named point</strong> of that contract — <code>scrumia-tdd</code> refines "how you test", <code>scrumia-solid-principles</code> refines "which design principles" — and ship the reference, the audit and the refactor skills that go with it. The implementation module <em>situates</em> each for its stack. One precedence rule: <strong>specific beats generic</strong> — the implementation module over the module refining it, the project override over both.</p>
 
   <h3>Overriding without forking</h3>
-  <p>Declared settings under <code>settings.implementation.&lt;module&gt;</code> and <code>settings.practices.&lt;module&gt;</code>, plus optional project override files (<code>.scrumia/impl/&lt;module&gt;.md</code>, <code>.scrumia/practices/&lt;module&gt;.md</code>) the module reads and honours over its own rules. A module offering neither gets forked at the first disagreement — and that fork never sees an update.</p>
+  <p>Every module documents what it reads under its own <code>params:</code>, plus an optional project override file (<code>.scrumia/modules/&lt;module&gt;.md</code>) whose content it honours over its own rules. A module offering neither gets forked at the first disagreement — and that fork never sees an update.</p>
 
   <div class="note">
     <span class="note-title">Where design meets this contract</span>
