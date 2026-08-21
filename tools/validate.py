@@ -252,22 +252,6 @@ def check_doc_links() -> None:
                 error(f"{rel}: broken link → {target}")
 
 
-def check_published_names() -> None:
-    """A bin/ entry that is a link to nothing — BR-7's clause the checker cannot see yet.
-
-    `scrumia-module` filters bin/ with `is_file()`, which follows the link, so a name
-    resolving nowhere is skipped and the module exits clean. Removing this with the rest
-    of the delegated checks would leave BR-7's `bin/` clause enforced in no surface at
-    all; it goes when tibs245/scrumia#312 lands, and not before.
-    """
-    for entry in sorted((ROOT / "plugins").glob("*/bin/*")):
-        if entry.is_symlink() and not entry.exists():
-            error(
-                f"{entry.relative_to(ROOT)}: a published name resolving nowhere — "
-                f"a name on PATH that cannot run, and the caller cannot see why"
-            )
-
-
 def check_french_leftovers() -> None:
     """The repo is English-only (site/fr/ excepted): flag leftover French prose."""
     accents = re.compile(r"[àâäçèéêëîïôöùûü]", re.IGNORECASE)
@@ -776,13 +760,12 @@ def main() -> int:
     check_module_anatomy()
 
     # Kept under module-anatomy's BR-5: scrumia-module reads no frontmatter, no
-    # hooks.json and no changelog, and misses a bin/ name resolving nowhere (#312).
+    # hooks.json and no changelog.
     check_skills()
     check_agents()
     check_commands()
     check_hooks()
     check_plugin_changelogs()
-    check_published_names()
 
     check_doc_links()
     check_french_leftovers()

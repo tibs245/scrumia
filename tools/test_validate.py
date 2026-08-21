@@ -203,16 +203,20 @@ def test_the_gate_says_so_when_the_checker_is_missing() -> None:
         shutil.rmtree(tmp)
 
 
-def test_a_published_name_resolving_nowhere_is_still_caught() -> None:
-    print("a dangling bin/ symlink: BR-7's clause the checker misses, kept here until #312")
+def test_a_published_name_resolving_nowhere_is_a_finding() -> None:
+    print("a bin/ symlink whose target does not exist: BR-7's name, found through delegation (AC-19)")
     tmp = Path(tempfile.mkdtemp())
     try:
-        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
-        bin_dir.mkdir(parents=True)
-        (bin_dir / "scrumia-ghost").symlink_to("../scripts/gone.sh")
-        errors = run_check(tmp, "check_published_names")
-        check("the name resolving nowhere is reported",
-              any("scrumia-ghost" in e and "resolving nowhere" in e for e in errors), str(errors))
+        install_checker(tmp)
+        plugin = write_module(tmp)
+        bin_dir = plugin / "bin"
+        bin_dir.mkdir(exist_ok=True)
+        (bin_dir / "symlink-to-nowhere").symlink_to("../scripts/gone.sh")
+        errors = run_check(tmp, "check_module_anatomy")
+        check("the dangling symlink is reported as a published name resolving nowhere",
+              any("symlink-to-nowhere" in e and "resolving nowhere" in e for e in errors), str(errors))
+        check("the finding cites the rule by its qualified identifier",
+              any("modular-composition/BR-7" in e for e in errors), str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -221,11 +225,13 @@ def test_a_working_published_name_is_not_flagged() -> None:
     print("a bin/ entry that resolves is untouched — executability is the checker's")
     tmp = Path(tempfile.mkdtemp())
     try:
-        bin_dir = tmp / "plugins" / "scrumia-widget" / "bin"
-        bin_dir.mkdir(parents=True)
-        (bin_dir / "scrumia-real").write_text("#!/bin/sh\n", encoding="utf-8")
-        errors = run_check(tmp, "check_published_names")
-        check("no findings", errors == [], str(errors))
+        install_checker(tmp)
+        plugin = write_module(tmp)
+        (plugin / "bin").mkdir()
+        (plugin / "bin" / "scrumia-real").write_text("#!/bin/sh\necho ok\n", encoding="utf-8")
+        (plugin / "bin" / "scrumia-real").chmod(0o755)
+        errors = run_check(tmp, "check_module_anatomy")
+        check("no findings on a working name", errors == [], str(errors))
     finally:
         shutil.rmtree(tmp)
 
@@ -1043,7 +1049,7 @@ def main() -> int:
                  test_a_conformant_module_produces_no_finding,
                  test_a_delegated_finding_fails_the_gate,
                  test_the_gate_says_so_when_the_checker_is_missing,
-                 test_a_published_name_resolving_nowhere_is_still_caught,
+                 test_a_published_name_resolving_nowhere_is_a_finding,
                  test_a_working_published_name_is_not_flagged,
                  test_a_run_that_could_not_conclude_is_not_read_as_clean,
                  test_a_directory_that_is_not_a_module_is_not_judged,
