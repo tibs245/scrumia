@@ -336,9 +336,24 @@ class Checker:
         """A name under bin/ is how another module reaches this one; one that cannot run
         is a reference that fails at the moment it is followed."""
         # Files only: a bin/lib/ a module's own scripts source is a legitimate arrangement,
-        # and refusing it would be a rule no feature states.
+        # and refusing it would be a rule no feature states. `glob` does not follow
+        # symlinks, so the loop sees a symlink whatever its target, and the cases below
+        # decide each on its own — `is_file()` follows links, which is why the dangling
+        # case is read with `is_symlink` and `exists` first, not the other way around.
         for entry in sorted((self.root / "bin").glob("*")) if (self.root / "bin").is_dir() else []:
-            if entry.is_file() and not os.access(entry, os.X_OK):
+            if entry.is_symlink() and not entry.exists():
+                # A symlink whose target is absent is not a file the platform could
+                # even try to execute; the second case below would not see it, because
+                # `is_file()` follows the link and reports False. The two messages
+                # carry distinct names for the same rule (BR-7) so a reader can tell
+                # which shape failed.
+                self.report(
+                    entry,
+                    "modular-composition/BR-7",
+                    "a published name resolving nowhere — a name on PATH that cannot "
+                    "run, and the caller cannot see why",
+                )
+            elif entry.is_file() and not os.access(entry, os.X_OK):
                 self.report(
                     entry,
                     "module-anatomy/BR-7",

@@ -132,10 +132,12 @@ first half flags every citation in every module and is unusable here.
 Given a module whose skill links to a relative path, and whose skill invokes a script
 When either target is absent from what the module ships
 Then each is a separate finding naming the referring file and the missing target
-Given instead a module shipping a name under `bin/` that is present and not executable
+Given instead a module shipping a name under `bin/` that cannot be run —
+  present and not executable, present and dangling, present but unreadable, or any
+  other shape the platform resolves to "no program at that path"
 When the same check runs
-Then a finding names it, because the name is how every other module reaches this one and
-  it fails in the caller, which cannot see why
+Then a finding names it, because the name is how every other module reaches this one
+  and it fails in the caller, which cannot see why
 ```
 
 ### AC-10 — Extension data a module ships is checked; extension data it omits is not
@@ -315,3 +317,17 @@ not re-found here. The audit reads no cache, makes no second attempt, and refuse
 guess at a redirect. A blank `homepage` is an empty string the audit will not try to open;
 that is BR-13's case (a conditional field that should have been absent) and the procedural
 check owns it.
+
+### AC-19 — A `bin/` entry that resolves to nothing is a finding, named as such
+
+```gherkin
+Given a module shipping under `bin/` a symlink whose target does not exist
+When the procedural check runs over it
+Then a finding names the entry as a published name resolving nowhere, distinct from
+  "not executable" — the latter is a file present on disk with a permission the platform
+  refuses, the former is no file at all
+And a finding message cites the rule by its qualified identifier
+  (`modular-composition/BR-7`) with any document it points at given as an absolute URL
+And no module the marketplace ships today fails this criterion, so the gate's first run
+  is silent — the criterion guards a future shape, not the current tree
+```
