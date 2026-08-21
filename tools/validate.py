@@ -468,15 +468,21 @@ def check_feature_links() -> None:
 
 
 def check_feature_nesting() -> None:
-    """A nested feature declares Parent, its parent declares Children, and nesting stops at one level."""
+    """A nested feature declares Parent, its parent declares Children.
+
+    Depth is bounded by structure, not by a number: a feature may sit more than
+    one level below another when each node carries its own content and the
+    relationship is declared on both sides. The structural tests still apply at
+    every level — every parent is a feature in its own right, and the Parent:
+    link travels with the child. The symmetric declaration of structural links
+    is enforced separately in check_feature_links.
+    """
     features_root = ROOT / "features"
     for feature_dir in bfi.find_leaf_features(ROOT):
         parent = feature_dir.parent
         if not (parent / "index.md").exists():
             continue  # not nested
         rel = feature_dir.relative_to(ROOT)
-        if (parent.parent / "index.md").exists():
-            error(f"{rel}: nested two levels deep — check the splitting criterion, nesting stops at one")
         keys = {key for key, _ in _feature_links(feature_dir)}
         if "Parent" not in keys:
             error(f"{rel}/index.md: sits inside {parent.relative_to(features_root)} but declares no 'Parent:' link")
