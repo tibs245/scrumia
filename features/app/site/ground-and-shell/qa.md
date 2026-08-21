@@ -129,19 +129,22 @@ When the stylesheet is read for the five declarations that compose the label
   register — `font-family: var(--font-mono)`, `font-size: var(--text-xs)`,
   `letter-spacing: var(--tracking-label)`, `text-transform: uppercase`,
   `color: var(--text-faint)`
-Then the five appear together exactly once, inside the component whose CSS the
-  build mirrors, with a documented weight variant that carries `.shelf-label`'s
-  `--weight-medium`
-And the five call sites — `.slot-name`, `.presets-label`, `.ext-label`,
-  `.shelf-label`, `.key-entry-label` — consume the component's class rather
-  than restate any of the five
+Then the five appear together exactly once under the five named call sites —
+  `.slot-name`, `.presets-label`, `.ext-label`, `.shelf-label`,
+  `.key-entry-label` — inside the component whose CSS the build mirrors, with a
+  documented weight variant that carries `.shelf-label`'s `--weight-medium`
+And the five call sites consume the component's class rather than restate any
+  of the five
 ```
 
 The component carries the require-ones and refuses the rest; what it refuses is
 written in `design/components/label-register/spec.md`. The five declarations
-appear together exactly once in `site/assets/style.css`; the call sites consume
-the class and add only contextual overrides (their own layout, the slot-scoped
-`--slot-name-color`).
+appear together exactly once among the five named call sites; the call sites
+consume the class and add only contextual overrides (their own layout, the
+slot-scoped `--slot-name-color`). Three other rules in `site/assets/style.css`
+— `.page-head .kicker`, `.count span`, and `th` — share the same typography by
+deliberate parallel construction; the component spec names them and the reason
+each carries all five by design.
 
 ## Out of scope
 
