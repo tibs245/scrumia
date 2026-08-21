@@ -93,7 +93,7 @@ limitation of the command — the rule is
 3. Update `.scrumia/config.yaml`.
 4. Invoke its install skill if it exists.
 5. Regenerate the `CLAUDE.md` section.
-6. For an `implementation` or `practices` change, flag the app's per-app `CLAUDE.md` stub (if one exists at `apps[].path`) as out of date — `scrumia-init` checks and reports drift on it, it does not overwrite it for you.
+6. For a change to what an app draws on, flag the app's per-app `CLAUDE.md` stub (if one exists at `apps[].path`) as out of date — `scrumia-init` checks and reports drift on it, it does not overwrite it for you.
 
 **When replacing, delete nothing the old module produced.** Specs written in a module's format stay readable; tickets created in a tool stay there. Flag what becomes orphaned and let the user decide — a migration is a job in its own right, not a side effect of a config change.
 
@@ -104,7 +104,7 @@ When something doesn't work, check in this order:
 1. **Did the declaration resolve, and to what?** `scrumia-extends --modules` is the first call, not a later one: a module present in the config but absent from `enabledPlugins` — or missing from the shared directory, or answered by two directories at once — is invisible to the agent, and every register renders shorter with nothing else said. Read the state before reading anything else, and read a conflict as a stop: that module contributes nothing until someone picks.
 2. **Does `CLAUDE.md` reflect the config, and does it survive a clone?** If not, agents read a stale composition. `scrumia-extends --claims` answers the second half, which staleness alone would miss: a file perfectly matching the config still lies to every clone when it names a module only one machine can reach.
 3. **Is the slot empty?** A missing capability is not a failure. Just say which module would provide it.
-4. **Does the app have an implementation module, and practices?** Without an implementation module, the agent follows the conventions of neighboring code; without practices, the implementation module's conventions suffice — acceptable behavior, not an error.
+4. **Does the app have an implementation module, and what else?** Without an implementation module, the agent follows the conventions of neighboring code; with nothing else beside it, that module's conventions suffice — acceptable behavior, not an error.
 5. **Does the app have a `path`, and does its per-app `CLAUDE.md` stub (if any) match it?** No `path` means no per-app activation — an agent editing a file there can't resolve which app it belongs to. A stub naming modules that were since replaced is the same failure as a stale root section, one level down — and so is a stub claiming what a clone cannot reach, which needs its own `scrumia-extends --claims <that file>`: the root run never opened it.
 6. **Are the settings read by the right module?** Each module documents the keys it consumes under `settings`.
 
@@ -112,7 +112,7 @@ When something doesn't work, check in this order:
 
 A module is an ordinary Claude Code plugin. What makes it a ScrumIA module comes down to three points:
 
-1. **It occupies a slot** — `specs`, `tracker`, `team`, `discovery`, `implementation`, `practices`, `design`, or a new slot it defines and documents.
+1. **It occupies a slot** — `specs`, `tracker`, `team`, `discovery`, `implementation`, `design`, or a new slot it defines and documents — or none, and refines what another module says.
 2. **It documents the settings it reads** under `settings.<slot>` in `.scrumia/config.yaml`.
 3. **It provides the `CLAUDE.md` line that describes it** — one sentence that tells an agent what it needs to know, without forcing it to read the module.
 
@@ -134,6 +134,6 @@ Whatever you did above — viewed, plugged in, replaced, diagnosed — close on 
 ${CLAUDE_SKILL_DIR}/../../scripts/compose-status.sh
 ```
 
-On a view, that output is most of the answer already: the slots, their modules, the ones empty on purpose, and the per-app implementation and practices columns.
+On a view, that output is most of the answer already: the slots, their modules, the ones empty on purpose, and the modules each app draws on.
 
 What it does **not** claim is the rest of this skill's job. It reads `.scrumia/config.yaml` and only that — it prints the declarations as written, resolving nothing — so it cannot tell you where a module actually came from, whether a named module is enabled in `.claude/settings.json`, whether the `CLAUDE.md` section still matches, or whether a per-app stub went stale. The first of those is `scrumia-extends --modules`, and the half of the third that a clone would trip on is `scrumia-extends --claims`; the rest are yours to check and report alongside its output. A status printer that guessed at them would be the least trustworthy thing in the composition.

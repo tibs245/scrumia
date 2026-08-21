@@ -749,7 +749,7 @@ cmd_check() {
 # parsed a table would start passing by accident the day the table changed.
 #
 # A name is matched at its edges and never as a substring: `tools` must not be found inside
-# `tools/validate.py`, nor `scrumia-practice` inside `scrumia-practice-tdd`. The boundary
+# `tools/validate.py`, nor `scrumia` inside `scrumia-tdd`. The boundary
 # class holds the identifier's own alphabet plus `/` and `.`, so a path counts as one token
 # and a backtick or a pipe counts as an edge.
 names_it() {
