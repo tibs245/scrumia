@@ -11,7 +11,7 @@ This skill addresses **one finding** — from `scrumia-solid-audit` or stated by
 
 A refactor without tests is a gamble. Check that the zone is covered:
 
-- If the TDD practice is plugged into the app (listed in the app's own `extends` in the config), its `scrumia-tdd-refactor` skill provides the method for getting under test — apply it first.
+- If `scrumia-tdd` is plugged into the app (listed in the app's own `extends` in the config), its `scrumia-tdd-refactor` skill provides the method for getting under test — apply it first.
 - Otherwise, write the minimum of characterization tests on the zone's observable behavior, and say explicitly that this is the only safety net.
 
 If no safety net is possible (code not runnable locally), stop and say why.
@@ -29,7 +29,7 @@ Each type of finding has its standard move. Announce it before starting:
 | D violated — domain imports the infra | The domain declares the contract, the infra implements it, injection at the entry point | [guides/05-dip.md](${CLAUDE_SKILL_DIR}/../scrumia-solid-principles/guides/05-dip.md) |
 | Over-application (any principle) — indirection without variation | **Inline.** Remove the single-implementer interface, unroll the delegation, bring it back home | the finding's guide, "Application limits" section; rationale: [D-01](${CLAUDE_SKILL_DIR}/../scrumia-solid-principles/decisions/D-01-over-application-audited-equally.md) |
 
-The last one counts as much as the others: knowing how to remove an abstraction is half the practice.
+The last one counts as much as the others: knowing how to remove an abstraction is half the job.
 
 ## Step 2 — In small steps
 

@@ -1,11 +1,11 @@
 ---
 name: scrumia-solid-principles
-description: The ScrumIA SOLID reference — the five principles, each with its limit of application, in OO and functional alike. Load it before writing or designing code in an app where the SOLID practice is plugged in.
+description: The ScrumIA SOLID reference — the five principles, each with its limit of application, in OO and functional alike. Load it before writing or designing code in an app where this module is plugged in.
 ---
 
 # Designing with SOLID — and knowing when to stop
 
-This practice refines one point of the implementation contract: **which design principles**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`. When an implementation module is plugged in, it situates these principles for its technology — and **specific beats generic**: if the implementation module restricts a principle, the module is right.
+This module refines one point of the implementation contract: **which design principles**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`. When an implementation module is plugged in, it situates these principles for its technology — and **specific beats generic**: if the implementation module restricts a principle, the module is right.
 
 ## The core contract
 
@@ -81,19 +81,24 @@ The five are independent lenses on the same code — none assumes another was re
 
 ## Settings
 
-Under `settings.practices.scrumia-practice-solid` in `.scrumia/config.yaml`:
+Under this module's own `params:` in `.scrumia/config.yaml`, beside the key of the app
+that lists it:
 
 ```yaml
-settings:
-  practices:
-    scrumia-practice-solid:
-      boundaries: []      # project-specific infrastructure boundaries where D applies
+apps:
+  - name: api
+    modules:
+      "tibs245/scrumia:scrumia-solid-principles":
+        params:
+          boundaries: []  # project-specific infrastructure boundaries where D applies
                           # e.g. ["stripe", "pdf-engine"] — added on top of the standard boundaries
 ```
 
+Read the effective value through `scrumia-extends --settings`, never out of the file — historically this sat under `settings.practices`, which the resolver still reconciles for the deprecation window.
+
 ## Project override
 
-If `.scrumia/practices/scrumia-practice-solid.md` exists, its content takes precedence over this skill.
+If `.scrumia/overrides/scrumia-solid-principles.md` exists, its content takes precedence over this skill.
 
 ## Per-app scoping
 

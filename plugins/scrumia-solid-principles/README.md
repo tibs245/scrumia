@@ -1,6 +1,6 @@
-# scrumia-practice-solid
+# scrumia-solid-principles
 
-The practices slot for the SOLID design principles — single responsibility through
+The SOLID design principles — single responsibility through
 dependency inversion — each stated with its own limit of application, not only its rule.
 Applies app by app, in object-oriented and functional code alike. (Design principles, not
 the SolidJS framework — see `scrumia-impl-solidjs` for that.)
@@ -31,17 +31,17 @@ equal footing, and a refactor skill that closes one finding at a time.
 
 ## Settings it reads
 
-Under `settings.practices.scrumia-practice-solid` in `.scrumia/config.yaml`:
+Under this module's own `params:` in `.scrumia/config.yaml`:
 `boundaries`, the project-specific infrastructure edges added to the standard ones
 (database, HTTP, filesystem, clock, randomness, third-party services) that Dependency
 Inversion applies to.
 
 ## What it expects to find
 
-An app that lists `scrumia-practice-solid` in its own `extends`. If `scrumia-practice-tdd`
+An app that lists `scrumia-solid-principles` in its own `extends`. If `scrumia-tdd`
 is also plugged in, `scrumia-solid-refactor` defers to its refactor skill for the safety
 net before touching code; otherwise it writes minimal characterization tests itself. An
-optional `.scrumia/practices/scrumia-practice-solid.md` records house exceptions without
+optional `.scrumia/overrides/scrumia-solid-principles.md` records house exceptions without
 forking the module.
 
 ## Decisions

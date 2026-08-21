@@ -14,7 +14,7 @@ The domain does not depend on the infrastructure; both depend on a contract the 
 
 ### Rule 2: Where it applies
 
-Applies at infrastructure boundaries — database, HTTP, file system, clock, randomness, third-party services — plus those the project declares in `settings.practices.scrumia-practice-solid.boundaries` (see [SKILL.md](../SKILL.md)).
+Applies at infrastructure boundaries — database, HTTP, file system, clock, randomness, third-party services — plus those the project declares in this module's own `params.boundaries` (see [SKILL.md](../SKILL.md)).
 
 Outside object orientation: D is done by injecting a function or a value, not necessarily an object.
 
