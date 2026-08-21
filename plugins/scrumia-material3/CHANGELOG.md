@@ -4,9 +4,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 ### Added
-- `extends.json`, `dependencies.jsonl` — the module contributes to `implement` and
-  `review` through the seven refusals below; no register is opened because no skill
-  ships its own `scrumia-extends` call.
+- `extends.json`, `dependencies.jsonl` — the module contributes to `implement`,
+  `review` and `audit` through the seven refusals below; no register is opened
+  because no skill ships its own `scrumia-extends` call.
 - `SKILL.md` — the entry point, restating the dissociation boundary with
   `scrumia-design` inline (BR-7 + AC-23).
 - `rules/compose-default.md`, `rules/views-explicit-choice.md` — Compose is the
@@ -24,7 +24,9 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `rules/contrast-ratios.md` — body text 4.5:1, large text 3:1, against WCAG 2.1.
 - `rules/content-description.md` — every icon-only control carries a
   `contentDescription` (TalkBack label).
-- `skills/material3-audit/SKILL.md` — the audit against the seven refusals above.
+- `skills/material3-audit/SKILL.md` — the audit against the seven refusals above;
+  registered in `implement`, `review` and `audit` so a reviewer or auditor sees
+  it beside the refusal entries.
 
 ### Changed
 - `README.md` — addressed to whoever is deciding whether to run this module: what

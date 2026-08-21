@@ -53,5 +53,10 @@
     { "name": "Icon-only control without contentDescription", "type": "refusal", "when": "required",
       "summary": "An `IconButton` without a TalkBack-readable label is refused",
       "read": "rules/content-description.md" }
+  ],
+  "audit": [
+    { "name": "Material 3 audit", "type": "method", "when": "optional",
+      "summary": "Measure an Android or Kotlin Multiplatform Mobile surface against the seven refusals above, finding by finding",
+      "read": "skills/material3-audit/SKILL.md" }
   ]
 }
