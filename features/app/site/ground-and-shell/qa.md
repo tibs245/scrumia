@@ -121,6 +121,28 @@ And CI fails the moment one does not — an unbalanced brace introduced in any o
   them is caught here, the only point that ever parses the file's syntax
 ```
 
+### AC-11 — The label register is named once and consumed by all five call sites
+
+```gherkin
+Given `design/components/label-register/spec.md` and `site/assets/style.css`
+When the stylesheet is read for the five declarations that compose the label
+  register — `font-family: var(--font-mono)`, `font-size: var(--text-xs)`,
+  `letter-spacing: var(--tracking-label)`, `text-transform: uppercase`,
+  `color: var(--text-faint)`
+Then the five appear together exactly once, inside the component whose CSS the
+  build mirrors, with a documented weight variant that carries `.shelf-label`'s
+  `--weight-medium`
+And the five call sites — `.slot-name`, `.presets-label`, `.ext-label`,
+  `.shelf-label`, `.key-entry-label` — consume the component's class rather
+  than restate any of the five
+```
+
+The component carries the require-ones and refuses the rest; what it refuses is
+written in `design/components/label-register/spec.md`. The five declarations
+appear together exactly once in `site/assets/style.css`; the call sites consume
+the class and add only contextual overrides (their own layout, the slot-scoped
+`--slot-name-color`).
+
 ## Out of scope
 
 - The hero, the slot index and the run — owned by `features/app/site/hero/`,
