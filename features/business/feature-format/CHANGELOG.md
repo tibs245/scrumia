@@ -6,7 +6,7 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 ## 2026-08-22 — Nesting depth is bounded by structure, not by a numeric limit
 - Issue: #456
 - Category: Changed
-- Breaking: no — no existing feature was nested past the previous one-level bound, and the change loosens a restriction rather than adds one; the structural tests still apply
+- Breaking: no — no existing feature was nested past the previous one-level bound, and the change loosens a restriction rather than adds one. The depth check is gone from `tools/validate.py`; a new `check_grouping_directories` enforces the "no grouping directory" rule at every depth so the structural tests still apply, including the case `features/business/<parent>/<empty>/<child>/` that the previous one-level bound caught only by accident.
 
 ## 2026-08-19 — The referential set gains `Cited by`, for the inverse-asymmetry case a consumer raises
 - Issue: #310

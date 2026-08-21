@@ -475,7 +475,9 @@ def check_feature_nesting() -> None:
     relationship is declared on both sides. The structural tests still apply at
     every level — every parent is a feature in its own right, and the Parent:
     link travels with the child. The symmetric declaration of structural links
-    is enforced separately in check_feature_links.
+    is enforced separately in check_feature_links. Grouping directories —
+    intermediate folders with children but no content of their own — are
+    enforced separately in check_grouping_directories.
     """
     features_root = ROOT / "features"
     for feature_dir in bfi.find_leaf_features(ROOT):
@@ -486,6 +488,36 @@ def check_feature_nesting() -> None:
         keys = {key for key, _ in _feature_links(feature_dir)}
         if "Parent" not in keys:
             error(f"{rel}/index.md: sits inside {parent.relative_to(features_root)} but declares no 'Parent:' link")
+
+
+def check_grouping_directories() -> None:
+    """No directory under features/ holds children without carrying content of its own.
+
+    A directory with at least one subdirectory but no `index.md` is a grouping
+    directory — the format refuses them at any depth. The recognized exceptions
+    are structural: the two strata (`features/business/`, `features/app/`) and
+    the app level (`features/app/<app>/`). The check complements
+    `check_feature_nesting`, which only sees directories that already carry an
+    `index.md`.
+    """
+    features_root = ROOT / "features"
+    for dirpath, dirnames, filenames in os.walk(features_root):
+        if not dirnames:
+            continue
+        if "index.md" in filenames:
+            continue
+        rel = Path(dirpath).relative_to(ROOT)
+        parts = rel.parts
+        # features/business/ and features/app/ are the two strata — exempt.
+        if len(parts) == 2 and parts[0] == "features" and parts[1] in {"business", "app"}:
+            continue
+        # features/app/<app>/ is the app level inside the app stratum — exempt.
+        if len(parts) == 3 and parts[0] == "features" and parts[1] == "app":
+            continue
+        error(
+            f"{rel}: grouping directory — holds children but carries no "
+            f"'index.md'; flatten it or make it a full feature"
+        )
 
 
 def check_feature_mandatory_files() -> None:
@@ -781,6 +813,7 @@ def main() -> int:
     check_feature_mandatory_files()
     check_feature_links()
     check_feature_nesting()
+    check_grouping_directories()
     check_no_tracker_refs()
     check_business_value_heading()
     check_qa_shape()
