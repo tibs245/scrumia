@@ -541,8 +541,13 @@
           <b>scrumia-kotlin-multiplatform-mobile</b><span>The Kotlin Multiplatform Mobile composition preset — six KMP-specific rule families and a single key that re-exports the satellites a KMP project runs.</span>
         </label>
         <label class="opt opt-add">
+<<<<<<< HEAD
           <input type="checkbox" name="c-add" value="scrumia-ktor">
           <b>scrumia-ktor</b><span>The library&#x27;s shape, stated as refusal rules — and the line that keeps HTTP status out of the application&#x27;s typed-error discipline.</span>
+=======
+          <input type="checkbox" name="c-add" value="scrumia-kotlin">
+          <b>scrumia-kotlin</b><span>The language the team agreed to, written down.</span>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
         </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
@@ -971,6 +976,7 @@ apps:
 
     <div class="mod">
       <div class="mod-head">
+<<<<<<< HEAD
         <span class="mod-ico">🛜</span>
         <span class="mod-id">
           <a class="mod-name" href="modules/scrumia-ktor.html">scrumia-ktor</a>
@@ -980,6 +986,17 @@ apps:
       <p class="mod-desc">HTTP server and client rules for a Ktor codebase — routing declared as a tree, content negotiation installed once, a long-lived HttpClient, named authentication providers, tests on the in-memory engine, configuration outside the code, and a stated choice between WebSockets and SSE. Nine rule families, an audit skill that measures a Ktor project against them.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
       <code class="mod-cmd">claude plugin install scrumia-ktor@scrumia</code>
+=======
+        <span class="mod-ico">🟣</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-kotlin.html">scrumia-kotlin</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Six rule families, a reference skill, and an audit skill that measures a Kotlin codebase against the six.</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">2 skills</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-kotlin@scrumia</code>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
     </div>
 
   </div>

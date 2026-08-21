@@ -541,8 +541,13 @@
           <b>scrumia-kotlin-multiplatform-mobile</b><span>Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques et une clé unique qui re-exporte les satellites qu&#x27;un projet KMP fait tourner.</span>
         </label>
         <label class="opt opt-add">
+<<<<<<< HEAD
           <input type="checkbox" name="c-add" value="scrumia-ktor">
           <b>scrumia-ktor</b><span>La forme de la bibliothèque, énoncée en règles de refus — et la ligne qui tient le statut HTTP hors de la discipline d&#x27;erreur typée de l&#x27;application.</span>
+=======
+          <input type="checkbox" name="c-add" value="scrumia-kotlin">
+          <b>scrumia-kotlin</b><span>Le langage sur lequel l&#x27;équipe s&#x27;est accordée, écrit noir sur blanc.</span>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
         </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
@@ -971,6 +976,7 @@ apps:
 
     <div class="mod">
       <div class="mod-head">
+<<<<<<< HEAD
         <span class="mod-ico">🛜</span>
         <span class="mod-id">
           <a class="mod-name" href="modules/scrumia-ktor.html">scrumia-ktor</a>
@@ -980,6 +986,17 @@ apps:
       <p class="mod-desc">Les règles de serveur et client HTTP pour un code base Ktor — routage déclaré comme arbre, content negotiation installé une fois, un HttpClient longue durée, fournisseurs d'authentification nommés, tests sur le moteur en mémoire, configuration hors du code, et choix énoncé entre WebSockets et SSE. Neuf familles de règles, une compétence d'audit qui mesure un projet Ktor contre elles.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">claude plugin install scrumia-ktor@scrumia</code>
+=======
+        <span class="mod-ico">🟣</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-kotlin.html">scrumia-kotlin</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Les règles de langage Kotlin idiomatique — val/var, null-safety et platform types, coroutines et Flow, classes data/sealed/value, object vs companion vs top-level, et visibilité. Six familles de règles, une compétence de référence, et une compétence d'audit qui mesure un code base Kotlin contre les six.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">2 compétences</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-kotlin@scrumia</code>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
     </div>
 
   </div>
