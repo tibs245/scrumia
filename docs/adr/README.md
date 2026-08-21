@@ -29,6 +29,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0021](0021-modules-keyed-by-source.md) | `modules` keyed by source, with a settings cascade | accepted — its `<owner>/<repo>` source-row clause superseded by [0023](0023-source-key-comes-from-the-manifest.md) |
 | [0022](0022-a-skill-carries-the-doc-it-needs.md) | A skill carries the doc it needs, and `docs/` points inward | accepted — amends [0018](0018-modules-reach-by-name.md) |
 | [0023](0023-source-key-comes-from-the-manifest.md) | A module's `<owner>/<repo>` source is its manifest's claim, not the marketplace | accepted |
+| [0024](0024-no-category-of-module.md) | There is no category of module, and no vocabulary naming one | accepted — completes [0019](0019-extends-replaces-composition-and-practices.md) |
 
 ## Scope of the decisions
 
@@ -41,7 +42,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The `specs` module** | 0003 (cross-cutting architecture), 0004 (splitting) |
 | **The `tracker` module** | 0008 (state outside the repo), 0013 (one slot, for now) |
 | **The `design` module** | 0014 (a role ships with its capability) |
-| **The `implementation` slot, plus `scrumia-core`** | 0011 (rules hierarchy — its `practices` citations point to 0019 pending a housekeeping pass) |
+| **The `implementation` slot, plus `scrumia-core`** | 0011 (rules hierarchy — it argues in the vocabulary of its date; 0024 retired that word without rewriting the record) |
 | **The `specs` module, plus its consumers (`tracker`, `discovery`, `team`) and `scrumia-core`** | 0016 (specs contract, superseding 0012) |
 | **The project** — every module it ships, and every project consuming one | 0017 (what a version bump promises, and the commit signal) |
 | **The project** — every module it ships | 0018 (a module reaches another by name, refining 0009) |

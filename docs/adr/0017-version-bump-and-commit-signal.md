@@ -88,7 +88,7 @@ The scope is **one token**, from one of four namespaces:
 
 | Namespace | Token | Example |
 |---|---|---|
-| a module | its plugin name with `scrumia-` dropped | `core`, `teams`, `specs`, `github-project`, `design`, `discovery`, `rules`, `impl-rust`, `impl-solidjs`, `practice-tdd`, `practice-solid`, `practice-tanstack-query` |
+| a module | its plugin name with `scrumia-` dropped | `core`, `teams`, `specs`, `github-project`, `design`, `discovery`, `rules`, `impl-rust`, `impl-solidjs`, `tdd`, `solid-principles`, `tanstack-query` |
 | an app | its name in `apps[]` of `.scrumia/config.yaml` | `site`, `tools` |
 | a feature | the name of the directory holding its `index.md` | `dev-flow`, `github-tracking`, `release-versioning` |
 | everything else | the literal `repo` | `CLAUDE.md`, `.github/`, root `docs/`, root `design/`, the marketplace manifest |
