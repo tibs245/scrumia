@@ -47,6 +47,23 @@ Then the row opens, a visible focus ring is drawn around the summary in both
   rows
 ```
 
+### AC-5 — The slot-index intro names the rule, not the count
+
+```gherkin
+Given `site/i18n/{en,fr}/index.json`, key `slots_intro`
+When the sentence is read alongside the seven slot cards it introduces
+Then it states what a slot *is* and what an empty slot *means*
+  (a slot is a question; a module is one answer; empty on purpose
+  is a real answer), without asserting how many slots are
+  currently empty
+And the day a slot is filled, the sentence is still true —
+  it does not become false in the other direction
+And the "nothing is faked in their place" / "rien n'y est simulé"
+  clause is kept verbatim: that clause is structural, it is the
+  honest half of the argument `design/identity.md` calls the
+  corollary the site must make legible
+```
+
 ## Out of scope
 
 - What the seven slots are, and their questions — owned by
