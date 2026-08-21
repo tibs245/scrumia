@@ -6,8 +6,8 @@ controls are for. It is the register that sits next to a "Start from" row, an
 inside a slot accordion — the typographic move that says *this is a label of
 something, not a value of its own*.
 
-Five declarations compose it, and they appear together exactly once, in
-`site/assets/style.css` under `.label-register`:
+Five declarations compose it, and they appear together exactly once among the
+five named call sites below, in `site/assets/style.css` under `.label-register`.
 
 | Declaration | Token |
 |---|---|
@@ -76,6 +76,24 @@ the faint colour that says it does not need to be read first.
   visual cue. `.key-entry-label` is the one exception, and even there it sits
   outside the input — the input's own label is the `<label>` element, and the
   register class on it is purely typographic.
+
+## Look-alikes that share the typography by design
+
+Three rules in `site/assets/style.css` carry all five declarations alongside
+their own additions. They are not call sites of the label register — they are
+parallel moves that happen to share the typography, and folding them into
+`.label-register` would either lose their additions or grow the component past
+its job.
+
+| Rule | Where | Why it carries all five by design |
+|---|---|---|
+| `.page-head .kicker` | `page-head` component | the page-head's lead mark, preceded by an accent dash via `::before` — the dash is the move, the register is the substrate |
+| `.count span` | count tile | a stat-tile caption that goes mono so the row reads as one unit |
+| `th` | table header | strong-weight column header; weight is the only difference from the register and the component's only weight variant is *medium* (pulling an `<h3>` down) |
+
+A reader who finds any of these via `grep` on the five declarations should
+view the table and not the count: three deliberate parallels, not a missed
+migration.
 
 ## What it refuses
 
