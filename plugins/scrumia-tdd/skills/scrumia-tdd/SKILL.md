@@ -1,20 +1,20 @@
 ---
 name: scrumia-tdd
-description: The ScrumIA TDD reference — the red-green-refactor cycle operationalized for an agent, the mock boundary, the acceptance criterion → test link. Load it before writing code in an app where the TDD practice is plugged in.
+description: The ScrumIA TDD reference — the red-green-refactor cycle operationalized for an agent, the mock boundary, the acceptance criterion → test link. Load it before writing code in an app where this module is plugged in.
 ---
 
 # Coding in TDD
 
 **Not one line of production code without a red test that justifies it.**
 
-This practice refines one point of the implementation contract: **how we test**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module. When an implementation module is plugged in, it situates this practice for its stack — its tooling takes precedence over the generic examples here.
+This module refines one point of the implementation contract: **how we test**. It applies to apps that list it in their own `extends` in `.scrumia/config.yaml`, with or without an implementation module. When an implementation module is plugged in, it situates this module for its stack — its tooling takes precedence over the generic examples here.
 
 ## The contract
 
 - Red, green, refactor, repeat — never skip running the red, it is the only step that cannot be faked → [guides/01-the-cycle.md](guides/01-the-cycle.md), founding rule in [D-01](decisions/D-01-no-code-without-red-test.md), agent-specific rationale in [D-02](decisions/D-02-agent-bias.md)
 - We simulate what we don't own; we never simulate our own modules → [guides/02-mock-boundary.md](guides/02-mock-boundary.md)
 - Every acceptance criterion in scope becomes at least one test, link kept visible → [guides/03-ac-mapping.md](guides/03-ac-mapping.md)
-- The practice stops at the spike, at declarative configuration, at visual styling — declared the moment the exception is taken, never after → [guides/04-where-tdd-stops.md](guides/04-where-tdd-stops.md)
+- It stops at the spike, at declarative configuration, at visual styling — declared the moment the exception is taken, never after → [guides/04-where-tdd-stops.md](guides/04-where-tdd-stops.md)
 - Seven test patterns that pass the suite and protect nothing → [guides/05-useless-tests-catalog.md](guides/05-useless-tests-catalog.md)
 
 ## Guides
@@ -65,7 +65,7 @@ This practice refines one point of the implementation contract: **how we test**.
 
 ## Project override
 
-If `.scrumia/practices/scrumia-practice-tdd.md` exists, its content takes precedence over this skill. A project records its house exceptions there without forking the module.
+If `.scrumia/overrides/scrumia-tdd.md` exists, its content takes precedence over this skill. A project records its house exceptions there without forking the module.
 
 ## The module's two other skills
 
@@ -74,4 +74,4 @@ If `.scrumia/practices/scrumia-practice-tdd.md` exists, its content takes preced
 
 ## Scoping
 
-This module applies to the apps that list `scrumia-practice-tdd` in their own `extends` in `.scrumia/config.yaml` — TDD scoping is by app, not by file pattern. Within an app, [`section.json`](section.json) globs (`**/*` by default) pick which files the guides apply to; the only per-path carve-out is `exempt_paths` under `settings.practices.scrumia-practice-tdd` (see [guides/03-ac-mapping.md](guides/03-ac-mapping.md)), honored before any guide in this module applies.
+This module applies to the apps that list `scrumia-tdd` in their own `extends` in `.scrumia/config.yaml` — TDD scoping is by app, not by file pattern. Within an app, [`section.json`](section.json) globs (`**/*` by default) pick which files the guides apply to; the only per-path carve-out is `exempt_paths` under this module's own `params:` (see [guides/03-ac-mapping.md](guides/03-ac-mapping.md)), honored before any guide in this module applies.

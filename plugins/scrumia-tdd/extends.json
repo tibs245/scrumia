@@ -13,7 +13,7 @@
       "summary": "What is faked and what is not — the line that keeps a test about behaviour",
       "read": "skills/scrumia-tdd/guides/02-mock-boundary.md" },
     { "name": "Where TDD stops", "type": "norm", "when": "required",
-      "summary": "The work this practice explicitly does not govern — stated so it is not inferred",
+      "summary": "The work this module explicitly does not govern — stated so it is not inferred",
       "read": "skills/scrumia-tdd/guides/04-where-tdd-stops.md" },
     { "name": "Agent bias", "type": "reference", "when": "optional",
       "summary": "Why an agent drifts out of the cycle, and the shape of the drift",

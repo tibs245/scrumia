@@ -1,6 +1,6 @@
-# scrumia-practice-tdd
+# scrumia-tdd
 
-The practices slot for test-driven development, operationalized for an agent rather than
+Test-driven development, operationalized for an agent rather than
 assumed as a habit: the red-green-refactor cycle, the mock boundary, and the link from an
 acceptance criterion to the test that proves it. Applies app by app, with or without an
 implementation module.
@@ -32,14 +32,14 @@ red test is the defect this module exists to catch.
 
 ## Settings it reads
 
-Under `settings.practices.scrumia-practice-tdd` in `.scrumia/config.yaml`: `ac_mapping`
+Under this module's own `params:` in `.scrumia/config.yaml`: `ac_mapping`
 (`strict`, enforced at commit, or `loose`, checked at PR) and `exempt_paths`.
 
 ## What it expects to find
 
-An app that lists `scrumia-practice-tdd` in its own `extends`. A specs module writing
+An app that lists `scrumia-tdd` in its own `extends`. A specs module writing
 `AC-n` criteria sharpens the AC-mapping guide; without one, it draws invariants from the
-raw request instead. An optional `.scrumia/practices/scrumia-practice-tdd.md` records
+raw request instead. An optional `.scrumia/overrides/scrumia-tdd.md` records
 house exceptions without forking the module.
 
 ## Decisions

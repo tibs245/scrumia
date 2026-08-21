@@ -6,7 +6,7 @@
 
 ## Context
 
-The practice needs one rule everything else can be derived from — the cycle's four steps, the mock boundary, the AC mapping — rather than a list of independent rules an agent has to remember and reconcile on its own. The question is what that single rule should be, and specifically whether it must be *red-first* rather than, say, "every line of code has a test" with no ordering constraint.
+The module needs one rule everything else can be derived from — the cycle's four steps, the mock boundary, the AC mapping — rather than a list of independent rules an agent has to remember and reconcile on its own. The question is what that single rule should be, and specifically whether it must be *red-first* rather than, say, "every line of code has a test" with no ordering constraint.
 
 ## Arguments For
 
@@ -22,4 +22,4 @@ The practice needs one rule everything else can be derived from — the cycle's 
 
 ## Verdict
 
-Adopted without exception inside the apps and paths where this practice is plugged in. The legitimate exits are enumerated, not implicit — see [guides/04-where-tdd-stops.md](../guides/04-where-tdd-stops.md) and `exempt_paths` in [guides/03-ac-mapping.md](../guides/03-ac-mapping.md) — so "no time for a red test" is never a silent escape hatch; it is either a declared exemption or a rule violation, never something in between.
+Adopted without exception inside the apps and paths where this module is plugged in. The legitimate exits are enumerated, not implicit — see [guides/04-where-tdd-stops.md](../guides/04-where-tdd-stops.md) and `exempt_paths` in [guides/03-ac-mapping.md](../guides/03-ac-mapping.md) — so "no time for a red test" is never a silent escape hatch; it is either a declared exemption or a rule violation, never something in between.

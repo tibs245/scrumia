@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-None — this is the foundation of the whole practice. Every other guide in this module assumes the cycle described here.
+None — this is the foundation of the whole module. Every other guide in this module assumes the cycle described here.
 
 ## Rules
 

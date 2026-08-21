@@ -22,14 +22,19 @@ Zero, boundary, duplicate, concurrency, cancellation, expiration, insufficient p
 
 ## Settings
 
-Under `settings.practices.scrumia-practice-tdd` in `.scrumia/config.yaml`:
+Under this module's own `params:` in `.scrumia/config.yaml`, beside the key of the app
+that lists it:
 
 ```yaml
-settings:
-  practices:
-    scrumia-practice-tdd:
-      ac_mapping: strict        # strict: every AC-n cited by a test; loose: correspondence checked at PR
-      exempt_paths: []          # paths declared outside TDD (prototypes, generated/)
+apps:
+  - name: api
+    modules:
+      "tibs245/scrumia:scrumia-tdd":
+        params:
+          ac_mapping: strict    # strict: every AC-n cited by a test; loose: correspondence checked at PR
+          exempt_paths: []      # paths declared outside TDD (prototypes, generated/)
 ```
+
+Read the effective value through `scrumia-extends --settings`, never out of the file — historically this sat under `settings.practices`, which the resolver still reconciles for the deprecation window.
 
 `ac_mapping: strict` enforces Rule 1 at commit time — no `AC-n` without a citing test. `ac_mapping: loose` defers the check to PR review, for projects that iterate faster than they can keep the citation current. `exempt_paths` names the paths carved out of this guide and of [04-where-tdd-stops](04-where-tdd-stops.md) — prefer a declared exemption there over a silent one here.

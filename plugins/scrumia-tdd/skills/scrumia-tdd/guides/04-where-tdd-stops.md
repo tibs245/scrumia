@@ -1,6 +1,6 @@
 # Where TDD Does Not Apply
 
-> A practice without limits becomes a reflex. This one stops at three legitimate exits.
+> A rule without limits becomes a reflex. This one stops at three legitimate exits.
 
 ## Prerequisites
 

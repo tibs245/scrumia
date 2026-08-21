@@ -21,4 +21,4 @@ An agent has a known bias: generating the implementation and the tests in one bl
 
 ## Verdict
 
-The cycle in [guides/01-the-cycle.md](../guides/01-the-cycle.md) is written as an explicit, checkable sequence — red, run it, verify why it fails; green, minimum; refactor — specifically because "do TDD" as a general instruction regresses to test-after under an agent's default behavior. The cost (ceremony, imperfect enforceability) is accepted because the alternative is a practice that looks followed and isn't.
+The cycle in [guides/01-the-cycle.md](../guides/01-the-cycle.md) is written as an explicit, checkable sequence — red, run it, verify why it fails; green, minimum; refactor — specifically because "do TDD" as a general instruction regresses to test-after under an agent's default behavior. The cost (ceremony, imperfect enforceability) is accepted because the alternative is a rule that looks followed and isn't.
