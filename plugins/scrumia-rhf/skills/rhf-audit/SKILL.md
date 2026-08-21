@@ -117,7 +117,7 @@ if that is the stack.
 The findings are tickets. Each blocking finding names the rule, the
 file, the line, and the remedy. A team that adopts the plugin
 records the audit's `genuinely-controlled` exemptions in a project
-override (`.scrumia/impl/scrumia-rhf.md`) — an exempted gap is not
+override (`.scrumia/overrides/scrumia-rhf.md`) — an exempted gap is not
 a finding on the next pass.
 
 Rewrite nothing without agreement.

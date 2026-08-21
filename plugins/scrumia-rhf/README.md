@@ -39,7 +39,7 @@ Each is a `rules/<name>.md` file, citing
 None. The plugin is dependency-free and reads no configuration. A
 project that needs an exemption (a genuinely-controlled input the
 audit cannot prove is justified) records it in
-`.scrumia/impl/scrumia-rhf.md`, and the audit honours the exemption on
+`.scrumia/overrides/scrumia-rhf.md`, and the audit honours the exemption on
 its next pass.
 
 ## What it expects to find
