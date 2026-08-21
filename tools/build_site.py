@@ -36,7 +36,9 @@ TPL = SITE / "templates"
 I18N = SITE / "i18n"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 MODULES_DATA = SITE / "modules.json"
-PLUGINS_DIR = ROOT / "plugins"
+# Real repo's plugins/, bound once — `extends_map_specials` reads it so the
+# home page's figure still tracks the live composition under a fixture ROOT (#361).
+REAL_PLUGINS_DIR = ROOT / "plugins"
 SCRUMIA_CONFIG = ROOT / ".scrumia" / "config.yaml"
 TOKENS_SRC = ROOT / "design" / "tokens.css"
 TOKENS_OUT = SITE / "assets" / "tokens.css"
@@ -410,16 +412,23 @@ def read_json_object(path: Path) -> dict:
     return data
 
 
-def load_extends_map(module_names, plugins_root: Path = PLUGINS_DIR) -> dict:
+def load_extends_map(module_names, plugins_root: Path | None = None) -> dict:
     """The registers `module_names` open and extend, walked directly from
     `plugins/*/registers.json` and `extends.json` rather than shelled out to
     `scrumia-extends`: a build has no guarantee of a PATH carrying every module's
     `bin/`, which is a harness feature (ADR-0018), not a build-time one.
 
+    The default tracks `ROOT` at call time — the same pattern `skill_names`
+    uses — so a test that reassigns `ROOT` to a fixture tree reads the fixture,
+    not the value the module saw at import (#361, AC-14). Callers that need the
+    real repo regardless of fixture context pass `REAL_PLUGINS_DIR` explicitly.
+
     `module_names` decides the scope: the project's own composition for the home
     page's #extends figure, every marketplace plugin for a module page's AC-12 —
     reading the former for the latter would leave the seven modules this project
     doesn't run showing no connection while their own files declare one (#297)."""
+    if plugins_root is None:
+        plugins_root = ROOT / "plugins"
     registers: dict[str, dict] = {}
     directives: dict[str, list[dict]] = {}
     for name in module_names:
@@ -447,8 +456,12 @@ def extends_map_specials() -> dict[str, str]:
     empty one. Both are re-verified against the live composition on every build —
     AC-2 (nothing invented) and AC-3 (the empty case is genuine) are guarded by the
     same check that produces the copy, so a composition drift fails the build
-    instead of shipping a figure that is quietly no longer true."""
-    data = load_extends_map(load_project_modules())
+    instead of shipping a figure that is quietly no longer true.
+
+    The map is read from `REAL_PLUGINS_DIR` rather than the default root: the
+    figure tracks the live composition even when a build is driven against a
+    fixture that reassigns `ROOT` (#361, AC-14)."""
+    data = load_extends_map(load_project_modules(), plugins_root=REAL_PLUGINS_DIR)
     regs, dirs = data["registers"], data["directives"]
 
     def pick(reg: str, want_empty: bool):

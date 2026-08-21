@@ -492,6 +492,65 @@ def test_composer_additions_are_derived_from_the_slot() -> None:
     shutil.rmtree(tmp)
 
 
+# --- AC-14 -------------------------------------------------------------------
+
+
+def test_ac14_default_root_tracks_root_and_real_repo_is_named() -> None:
+    print("AC-14 load_extends_map's default root tracks ROOT, and the real-repo read is named")
+
+    check("REAL_PLUGINS_DIR names the real repo's plugins",
+          bs.REAL_PLUGINS_DIR == (REPO / "plugins"))
+
+    tmp = Path(tempfile.mkdtemp())
+    (tmp / "plugins" / "x").mkdir(parents=True)
+    (tmp / "plugins" / "y").mkdir(parents=True)
+    (tmp / "plugins" / "x" / "registers.json").write_text(
+        json.dumps({"fixture-only": {"skill": "fs"}}), encoding="utf-8")
+    (tmp / "plugins" / "y" / "extends.json").write_text(
+        json.dumps({"fixture-only": [{"name": "n", "summary": "s"}]}), encoding="utf-8")
+    bs.ROOT = tmp
+    try:
+        result = bs.load_extends_map(["x", "y"])
+    finally:
+        bs.ROOT = REPO
+    check("a default call resolves against the current ROOT, not the import-time bind",
+          "fixture-only" in result["registers"]
+          and result["directives"]["fixture-only"][0]["module"] == "y", str(result))
+    shutil.rmtree(tmp)
+
+    fixture_root = Path(tempfile.mkdtemp())
+    bs.ROOT = fixture_root
+    saved_errors = list(bs.ERRORS)
+    bs.ERRORS.clear()
+    try:
+        result = bs.extends_map_specials()
+    finally:
+        bs.ROOT = REPO
+        bs.ERRORS.clear()
+        bs.ERRORS.extend(saved_errors)
+    check("extends_map_specials() reads the real repo under a fixture ROOT",
+          result.get("@ext_full_register") == "implement"
+          and result.get("@ext_full_module") == "scrumia-github-project"
+          and len(result.get("@ext_full_contributors", "")) > 0, str(result))
+    shutil.rmtree(fixture_root)
+
+    tmp = Path(tempfile.mkdtemp())
+    make_fixture(tmp, extra={"alpha": {"emoji": "🅰"}, "beta": {"emoji": "🅱"}})
+    (tmp / "plugins" / "alpha" / "registers.json").write_text(
+        json.dumps({"fixture-only": {"skill": "fs"}}), encoding="utf-8")
+    (tmp / "plugins" / "beta" / "extends.json").write_text(
+        json.dumps({"fixture-only": [{"name": "n", "summary": "s"}]}), encoding="utf-8")
+    code, errors = run_fixture(tmp)
+    check("a single fixture build exercises both call paths and passes",
+          code == 0, str(errors))
+    page = (tmp / "site" / "modules" / "alpha.html").read_text(encoding="utf-8")
+    check("AC-12's call reads the fixture — alpha's page names beta on `fixture-only`",
+          "fixture-only" in page and '<a href="../modules/beta.html">' in page, page)
+    check("AC-12's call does not leak the real repo's register names",
+          ">implement<" not in page and ">sprint<" not in page, page)
+    shutil.rmtree(tmp)
+
+
 def main() -> int:
     for test in (test_ac1_one_page_per_plugin_per_language, test_ac2_guards,
                  test_ac3_one_file_owns_the_emoji, test_ac4_sitemap,
@@ -502,6 +561,7 @@ def main() -> int:
                  test_ac11_reference_link_is_generated_not_hand_written,
                  test_ac12_module_page_shows_what_it_plugs_into,
                  test_ac13_module_page_shows_what_it_goes_well_with,
+                 test_ac14_default_root_tracks_root_and_real_repo_is_named,
                  test_composer_additions_are_derived_from_the_slot):
         test()
     print()
