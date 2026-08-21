@@ -3,6 +3,13 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- `scrumia-extends --claims` — walks the root `CLAUDE.md` and every `apps[].path/CLAUDE.md`
+  that exists, reconciling each declaration against the file of its own scope. The verdict
+  on an app stub's claim no longer fails the run: the app owns its declarations. A
+  declaration no scope file mentions is now `not claimed` and exits non-zero, where it
+  passed silently before — the claim the composition made that no file carried.
+
 ### Added
 - `scrumia-author` — a pass writes a rule a skill applies into the module rather than
   citing it, and names which of the two legitimate reasons an outward reference is. The

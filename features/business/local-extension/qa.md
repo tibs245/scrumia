@@ -144,6 +144,29 @@ declaration resolved to — not the prose around it, which is the human's.
 This is the criterion the shared-checkout location is most likely to fail. It is stated
 so that choosing that location is a decision with a known cost rather than a convenience.
 
+### AC-14 — A per-app `CLAUDE.md` stub is reconciled against its own scope
+
+```gherkin
+Given a project whose root `CLAUDE.md` declares nothing about a module, but whose
+  `apps[].path/CLAUDE.md` for one app declares `shared:acme-web` and lists the
+  app's `modules:` mapping under that key
+When `scrumia-extends --claims` runs at the project root
+Then it reconciles the app's stub against the app's own scope, the app's declaration
+  is reported `claimed` against the app's file, and the exit code is 0 for that
+  module
+And a module declared at the root file is reconciled against the root file
+And a module declared in neither file is reported `not claimed` and exits non-zero
+```
+
+The surface is the same `scrumia-extends --claims` as AC-7. With no file named, it walks
+the root `CLAUDE.md` and every `apps[].path/CLAUDE.md` that exists, reconciling each
+declaration against the file of its own scope — the root file for project-wide
+declarations, the app's stub for that app's. A file a caller names is still read on its
+own, the way it was: backward compatibility with the surface AC-7 stated, and a way to
+audit one file in isolation. The stub is a claim `scrumia-init` wrote, so the
+reconciliation covers it the same way it covers the root file: the tool that wrote the
+claim is the one that reconciles it.
+
 ## Boundary
 
 ### AC-8 — Local material without a module is not a malformed module
