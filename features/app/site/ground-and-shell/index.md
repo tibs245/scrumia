@@ -17,6 +17,9 @@ footer, skip link, theme toggle, arrival gate.
   - `design/tokens.css` — the vocabulary; owns "a theme is a token redefinition",
     "the sky is scenery, not an actor", and the ground's two-wash light
   - `design/components/site-header/spec.md` — what the top bar does, rail included
+  - `design/components/label-register/spec.md` — the mono, uppercase, faint
+    register that names what the nearby controls are for; its five call sites
+    consume it rather than restate it
   - `design/explorations/orbit.html` — the direction adopted during the redesign
   - `tools/check_contrast.py` — the runnable form of `qa.md` AC-6; lives at the
     repo root, outside this feature
