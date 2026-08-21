@@ -753,13 +753,13 @@ def test_ac7_what_claude_md_claims_survives_a_clone() -> None:
 
     claude.write_text("## ScrumIA composition\n\nNothing to say.\n", encoding="utf-8")
     code, out, _ = run(["--claims"], config)
-    check("a file that claims nothing about it passes too",
-          code == 0 and "not claimed" in out, f"exit {code}: {out[:300]}")
+    check("a file that mentions none of its declarations fails, naming each one (AC-14)",
+          code != 0 and "not claimed" in out, f"exit {code}: {out[:300]}")
 
     claude.unlink()
     code, _, err = run(["--claims"], config)
-    check("and a project with no such file has nothing to reconcile",
-          code == 0 and "nothing to reconcile" in err, f"exit {code}: {err.strip()}")
+    check("and a project whose CLAUDE.md went away fails on its unclaimed declarations",
+          code != 0 and "does not exist" in err, f"exit {code}: {err.strip()}")
     shutil.rmtree(project)
 
     # A key the grammar refuses names no module to look for, and looking for nothing finds
@@ -781,8 +781,8 @@ modules:
 def test_claims_matches_a_name_at_its_edges_and_only_where_reach_is_at_stake() -> None:
     print("AC-7 — what counts as naming a module, and which absence the file is answerable for")
 
-    # A name found inside a path or inside a longer name is not a claim, and accusing a
-    # correct file of one would have the tool talk a project into writing the real thing.
+    # A name found inside a path or inside a longer name is not a claim; the keyed
+    # forms below are, and the assertion checks only the keyed ones match.
     project = project_with("""
 project: { name: "Edges" }
 modules:
@@ -793,12 +793,14 @@ modules:
     (project / "CLAUDE.md").write_text(
         "Run `python3 tools/validate.py` before pushing.\n"
         "| `acme-lint` | Lints. |\n"
-        "| `scrumia-practice-tdd` | Tests first. |\n", encoding="utf-8")
+        "| `scrumia-practice-tdd` | Tests first. |\n"
+        "We use `shared:tools`, `shared:acme`, and `shared:scrumia-practice` here.\n",
+        encoding="utf-8")
     code, out, _ = run(["--claims"], project / ".scrumia" / "config.yaml")
     check("a name inside a path is not a claim about the module of that name",
           code == 0, f"exit {code}: {out[:400]}")
-    check("nor is one inside a longer module name",
-          out.count("not claimed") == 3, out[:400])
+    check("nor is one inside a longer module name — only the keyed form is",
+          out.count("named as absent") == 3, out[:400])
     shutil.rmtree(project)
 
     # BR-8's subject: the location a clone cannot reach. A marketplace module nobody
@@ -856,17 +858,13 @@ modules:
               code == 0 and "| unsourced |" in out, f"exit {code}: {out[:400]}")
         shutil.rmtree(project)
 
-    # A shadow binds, so it makes the module present for a stale key beside it. The two
-    # shapes have to differ, or both declarations shadow and neither exercises the carve-out.
+    # The carve-out: `local:` next to `shared:`, where the local resolves and the
+    # shared does not — what makes the second verdict `reachable`, not `claimed`.
     project = project_with("""
 project: { name: "Shadowed and stale" }
-extends:
-  - scrumia-practice-tdd
-apps:
-  - name: "web"
-    path: "apps/web"
-    modules:
-      "shared:scrumia-practice-tdd": {}
+modules:
+  "local:scrumia-practice-tdd": {}
+  "shared:scrumia-practice-tdd": {}
 """)
     make_module(project / ".scrumia" / "modules" / "scrumia-practice-tdd",
                 "scrumia-practice-tdd")
@@ -987,6 +985,83 @@ apps:
     shutil.rmtree(project)
 
 
+def test_ac14_per_app_stub_is_reconciled_against_its_own_scope() -> None:
+    print("AC-14 — --claims walks per-app stubs alongside the root file, reconciling per scope")
+
+    # The recommended shape: app stub names its own declaration bare, so the verdict is
+    # `claimed` — but the scope is the app's stub, so the run does not fail on it.
+    project = project_with("""
+project: { name: "App claims" }
+modules: {}
+apps:
+  - name: "site"
+    path: "apps/site"
+    modules:
+      "shared:acme-web": {}
+""")
+    (project / "apps" / "site").mkdir(parents=True)
+    (project / "apps" / "site" / "CLAUDE.md").write_text(
+        "## The site app\n\n| `acme-web` | Web bits. |\n", encoding="utf-8")
+    code, out, err = run(["--claims"], project / ".scrumia" / "config.yaml")
+    app_section = [line for line in out.splitlines()
+                   if line.startswith("# claims") and "site" in line]
+    app_rows = [line for line in out.splitlines() if line.startswith("| `")]
+    check("an app stub is reconciled against the app's own scope",
+          len(app_section) == 1 and "scope: site" in app_section[0],
+          f"exit {code}: {out[:400]}")
+    check("the verdict on the app stub's claim is `claimed`",
+          len(app_rows) == 1 and app_rows[0].endswith("| claimed |"),
+          f"exit {code}: {out[:400]}")
+    check("and the stub's verdict does not fail the run",
+          code == 0, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
+
+    # A module declared in the root config and mentioned nowhere: `not claimed`, fails.
+    project = project_with("""
+project: { name: "Unclaimed" }
+modules:
+  "shared:acme-web": {}
+""")
+    (project / "CLAUDE.md").write_text("Nothing to say.\n", encoding="utf-8")
+    code, out, err = run(["--claims"], project / ".scrumia" / "config.yaml")
+    check("a declaration the root file does not mention is `not claimed`",
+          "not claimed" in out and "`shared:acme-web`" in out, f"exit {code}: {out[:400]}")
+    check("and the run exits non-zero on it",
+          code != 0, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
+
+    # Both scopes in one run: the root claim fails (root scope, `claimed`), the app stub
+    # does not — the failure names the root file, not the app's path.
+    project = project_with("""
+project: { name: "Both" }
+modules:
+  "shared:acme-root": {}
+apps:
+  - name: "site"
+    path: "apps/site"
+    modules:
+      "shared:acme-app": {}
+""")
+    (project / "CLAUDE.md").write_text("| `acme-root` | Root. |\n", encoding="utf-8")
+    (project / "apps" / "site").mkdir(parents=True)
+    (project / "apps" / "site" / "CLAUDE.md").write_text(
+        "| `acme-app` | App. |\n", encoding="utf-8")
+    code, out, err = run(["--claims"], project / ".scrumia" / "config.yaml")
+    root_rows = [line for line in out.splitlines()
+                 if line.startswith("| `shared:acme-root`")]
+    app_rows = [line for line in out.splitlines()
+                if line.startswith("| `shared:acme-app`")]
+    check("the root file's claim is held against the root scope",
+          len(root_rows) == 1 and root_rows[0].endswith("| claimed |"),
+          f"exit {code}: {out[:400]}")
+    check("the app stub's claim is held against the app's scope",
+          len(app_rows) == 1 and app_rows[0].endswith("| claimed |"),
+          f"exit {code}: {out[:400]}")
+    check("and the app stub's verdict is not what makes the run fail",
+          code != 0 and "apps/site/CLAUDE.md" not in err, f"exit {code}: {err.strip()}")
+    shutil.rmtree(project)
+
+
 def test_ac8_local_material_without_a_module_is_not_a_malformed_module() -> None:
     print("AC-8 — directives and a rules section are a correct extension, not a broken module")
 
@@ -1059,6 +1134,7 @@ def main() -> int:
     test_claims_matches_a_name_at_its_edges_and_only_where_reach_is_at_stake()
     test_claims_answers_for_a_shadow_a_conflict_and_a_named_file()
     test_claims_refuses_to_answer_when_it_could_not_read()
+    test_ac14_per_app_stub_is_reconciled_against_its_own_scope()
     test_ac8_local_material_without_a_module_is_not_a_malformed_module()
     print(f"\n{len(FAILURES)} failure(s)")
     return 1 if FAILURES else 0

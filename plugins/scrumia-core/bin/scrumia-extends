@@ -72,12 +72,16 @@ is a conflict, named with both and bound to neither; --check exits non-zero on i
 bare name from the retired list can be answered in more than one place at once: there the
 narrowest wins and says so, so promoting a module never disables it.
 
---claims reconciles what a file says about the composition against those states, so that
-a capability reachable only from one machine is not asserted to a reader who cloned
-without it. It reads one file, and exits non-zero on one case only: the file names, by its
-bare name, a `shared:` module that does not resolve here and nothing else binds. Absent
-from a marketplace or from inside the project, the module is what is missing rather than
-the sentence; naming the declaration key states the source and settles it either way.
+--claims reconciles what each scope's `CLAUDE.md` says about the composition against those
+states, so that a capability reachable only from one machine is not asserted to a reader
+who cloned without it. With no file named it walks the root `CLAUDE.md` and every
+`apps[].path/CLAUDE.md` that exists, reconciling each declaration against the file of its
+own scope — the root file for project-wide declarations, that app's stub for that app's.
+A file a caller names is still read on its own: one file in isolation, every declaration
+against it. It exits non-zero on two cases: a declaration no scope file mentions, and a
+`shared:` module the root file names by its bare name and nothing else binds. Absent from
+a marketplace or from inside the project, the module is what is missing rather than the
+sentence; naming the declaration key states the source and settles it either way.
 
 Reads $SCRUMIA_CONFIG (default .scrumia/config.yaml), $SCRUMIA_CONFIG_LOCAL (default
 .scrumia/config.local.yaml) and each module's own extends.json, registers.json and
@@ -755,36 +759,87 @@ names_it() {
 }
 
 cmd_claims() {
-  local file=$1 named_file=$1 all decls key mod state loc reach elsewhere named keyed verdict
-  local failed=0 rows="" unbacked=""
-  # Beside the configuration's own directory, like everything else under .scrumia/: a
-  # $SCRUMIA_CONFIG pointed at another project must take that project's CLAUDE.md with it.
-  [ -n "$file" ] || file="$(dirname -- "$SCRUMIA_DIR")/CLAUDE.md"
+  local named_file=$1 all
+  # Module-level so reconcile_claims_file can update them. Cleared here so two --claims
+  # calls in one process do not inherit each other's tally.
+  CLAIMS_FAILED=0
+  CLAIMS_UNBACKED=""
+
   # Unreachable while load_config guards the only query a configuration can break, and kept
   # because the sentence below is what an unchecked read prints: that this project declares
   # no module, which is also what a correct empty composition says.
   all=$(bindings) || die "could not resolve this project's declarations"
 
-  # A file the caller named is an assertion that it is there; only the default may be
-  # missing, because a project that claims nothing is a project with nothing to reconcile.
-  # Unreadable is neither: read as empty it would clear every claim and exit clean, which
-  # is the one answer a surface whose job is to fail must never give.
-  if [ ! -f "$file" ]; then
-    [ -z "$named_file" ] && [ ! -e "$file" ] || die "$file is not a file"
-    note "$file does not exist — this composition is claimed nowhere, so there is nothing to reconcile"
-    return 0
+  if [ -n "$named_file" ]; then
+    # Backward-compatible one-file mode: every declaration, against the file the caller
+    # named. The way AC-7 stated the surface, and the path to audit one file in isolation.
+    reconcile_claims_file "$named_file" "single-file"
+  else
+    # Walk every scope's file. The root file first — it is the global reader, the one an
+    # agent reads before anything else. Then each app's stub, which `scrumia-init` writes
+    # and the reconciliation now covers the same way.
+    # App paths are stated relative to the project root (the configuration's parent),
+    # the convention `app_of_path` reads in --path — not to $cwd, which the harness and
+    # CI run with whatever they happen to be at.
+    local project_root
+    project_root=$(dirname -- "$SCRUMIA_DIR")
+    reconcile_claims_file "$project_root/CLAUDE.md" "project-wide"
+    while IFS=$'\t' read -r app_path app_name; do
+      [ -n "$app_path" ] || continue
+      case "$app_path" in
+        /*) reconcile_claims_file "$app_path/CLAUDE.md" "$app_name" ;;
+        *)  reconcile_claims_file "$project_root/$app_path/CLAUDE.md" "$app_name" ;;
+      esac
+    done < <(jq -r '.apps[]? | select(.path != "") | "\(.path)\t\(.name)"' <<<"$SCOPES")
   fi
-  [ -r "$file" ] || die "$file cannot be read"
 
+  if [ "$CLAIMS_FAILED" -gt 0 ]; then
+    [ -n "$CLAIMS_UNBACKED" ] && printf '%s' "$CLAIMS_UNBACKED" >&2
+    die "$CLAIMS_FAILED claim(s) this checkout cannot honour"
+  fi
+  return 0
+}
+
+# Reconcile one file in one scope. The file may not exist when the scope is one the
+# configuration wrote nothing for, or when an app stub was never produced — in those cases
+# nothing is claimed for it and there is nothing to say. A scope with declarations and no
+# file is exactly the case AC-14 calls `not claimed`: the composition made an assertion no
+# file carried, and the reconciliation names it.
+reconcile_claims_file() {
+  local file=$1 scope=$2
+  local decls key mod state loc reach elsewhere origin named keyed verdict
+  local rows="" file_unbacked=""
+  local must_exist=0 file_present=0
+
+  # single-file mode: the caller asserted the file is there, so its absence or its being a
+  # directory is the caller's mistake.
+  if [ "$scope" = "single-file" ]; then must_exist=1; fi
+
+  if [ -e "$file" ]; then
+    [ -f "$file" ] || die "$file is not a file"
+    [ -r "$file" ] || die "$file cannot be read"
+    file_present=1
+  elif [ "$must_exist" = 1 ]; then
+    die "$file is not a file"
+  elif [ "$scope" = "project-wide" ]; then
+    note "$file does not exist — project-wide declarations have no file to reconcile against"
+  fi
   # Read before the loop, and checked: a query that failed feeds an empty loop, and an empty
   # loop here prints "this project declares no module" — the one sentence a broken read must
   # never produce, since it is also what a correct empty composition says.
   # A key carrying no module name has no needle to look for, and an empty needle matches
   # every file; load_config has already named it as no declaration. Dropped in the query
   # rather than in the loop because a tab-separated empty field vanishes on `read`.
-  decls=$(jq -r '([.[] | select(.state == "resolved" or .state == "shadow") | .module]
-                  | unique) as $bound
+  #
+  # single-file mode passes every declaration through: the file the caller named is the
+  # only scope it has. Per-scope runs keep only the declarations the configuration wrote
+  # under the matching scope — the project-wide ones against the root file, that app's
+  # against that app's stub.
+  decls=$(jq -r --arg s "$scope" '
+    ([.[] | select(.state == "resolved" or .state == "shadow") | .module]
+      | unique) as $bound
     | map(select(.module != "")) | unique_by(.key)[] | . as $r
+    | select($s == "single-file" or $r.scope == $s)
     | [$r.key, $r.module, $r.state, $r.location,
        (if $r.source == "shared" then "shared" else "everyone" end),
        (if ($bound | index($r.module)) then "bound" else "unbound" end),
@@ -795,14 +850,21 @@ cmd_claims() {
   while IFS=$'\t' read -r key mod state loc reach elsewhere origin; do
     [ -n "$key" ] || continue
     named=no; keyed=no
-    names_it "$file" "$mod" && named=yes
-    names_it "$file" "$key" && keyed=yes
+    if [ "$file_present" = 1 ]; then
+      names_it "$file" "$mod" && named=yes
+      names_it "$file" "$key" && keyed=yes
+    fi
 
     if [ "$state" = resolved ] || [ "$state" = shadow ]; then
       # It binds, so the claim is true for this reader whichever way the file words it.
       [ "$named" = yes ] && verdict=honoured || verdict=unclaimed
     elif [ "$named" = no ]; then
+      # The declaration was made in the configuration, but neither the scope file nor any
+      # other one in the walk mentioned it. A claim the composition made that no file
+      # carried — the file in whose scope it sits is where it would have been said. The
+      # only case where a row the file says nothing about is itself the finding.
       verdict="not claimed"
+      CLAIMS_FAILED=$((CLAIMS_FAILED + 1))
     elif [ "$origin" = none ]; then
       # No location this tool can use — a name from the retired list, or a source the
       # grammar refuses. The configuration states no origin, so there is nothing for the
@@ -822,15 +884,25 @@ cmd_claims() {
       verdict=reachable
     else
       verdict=claimed
-      unbacked="$unbacked$file claims '$mod', which is $state here and comes from a shared checkout this machine has no path to — a reader of that file is told it has a capability it cannot reach. Name it '$key', so the file states where it would come from, or make no claim about it."$'\n'
-      failed=$((failed + 1))
+      # `claimed` is a capability the file asserts to its reader. When the scope file is
+      # the root, that reader is anyone reading the project — and the shared checkout
+      # travels with nobody, so a bare name there is a lie. When the scope is an app's
+      # stub, the reader is the app, and the app owns its declarations: the row is said
+      # and the file is held to its verdict, but the run does not fail on it.
+      if [ "$scope" = "project-wide" ] || [ "$scope" = "single-file" ]; then
+        file_unbacked="$file_unbacked$file claims '$mod', which is $state here and comes from a shared checkout this machine has no path to — a reader of that file is told it has a capability it cannot reach. Name it '$key', so the file states where it would come from, or make no claim about it."$'\n'
+        CLAIMS_FAILED=$((CLAIMS_FAILED + 1))
+      fi
     fi
     rows="$rows| \`$key\` | $loc | $state | $named | $verdict |"$'\n'
   done <<<"$decls"
 
-  printf '# claims — %s against what resolves here\n\n' "$file"
+  # Sections printed per scope file, not one combined table: the file path is the row the
+  # reader checks, and mixing project-wide rows with an app's would make the verdict read
+  # as if the root file had answered for the app.
+  printf '# claims — %s (scope: %s)\n\n' "$file" "$scope"
   if [ -z "$rows" ]; then
-    printf 'This project declares no module.\n'
+    printf 'No declaration is made at this scope.\n\n'
     return 0
   fi
   printf '| Declared as | Location | State | Named in the file | Verdict |\n|---|---|---|---|---|\n'
@@ -839,16 +911,16 @@ cmd_claims() {
   printf 'the file names the declaration key — which carries the source — or says nothing about\n'
   printf 'the module. `reachable` means the module is what is missing rather than the sentence:\n'
   printf 'restore it. `unsourced` means the declaration states no origin for the file to repeat\n'
-  printf '— key it <source>:<module>. Only a bare name for a shared checkout is a capability\n'
-  printf 'asserted to a reader who has no way to reach it, and only that fails.\n'
-  printf '\nOne file per run, so an app with a CLAUDE.md of its own is checked by naming it.\n'
+  printf '— key it <source>:<module>. A bare name for a shared checkout in the root file is a\n'
+  printf 'capability asserted to a reader who has no way to reach it; in an app stub it is the\n'
+  printf 'app stating its own scope.\n'
+  printf '\nOne run per composition: each scope file is read alongside the others, and each\n'
+  printf 'declaration is reconciled against the file of its own scope. Pass a file to audit one\n'
+  printf 'file in isolation.\n\n'
 
-  # After the table, not as they are found: the table is the answer, and a reader scanning
-  # a terminal reads the verdicts first and the remedy second.
-  if [ "$failed" -gt 0 ]; then
-    printf '%s' "$unbacked" >&2
-    die "$failed claim(s) this checkout cannot honour"
-  fi
+  # The remedy text is buffered per file and emitted on stderr after the table, so a reader
+  # scanning stdout sees the verdict and only then the explanation.
+  CLAIMS_UNBACKED="$CLAIMS_UNBACKED$file_unbacked"
   return 0
 }
 

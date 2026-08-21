@@ -122,25 +122,36 @@ nothing with nothing said.
 
 ## Reconciling what `CLAUDE.md` claims
 
-`--claims` takes a file — `CLAUDE.md` beside the configuration's own directory unless one
-is named — and reconciles it against the states above. **One file per run**: an app's own
-`CLAUDE.md` is a second claim in a second file, and the root run says nothing about it. One
-row per declaration, and one verdict each:
+`--claims` walks the root `CLAUDE.md` and every `apps[].path/CLAUDE.md` that exists, and
+reconciles each declaration against the file of its own scope — the root file for
+project-wide declarations, the app's stub for that app's. The reader of a stub is the
+app's reader, so what the stub claims is held against that app's declarations and not
+against the project's. A file a caller names is still read on its own — the way AC-7
+stated the surface — and reconciles every declaration against it, the way it always did;
+that is the way to audit one file in isolation, and the path the root run took before
+AC-14. One row per (declaration, scope-file) pair, and one verdict each:
 
-| The declaration | The file | Verdict |
+| The declaration | The file in its scope | Verdict |
 |---|---|---|
 | `resolved` or `shadow` | names it, or does not | `honoured` / `unclaimed` — the capability is here either way |
-| `absent` or `conflict` | does not name it | `not claimed` — the file says nothing it cannot back |
+| `absent` or `conflict` | does not name it | `not claimed` — the declaration was never stated. Exit non-zero |
 | `absent` or `conflict`, stating no source the grammar admits | names only the module | `unsourced` — the declaration states no origin for the file to repeat |
 | `absent` or `conflict` | names its declaration key | `named as absent` — the file states the source, so the reader can see what is missing |
 | `absent` or `conflict`, from a marketplace or from inside the project, or bound under another key | names only the module | `reachable` — what is missing is the module, not the sentence |
-| `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero |
+| `absent` or `conflict`, from a shared checkout | names only the module | `claimed` — a capability asserted to a reader who cannot reach it. Exit non-zero when the scope file is the root file; exit 0 when it is an app's stub |
 
 **Only the shared tier can produce the last row**, because it is the only source whose
 absence belongs to the reader alone (BR-8). A marketplace declaration nothing answers means
 the plugin is not installed or the session was not restarted, and one inside the project
 means a directory missing from the repository — both are missing for the author too,
 neither is corrected by editing a sentence, and `--modules` already names both.
+
+When the file in the declaration's scope is an app's stub, the verdict is still `claimed`
+when its conditions hold, but it does not fail: the stub is read in the app's context, and
+the app owns its declarations. The root file is the global reader; a `claimed` row there
+is a capability asserted to whoever reads it without that machine's shared checkout. The
+app stub is the app's reader; its `claimed` row is the app stating its own scope, and
+`--modules` is the surface that names what is missing.
 
 **A module another declaration bound is present whatever this one did**, so it is
 `reachable` too. That is the promotion arrangement seen from one key behind: a module moved
@@ -176,10 +187,10 @@ It is vacuous on the machine that wrote the file, by construction — everything
 there — and it is the clone that gets the answer. That asymmetry is the point rather than a
 weakness: AC-7 is a claim about a reader who is not the author.
 
-A project with no such file claims nothing, which is reported and is not a failure. A file
-the caller names is different: the caller asserted it is there, so one that is not, or one
-that cannot be read, is an error. Read as empty it would clear every claim and exit clean,
-which is the one answer a surface whose job is to fail must never give.
+A project with no `CLAUDE.md` anywhere claims nothing, which is reported and is not a
+failure. A file the caller names is different: the caller asserted it is there, so one that
+is not, or one that cannot be read, is an error. Read as empty it would clear every claim
+and exit clean, which is the one answer a surface whose job is to fail must never give.
 
 ## Two sets, and why they are not one
 

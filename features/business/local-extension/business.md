@@ -199,7 +199,7 @@ Two comparisons carry that, and they answer different questions:
 | What is compared | Against | Answers |
 |---|---|---|
 | every declaration the configuration makes | the roots resolution found | which capabilities this machine actually has |
-| the text of `CLAUDE.md` | the state each declaration resolved to | whether that file's claims are true for whoever is reading it |
+| the text of each `CLAUDE.md` in the declaration's scope (the root file, or that app's stub) | the state each declaration resolved to | whether that file's claims are true for whoever is reading it |
 
 The first is what makes a declared absence sayable at all. The second is what makes it
 sayable about the one file an agent reads before it knows anything else — a file written
@@ -208,6 +208,13 @@ them true. A row naming a capability by its bare name promises it; naming it by 
 declaration key states the module and its source at once, which is the same fact the
 absence report carries, and offers the reader an origin it can check rather than a
 capability it cannot.
+
+The second comparison runs once per file in the declaration's scope, not once per file at
+all — the root file's claims are read against project-wide declarations, an app's stub
+against that app's. An app stub names the modules the app extends, and the reader of that
+stub is the app's reader, so what the stub claims is held against that app's declarations
+and not against the project's. `scrumia-init` writes that stub; the reconciliation covers
+it the same way it covers the root file.
 
 Only one source needs that. A module comes from a marketplace anyone may install from, or
 from inside the project where it arrives with the clone — and where one of those is missing
@@ -265,7 +272,10 @@ on one machine is a module the project cannot be handed to someone else with.
   A module absent from a location every clone can reach is not that: there it is missing
   for every reader alike, which is a module to restore rather than a sentence to correct.
   What may fail is the reconciliation, and what it reports belongs to the file, never to
-  the absence.
+  the absence. The reconciliation runs once per file in the declaration's scope — the
+  root file for project-wide declarations, the app's stub for that app's — and a
+  declaration neither file mentions is a claim the composition makes that nobody has
+  stated; the file in whose scope it sits is where it would have been said.
 - **BR-9** — A conflict blocks the declaration it applies to and nothing else: that
   module contributes no directive anywhere, every other module still resolves, and the
   dependency check exits non-zero on it.

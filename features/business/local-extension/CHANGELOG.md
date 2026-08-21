@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-21 — `--claims` walks per-app `CLAUDE.md` stubs alongside the root file, reconciling each declaration against the file of its own scope (BR-8, AC-14)
+- Issue: #386
+- Category: Added
+- Breaking: yes — a declaration that no scope file mentions now fails `--claims`, where it used to pass silently
+
 ## 2026-08-20 — A withdrawn declaration exits non-zero on the dependency check, naming module, source and action (BR-10)
 - Issue: #374
 - Category: Added
