@@ -61,9 +61,11 @@ Three constraints hold:
 
 - A parent is a full feature, carrying every mandatory file with content of
   its own. This format has no grouping directory — a directory that exists
-  only to hold children is flattened.
-- Nesting stops at **one level**. A child of a child means the middle level
-  was really the feature and the rest are its rules.
+  only to hold children is flattened — at any depth.
+- Depth is bounded by **structure**, not by a number. A child of a child is
+  legitimate when each node carries its own content, the relationship is
+  declared on both sides, and the deeper level expresses a constraint the
+  parent itself does not state. The same test applies at every level.
 - Both sides declare the relationship. A child's stratum is its parent's.
 
 ### The link vocabulary is fixed

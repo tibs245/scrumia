@@ -117,10 +117,14 @@ Three constraints travel with nesting:
 
 - **A parent is a full feature.** It carries its four mandatory files with content
   of its own. A directory that exists only to group children is not a feature, and
-  this format has no grouping directory — flatten it.
-- **One level.** A child of a child is a signal that the middle level is really the
-  feature and the rest are its rules. Check the splitting criterion before going
-  deeper.
+  this format has no grouping directory — flatten it. The same holds at every
+  level: a node at any depth is either a feature or it does not exist.
+- **Bounded by structure, not by a number.** A child of a child is legitimate when
+  every node in the chain is a feature in its own right, the relationship is
+  declared on both sides, and each level expresses a constraint the level above
+  does not. A directory with no content of its own is a grouping directory
+  regardless of its depth — flatten it. The depth at which a feature sits does
+  not, by itself, make the nesting wrong.
 - **Both sides declare it.** The parent carries `Children:`, the child carries
   `Parent:`. A child's stratum is its parent's; a child of a Business feature is a
   Business feature.
