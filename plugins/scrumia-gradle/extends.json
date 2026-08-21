@@ -1,0 +1,120 @@
+{
+  "implement": [
+    {
+      "name": "Kotlin DSL over Groovy",
+      "type": "refusal",
+      "when": "required",
+      "summary": "Build scripts are .gradle.kts; a .gradle Groovy file is named as a finding",
+      "read": "skills/scrumia-gradle/guides/01-build-script-format.md"
+    },
+    {
+      "name": "Versions live in the catalog",
+      "type": "refusal",
+      "when": "required",
+      "summary": "Every plugin and library version is declared in gradle/libs.versions.toml; a literal version in a build script is a finding",
+      "read": "skills/scrumia-gradle/guides/02-version-catalog.md"
+    },
+    {
+      "name": "Convention plugin shape",
+      "type": "norm",
+      "when": "required",
+      "summary": "Shared build logic lives in a build-logic composite as a precompiled script plugin, applied via plugins { id(\"...\") } — the Kotlin Multiplatform-shaped convention plugin belongs to scrumia-kotlin-multiplatform-mobile",
+      "read": "skills/scrumia-gradle/guides/03-convention-plugin-shape.md"
+    },
+    {
+      "name": "Tasks are registered, not created",
+      "type": "refusal",
+      "when": "required",
+      "summary": "Tasks use tasks.register for lazy evaluation; an eager tasks.create is a finding unless the comment states why",
+      "read": "skills/scrumia-gradle/guides/04-task-configuration.md"
+    },
+    {
+      "name": "Caches on by default",
+      "type": "norm",
+      "when": "required",
+      "summary": "org.gradle.caching=true and org.gradle.configuration-cache=true are set in gradle.properties; each rule names what it breaks when enabled",
+      "read": "skills/scrumia-gradle/guides/05-caches.md"
+    },
+    {
+      "name": "Composite builds for local siblings",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A locally-built sibling dependency is wired via includeBuild(...); publishing one to a Maven snapshot for internal use is a finding",
+      "read": "skills/scrumia-gradle/guides/06-composite-builds.md"
+    },
+    {
+      "name": "Plugin versions in pluginManagement",
+      "type": "refusal",
+      "when": "required",
+      "summary": "Every plugin version is declared in settings.gradle.kts's pluginManagement block; a plugins { id(\"...\") version \"...\" } in a build script is a finding",
+      "read": "skills/scrumia-gradle/guides/07-plugin-management.md"
+    },
+    {
+      "name": "Documentation tasks wired into the lifecycle",
+      "type": "norm",
+      "when": "required",
+      "summary": "dokka, javadoc or a publishing convention plugin hooks into check or build; the rule is the wiring, not the content of the docs",
+      "read": "skills/scrumia-gradle/guides/08-documentation-tasks.md"
+    }
+  ],
+  "review": [
+    {
+      "name": "Build script format",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A .gradle Groovy file is the trigger; named as a finding the audit cites",
+      "read": "skills/scrumia-gradle/guides/01-build-script-format.md"
+    },
+    {
+      "name": "Version literals outside the catalog",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A version string in build.gradle.kts that should have been in libs.versions.toml",
+      "read": "skills/scrumia-gradle/guides/02-version-catalog.md"
+    },
+    {
+      "name": "Eager task creation without a stated reason",
+      "type": "refusal",
+      "when": "required",
+      "summary": "tasks.create with no comment naming why the eager form is correct",
+      "read": "skills/scrumia-gradle/guides/04-task-configuration.md"
+    },
+    {
+      "name": "Plugin versions declared in the wrong place",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A plugins { id(\"...\") version \"...\" } block in a build script is the version literal that belongs in pluginManagement",
+      "read": "skills/scrumia-gradle/guides/07-plugin-management.md"
+    },
+    {
+      "name": "Locally-published snapshot instead of includeBuild",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A dependency on a Maven snapshot that came from a sibling checkout is the dependency that should have used includeBuild",
+      "read": "skills/scrumia-gradle/guides/06-composite-builds.md"
+    },
+    {
+      "name": "Documentation tasks not wired in",
+      "type": "refusal",
+      "when": "required",
+      "summary": "A dokka or javadoc task that exists but is not a dependency of check or build",
+      "read": "skills/scrumia-gradle/guides/08-documentation-tasks.md"
+    },
+    {
+      "name": "Gradle audit",
+      "type": "method",
+      "when": "optional",
+      "summary": "Measure an existing Gradle project against the eight rules — find each .gradle, each literal version, each eager create, each missing cache flag",
+      "read": "skills/scrumia-gradle-audit/SKILL.md"
+    }
+  ],
+  "find-spec": [
+    {
+      "name": "Where the Gradle rules live",
+      "type": "reference",
+      "when": "optional",
+      "summary": "The eight Gradle rules are documented in plugins/scrumia-gradle/skills/scrumia-gradle/guides/ — load them when a ticket touches build scripts, version catalogs, convention plugins, task configuration, caches, composite builds, pluginManagement or documentation tasks",
+      "read": "skills/scrumia-gradle/SKILL.md"
+    }
+  ]
+}
