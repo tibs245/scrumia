@@ -72,9 +72,9 @@ A trait earns its place with two living implementers, or a genuine test double n
 
 A `clone()` is justified by semantics — two legitimate owners — not by a lost fight against the borrow checker. Three clones in the same place signal an ownership structure to rethink, not a style issue to fix line by line. See [decisions/D-02](../decisions/D-02-no-clone-to-appease-borrowck.md).
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-solid`** — situated here:
+**`scrumia-solid-principles`** — situated here:
 - **O**: prefer closure — `enum` + exhaustive `match` (Rule 4 above) — as long as the variants are known. An assumed restriction of the principle.
 - **L**: every `impl` of a trait honors the trait's documented invariants, backed by shared contract tests.
 - **I**: thin traits, cut to the consumer's measure.

@@ -71,8 +71,8 @@ src/
 
 Who is not allowed to depend on what: `billing` never depends on `infra`. `infra` depends on `billing` (it implements its contracts). The binary depends on both and does the wiring. This direction is what makes the domain testable without a database, a network, or a filesystem.
 
-## With the practices
+## Alongside other modules
 
-**`scrumia-practice-solid`** — situated here:
+**`scrumia-solid-principles`** — situated here:
 - **S** applies to the module and the crate.
 - **D**: at infrastructure boundaries only — the layering in Rule 4 above. Between modules of the same crate, the direct call is the rule and indirection a refusal (see [decisions/D-03](../decisions/D-03-no-single-implementer-traits.md)).

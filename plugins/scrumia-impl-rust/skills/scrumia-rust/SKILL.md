@@ -1,6 +1,6 @@
 ---
 name: scrumia-rust
-description: The Rust practices of ScrumIA — tests per invariant, unrepresentable invalid states, typed errors per layer, structure by domain, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-rust.
+description: The ScrumIA Rust reference — tests per invariant, unrepresentable invalid states, typed errors per layer, structure by domain, and what we refuse. Load it before writing code in an app whose implementation module is scrumia-impl-rust.
 ---
 
 # Coding in Rust
@@ -81,7 +81,7 @@ settings:
 
 ## Project override
 
-If `.scrumia/impl/scrumia-impl-rust.md` exists, its content takes precedence over this skill and its guides. A project records its house conventions there — a legacy crate, an error exception, a runtime choice — without forking the module.
+If `.scrumia/overrides/scrumia-impl-rust.md` exists, its content takes precedence over this skill and its guides. A project records its house conventions there — a legacy crate, an error exception, a runtime choice — without forking the module.
 
 ## The module's other skill
 

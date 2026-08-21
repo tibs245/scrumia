@@ -53,6 +53,6 @@ The rule in one sentence: **a layer exposes its own error vocabulary, and transl
 
 The caller can do nothing with either but display it — no `match`, no recovery decision. A public function returns its layer's typed error enum, always.
 
-## With the practices
+## Alongside other modules
 
-No cross-cutting practice restricts this guide directly; the "how we test" and "which design principles" contracts each layer's errors follow live in [04-testing](04-testing.md) and [02-domain-types](02-domain-types.md).
+No cross-cutting module restricts this guide directly; the "how we test" and "which design principles" contracts each layer's errors follow live in [04-testing](04-testing.md) and [02-domain-types](02-domain-types.md).

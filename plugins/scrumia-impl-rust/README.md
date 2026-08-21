@@ -1,7 +1,7 @@
 # scrumia-impl-rust
 
 The implementation slot for Rust: invalid states made unrepresentable, typed errors per
-layer, one test per invariant. Plugs in app by app, alongside whichever practice modules
+layer, one test per invariant. Plugs in app by app, alongside whichever modules
 that app also runs.
 
 ## What it answers
@@ -36,7 +36,7 @@ Under `settings.implementation.scrumia-impl-rust` in `.scrumia/config.yaml`:
 
 An app that lists `scrumia-impl-rust` in its own `extends`; within it, `.rs` files and
 `Cargo.toml` are what the guides apply to. An optional
-`.scrumia/impl/scrumia-impl-rust.md` records a project's house exceptions without forking
+`.scrumia/overrides/scrumia-impl-rust.md` records a project's house exceptions without forking
 the module.
 
 ## Decisions
