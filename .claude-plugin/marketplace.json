@@ -362,6 +362,15 @@
       }
     },
     {
+      "name": "scrumia-effect",
+      "source": "./plugins/scrumia-effect",
+      "description": "The typed-effect discipline — describe before execute, failure as a value, the effect boundary, and which approach to reach for (Result, Either, IO/suspend, or effect.website). Library-agnostic on the pattern; cites effect.website as the reference implementation rather than wrapping it. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "effect", "effects", "result", "either", "io", "suspend", "functional-programming"],
+      "author": { "name": "tibs245" }
+    },
+    {
       "name": "scrumia-kotlin",
       "source": "./plugins/scrumia-kotlin",
       "description": "Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Pinned to the Kotlin language docs, applicable to any Kotlin codebase without requiring Functional Programming or Multiplatform modules. Plugs in app by app.",

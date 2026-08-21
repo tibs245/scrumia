@@ -8,8 +8,13 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Added
 - Breaking: no
 
+<<<<<<< HEAD
 ## 2026-08-22 — A composition preset re-exports a stack by configuration, and the first preset is the Kotlin Multiplatform Mobile lane
 - Issue: #448
+=======
+## 2026-08-22 — The typed-effect discipline is its own refinement lane, with dissociation named in the lane
+- Issue: #453
+>>>>>>> 956aefd (feat(scrumia-effect): typed effect discipline across Result, Either, IO/suspend, and effect.website)
 - Category: Added
 - Breaking: no
 
