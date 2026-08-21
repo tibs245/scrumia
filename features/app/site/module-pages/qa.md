@@ -82,6 +82,32 @@ Then each comes from `@modlink_<name>`, the same special AC-9 already covers
 And no literal `href="modules/…"` string is typed into the reference template
 ```
 
+### AC-14 — `load_extends_map`'s default root tracks `ROOT`, and the deliberate asymmetry is named
+
+```gherkin
+Given `tools/build_site.py`'s `ROOT` reassigned at test time to a fixture tree
+When `load_extends_map()` is called with no explicit `plugins_root`
+Then it resolves against the reassigned `ROOT`, not against the value the
+  module saw at import — every read of `ROOT` is computed at call time, the
+  same way `skill_names()` already does
+
+Given `extends_map_specials()`, which deliberately reads the real
+  repository's `plugins/` regardless of any fixture context (to avoid
+  regressing `tools/test_extends_map.py`)
+When the function is read
+Then it passes the root explicitly, and the "real repo" intent is named —
+  a separately-named constant or parameter that says so, rather than
+  relying on an import-time default to happen to still be correct
+
+Given a single fixture build that exercises both call paths under one
+  `run_fixture()`
+When `tools/test_build_site.py` runs
+Then the call that wants the fixture's `plugins/` reads the fixture, and
+  the call that wants the real repo reads the real repo — both observable
+  through the output, not by inspecting which module-level constant the
+  call happened to bind
+```
+
 ## Edge cases
 
 ### AC-2 — A gap in the prose fails the build
