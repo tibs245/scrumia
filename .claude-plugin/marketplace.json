@@ -176,6 +176,15 @@
       "category": "workflow",
       "tags": ["scrumia", "material3", "material-design", "android", "compose", "kotlin-multiplatform", "ui", "accessibility"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-kotlin-multiplatform-mobile",
+      "source": "./plugins/scrumia-kotlin-multiplatform-mobile",
+      "description": "The Kotlin Multiplatform Mobile composition preset — KMP-specific rules (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring). Re-exports six satellites (scrumia-kotlin, scrumia-gradle, scrumia-ktor, scrumia-material3, scrumia-effect, scrumia-functional-programming) by configuration. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "kotlin", "kotlin-multiplatform", "kmp", "kmm", "ios", "android", "multiplatform", "gradle"],
+      "author": { "name": "tibs245" }
     }
   ]
 }
