@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-22 — A Material 3 lane is added, and its boundary with `scrumia-design` is restated inline (BR-7 + AC-23)
+- Issue: #454
+- Category: Added
+- Breaking: no
+
 ## 2026-08-19 — A plugin citing its own home-repo's features/ restates the operative rule inline (BR-7, AC-22)
 - Issue: #227
 - Category: Changed
