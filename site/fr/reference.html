@@ -347,6 +347,19 @@
   </div>
 </section>
 
+<section id="ktor">
+  <h3><a href="modules/scrumia-ktor.html"><code>scrumia-ktor</code></a> — no slot</h3>
+  <p>Les règles de serveur et client HTTP pour un code base Ktor. Neuf refus ou normes : la surface de l'application est un seul bloc <code>routing {}</code> découpé en fonctions d'extension de route imbriquées ; <code>ContentNegotiation</code> est installé une fois par application et par client ; un <code>HttpClient</code> par dépendance distante, construit une fois et fermé une fois ; l'authentification est <code>install(Authentication) { name -> ... }</code> avec des fournisseurs nommés ; les tests de route tournent sur <code>testApplication {}</code> ; ports, hôtes, secrets et URLs viennent de <code>environment.config</code> ; une route streaming énonce si elle est WebSocket ou SSE ; le logging de requêtes est <code>install(CallLogging)</code> avec un filtre ; et un HTTP non-2xx est converti en erreur de domaine à un endroit nommé.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
+      <tbody>
+        <tr><td><code>ktor-audit</code></td><td>Audite un projet Ktor existant contre les neuf familles de règles — trouve chaque route enregistrée hors de l'arbre de routage, chaque parse fait main sur <code>call.receiveText()</code>, chaque <code>HttpClient</code> par appel, chaque header <code>Authorization</code> lu dans un handler, chaque test qui ouvre un vrai port, chaque hôte ou secret littéral dans le code, chaque corps WebSocket qui ne lit jamais de frame, chaque <code>println</code> dans un handler, chaque <code>Result.failure</code> dont le corps est <code>r.status</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.</p>

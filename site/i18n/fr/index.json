@@ -173,5 +173,8 @@
   "mod_material3_cmd": "claude plugin install scrumia-material3@scrumia",
   "mod_slot_kmm": "aucun slot",
   "mod_kmm_d": "Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques (expect/actual entre source sets, disposition des source sets, split iOS/Android, interop Cocoapods et Swift, déclaration de targets, câblage Gradle en forme KMP) et une clé unique qui re-exporte les six satellites qu'un projet KMP fait tourner.",
-  "mod_kmm_cmd": "claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia"
+  "mod_kmm_cmd": "claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia",
+  "mod_slot_ktor": "aucun slot",
+  "mod_ktor_d": "Les règles de serveur et client HTTP pour un code base Ktor — routage déclaré comme arbre, content negotiation installé une fois, un HttpClient longue durée, fournisseurs d'authentification nommés, tests sur le moteur en mémoire, configuration hors du code, et choix énoncé entre WebSockets et SSE. Neuf familles de règles, une compétence d'audit qui mesure un projet Ktor contre elles.",
+  "mod_ktor_cmd": "claude plugin install scrumia-ktor@scrumia"
 }
