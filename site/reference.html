@@ -347,14 +347,25 @@
   </div>
 </section>
 
+<<<<<<< HEAD
 <section id="ktor">
   <h3><a href="modules/scrumia-ktor.html"><code>scrumia-ktor</code></a> — no slot</h3>
   <p>HTTP server and client rules for a Ktor codebase. Nine refusals or norms: the application's surface is one <code>routing {}</code> block split into nested route extension functions; <code>ContentNegotiation</code> is installed once per application and per client; one <code>HttpClient</code> per remote dependency, built once and closed once; authentication is <code>install(Authentication) { name -> ... }</code> with named providers; route tests run on <code>testApplication {}</code>; ports, hosts, secrets and URLs come from <code>environment.config</code>; a streaming route states whether it is WebSocket or SSE; request logging is <code>install(CallLogging)</code> with a filter; and an HTTP non-2xx is converted into a domain error in one named place.</p>
+=======
+<section id="kotlin">
+  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — no slot</h3>
+  <p>Idiomatic Kotlin language rules. Six refusals or norms: <code>var</code> only when <code>val</code> cannot carry the invariant; <code>!!</code> only with a stated local proof and never on a platform type (<code>T!</code>) read as Kotlin; structured concurrency with explicit scopes, no <code>GlobalScope.launch</code> outside the bootstrap, no swallowed <code>CancellationException</code>; <code>data class</code> for values, <code>sealed interface</code> for closed taxonomies, <code>value class</code> for type-safe wrappers; top-level functions for stateless utilities, <code>object</code> expressions only for true singletons; <code>internal</code> as the module boundary (not package-private), <code>public</code> only on a surface meant to cross a published boundary.</p>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
   <div class="table-wrap">
     <table>
       <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
       <tbody>
+<<<<<<< HEAD
         <tr><td><code>ktor-audit</code></td><td>Audits an existing Ktor project against the nine rule families — find each route registered outside the routing tree, each hand-rolled parse on <code>call.receiveText()</code>, each per-call <code>HttpClient</code>, each <code>Authorization</code> header read inside a handler, each test that opens a real port, each literal host or secret in code, each WebSocket body that never reads a frame, each <code>println</code> in a handler, each <code>Result.failure</code> whose body is <code>r.status</code></td></tr>
+=======
+        <tr><td><code>scrumia-kotlin</code></td><td>The reference: six rule families — <code>val</code>/<code>var</code> and scope functions, null-safety and platform types, coroutines and <code>Flow</code>, data/sealed/value classification, top-level vs companion vs object, visibility modifiers — with the routing table between them and the Kotlin documentation each cites</td></tr>
+        <tr><td><code>scrumia-kotlin-audit</code></td><td>Measures an existing Kotlin codebase against the six rule families — find each <code>var</code> where <code>val</code> would carry the invariant, each <code>!!</code> on a platform type, each <code>GlobalScope.launch</code>, each <code>class</code> with a single property pretending to be a domain value, each <code>object</code> expression used as a singleton, each <code>public</code> on a member meant to stay inside the module</td></tr>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
       </tbody>
     </table>
   </div>

@@ -1,0 +1,40 @@
+{
+  "implement": [
+    { "name": "Naming, scope functions, extension functions, val vs var",
+      "type": "refusal", "when": "required",
+      "summary": "val by default; var only when reassignment is the behaviour; scope and extension functions chosen by what the call site reads, not by habit",
+      "read": "rules/01-data-modelling.md" },
+    { "name": "Null-safety, platform types, and precondition functions",
+      "type": "refusal", "when": "required",
+      "summary": "T? on every value that can be absent; !! only with a stated local proof; platform types (Java-interop T!) treated as a borrowed contract; require for arguments, check for state, error for the unreachable branch",
+      "read": "rules/02-null-safety.md" },
+    { "name": "Coroutines, structured concurrency, scopes, dispatchers, cancellation, Flow",
+      "type": "refusal", "when": "required",
+      "summary": "coroutineScope { } or a scoped lifetime — never GlobalScope.launch outside the bootstrap; cancellation cooperative and never swallowed; Dispatchers injected; Flow cold by default, hot types only at the seam",
+      "read": "rules/03-coroutines.md" },
+    { "name": "data class, sealed class / sealed interface, value class",
+      "type": "refusal", "when": "required",
+      "summary": "data class for value-shaped records with no identity; sealed class or sealed interface for closed hierarchies; value class for type-safe wrappers around a single underlying value",
+      "read": "rules/04-classification.md" },
+    { "name": "Object expressions vs companion objects vs top-level functions",
+      "type": "refusal", "when": "required",
+      "summary": "Top-level functions when no state is shared; companion object only when state or a constant-bearing factory belongs on the class; object expressions for one-off SAMs; named object for true singletons",
+      "read": "rules/05-top-level.md" },
+    { "name": "Visibility modifiers",
+      "type": "refusal", "when": "required",
+      "summary": "private by default; internal as the module boundary; public only on a surface meant to cross a published boundary — never to silence a test that crossed the wrong one",
+      "read": "rules/06-visibility.md" }
+  ],
+  "review": [
+    { "name": "Idiomatic Kotlin refusals",
+      "type": "refusal", "when": "required",
+      "summary": "val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility — each finding citing the rule it breaks",
+      "read": "skills/scrumia-kotlin-audit/SKILL.md" }
+  ],
+  "find-spec": [
+    { "name": "Where a Kotlin-language rule lives",
+      "type": "method", "when": "optional",
+      "summary": "A reviewer tracing a Kotlin rule to its source reads the six rules in plugins/scrumia-kotlin/rules/ and the upstream Kotlin documentation each one cites",
+      "read": "rules/01-data-modelling.md" }
+  ]
+}

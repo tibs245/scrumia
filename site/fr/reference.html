@@ -347,14 +347,25 @@
   </div>
 </section>
 
+<<<<<<< HEAD
 <section id="ktor">
   <h3><a href="modules/scrumia-ktor.html"><code>scrumia-ktor</code></a> — no slot</h3>
   <p>Les règles de serveur et client HTTP pour un code base Ktor. Neuf refus ou normes : la surface de l'application est un seul bloc <code>routing {}</code> découpé en fonctions d'extension de route imbriquées ; <code>ContentNegotiation</code> est installé une fois par application et par client ; un <code>HttpClient</code> par dépendance distante, construit une fois et fermé une fois ; l'authentification est <code>install(Authentication) { name -> ... }</code> avec des fournisseurs nommés ; les tests de route tournent sur <code>testApplication {}</code> ; ports, hôtes, secrets et URLs viennent de <code>environment.config</code> ; une route streaming énonce si elle est WebSocket ou SSE ; le logging de requêtes est <code>install(CallLogging)</code> avec un filtre ; et un HTTP non-2xx est converti en erreur de domaine à un endroit nommé.</p>
+=======
+<section id="kotlin">
+  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — no slot</h3>
+  <p>Les règles de langage Kotlin idiomatique. Six refus ou normes : <code>var</code> seulement quand <code>val</code> ne peut pas porter l'invariant ; <code>!!</code> seulement avec une preuve locale énoncée et jamais sur un platform type (<code>T!</code>) lu comme Kotlin ; concurrence structurée avec scopes explicites, pas de <code>GlobalScope.launch</code> hors du bootstrap, pas de <code>CancellationException</code> avalé ; <code>data class</code> pour les valeurs, <code>sealed interface</code> pour les taxonomies fermées, <code>value class</code> pour les wrappers type-safe ; fonctions top-level pour les utilitaires stateless, expressions <code>object</code> seulement pour les vrais singletons ; <code>internal</code> comme frontière de module (pas package-private), <code>public</code> seulement sur une surface destinée à traverser une frontière publiée.</p>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
   <div class="table-wrap">
     <table>
       <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
       <tbody>
+<<<<<<< HEAD
         <tr><td><code>ktor-audit</code></td><td>Audite un projet Ktor existant contre les neuf familles de règles — trouve chaque route enregistrée hors de l'arbre de routage, chaque parse fait main sur <code>call.receiveText()</code>, chaque <code>HttpClient</code> par appel, chaque header <code>Authorization</code> lu dans un handler, chaque test qui ouvre un vrai port, chaque hôte ou secret littéral dans le code, chaque corps WebSocket qui ne lit jamais de frame, chaque <code>println</code> dans un handler, chaque <code>Result.failure</code> dont le corps est <code>r.status</code></td></tr>
+=======
+        <tr><td><code>scrumia-kotlin</code></td><td>La référence : six familles de règles — <code>val</code>/<code>var</code> et fonctions de scope, null-safety et platform types, coroutines et <code>Flow</code>, classification data/sealed/value, top-level vs companion vs object, modificateurs de visibilité — avec la table de routage entre elles et la documentation Kotlin que chacune cite</td></tr>
+        <tr><td><code>scrumia-kotlin-audit</code></td><td>Mesure un code base Kotlin existant contre les six familles de règles — trouve chaque <code>var</code> où <code>val</code> porterait l'invariant, chaque <code>!!</code> sur un platform type, chaque <code>GlobalScope.launch</code>, chaque <code>class</code> à propriété unique prétendant être une valeur de domaine, chaque expression <code>object</code> utilisée comme singleton, chaque <code>public</code> sur un membre destiné à rester interne au module</td></tr>
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
       </tbody>
     </table>
   </div>

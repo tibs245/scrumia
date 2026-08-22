@@ -475,6 +475,112 @@ When a reviewer reads them side by side without the prose
 Then the pivot's `extends.json` lists no fragment under a satellite's root, and
   no satellite's `extends.json` lists a fragment under the pivot's root — the
   dissociation is visible from the file paths alone
+
+## Idiomatic Kotlin language lane
+
+One falsifiable scenario per rule family in the lane. Each scenario must be able to
+fail. The lane is independent of `scrumia-functional-programming`,
+`scrumia-kotlin-multiplatform-mobile`, and `scrumia-gradle` — a pure-JVM project
+activating `scrumia-kotlin` alone reaches the same scenarios. A scenario whose
+reasoning requires any of those modules is a finding on the lane, not on the
+consumer.
+
+### AC-24 — `val` carries the invariant; `var` is justified by reassignment
+
+```gherkin
+Given a Kotlin file with a `var` that is assigned exactly once in its declaring
+  scope — the constructor sets it, or a single `=` in the function it lives in,
+  and there are no later assignments
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-17`), and one
+  line of what was not met — that `val` carries the invariant and `var` is
+  permitted only when reassignment is the behaviour
+And the finding cites the Kotlin coding conventions as its source
+And a `var` that is reassigned across iterations, inside a builder, or as a
+  counter is not subject to this rule
+```
+
+### AC-25 — `!!` is preceded by a stated local proof, never by hope
+
+```gherkin
+Given a Kotlin file using `!!` on a nullable value, with no early-return, no
+  explicit null check, and no preceding `when` branch that has already excluded
+  the null case on the same line or the line above
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-18`), and one
+  line of what was not met — that `!!` papers over a nullable the surrounding
+  code did not prove
+And the same finding cites the Kotlin null-safety reference as its source
+And a `!!` preceded by an early-return that makes the value non-null, or used in
+  a test on a value the test constructed, is not subject to this rule
+```
+
+### AC-26 — Concurrency is structured, and cancellation is cooperative
+
+```gherkin
+Given a Kotlin file that calls `GlobalScope.launch` outside the bootstrap, or
+  wraps a suspending call in `runCatching`, or calls `Flow.collect` outside a
+  `launch` block, or hard-codes a `Dispatchers.*` reference at a call site
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-19`), and one
+  line of what was not met — that structured concurrency is the default and
+  `GlobalScope` is the documented escape
+And the finding cites the Kotlin coroutines guide as its source
+And a `GlobalScope.launch` that is the application's bootstrap — the documented
+  reason `GlobalScope` exists — is not subject to this rule
+```
+
+### AC-27 — A `data class` carries records, a `sealed` hierarchy carries closed sets, a `value class` carries type-safe wrappers
+
+```gherkin
+Given a Kotlin file with a hand-written `equals`/`hashCode`/`toString` on a
+  class that `data class` would have generated, or a class with a string
+  discriminator field naming a kind whose payload is set only for some values,
+  or a `data class` with a single field whose wrapper identity is the value's
+  identity
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-20`), and one
+  line of what was not met — that `data class`, `sealed class` / `sealed
+  interface`, and `value class` are chosen by shape, not by reflex
+And the finding cites the Kotlin classes reference as its source
+And a hand-written `equals` whose semantics disagree with what `data class`
+  would have generated is also a finding — it disagrees
+```
+
+### AC-28 — Top-level functions, companion objects, and object expressions are chosen by what they hold, not by reflex
+
+```gherkin
+Given a Kotlin file with a `companion object` whose every member is stateless
+  and could be a top-level function, or an `object` expression used as a
+  singleton, or a top-level function whose only purpose is to reach a private
+  field of a class it does not belong to
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-21`), and one
+  line of what was not met — that top-level functions are the default for
+  stateless helpers, `companion object` is for state that belongs on the class,
+  and an `object` expression is not a singleton
+And the finding cites the Kotlin object expressions and declarations reference
+  as its source
+And a `companion object` that holds state the class owns, or a named factory
+  the convention reads as `Type.of(...)`, is not subject to this rule
+```
+
+### AC-29 — Visibility is set to the granularity the surface is meant to cross
+
+```gherkin
+Given a Kotlin file with a `val` or `fun` declared with no visibility modifier
+  whose surface is meant to stay inside the module but is reachable from any
+  consumer that holds the type, or a `public` member promoted to silence a test
+  that crossed the boundary, or an `internal` declaration the author treated as
+  package-private
+When the `scrumia-kotlin` implement register runs against the file
+Then a finding names the file, the rule (`modular-composition/BR-22`), and one
+  line of what was not met — that `private` is the default, `internal` is the
+  module boundary (not the package), and `public` is for surfaces meant to cross
+  a published boundary
+And the finding cites the Kotlin visibility modifiers reference as its source
+And a `val` or `fun` on a class that *is* a published surface — a library API,
+  a module's outward-facing type — is not subject to this rule
 ```
 
 ## Out of scope

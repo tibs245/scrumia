@@ -567,6 +567,66 @@ exist, which is the role BR-8 reserves for the consuming skill.
   the message; what this rule adds is that a configuration one cannot resolve has no
   degraded mode to continue in, because every later answer would be well-formed and wrong.
 
+## Idiomatic Kotlin language lane
+
+`scrumia-kotlin` fills the language lane for a Kotlin codebase. The lane owns six
+rule families, each grounded on the Kotlin language documentation, each carrying at
+least one falsifiable scenario in this feature's `qa.md`. The lane is the capability
+a project activates to receive those rules — through the `implement` and `review`
+registers — without depending on any other Kotlin ecosystem module.
+
+### Dissociation
+
+The lane does not assume the presence of any of:
+
+- `scrumia-functional-programming` — every rule is stated in pure Kotlin syntax and
+  semantics, not in terms of a paradigm. A one-line pointer to the paradigm may appear
+  under a rule whose Kotlin phrasing touches it; it is never a load-bearing rationale.
+- `scrumia-kotlin-multiplatform-mobile` — no source-set rules, no `expect`/`actual`,
+  no platform-specific type choices. A pure-JVM project (Spring, Android) activates
+  `scrumia-kotlin` alone and gets the same rules.
+- `scrumia-gradle` — no convention-plugin DSL, no build-script patterns. The lane is
+  about the language, not the build.
+
+A reviewer who finds a rule in the lane requiring any of these modules to be understood
+names it as a finding — the lane is the wrong place for a cross-module dependency.
+
+### What the lane refuses
+
+- **BR-17** — `var` carrying the invariant; a scope function (`let`, `run`, `with`,
+  `apply`, `also`) chosen by reflex rather than by what the call site reads; an
+  extension function declared only to reach a sibling private field. `val` by default;
+  a `var` is justified only when reassignment is the *behaviour*.
+- **BR-18** — `!!` without a stated local proof; a Java-interop platform type
+  (`String!`) read as a Kotlin type; a precondition function used as the wrong
+  category — `require` for state, `check` for arguments, `error` for the unreachable
+  branch. `?` on every type that can be absent; the proof precedes the `!!`.
+- **BR-19** — Unstructured concurrency (`GlobalScope.launch` outside the bootstrap);
+  swallowed `CancellationException`; a `Flow.collect` outside a scope; a
+  `Dispatcher` hard-coded at the call site. Structured concurrency by default;
+  cancellation cooperative and never swallowed; `Dispatchers` injected.
+- **BR-20** — A `class` with a single property pretending to be a domain value; a
+  closed hierarchy written as a `class` with a string discriminator; a single-field
+  wrapper built as a `data class` instead of a `value class`. `data class` for
+  records; `sealed class` / `sealed interface` for closed hierarchies; `value class`
+  for type-safe wrappers around a single underlying value.
+- **BR-21** — A `companion object` whose every member is stateless; an `object`
+  expression used as a singleton; a top-level function existing only to reach a
+  private field. Top-level functions when no state is shared; `companion object` only
+  when state or a stateful factory belongs on the class; named `object` declarations
+  for true singletons.
+- **BR-22** — `public` on a member meant to stay inside the module; `internal` read
+  as "package-private" (it is not — it is the module boundary); a member promoted to
+  `public` to silence a test that crossed the wrong boundary. `private` by default;
+  `internal` as the module boundary; `public` only on a surface meant to cross a
+  published one.
+
+Each rule is grounded on the Kotlin language documentation
+(`https://kotlinlang.org/docs/`), the coroutines guide, the Java interop reference,
+and the coding conventions — no blog post, no tutorial, no community pattern. The
+rules' canonical source lives in `plugins/scrumia-kotlin/rules/`; the lane this
+section defines is the project-level statement of what the plugin refuses.
+
 ## Vocabulary
 
 **"Slot" names the question a project answers when composing** — it survives as the

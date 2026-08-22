@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-kotlin — ScrumIA</title>
+<meta name="description" content="scrumia-kotlin: idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility modifiers.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/modules/scrumia-kotlin.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-kotlin.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-kotlin.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-kotlin.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-kotlin — ScrumIA">
+<meta property="og:description" content="scrumia-kotlin: idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility modifiers.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/modules/scrumia-kotlin.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  root.classList.add('has-js');
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../assets/theme.js"></script>
+<script defer src="../assets/motion.js"></script>
+<script defer src="../assets/header.js"></script>
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="../index.html">Overview</a>
+      <a href="../index.html#composer">Compose</a>
+      <a href="../workflow.html">Workflow</a>
+      <a href="../reference.html">Reference</a>
+      <a href="../about.html">About</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="scrumia-kotlin.html" aria-current="true" lang="en">EN</a>
+        <a href="../fr/modules/scrumia-kotlin.html" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← All modules</a></p>
+
+<h1><span class="mod-ico">🟣</span> <code>scrumia-kotlin</code></h1>
+<p class="section-intro">The language the team agreed to, written down.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · none</span>
+  <span class="pill">version · 0.1.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>What it is responsible for</h2>
+  <p>Six refusal rule families that mark where Kotlin's documented semantics end and the wrong default begins: <code>val</code> by default with <code>var</code> only when reassignment is the behaviour; <code>?</code> on every value that can be absent and <code>!!</code> only with a stated local proof; structured concurrency and cooperative cancellation rather than <code>GlobalScope.launch</code>; <code>data class</code>, <code>sealed</code> hierarchies and <code>value class</code> chosen by shape; top-level functions and named objects over stateless companion objects; and visibility set to the granularity the surface is meant to cross. Ships a <code>scrumia-kotlin-audit</code> skill that measures an existing Kotlin codebase against the six, each finding citing the rule it breaks.</p>
+</section>
+
+<section id="refusals">
+  <h2>What it refuses</h2>
+  <p>A <code>var</code> with a single assignment. An <code>!!</code> without a proof on the line above. A <code>GlobalScope.launch</code> outside the bootstrap. A <code>runCatching</code> around suspension that swallows <code>CancellationException</code>. A hand-written <code>equals</code> / <code>hashCode</code> / <code>toString</code> on a record <code>data class</code> would have generated. A <code>companion object</code> whose every member is stateless. A <code>public</code> field promoted to silence a test that crossed the wrong boundary.</p>
+</section>
+
+<section id="philosophy">
+  <h2>The assumption it makes</h2>
+  <p>Assumes the Kotlin language documentation is the citation for every rule — no blog post, no tutorial, no community pattern. Costs discipline at every <code>var</code>, every <code>!!</code>, every <code>launch</code>, and every visibility modifier, and pays back in code that reads as the language documents it. The module is compose-only: no <code>bin/</code>, no <code>dependencies.jsonl</code>; it contributes to the composition through <code>extends.json</code> and nothing else. A pure-JVM project (Spring, Android) activates <code>scrumia-kotlin</code> alone and gets the same rules; <code>scrumia-functional-programming</code>, <code>scrumia-kotlin-multiplatform-mobile</code> and <code>scrumia-gradle</code> are not assumed.</p>
+</section>
+
+<section id="skills">
+  <h2>Its skills</h2>
+  <ul class="mod-skills"><li><code>scrumia-kotlin-audit</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Tags</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>kotlin</li> <li>language</li> <li>idiomatic</li> <li>coroutines</li> <li>null-safety</li></ul>
+</section>
+
+<section id="plugs-into">
+  <h2>What it plugs into</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Register</th><th>Direction</th><th>Module</th></tr></thead>
+      <tbody><tr><td><code>find-spec</code></td><td>contributes</td><td><a href="../modules/scrumia-specs.html"><code>scrumia-specs</code></a></td></tr><tr><td><code>implement</code></td><td>contributes</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>review</code></td><td>contributes</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section id="install">
+  <h2>Install it</h2>
+  <code class="mod-cmd">/plugin install scrumia-kotlin@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-kotlin">Read the source on GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — one composition among many. Not yet proven on a real project; a pilot is the next step.</span>
+    <span><a href="../about.html">About</a> · <a href="https://github.com/tibs245/scrumia">Repo</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Decisions</a></span>
+    <span>ScrumIA is an independent project, not affiliated with, sponsored by, or endorsed by Anthropic. Claude Code is a trademark of Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

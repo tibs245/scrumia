@@ -13,6 +13,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Added
 - Breaking: no
 
+## 2026-08-22 — The idiomatic Kotlin language lane is added, with six rule families and one falsifiable scenario each
+- Issue: #449
+- Category: Added
+- Breaking: no
+
 ## 2026-08-19 — A plugin citing its own home-repo's features/ restates the operative rule inline (BR-7, AC-22)
 - Issue: #227
 - Category: Changed

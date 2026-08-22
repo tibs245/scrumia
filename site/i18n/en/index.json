@@ -174,7 +174,13 @@
   "mod_slot_kmm": "no slot",
   "mod_kmm_d": "The Kotlin Multiplatform Mobile composition preset — six KMP-specific rule families (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring) and a single key that re-exports the six satellites a KMP project runs.",
   "mod_kmm_cmd": "claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia",
+<<<<<<< HEAD
   "mod_slot_ktor": "no slot",
   "mod_ktor_d": "HTTP server and client rules for a Ktor codebase — routing declared as a tree, content negotiation installed once, a long-lived HttpClient, named authentication providers, tests on the in-memory engine, configuration outside the code, and a stated choice between WebSockets and SSE. Nine rule families, an audit skill that measures a Ktor project against them.",
   "mod_ktor_cmd": "claude plugin install scrumia-ktor@scrumia"
+=======
+  "mod_slot_kotlin": "no slot",
+  "mod_kotlin_d": "Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Six rule families, a reference skill, and an audit skill that measures a Kotlin codebase against the six.",
+  "mod_kotlin_cmd": "claude plugin install scrumia-kotlin@scrumia"
+>>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
 }
