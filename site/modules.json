@@ -21,9 +21,6 @@
   "scrumia-gradle": { "emoji": "⚙️", "slot": null },
   "scrumia-material3": { "emoji": "🪟", "slot": null },
   "scrumia-kotlin-multiplatform-mobile": { "emoji": "🌐", "slot": null },
-<<<<<<< HEAD
-  "scrumia-ktor": { "emoji": "🛜", "slot": null }
-=======
+  "scrumia-ktor": { "emoji": "🛜", "slot": null },
   "scrumia-kotlin": { "emoji": "🟣", "slot": null }
->>>>>>> 758eb7d (feat(kotlin): create scrumia-kotlin: idiomatic Kotlin language rules)
 }
