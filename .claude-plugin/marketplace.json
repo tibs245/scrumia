@@ -167,6 +167,15 @@
       "category": "workflow",
       "tags": ["scrumia", "gradle", "build-system", "kotlin-dsl", "convention-plugin"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-material3",
+      "source": "./plugins/scrumia-material3",
+      "description": "The Material 3 UI capability for Kotlin Multiplatform Mobile and Android — tokens, components, theming and accessibility, stated as falsifiable directives. Compose is the default; Views is an explicit choice. Plugs in app by app.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "material3", "material-design", "android", "compose", "kotlin-multiplatform", "ui", "accessibility"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

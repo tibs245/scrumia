@@ -278,6 +278,45 @@ registers in the same `settings.team.roles` list, so routing stays single-source
 [ADR-0014](../../../docs/adr/0014-roles-ship-with-their-capability.md) and the
 `agent-team` feature.
 
+### Lanes — Material 3, distinct from `scrumia-design`
+
+`scrumia-design` is the **web** design slot: identity, tokens and components an HTML /
+CSS / React / SolidJS interface reads from, shipped under `design/`. `scrumia-material3`
+is the **Android / Kotlin Multiplatform Mobile** Material 3 slot: tokens, components,
+theming and accessibility stated for a Compose (default) or Views codebase, shipped as
+rules. The two answer to different platforms and never share a vocabulary:
+
+- `scrumia-design` owns `tokens.css`, `identity.md`, and a `components/<name>/` tree
+  per component. Its tokens are CSS custom properties; its decisions are about web
+  surfaces.
+- `scrumia-material3` owns Material 3 tokens (`MaterialTheme.colorScheme`,
+  `typography`, `shapes`, `elevation`, state layers), Material 3 components
+  (`Button`, `Card`, `TopAppBar`, `NavigationBar`, `ListItem`, `Dialog`, `Snackbar`,
+  and the rest), theming (dynamic color and custom color schemes, light and dark),
+  and accessibility thresholds (touch target ≥ 48dp, contrast 4.5:1 body / 3:1 large,
+  `contentDescription` on icon-only controls). Its decisions are about Android and
+  Kotlin Multiplatform Mobile surfaces.
+
+A pure-Android project activates `scrumia-material3` alone. A Kotlin Multiplatform
+Mobile project activates it alongside `scrumia-kotlin-multiplatform-mobile`. A web
+project activates `scrumia-design` instead. A project adopting both runs two
+independent design lanes, each with its own tokens, components and refusals — and
+nothing in either module's `extends.json` overlaps with the other's registers.
+
+The lane is added for one reason: the boundary with `scrumia-design` is the one a
+designer must guard, because Material 3 and a house web system look similar enough
+that an agent will reach for whichever one it knows first. The boundary is restated
+inline (BR-7) so the agent can apply it without resolving the citation: **a Material
+3 token (a Compose `MaterialTheme.colorScheme.primary`, a `dp` size, a typography
+scale step) is owned by `scrumia-material3` and has no equivalent in
+`scrumia-design`; a CSS custom property under `design/tokens.css` is owned by
+`scrumia-design` and has no equivalent here. Reaching for one in the other's lane is
+a refusal on both sides.** Provenance pointer: the home-repo's
+[`features/business/modular-composition/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/modular-composition/business.md)
+records this as a § *Lanes — Material 3, distinct from `scrumia-design`* section; the
+inline statement is what an agent applies, the URL is where the rule is owned in
+source.
+
 ## How modules connect to each other
 
 **Through documentation and data, never through a lookup that hides who answered.**

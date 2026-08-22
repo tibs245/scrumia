@@ -321,6 +321,19 @@
   </div>
 </section>
 
+<section id="material3">
+  <h3><a href="modules/scrumia-material3.html"><code>scrumia-material3</code></a> — no slot</h3>
+  <p>Material 3 the UI system, stated in Material 3's terms. Eight refusals or norms: Compose as the default toolkit and Views as an explicit choice with a stated justification; tokens from <code>MaterialTheme.colorScheme</code>, <code>Typography</code>, <code>Shapes</code>, <code>elevation</code>, and the state-layer system — never from hex literals; components from <code>androidx.compose.material3.*</code> — never built from primitives; dynamic color as the default on Android 12+; touch targets of 48dp × 48dp; contrast ratios of 4.5:1 for body text and 3:1 for large text; and <code>contentDescription</code> on every icon-only control.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>material3-audit</code></td><td>Audits an existing Android or Kotlin Multiplatform Mobile surface against the eight rules — find each View-based widget without a stated justification, each hardcoded color or typography step, each reinvented Button or Card or AppBar, each static brand palette on Android 12+, each interactive control below 48dp, each contrast ratio below WCAG AA, each <code>IconButton</code> without a TalkBack label</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>
