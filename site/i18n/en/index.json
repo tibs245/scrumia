@@ -167,5 +167,8 @@
   "mod_slot_tanstack": "no slot",
   "mod_slot_gradle": "no slot",
   "mod_gradle_d": "Gradle the build tool, stated in Gradle's terms — Kotlin DSL over Groovy, version catalogs, the shape of convention plugins, lazy task configuration, the build and configuration caches, composite builds, pluginManagement. Eight rules, an audit skill that measures an existing Gradle project against them.",
-  "mod_gradle_cmd": "claude plugin install scrumia-gradle@scrumia"
+  "mod_gradle_cmd": "claude plugin install scrumia-gradle@scrumia",
+  "mod_slot_material3": "no slot",
+  "mod_material3_d": "Material 3 the UI system, stated in Material 3's terms — Compose as the default toolkit, Views as an explicit choice, tokens and components pulled from Material 3 rather than reinvented per project. Eight rules, an audit skill that measures an existing Android or Kotlin Multiplatform Mobile surface against them.",
+  "mod_material3_cmd": "claude plugin install scrumia-material3@scrumia"
 }
