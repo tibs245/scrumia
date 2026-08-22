@@ -1,0 +1,10 @@
+{
+  "name": "scrumia-gradle",
+  "description": "Gradle the build tool — Kotlin DSL over Groovy, version catalogs, the shape of convention plugins, lazy task configuration, the build and configuration caches, composite builds, pluginManagement. Stated in terms of Gradle, not Kotlin Multiplatform.",
+  "version": "0.1.0",
+  "author": { "name": "tibs245" },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": ["scrumia", "gradle", "build-system", "kotlin-dsl", "convention-plugin"]
+}

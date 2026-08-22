@@ -308,6 +308,19 @@
   </div>
 </section>
 
+<section id="gradle">
+  <h3><a href="modules/scrumia-gradle.html"><code>scrumia-gradle</code></a> — no slot</h3>
+  <p>Gradle l'outil de build, énoncé dans ses termes. Huit refus ou normes : DSL Kotlin plutôt que Groovy, catalogue de versions comme l'unique endroit où vivent les versions, forme d'un plugin de convention (plugin script précompilé dans un composite <code>build-logic</code>), configuration paresseuse des tâches, caches de build et de configuration, builds composites pour les siblings locaux, <code>pluginManagement</code>, et tâches de documentation branchées sur le cycle de vie. L'application spécifique à Kotlin Multiplatform de ces règles appartient à <code>scrumia-kotlin-multiplatform-mobile</code>, cité ici seulement comme l'endroit où la forme s'applique.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Compétence</th><th>Fonction</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-gradle-audit</code></td><td>Audite un projet Gradle existant contre les huit règles — trouve chaque fichier Groovy <code>.gradle</code>, chaque littéral de version, chaque <code>tasks.create</code> eager, chaque drapeau de cache manquant, chaque version de plugin déclarée au mauvais endroit</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.</p>

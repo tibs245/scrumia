@@ -158,6 +158,15 @@
       "category": "workflow",
       "tags": ["scrumia", "validation", "zod", "runtime", "typescript"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-gradle",
+      "source": "./plugins/scrumia-gradle",
+      "description": "Gradle the build tool — Kotlin DSL over Groovy, version catalogs, the shape of convention plugins, lazy task configuration, the build and configuration caches, composite builds, pluginManagement. Stated in terms of Gradle, not Kotlin Multiplatform.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "gradle", "build-system", "kotlin-dsl", "convention-plugin"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

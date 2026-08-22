@@ -1,0 +1,14 @@
+{
+  "globs": [
+    "settings.gradle.kts",
+    "settings.gradle",
+    "build.gradle.kts",
+    "build.gradle",
+    "**/*.gradle.kts",
+    "**/*.gradle",
+    "gradle/libs.versions.toml",
+    "gradle.properties",
+    "build-logic/**/*.kt",
+    "build-logic/**/*.kts"
+  ]
+}
