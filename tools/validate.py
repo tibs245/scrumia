@@ -365,6 +365,36 @@ def check_extends_tool_runs() -> None:
             error(f"scrumia-extends --claims: {line}")
 
 
+def check_functional_programming_vocabulary() -> None:
+    """scrumia-functional-programming's bin/ vocabulary gate runs against this repo.
+
+    AC-6 of #450: a paradigm module's rule that can only be stated in one language's
+    terms is misplaced, and the CI gate is the textual enforcement. The script
+    greps the plugin's own rule fragments, skips README.md and the `Verified in:`
+    footer lines, and exits non-zero with a one-line message naming each
+    occurrence. The plugin ships the script under its own bin/; tools/validate.py
+    discovers it the same way scrumia-extends is discovered — by path, not by PATH.
+    """
+    tool = ROOT / "plugins" / "scrumia-functional-programming" / "bin" / "scrumia-functional-programming-check-vocabulary"
+    if not tool.exists():
+        # The plugin is optional. A project that does not adopt the paradigm does not
+        # need the gate; its absence here is not an error.
+        return
+    if not os.access(tool, os.X_OK):
+        error(f"{tool.relative_to(ROOT)}: not executable (chmod +x)")
+        return
+    try:
+        result = subprocess.run(
+            [str(tool)], cwd=str(ROOT), capture_output=True, text=True, timeout=60
+        )
+    except Exception as exc:  # noqa: BLE001 - reported, not raised
+        error(f"{tool.relative_to(ROOT)}: failed to run — {exc}")
+        return
+    if result.returncode != 0:
+        for line in (result.stdout + result.stderr).strip().splitlines():
+            error(f"scrumia-functional-programming-check-vocabulary: {line}")
+
+
 ANGLES_ROOT = (
     ROOT / "plugins" / "scrumia-specs" / "skills" / "scrumia-feature"
     / "references" / "angles"
@@ -809,6 +839,7 @@ def main() -> int:
     check_french_leftovers()
     check_composition_drift()
     check_extends_tool_runs()
+    check_functional_programming_vocabulary()
     check_angle_directories()
     check_feature_mandatory_files()
     check_feature_links()

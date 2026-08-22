@@ -23,5 +23,6 @@
   "scrumia-kotlin-multiplatform-mobile": { "emoji": "🌐", "slot": null },
   "scrumia-ktor": { "emoji": "🛜", "slot": null },
   "scrumia-kotlin": { "emoji": "🟣", "slot": null },
-  "scrumia-effect": { "emoji": "🎭", "slot": null }
+  "scrumia-effect": { "emoji": "🎭", "slot": null },
+  "scrumia-functional-programming": { "emoji": "🌀", "slot": null }
 }

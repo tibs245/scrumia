@@ -592,6 +592,15 @@ exist, which is the role BR-8 reserves for the consuming skill.
   step as BR-3 requires, and stops. It does not answer from its own defaults. BR-3 governs
   the message; what this rule adds is that a configuration one cannot resolve has no
   degraded mode to continue in, because every later answer would be well-formed and wrong.
+- **BR-17** — A paradigm module owns a discipline that holds with the same wording in
+  every language that supports it, and a rule that can only be stated in one language's
+  terms is misplaced: the language-specific rule belongs to the language module, and the
+  paradigm module names it and proposes the move before its own PR merges. A paradigm
+  module activates alone — no companion module is required for its rules to land — and
+  lands and merges independently of every other satellite. Cross-dependency with a
+  language module is itself a misplaced-rule finding: a paradigm module that names a
+  type, a syntax keyword, or a library from one language has already drifted, and the
+  drift is what the finding names.
 
 ## Idiomatic Kotlin language lane
 

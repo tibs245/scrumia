@@ -1,0 +1,18 @@
+{
+  "name": "scrumia-functional-programming",
+  "description": "The Functional Programming paradigm, language-neutral — purity, total functions, referential transparency, immutability by default, composition over inheritance, and effect discipline. The principles hold with the same wording in Kotlin, JavaScript, Rust, Scala, F#, Haskell and Swift. Plugs in app by app; activates alone.",
+  "version": "0.1.0",
+  "author": { "name": "tibs245" },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "paradigm",
+    "functional-programming",
+    "purity",
+    "composition",
+    "immutability",
+    "language-neutral"
+  ]
+}
