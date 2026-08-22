@@ -548,6 +548,10 @@
           <input type="checkbox" name="c-add" value="scrumia-kotlin">
           <b>scrumia-kotlin</b><span>The language the team agreed to, written down.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-effect">
+          <b>scrumia-effect</b><span>Effects as values, not exceptions — the discipline that sits above Result, Either, IO/suspend, and effect.website without substituting for any of them.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -997,6 +1001,19 @@ apps:
       <p class="mod-desc">Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Six rule families, a reference skill, and an audit skill that measures a Kotlin codebase against the six.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">2 skills</span></div>
       <code class="mod-cmd">claude plugin install scrumia-kotlin@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🎭</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-effect.html">scrumia-effect</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Effects as values, not exceptions — the typed-effect discipline that sits above Result, Either, IO/suspend, and effect.website without substituting for any of them. Six refusals, a reference skill, and ten guides spanning the discipline and the four approaches.</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-effect@scrumia</code>
     </div>
 
   </div>
