@@ -1,7 +1,7 @@
 {
   "name": "scrumia-kotlin-multiplatform-mobile",
-  "description": "The Kotlin Multiplatform Mobile composition preset — KMP-specific rules: expect/actual across source sets, source-set layout (commonMain, androidMain, iosMain, the JVM desktop target), iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring. Re-exports six satellites (scrumia-kotlin, scrumia-gradle, scrumia-ktor, scrumia-material3, scrumia-effect, scrumia-functional-programming) by configuration, not by code. Plugs in app by app.",
-  "version": "0.1.0",
+  "description": "The Kotlin Multiplatform Mobile implementation slot — a composition preset carrying KMP-specific rules: expect/actual across source sets, source-set layout (commonMain, androidMain, iosMain, the JVM desktop target), iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring. Re-exports six satellites (scrumia-kotlin, scrumia-gradle, scrumia-ktor, scrumia-material3, scrumia-effect, scrumia-functional-programming) by configuration, not by code. Plugs in app by app.",
+  "version": "0.2.0",
   "author": {
     "name": "tibs245"
   },
@@ -10,6 +10,7 @@
   "license": "MIT",
   "keywords": [
     "scrumia",
+    "implementation",
     "kotlin",
     "kotlin-multiplatform",
     "kmp",

@@ -436,6 +436,9 @@
             <span class="slot-fill">
               <span class="fill-1">scrumia-impl-rust</span>
               <span class="fill-2">scrumia-impl-solidjs</span>
+              <span class="fill-3">scrumia-impl-reactjs</span>
+              <span class="fill-4">scrumia-kotlin</span>
+              <span class="fill-5">scrumia-kotlin-multiplatform-mobile</span>
               <span class="fill-none">rien d'installé</span>
             </span>
           </h3>
@@ -449,7 +452,19 @@
             <input type="checkbox" name="c-impl" value="solidjs" checked>
             <b>SolidJS</b><span>Réactivité granulaire, tests axés sur le comportement.</span>
           </label>
-          <label class="opt opt-3">
+          <label class="opt opt-3 opt-mod">
+            <input type="checkbox" name="c-impl" value="reactjs">
+            <b>React</b><span>Server Components par défaut, état dérivé au rendu, tests de composants comportement-d'abord.</span>
+          </label>
+          <label class="opt opt-4 opt-mod">
+            <input type="checkbox" name="c-impl" value="kotlin">
+            <b>Kotlin</b><span>Val/var, null-safety, coroutines et Flow — pour un projet JVM ou Android pur.</span>
+          </label>
+          <label class="opt opt-5 opt-mod">
+            <input type="checkbox" name="c-impl" value="kmm">
+            <b>Kotlin Multiplatform Mobile</b><span>Les règles Kotlin plus le câblage KMP — source sets, expect/actual, Gradle en forme KMP.</span>
+          </label>
+          <label class="opt opt-other">
             <input type="checkbox" name="c-impl" value="other">
             <b>Quelque chose d'autre</b><span>Suit le code voisin — ou écrivez votre module.</span>
           </label>
@@ -537,16 +552,8 @@
           <b>scrumia-material3</b><span>Material 3 le système, énoncé dans ses termes — Compose par défaut, Views par choix, tokens et composants depuis la source.</span>
         </label>
         <label class="opt opt-add">
-          <input type="checkbox" name="c-add" value="scrumia-kotlin-multiplatform-mobile">
-          <b>scrumia-kotlin-multiplatform-mobile</b><span>Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques et une clé unique qui re-exporte les satellites qu&#x27;un projet KMP fait tourner.</span>
-        </label>
-        <label class="opt opt-add">
           <input type="checkbox" name="c-add" value="scrumia-ktor">
           <b>scrumia-ktor</b><span>La forme de la bibliothèque, énoncée en règles de refus — et la ligne qui tient le statut HTTP hors de la discipline d&#x27;erreur typée de l&#x27;application.</span>
-        </label>
-        <label class="opt opt-add">
-          <input type="checkbox" name="c-add" value="scrumia-kotlin">
-          <b>scrumia-kotlin</b><span>Le langage sur lequel l&#x27;équipe s&#x27;est accordée, écrit noir sur blanc.</span>
         </label>
         <label class="opt opt-add">
           <input type="checkbox" name="c-add" value="scrumia-effect">
@@ -973,7 +980,7 @@ apps:
         <span class="mod-ico">🌐</span>
         <span class="mod-id">
           <a class="mod-name" href="modules/scrumia-kotlin-multiplatform-mobile.html">scrumia-kotlin-multiplatform-mobile</a>
-          <span class="mod-slot">aucun slot</span>
+          <span class="mod-slot">implementation</span>
         </span>
       </div>
       <p class="mod-desc">Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques (expect/actual entre source sets, disposition des source sets, split iOS/Android, interop Cocoapods et Swift, déclaration de targets, câblage Gradle en forme KMP) et une clé unique qui re-exporte les six satellites qu'un projet KMP fait tourner.</p>
@@ -999,7 +1006,7 @@ apps:
         <span class="mod-ico">🟣</span>
         <span class="mod-id">
           <a class="mod-name" href="modules/scrumia-kotlin.html">scrumia-kotlin</a>
-          <span class="mod-slot">aucun slot</span>
+          <span class="mod-slot">implementation</span>
         </span>
       </div>
       <p class="mod-desc">Les règles de langage Kotlin idiomatique — val/var, null-safety et platform types, coroutines et Flow, classes data/sealed/value, object vs companion vs top-level, et visibilité. Six familles de règles, une compétence de référence, et une compétence d'audit qui mesure un code base Kotlin contre les six.</p>

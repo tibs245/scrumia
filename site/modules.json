@@ -20,9 +20,9 @@
   "scrumia-zod": { "emoji": "🛡️", "slot": null },
   "scrumia-gradle": { "emoji": "⚙️", "slot": null },
   "scrumia-material3": { "emoji": "🪟", "slot": null },
-  "scrumia-kotlin-multiplatform-mobile": { "emoji": "🌐", "slot": null },
+  "scrumia-kotlin-multiplatform-mobile": { "emoji": "🌐", "slot": "implementation" },
   "scrumia-ktor": { "emoji": "🛜", "slot": null },
-  "scrumia-kotlin": { "emoji": "🟣", "slot": null },
+  "scrumia-kotlin": { "emoji": "🟣", "slot": "implementation" },
   "scrumia-effect": { "emoji": "🎭", "slot": null },
   "scrumia-functional-programming": { "emoji": "🌀", "slot": null }
 }

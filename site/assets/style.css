@@ -1000,13 +1000,16 @@ tbody tr:last-child td { border-bottom: 0; }
 /* A chosen module is emphasised; `nothing installed` is not. Bold-but-faint on
    the one row whose message is absence sends two signals at once, and it would
    also draw the empty state differently here than in the reporting index. */
-.slots-choose .fill-1, .slots-choose .fill-2, .slots-choose .fill-3 { font-weight: var(--weight-strong); }
+.slots-choose .fill-1, .slots-choose .fill-2, .slots-choose .fill-3,
+.slots-choose .fill-4, .slots-choose .fill-5 { font-weight: var(--weight-strong); }
 .slots-choose .slot:has(.opt-empty input:checked) .slot-fill > span { font-weight: var(--weight-body); }
 .slots-choose .slot-q { flex: 1 1 auto; min-width: 0; }
 .slots-choose .slot-fill > span { display: none; }
 .slots-choose .slot:has(.opt-1 input:checked) .fill-1,
 .slots-choose .slot:has(.opt-2 input:checked) .fill-2,
 .slots-choose .slot:has(.opt-3 input:checked) .fill-3,
+.slots-choose .slot:has(.opt-4 input:checked) .fill-4,
+.slots-choose .slot:has(.opt-5 input:checked) .fill-5,
 .slots-choose .slot-multi:not(:has(.opt-mod input:checked)) .fill-none { display: block; }
 
 /* A fill arriving is a state change, so it is allowed to move. Summoned when a
@@ -1045,8 +1048,8 @@ tbody tr:last-child td { border-bottom: 0; }
    descendant selector would hand it the checkbox's 16px box. */
 .opt > input { margin: var(--space-1) 0 0; accent-color: var(--human); width: 16px; height: 16px; }
 .opt b { font-size: var(--text-base); font-weight: var(--weight-body); color: var(--text); }
-.opt-1 b, .opt-2 b, .opt-3 b, .opt-add b { font-family: var(--font-mono); font-size: var(--text-sm); }
-.opt-empty b, .opt-3:not(.opt-mod) b, .opt-free b { font-family: var(--font-body); font-size: var(--text-base); }
+.opt-1 b, .opt-2 b, .opt-3 b, .opt-4 b, .opt-5 b, .opt-add b { font-family: var(--font-mono); font-size: var(--text-sm); }
+.opt-empty b, .opt-other b, .opt-free b { font-family: var(--font-body); font-size: var(--text-base); }
 .opt span { grid-column: 2; font-size: var(--text-sm); color: var(--text-soft); line-height: var(--leading-snug); }
 .opt:has(input:checked) { background: var(--human-surface); }
 .opt:has(input:checked) b { color: var(--human); font-weight: var(--weight-strong); }

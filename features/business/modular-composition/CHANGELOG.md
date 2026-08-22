@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-22 — The Kotlin language lane and the Kotlin Multiplatform Mobile pivot are named as the `implementation` slot's Kotlin lanes
+- Issue: #466
+- Category: Added
+- Breaking: no
+
 ## 2026-08-22 — A Material 3 lane is added, and its boundary with `scrumia-design` is restated inline (BR-7 + AC-23)
 - Issue: #454
 - Category: Added
