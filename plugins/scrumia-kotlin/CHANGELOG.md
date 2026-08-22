@@ -4,6 +4,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-22
+### Added
+- Named as the **JVM/Android implementation slot** for a pure-Kotlin codebase — the same role `scrumia-impl-rust` plays for Rust and `scrumia-impl-solidjs` / `scrumia-impl-reactjs` play for their frontends. An app names `scrumia-kotlin` in its own `modules` and a companion module refines a named point of that contract, exactly as beside any other implementation module. Nothing about the lane or its dissociation changes; this only states which slot the lane answers.
+
 ## [0.1.0] - 2026-08-22
 ### Added
 - The module, carrying the **idiomatic Kotlin language rules** capability: six refusal rule families contributed to the `implement`, `review` and `find-spec` registers.

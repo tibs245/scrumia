@@ -368,6 +368,9 @@
             <span class="slot-fill">
               <span class="fill-1">scrumia-impl-rust</span>
               <span class="fill-2">scrumia-impl-solidjs</span>
+              <span class="fill-3">scrumia-impl-reactjs</span>
+              <span class="fill-4">scrumia-kotlin</span>
+              <span class="fill-5">scrumia-kotlin-multiplatform-mobile</span>
               <span class="fill-none">{{slot_empty_fill}}</span>
             </span>
           </h3>
@@ -381,7 +384,19 @@
             <input type="checkbox" name="c-impl" value="solidjs" checked>
             <b>SolidJS</b><span>{{comp_impl_solidjs_d}}</span>
           </label>
-          <label class="opt opt-3">
+          <label class="opt opt-3 opt-mod">
+            <input type="checkbox" name="c-impl" value="reactjs">
+            <b>React</b><span>{{comp_impl_reactjs_d}}</span>
+          </label>
+          <label class="opt opt-4 opt-mod">
+            <input type="checkbox" name="c-impl" value="kotlin">
+            <b>Kotlin</b><span>{{comp_impl_kotlin_d}}</span>
+          </label>
+          <label class="opt opt-5 opt-mod">
+            <input type="checkbox" name="c-impl" value="kmm">
+            <b>Kotlin Multiplatform Mobile</b><span>{{comp_impl_kmm_d}}</span>
+          </label>
+          <label class="opt opt-other">
             <input type="checkbox" name="c-impl" value="other">
             <b>{{comp_impl_other}}</b><span>{{comp_impl_other_d}}</span>
           </label>
@@ -846,7 +861,7 @@ apps:
         <span class="mod-ico">{{@emoji_scrumia-kotlin-multiplatform-mobile}}</span>
         <span class="mod-id">
           <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-kotlin-multiplatform-mobile}}">scrumia-kotlin-multiplatform-mobile</a>
-          <span class="mod-slot">{{mod_slot_kmm}}</span>
+          <span class="mod-slot">implementation</span>
         </span>
       </div>
       <p class="mod-desc">{{mod_kmm_d}}</p>
@@ -872,7 +887,7 @@ apps:
         <span class="mod-ico">{{@emoji_scrumia-kotlin}}</span>
         <span class="mod-id">
           <a class="mod-name" href="{{@lroot}}{{@modlink_scrumia-kotlin}}">scrumia-kotlin</a>
-          <span class="mod-slot">{{mod_slot_kotlin}}</span>
+          <span class="mod-slot">implementation</span>
         </span>
       </div>
       <p class="mod-desc">{{mod_kotlin_d}}</p>

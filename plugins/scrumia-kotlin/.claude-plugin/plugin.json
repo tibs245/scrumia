@@ -1,7 +1,7 @@
 {
   "name": "scrumia-kotlin",
-  "description": "Idiomatic Kotlin language rules — naming, null-safety, coroutines, data/sealed/value classes, object vs companion vs top-level, and visibility. Pinned to Kotlin language semantics, applicable to any Kotlin codebase (JVM, Android, KMP) without requiring Functional Programming or Multiplatform modules. Plugs in app by app.",
-  "version": "0.1.0",
+  "description": "The JVM/Android implementation slot for Kotlin — idiomatic Kotlin language rules: naming, null-safety, coroutines, data/sealed/value classes, object vs companion vs top-level, and visibility. Pinned to Kotlin language semantics, applicable to any Kotlin codebase (JVM, Android, KMP) without requiring Functional Programming or Multiplatform modules. Plugs in app by app.",
+  "version": "0.2.0",
   "author": {
     "name": "tibs245"
   },
@@ -10,6 +10,7 @@
   "license": "MIT",
   "keywords": [
     "scrumia",
+    "implementation",
     "kotlin",
     "language",
     "idiomatic",

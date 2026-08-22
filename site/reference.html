@@ -335,7 +335,7 @@
 </section>
 
 <section id="kmm">
-  <h3><a href="modules/scrumia-kotlin-multiplatform-mobile.html"><code>scrumia-kotlin-multiplatform-mobile</code></a> — no slot</h3>
+  <h3><a href="modules/scrumia-kotlin-multiplatform-mobile.html"><code>scrumia-kotlin-multiplatform-mobile</code></a> — slot <code>implementation</code></h3>
   <p>The Kotlin Multiplatform Mobile composition preset. Six refusals: <code>expect</code>/<code>actual</code> stays in <code>commonMain</code> for the contract and in the platform source set for the implementation; source-set layout keeps platform code in its own source set; platform tests and shared dependencies live where they compile for every target; a Cocoapods pod is declared once across the KMP module and the iOS project; the target list is the one in the Gradle DSL, not the one an IDE invents; Gradle wiring goes through the Kotlin Multiplatform plugin's source-set DSL.</p>
   <div class="table-wrap">
     <table>
@@ -361,7 +361,7 @@
 </section>
 
 <section id="kotlin">
-  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — no slot</h3>
+  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — slot <code>implementation</code></h3>
   <p>Idiomatic Kotlin language rules. Six refusals or norms: <code>var</code> only when <code>val</code> cannot carry the invariant; <code>!!</code> only with a stated local proof and never on a platform type (<code>T!</code>) read as Kotlin; structured concurrency with explicit scopes, no <code>GlobalScope.launch</code> outside the bootstrap, no swallowed <code>CancellationException</code>; <code>data class</code> for values, <code>sealed interface</code> for closed taxonomies, <code>value class</code> for type-safe wrappers; top-level functions for stateless utilities, <code>object</code> expressions only for true singletons; <code>internal</code> as the module boundary (not package-private), <code>public</code> only on a surface meant to cross a published boundary.</p>
   <div class="table-wrap">
     <table>

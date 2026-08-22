@@ -468,6 +468,14 @@ takes. A Kotlin Multiplatform Mobile project that declares
 `modules:` entry, the pivot's own KMP-specific rules alongside the six satellites'
 rules — the rules a Kotlin Multiplatform Mobile project needs, declared once.
 
+The pivot is what fills the `implementation` slot for that project — the KMP
+counterpart to `scrumia-kotlin` alone answering it for a pure-JVM/Android app,
+above. That is a site-facing fact about which lane answers the slot's question,
+not a change to what the pivot contributes: it still opens no register of its own
+(below), and a project naming the pivot in `apps[].modules` reads exactly as any
+other app naming its implementation module in `A module that refines another is a
+module like any other`, above.
+
 The satellites and what each owns:
 
 | Satellite | Owns |
@@ -609,6 +617,19 @@ rule families, each grounded on the Kotlin language documentation, each carrying
 least one falsifiable scenario in this feature's `qa.md`. The lane is the capability
 a project activates to receive those rules — through the `implement` and `review`
 registers — without depending on any other Kotlin ecosystem module.
+
+The lane is also the **JVM/Android implementation slot** for a pure-Kotlin codebase
+— the same role `scrumia-impl-rust` plays for Rust and `scrumia-impl-solidjs` /
+`scrumia-impl-reactjs` play for their frontends, on the same terms § *Lanes —
+Material 3, distinct from `scrumia-design`* already states for the `design` slot:
+one slot, answered by whichever lane fits the platform. An app declares
+`scrumia-kotlin` in its own `modules` and a companion module (`scrumia-tdd`,
+`scrumia-solid-principles`, …) refines a named point of that contract exactly as
+it would beside any other implementation module — filling the slot changes
+nothing about the lane above or its dissociation below. A Kotlin Multiplatform
+Mobile project instead fills the slot with `scrumia-kotlin-multiplatform-mobile`,
+the pivot below, which composes this lane's rules alongside its five other
+satellites.
 
 ### Dissociation
 

@@ -41,6 +41,9 @@
   var APPS = {
     rust: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-impl-rust' },
     solidjs: { name: 'web', path: 'apps/web', type: 'frontend', impl: 'scrumia-impl-solidjs' },
+    reactjs: { name: 'web', path: 'apps/web', type: 'frontend', impl: 'scrumia-impl-reactjs' },
+    kotlin: { name: 'api', path: 'apps/api', type: 'backend', impl: 'scrumia-kotlin' },
+    kmm: { name: 'mobile', path: 'apps/mobile', type: 'mobile', impl: 'scrumia-kotlin-multiplatform-mobile' },
     other: { name: 'app', path: 'apps/app', type: 'backend', impl: null }
   };
 

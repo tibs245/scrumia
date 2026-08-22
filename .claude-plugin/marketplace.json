@@ -326,7 +326,7 @@
       "name": "scrumia-kotlin-multiplatform-mobile",
       "source": "./plugins/scrumia-kotlin-multiplatform-mobile",
       "description": "The Kotlin Multiplatform Mobile composition preset — KMP-specific rules (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring). Re-exports six satellites (scrumia-kotlin, scrumia-gradle, scrumia-ktor, scrumia-material3, scrumia-effect, scrumia-functional-programming) by configuration. Plugs in app by app.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -365,7 +365,7 @@
       "name": "scrumia-kotlin",
       "source": "./plugins/scrumia-kotlin",
       "description": "Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Pinned to the Kotlin language docs, applicable to any Kotlin codebase without requiring Functional Programming or Multiplatform modules. Plugs in app by app.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "workflow",
       "tags": ["scrumia", "kotlin", "language", "idiomatic", "coroutines", "null-safety"],
       "author": { "name": "tibs245" }

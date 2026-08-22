@@ -335,7 +335,7 @@
 </section>
 
 <section id="kmm">
-  <h3><a href="modules/scrumia-kotlin-multiplatform-mobile.html"><code>scrumia-kotlin-multiplatform-mobile</code></a> — no slot</h3>
+  <h3><a href="modules/scrumia-kotlin-multiplatform-mobile.html"><code>scrumia-kotlin-multiplatform-mobile</code></a> — slot <code>implementation</code></h3>
   <p>Le preset de composition Kotlin Multiplatform Mobile. Six refus : <code>expect</code>/<code>actual</code> reste dans <code>commonMain</code> pour le contrat et dans le source set plateforme pour l'implémentation ; la disposition des source sets garde le code plateforme dans son propre source set ; les tests plateforme et les dépendances partagées vivent là où ils compilent pour chaque target ; un pod Cocoapods est déclaré une seule fois entre le module KMP et le projet iOS ; la liste des targets est celle du DSL Gradle, pas celle qu'un IDE invente ; le câblage Gradle passe par le DSL source-set du plugin Kotlin Multiplatform.</p>
   <div class="table-wrap">
     <table>
@@ -361,7 +361,7 @@
 </section>
 
 <section id="kotlin">
-  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — no slot</h3>
+  <h3><a href="modules/scrumia-kotlin.html"><code>scrumia-kotlin</code></a> — slot <code>implementation</code></h3>
   <p>Les règles de langage Kotlin idiomatique. Six refus ou normes : <code>var</code> seulement quand <code>val</code> ne peut pas porter l'invariant ; <code>!!</code> seulement avec une preuve locale énoncée et jamais sur un platform type (<code>T!</code>) lu comme Kotlin ; concurrence structurée avec scopes explicites, pas de <code>GlobalScope.launch</code> hors du bootstrap, pas de <code>CancellationException</code> avalé ; <code>data class</code> pour les valeurs, <code>sealed interface</code> pour les taxonomies fermées, <code>value class</code> pour les wrappers type-safe ; fonctions top-level pour les utilitaires stateless, expressions <code>object</code> seulement pour les vrais singletons ; <code>internal</code> comme frontière de module (pas package-private), <code>public</code> seulement sur une surface destinée à traverser une frontière publiée.</p>
   <div class="table-wrap">
     <table>

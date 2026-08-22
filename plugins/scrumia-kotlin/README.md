@@ -1,9 +1,17 @@
 # scrumia-kotlin
 
-The idiomatic Kotlin language rules a Kotlin codebase writes and reads against — naming
-and scope functions, null-safety and platform types, coroutines and Flow, data / sealed /
-value classes, object vs companion vs top-level, and visibility modifiers. Plugs in app by
-app, alongside whichever modules that app also runs.
+The JVM/Android implementation slot for Kotlin: the idiomatic Kotlin language rules a
+Kotlin codebase writes and reads against — naming and scope functions, null-safety and
+platform types, coroutines and Flow, data / sealed / value classes, object vs companion vs
+top-level, and visibility modifiers. Plugs in app by app, alongside whichever modules that
+app also runs.
+
+A pure-JVM or Android project names `scrumia-kotlin` as its app's implementation module —
+the same role `scrumia-impl-rust` plays for Rust — and a companion module (`scrumia-tdd`,
+`scrumia-solid-principles`, …) refines a named point of that contract exactly as it would
+beside any other implementation module. A Kotlin Multiplatform Mobile project instead
+names `scrumia-kotlin-multiplatform-mobile`, which composes this module's rules alongside
+its five other satellites; see its own README for that lane.
 
 ## What it answers
 

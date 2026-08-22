@@ -1,13 +1,19 @@
 # scrumia-kotlin-multiplatform-mobile
 
-The Kotlin Multiplatform Mobile composition preset — the KMP-specific rules for
-`expect`/`actual` across source sets, the source-set layout (commonMain, androidMain,
-iosMain, the JVM desktop target), the iOS/Android split (platform-specific tests and
-dependencies), Cocoapods and Swift interop, target declaration, and KMP-shaped Gradle
-wiring. Re-exports six satellites by configuration: `scrumia-kotlin`, `scrumia-gradle`,
-`scrumia-ktor`, `scrumia-material3`, `scrumia-effect`, `scrumia-functional-programming`.
-Plugs in app by app; a Kotlin Multiplatform Mobile project declares one key and gets
-the KMP rules *and* the satellites' rules.
+The Kotlin Multiplatform Mobile implementation slot: a composition preset carrying the
+KMP-specific rules for `expect`/`actual` across source sets, the source-set layout
+(commonMain, androidMain, iosMain, the JVM desktop target), the iOS/Android split
+(platform-specific tests and dependencies), Cocoapods and Swift interop, target declaration,
+and KMP-shaped Gradle wiring. Re-exports six satellites by configuration: `scrumia-kotlin`,
+`scrumia-gradle`, `scrumia-ktor`, `scrumia-material3`, `scrumia-effect`,
+`scrumia-functional-programming`. Plugs in app by app; a Kotlin Multiplatform Mobile
+project declares one key and gets the KMP rules *and* the satellites' rules.
+
+A Kotlin Multiplatform Mobile project names this pivot in its own `modules` the same way
+a Rust app names `scrumia-impl-rust` or a pure-JVM/Android project names `scrumia-kotlin`
+alone — it is the answer to "how is code written for this app". Filling that slot changes
+nothing below: the pivot still opens no register of its own, still contributes only the
+six KMP-specific norms, and the six satellites remain dissociable and usable on their own.
 
 ## What it answers
 
