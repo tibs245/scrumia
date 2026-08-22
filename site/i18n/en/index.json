@@ -170,5 +170,8 @@
   "mod_gradle_cmd": "claude plugin install scrumia-gradle@scrumia",
   "mod_slot_material3": "no slot",
   "mod_material3_d": "Material 3 the UI system, stated in Material 3's terms — Compose as the default toolkit, Views as an explicit choice, tokens and components pulled from Material 3 rather than reinvented per project. Eight rules, an audit skill that measures an existing Android or Kotlin Multiplatform Mobile surface against them.",
-  "mod_material3_cmd": "claude plugin install scrumia-material3@scrumia"
+  "mod_material3_cmd": "claude plugin install scrumia-material3@scrumia",
+  "mod_slot_kmm": "no slot",
+  "mod_kmm_d": "The Kotlin Multiplatform Mobile composition preset — six KMP-specific rule families (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring) and a single key that re-exports the six satellites a KMP project runs.",
+  "mod_kmm_cmd": "claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia"
 }

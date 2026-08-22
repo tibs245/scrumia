@@ -19,5 +19,6 @@
   "scrumia-compound-design": { "emoji": "🪢", "slot": null },
   "scrumia-zod": { "emoji": "🛡️", "slot": null },
   "scrumia-gradle": { "emoji": "⚙️", "slot": null },
-  "scrumia-material3": { "emoji": "🪟", "slot": null }
+  "scrumia-material3": { "emoji": "🪟", "slot": null },
+  "scrumia-kotlin-multiplatform-mobile": { "emoji": "🌐", "slot": null }
 }
