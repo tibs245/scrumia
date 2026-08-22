@@ -20,6 +20,7 @@
 | [form-management](business/form-management/index.md) | business | draft | Declarative form management for React implementations. |
 | [github-tracking](business/github-tracking/index.md) | business | active | How ScrumIA tracks work when the tracker slot is filled by scrumia-github-project: the ticket's lifecycle across the board's six columns… |
 | [html-css-and-accessibility](business/html-css-and-accessibility/index.md) | business | draft | Modern HTML and CSS, with accessibility as a first-class concern, applicable to React and SolidJS implementations. |
+| [http-transport](business/http-transport/index.md) | business | draft | HTTP server and client rules for a Ktor codebase, applicable to a pure-JVM service, a Ktor-on-Android client, or a Kotlin/JS browser app. |
 | [knowledge-placement](business/knowledge-placement/index.md) | business | draft | What happens to something an agent just learned. |
 | [local-extension](business/local-extension/index.md) | business | draft | The places a module may live besides a marketplace, and the material a project may add without a module at all. |
 | [local-tracking](business/local-tracking/index.md) | business | draft | The address of a tracker store that lives outside the project's repository, the git plumbing that resolves it from every linked worktree… |

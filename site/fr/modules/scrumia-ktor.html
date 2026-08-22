@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-ktor — ScrumIA</title>
+<meta name="description" content="scrumia-ktor : règles de serveur et de client HTTP pour une base de code Ktor — routage en arbre, négociation de contenu installée une fois, HttpClient de longue durée, fournisseurs d'authentification nommés, tests sur le moteur en mémoire, configuration hors du code, et choix explicite entre WebSockets et SSE. Épinglé à Ktor 3.x.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-ktor.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-ktor.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-ktor.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-ktor.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-ktor — ScrumIA">
+<meta property="og:description" content="scrumia-ktor : règles de serveur et de client HTTP pour une base de code Ktor — routage en arbre, négociation de contenu installée une fois, HttpClient de longue durée, fournisseurs d'authentification nommés, tests sur le moteur en mémoire, configuration hors du code, et choix explicite entre WebSockets et SSE. Épinglé à Ktor 3.x.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-ktor.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  root.classList.add('has-js');
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../../assets/theme.js"></script>
+<script defer src="../../assets/motion.js"></script>
+<script defer src="../../assets/header.js"></script>
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="../../modules/scrumia-ktor.html" lang="en">EN</a>
+        <a href="scrumia-ktor.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">🛜</span> <code>scrumia-ktor</code></h1>
+<p class="section-intro">La forme de la bibliothèque, énoncée en règles de refus — et la ligne qui tient le statut HTTP hors de la discipline d'erreur typée de l'application.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · aucun</span>
+  <span class="pill">version · 0.1.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Neuf règles de refus couvrant les huit familles que Ktor possède — routage, négociation de contenu, client HTTP, authentification, client de test, configuration serveur, WebSockets et SSE, observabilité — plus une neuvième qui nomme la dissociation entre le statut HTTP et la discipline d'erreur typée de l'application. Livre une compétence <code>ktor-audit</code> qui audite une base de code existante contre les neuf, et un mappage <code>find-spec</code> pour les clés auxquelles le module répond. Les règles portent sur une bibliothèque, pas sur une pile : un service pur-JVM, un client Ktor-sur-Android, une appli navigateur Kotlin/JS activent <code>scrumia-ktor</code> seul.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Une route enregistrée hors de l'arbre <code>routing {}</code> de l'application. Un <code>Json.decodeFromString</code> sur <code>call.receiveText()</code> dans une application qui installe <code>ContentNegotiation</code>. Un <code>HttpClient</code> construit à l'appel. Une vérification dans le handler. Un test qui ouvre un vrai port. Un port ou un secret en littéral dans Kotlin. Un websocket qui ne lit jamais de frame, ou une boucle SSE qui ne se reconnecte jamais. Un <code>println</code> dans un handler. Un <code>Result.failure</code> dont le corps est <code>r.status</code> — le canal est celui de l'application, pas celui du réseau.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume que la documentation de la bibliothèque est la citation de chaque règle — pas d'articles de blog, pas de tutoriels, pas de patterns communautaires. Coûte de la discipline à chaque installation de plugin, à chaque construction d'<code>HttpClient</code>, et à chaque route, et le rend en surface qu'un seul lecteur peut voir de bout en bout. La dissociation entre statut HTTP et sémantique d'effet est la ligne que le module existe pour tenir : <code>scrumia-ktor</code> possède la bibliothèque, le paradigme d'erreur typée appartient au module suivant.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>ktor-audit</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>ktor</li> <li>http</li> <li>server</li> <li>client</li> <li>kotlin</li></ul>
+</section>
+
+<section id="plugs-into">
+  <h2>Ce à quoi il se branche</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Registre</th><th>Sens</th><th>Module</th></tr></thead>
+      <tbody><tr><td><code>find-spec</code></td><td>contribue</td><td><a href="../modules/scrumia-specs.html"><code>scrumia-specs</code></a></td></tr><tr><td><code>implement</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>review</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-ktor@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-ktor">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+    <span>ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

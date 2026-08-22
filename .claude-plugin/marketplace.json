@@ -12,8 +12,15 @@
       "description": "The kernel: describes the project's active composition, its configuration, and the shared conventions. Does nothing on its own.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "kernel", "composition", "configuration"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "kernel",
+        "composition",
+        "configuration"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-rules",
@@ -21,8 +28,15 @@
       "description": "Fills no slot, like the kernel — the rules-hierarchy format itself: index, guides, decisions. Teaches modules and projects to consume, scaffold and evolve rule sections.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "kernel", "rules", "decisions"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "kernel",
+        "rules",
+        "decisions"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-specs",
@@ -30,8 +44,15 @@
       "description": "The specs slot — per-feature, TDD-oriented specs. A contextual file catalog instead of a single document.",
       "version": "0.5.0",
       "category": "workflow",
-      "tags": ["scrumia", "specs", "features", "tdd"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "specs",
+        "features",
+        "tdd"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-github-project",
@@ -39,8 +60,15 @@
       "description": "The tracker slot — issues, sub-issues, GitHub Projects columns, branches and PRs. Replaceable by an equivalent module for another tool.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "tracker", "github", "issues"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "tracker",
+        "github",
+        "issues"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-teams",
@@ -48,8 +76,15 @@
       "description": "The team slot — standing roles and sprint execution as dynamic workflows. Configurable: roles, models, escalation thresholds.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "agents", "team", "sprint"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "agents",
+        "team",
+        "sprint"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-discovery",
@@ -57,8 +92,15 @@
       "description": "The discovery slot — brainstorming and design. Produces issues and a branch carrying up-to-date specs.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "discovery", "brainstorming", "scoping"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "discovery",
+        "brainstorming",
+        "scoping"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-impl-rust",
@@ -66,8 +108,15 @@
       "description": "The implementation slot, for Rust apps — invalid states made unrepresentable, typed errors per layer, one test per invariant. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "implementation", "rust", "backend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "implementation",
+        "rust",
+        "backend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-impl-solidjs",
@@ -75,8 +124,15 @@
       "description": "The implementation slot, for SolidJS apps — fine-grained reactivity without React reflexes, behaviour-first component tests. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "implementation", "solidjs", "frontend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "implementation",
+        "solidjs",
+        "frontend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-impl-reactjs",
@@ -84,8 +140,16 @@
       "description": "The implementation slot, for React 19 apps — Server Components by default, Actions and useActionState for mutations and forms, derived state calculated during render. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "implementation", "react", "react19", "frontend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "implementation",
+        "react",
+        "react19",
+        "frontend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-tdd",
@@ -93,8 +157,15 @@
       "description": "Test-driven development, situated for an agent — the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "tdd", "tests", "testing"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "tdd",
+        "tests",
+        "testing"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-solid-principles",
@@ -102,8 +173,15 @@
       "description": "SOLID principles, each with its application limit — audits violations and over-applications alike. Reference, audit and refactor skills. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "solid", "design-principles", "architecture"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "solid",
+        "design-principles",
+        "architecture"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-tanstack-query",
@@ -111,8 +189,15 @@
       "description": "TanStack Query, situated for an agent — the queryOptions() factory, query keys, useQuery through testing. Reference skill now; audit and refactor land next. Plugs in app by app.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "tanstack-query", "data-fetching", "frontend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "tanstack-query",
+        "data-fetching",
+        "frontend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-design",
@@ -120,8 +205,15 @@
       "description": "The design slot — a design system that lives in the repo and syncs with Claude Design, plus a designer role guarding identity and consistency.",
       "version": "0.4.0",
       "category": "workflow",
-      "tags": ["scrumia", "design", "design-system", "tokens"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "design",
+        "design-system",
+        "tokens"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-html-css",
@@ -129,8 +221,17 @@
       "description": "The HTML, CSS and accessibility capability — semantic elements over ARIA roles, the element follows the purpose, and tests query what the user meets. Plugs in app by app, scoped to React and SolidJS by default.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "html", "css", "accessibility", "a11y", "web"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "html",
+        "css",
+        "accessibility",
+        "a11y",
+        "web"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-rhf",
@@ -138,8 +239,17 @@
       "description": "The implementation slot, for React apps using React Hook Form — declarative form management, resolver-driven validation, registered inputs, state through the library. Plugs in app by app, scoped to scrumia-impl-reactjs only.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "form", "rhf", "react-hook-form", "react", "frontend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "form",
+        "rhf",
+        "react-hook-form",
+        "react",
+        "frontend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-compound-design",
@@ -147,8 +257,16 @@
       "description": "The compound component pattern, framework-agnostic — parts reach the parent through context, sub-components are co-located with it, and the compound is consumed as one unit. React, Vue, Solid and Angular. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "component", "compound", "design-pattern", "frontend"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "component",
+        "compound",
+        "design-pattern",
+        "frontend"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-zod",
@@ -156,8 +274,16 @@
       "description": "Runtime validation at trust boundaries — the schema is the source of truth, the type is derived from it, and a user-facing failure carries a field-targeted message. Pinned to Zod v4. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "validation", "zod", "runtime", "typescript"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "validation",
+        "zod",
+        "runtime",
+        "typescript"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-gradle",
@@ -165,8 +291,16 @@
       "description": "Gradle the build tool — Kotlin DSL over Groovy, version catalogs, the shape of convention plugins, lazy task configuration, the build and configuration caches, composite builds, pluginManagement. Stated in terms of Gradle, not Kotlin Multiplatform.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "gradle", "build-system", "kotlin-dsl", "convention-plugin"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "gradle",
+        "build-system",
+        "kotlin-dsl",
+        "convention-plugin"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-material3",
@@ -174,8 +308,19 @@
       "description": "The Material 3 UI capability for Kotlin Multiplatform Mobile and Android — tokens, components, theming and accessibility, stated as falsifiable directives. Compose is the default; Views is an explicit choice. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "material3", "material-design", "android", "compose", "kotlin-multiplatform", "ui", "accessibility"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "material3",
+        "material-design",
+        "android",
+        "compose",
+        "kotlin-multiplatform",
+        "ui",
+        "accessibility"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-kotlin-multiplatform-mobile",
@@ -183,8 +328,38 @@
       "description": "The Kotlin Multiplatform Mobile composition preset — KMP-specific rules (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring). Re-exports six satellites (scrumia-kotlin, scrumia-gradle, scrumia-ktor, scrumia-material3, scrumia-effect, scrumia-functional-programming) by configuration. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "kotlin", "kotlin-multiplatform", "kmp", "kmm", "ios", "android", "multiplatform", "gradle"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "kotlin",
+        "kotlin-multiplatform",
+        "kmp",
+        "kmm",
+        "ios",
+        "android",
+        "multiplatform",
+        "gradle"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
+    },
+    {
+      "name": "scrumia-ktor",
+      "source": "./plugins/scrumia-ktor",
+      "description": "HTTP server and client rules for a Ktor codebase — routing declared as a tree, content negotiation installed once, a long-lived HttpClient, named authentication providers, tests on the in-memory engine, configuration outside the code, and a stated choice between WebSockets and SSE. Pinned to Ktor 3.x.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": [
+        "scrumia",
+        "ktor",
+        "http",
+        "server",
+        "client",
+        "kotlin"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     }
   ]
 }

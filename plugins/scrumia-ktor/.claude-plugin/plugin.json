@@ -1,0 +1,19 @@
+{
+  "name": "scrumia-ktor",
+  "description": "HTTP server and client rules for a Ktor codebase: routing declared as a tree, content negotiation installed once, a long-lived HttpClient, named authentication providers, tests on the in-memory engine, configuration outside the code, and a stated choice between WebSockets and SSE. Pinned to Ktor 3.x.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "ktor",
+    "http",
+    "server",
+    "client",
+    "kotlin"
+  ]
+}
