@@ -13,6 +13,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Added
 - Breaking: no
 
+## 2026-08-22 — The typed-effect discipline is its own refinement lane, with dissociation named in the lane
+- Issue: #453
+- Category: Added
+- Breaking: no
+
 ## 2026-08-22 — The idiomatic Kotlin language lane is added, with six rule families and one falsifiable scenario each
 - Issue: #449
 - Category: Added

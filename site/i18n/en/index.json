@@ -179,5 +179,8 @@
   "mod_ktor_cmd": "claude plugin install scrumia-ktor@scrumia",
   "mod_slot_kotlin": "no slot",
   "mod_kotlin_d": "Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Six rule families, a reference skill, and an audit skill that measures a Kotlin codebase against the six.",
-  "mod_kotlin_cmd": "claude plugin install scrumia-kotlin@scrumia"
+  "mod_kotlin_cmd": "claude plugin install scrumia-kotlin@scrumia",
+  "mod_slot_effect": "no slot",
+  "mod_effect_d": "Effects as values, not exceptions — the typed-effect discipline that sits above Result, Either, IO/suspend, and effect.website without substituting for any of them. Six refusals, a reference skill, and ten guides spanning the discipline and the four approaches.",
+  "mod_effect_cmd": "claude plugin install scrumia-effect@scrumia"
 }

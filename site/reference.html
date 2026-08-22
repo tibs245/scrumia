@@ -374,6 +374,19 @@
   </div>
 </section>
 
+<section id="effect">
+  <h3><a href="modules/scrumia-effect.html"><code>scrumia-effect</code></a> — no slot</h3>
+  <p>Effects as values, not exceptions — the typed-effect discipline. Six refusals: every rule names the approach it informs (<code>Result</code>, <code>Either</code>, <code>IO</code>/suspend, effect.website, or discipline-level); the four approaches are layered, never substituted; effect.website is cited by URL and never wrapped; recoverable failures travel the value path, not the throw path; retry is data on the failure composed as a function on the effect, not a try/catch loop; environments and layers (where they apply) replace service-locator-style dependencies at the effect boundary.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-effect</code></td><td>Walks a developer through the discipline section (typed effects, describe-before-execute, effect boundary, service-locator avoided) and the four approach sections (<code>Result</code>, <code>Either</code>, <code>IO</code>/suspend, effect.website) layered on top, plus error semantics and retry-as-data</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>

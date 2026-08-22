@@ -159,6 +159,32 @@ implementation contract, it works on its own even without an implementation modu
 present, it ships a reference/audit/refactor skill trio, it documents the settings it
 reads.
 
+## The typed-effect discipline is its own refinement lane
+
+`scrumia-effect` refines a named point of the implementation contract that the others
+leave implicit: how a function returns a description of a side effect rather than
+performing it. The discipline (typed effects, describe-before-execute, the effect
+boundary, service-locator avoided) applies regardless of which approach the project
+uses; four canonical approaches (`Result`, `Either`, `IO`/suspend, effect.website) are
+layered on top of the discipline, not substitutes for it.
+
+The module ships the same way `scrumia-tdd` and `scrumia-solid-principles` ship — in
+the app's own `modules`, alongside the implementation module — and dissociation is
+named in its README rather than implied:
+
+- the paradigm (purity, total functions, immutability, typeclasses) belongs to
+  `scrumia-functional-programming`;
+- the `suspend` keyword's behaviour, `Flow`, dispatchers, structured concurrency
+  belong to `scrumia-kotlin`;
+- HTTP-status-as-effect (`StatusCode`, `expectSuccess`, response-shape failures)
+  belongs to `scrumia-ktor`.
+
+A `Result`-only project reads no `Either`-specific or effect.website-specific rule as
+load-bearing — the module's `extends.json` lists every approach, and the consuming
+project's composition decides which approach rules are in scope. The reference
+implementation is cited by URL (`https://effect.website`) and never imported; the
+module is library-agnostic on the pattern.
+
 ## What a module owes to be pluggable
 
 Three things, no more:
