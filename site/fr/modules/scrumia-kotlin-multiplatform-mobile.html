@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scrumia-kotlin-multiplatform-mobile — ScrumIA</title>
+<meta name="description" content="scrumia-kotlin-multiplatform-mobile : le preset de composition Kotlin Multiplatform Mobile — règles KMP spécifiques (expect/actual entre source sets, disposition des source sets, split iOS/Android, interop Cocoapods et Swift, déclaration de targets, câblage Gradle en forme KMP). Re-exporte six satellites par configuration.">
+<link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-kotlin-multiplatform-mobile.html">
+<link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-kotlin-multiplatform-mobile.html">
+<link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-kotlin-multiplatform-mobile.html">
+<link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-kotlin-multiplatform-mobile.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="scrumia-kotlin-multiplatform-mobile — ScrumIA">
+<meta property="og:description" content="scrumia-kotlin-multiplatform-mobile : le preset de composition Kotlin Multiplatform Mobile — règles KMP spécifiques (expect/actual entre source sets, disposition des source sets, split iOS/Android, interop Cocoapods et Swift, déclaration de targets, câblage Gradle en forme KMP). Re-exporte six satellites par configuration.">
+<meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-kotlin-multiplatform-mobile.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F8F5F0" media="(prefers-color-scheme: light)">
+<link rel="preload" href="../../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/tokens.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<script>
+/* Inline, and it has to stay that way: both decisions below are made before the
+   first paint, and an external file is a round trip the paint waits on.
+   1. The saved theme, or the reader watches one theme be replaced by the other.
+   2. The two gates the stylesheet reads. `.has-js` means a script is running, and
+      is what a capability may be gated on. `.js` means that *and* the reader wants
+      motion — so it may only hide pixels, never a control: a motion preference
+      that deletes a feature is an accessibility setting causing a functional loss. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('scrumia-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  root.classList.add('has-js');
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still && 'IntersectionObserver' in window) root.classList.add('js');
+})();
+</script>
+<script defer src="../../assets/theme.js"></script>
+<script defer src="../../assets/motion.js"></script>
+<script defer src="../../assets/header.js"></script>
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<!-- The light the whole page is lit by. Fixed and inert: the page scrolls past
+     it rather than carrying it along. -->
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../../assets/mark.svg" alt="" width="22" height="22">
+      Scrum<span>IA</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="../index.html">Aperçu</a>
+      <a href="../index.html#composer">Composer</a>
+      <a href="../workflow.html">Déroulé</a>
+      <a href="../reference.html">Référence</a>
+      <a href="../about.html">À propos</a>
+      <a href="https://github.com/tibs245/scrumia">GitHub</a>
+      <span class="nav-rail" aria-hidden="true"></span>
+      <span class="lang">
+        <a href="../../modules/scrumia-kotlin-multiplatform-mobile.html" lang="en">EN</a>
+        <a href="scrumia-kotlin-multiplatform-mobile.html" aria-current="true" lang="fr">FR</a>
+      </span>
+      <button class="theme-btn" id="theme" title="Basculer le thème sombre" aria-label="Basculer le thème sombre" aria-pressed="false">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<p><a href="../reference.html">← Tous les modules</a></p>
+
+<h1><span class="mod-ico">🌐</span> <code>scrumia-kotlin-multiplatform-mobile</code></h1>
+<p class="section-intro">Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques et une clé unique qui re-exporte les satellites qu'un projet KMP fait tourner.</p>
+
+<p class="mod-foot">
+  <span class="pill">slot · aucun</span>
+  <span class="pill">version · 0.1.0</span>
+</p>
+
+<section id="responsibilities">
+  <h2>Ce dont il est responsable</h2>
+  <p>Six refus qui façonnent un projet Kotlin Multiplatform Mobile pour que les règles multiplateformes s'appliquent là où elles s'appliquent et ne fuient jamais là où elles ne le font pas. <code>expect</code>/<code>actual</code> reste dans <code>commonMain</code> pour le contrat, dans le source set plateforme pour l'implémentation ; la disposition des source sets garde le code plateforme dans son propre source set ; les tests plateforme et les dépendances partagées vivent là où ils compilent pour chaque target ; un pod Cocoapods est déclaré une seule fois entre le module KMP et le projet iOS ; la liste des targets est celle du DSL Gradle, pas celle qu'un IDE invente ; le câblage Gradle passe par le DSL source-set du plugin Kotlin Multiplatform, pas par un <code>implementation(...)</code> brut. Livre une compétence de référence <code>scrumia-kotlin-multiplatform-mobile</code> et re-exporte les six satellites (<code>scrumia-kotlin</code>, <code>scrumia-gradle</code>, <code>scrumia-ktor</code>, <code>scrumia-material3</code>, <code>scrumia-effect</code>, <code>scrumia-functional-programming</code>) par configuration.</p>
+</section>
+
+<section id="refusals">
+  <h2>Ce qu'il refuse</h2>
+  <p>Un <code>expect</code> hors de <code>commonMain</code>. Un <code>actual</code> dans <code>commonMain</code>. Imports Android dans <code>commonMain</code>, bridges Swift dans <code>commonMain</code>, APIs JVM-only dans <code>iosMain</code>. Un test plateforme dans <code>commonTest</code>. Une dépendance partagée dans <code>commonMain</code> qui livre à une target sans surface d'API pour elle. Un pod Cocoapods déclaré à la fois dans le module KMP et dans le <code>Podfile</code> du projet iOS. Une target que le build ne compile pas, ou une target que l'IDE invente. Une dépendance dans <code>dependencies { implementation(...) }</code> au lieu de <code>dependencies { "commonMainImplementation"(...) }</code>.</p>
+</section>
+
+<section id="philosophy">
+  <h2>L'hypothèse qu'il fait</h2>
+  <p>Présume que Kotlin Multiplatform Mobile est une surface distincte d'un projet purement JVM, et que les règles sur ce qui traverse les source sets et ce qui ne le fait pas sont l'ensemble de règles qu'un projet KMP doit. Le pivot est compose-only : il livre une référence, pas une adhésion de pile ; les satellites sont dissociables ; le pivot est la façon d'avoir les sept ensemble plutôt que la façon dont l'un d'eux dépend d'un autre. Coûte la friction d'une liste de satellites à mettre à jour quand on en ajoute un, le rend en une clé unique qui re-exporte les règles qu'un projet KMP fait tourner.</p>
+</section>
+
+<section id="skills">
+  <h2>Ses compétences</h2>
+  <ul class="mod-skills"><li><code>scrumia-kotlin-multiplatform-mobile</code></li></ul>
+</section>
+
+<section id="tags">
+  <h2>Étiquettes</h2>
+  <ul class="mod-tags"><li>scrumia</li> <li>kotlin</li> <li>kotlin-multiplatform</li> <li>kmp</li> <li>kmm</li> <li>ios</li> <li>android</li> <li>multiplatform</li> <li>gradle</li></ul>
+</section>
+
+<section id="plugs-into">
+  <h2>Ce à quoi il se branche</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Registre</th><th>Sens</th><th>Module</th></tr></thead>
+      <tbody><tr><td><code>find-spec</code></td><td>contribue</td><td><a href="../modules/scrumia-specs.html"><code>scrumia-specs</code></a></td></tr><tr><td><code>implement</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr><tr><td><code>review</code></td><td>contribue</td><td><a href="../modules/scrumia-github-project.html"><code>scrumia-github-project</code></a></td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+
+
+<section id="install">
+  <h2>L'installer</h2>
+  <code class="mod-cmd">/plugin install scrumia-kotlin-multiplatform-mobile@scrumia</code>
+  <p><a href="https://github.com/tibs245/scrumia/tree/main/plugins/scrumia-kotlin-multiplatform-mobile">Lire le source sur GitHub</a></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ScrumIA — une composition parmi d'autres. Pas encore éprouvé sur un projet réel ; un pilote est la prochaine étape.</span>
+    <span><a href="../about.html">À propos</a> · <a href="https://github.com/tibs245/scrumia">Dépôt</a> · <a href="https://github.com/tibs245/scrumia/tree/main/docs/adr">Décisions</a></span>
+    <span>ScrumIA est un projet indépendant, non affilié à Anthropic, ni sponsorisé ni approuvé par cette dernière. Claude Code est une marque d'Anthropic.</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -412,6 +412,72 @@ failure mode — a module not in the cache is one thing, a module disabled in th
 is another, a module scoped to another project is a third, and a stale entry whose
 `installPath` no longer resolves is a fourth.
 
+## A composition preset re-exports a stack by configuration
+
+A composition preset is a module that lands one key for a project, by carrying the
+rules of a stack of modules it never duplicates. The pivot is one declared module
+with no executable, no role, no `bin/`; the rules it contributes are the rules its
+satellites contribute, and what it adds are the rules that are *stack-shaped* rather
+than *module-shaped* — the rules no satellite owns because they only exist when the
+stack is.
+
+A preset lands in `plugins/<name>/` like any other module: a `SKILL.md` (the
+reference), an `extends.json` (the directives the pivot owns and the registers it
+contributes them to), a `README.md`, a `CHANGELOG.md`, and a lane in this feature
+that names the pivot, the satellites it re-exports by configuration, and the
+boundary each satellite still owns. The pivot does not open a register, does not
+publish an executable, and does not run. Its dissociation from the satellites is
+visible by file structure alone: the pivot's `extends.json` lists no fragment under
+a satellite's root, and no satellite's `extends.json` lists a fragment under the
+pivot's root. The split is the same split BR-7 enforces for any module — a
+fragment path stays inside the module that ships it — and the pivot re-exports
+through the composition's register mechanism, never through `extends.json` data
+that points at a satellite's tree.
+
+### The Kotlin Multiplatform Mobile lane
+
+`scrumia-kotlin-multiplatform-mobile` is the first preset, and the form the lane
+takes. A Kotlin Multiplatform Mobile project that declares
+`tibs245/scrumia:scrumia-kotlin-multiplatform-mobile` receives, in one
+`modules:` entry, the pivot's own KMP-specific rules alongside the six satellites'
+rules — the rules a Kotlin Multiplatform Mobile project needs, declared once.
+
+The satellites and what each owns:
+
+| Satellite | Owns |
+|---|---|
+| `scrumia-kotlin` | Kotlin language — coroutines, null-safety, idiomatic style |
+| `scrumia-gradle` | Gradle the tool — Kotlin DSL format, version catalogs, task configuration, build cache, plugin management |
+| `scrumia-ktor` | HTTP — Ktor routing, content negotiation, auth |
+| `scrumia-material3` | UI — Material 3 tokens, components |
+| `scrumia-effect` | Effect handling — typed errors, dependency injection through effects |
+| `scrumia-functional-programming` | Paradigm — purity, total functions, referential transparency |
+
+The pivot owns none of those concerns. It owns what is KMP-shaped and only what is
+KMP-shaped: `expect`/`actual` across source sets, the source-set layout
+(commonMain, androidMain, iosMain, JVM desktop), the iOS/Android split
+(platform-specific tests and dependencies per target), Cocoapods and Swift
+interop, KMP target declaration, and KMP-shaped Gradle wiring. A rule about
+coroutine idioms in a KMP module belongs to `scrumia-kotlin`; a rule about how
+the Gradle build resolves version catalogs belongs to `scrumia-gradle`; the split
+is the same split BR-7 enforces — each module owns its own tree, no fragment
+climbs out of it.
+
+The preset lands and merges independently of the six satellites (the pivot is
+not a prerequisite for any satellite), and a project that declares only the
+satellites receives their rules unchanged. A Kotlin Multiplatform Mobile project
+declares the pivot *and* the satellites, or the satellites alone; a pure-Kotlin
+project declares neither. Neither merge order nor activation order is enforced
+between them, and a satellite's rules never degrade when the pivot is absent —
+each has always been total on its own, and the pivot is the way to get the seven
+together rather than the way any one of them depends on another.
+
+The pivot contributes to the `implement`, `review` and `find-spec` registers, and
+to no register named `init`. `scrumia-extends --list` shows the same register
+set before and after the preset lands; the register vocabulary is the consumer's,
+and a preset that opened a new one would be the pivot deciding what registers
+exist, which is the role BR-8 reserves for the consuming skill.
+
 ## Business rules
 
 - **BR-1** — A register is a question, not a module. An extension point exists

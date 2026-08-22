@@ -334,6 +334,19 @@
   </div>
 </section>
 
+<section id="kmm">
+  <h3><a href="modules/scrumia-kotlin-multiplatform-mobile.html"><code>scrumia-kotlin-multiplatform-mobile</code></a> — no slot</h3>
+  <p>The Kotlin Multiplatform Mobile composition preset. Six refusals: <code>expect</code>/<code>actual</code> stays in <code>commonMain</code> for the contract and in the platform source set for the implementation; source-set layout keeps platform code in its own source set; platform tests and shared dependencies live where they compile for every target; a Cocoapods pod is declared once across the KMP module and the iOS project; the target list is the one in the Gradle DSL, not the one an IDE invents; Gradle wiring goes through the Kotlin Multiplatform plugin's source-set DSL.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrumia-kotlin-multiplatform-mobile</code></td><td>Six rule families — <code>expect</code>/<code>actual</code> across source sets, source-set layout, platform tests and dependencies, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring — each its own file, all citing the Kotlin documentation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>

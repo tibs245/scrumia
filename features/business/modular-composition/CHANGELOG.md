@@ -8,6 +8,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Added
 - Breaking: no
 
+## 2026-08-22 — A composition preset re-exports a stack by configuration, and the first preset is the Kotlin Multiplatform Mobile lane
+- Issue: #448
+- Category: Added
+- Breaking: no
+
 ## 2026-08-19 — A plugin citing its own home-repo's features/ restates the operative rule inline (BR-7, AC-22)
 - Issue: #227
 - Category: Changed

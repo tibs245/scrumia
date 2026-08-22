@@ -536,6 +536,10 @@
           <input type="checkbox" name="c-add" value="scrumia-material3">
           <b>scrumia-material3</b><span>Material 3 the system, stated in Material 3&#x27;s terms — Compose by default, Views by choice, tokens and components from the source.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-kotlin-multiplatform-mobile">
+          <b>scrumia-kotlin-multiplatform-mobile</b><span>The Kotlin Multiplatform Mobile composition preset — six KMP-specific rule families and a single key that re-exports the satellites a KMP project runs.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -946,6 +950,19 @@ apps:
       <p class="mod-desc">Material 3 the UI system, stated in Material 3's terms — Compose as the default toolkit, Views as an explicit choice, tokens and components pulled from Material 3 rather than reinvented per project. Eight rules, an audit skill that measures an existing Android or Kotlin Multiplatform Mobile surface against them.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
       <code class="mod-cmd">claude plugin install scrumia-material3@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🌐</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-kotlin-multiplatform-mobile.html">scrumia-kotlin-multiplatform-mobile</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">The Kotlin Multiplatform Mobile composition preset — six KMP-specific rule families (expect/actual across source sets, source-set layout, iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring) and a single key that re-exports the six satellites a KMP project runs.</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia</code>
     </div>
 
   </div>

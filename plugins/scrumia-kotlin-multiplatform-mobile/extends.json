@@ -1,0 +1,64 @@
+{
+  "implement": [
+    {
+      "name": "expect-actual-across-source-sets",
+      "type": "norm",
+      "when": "required",
+      "summary": "An expect declaration lives in commonMain, each actual lives in the platform source set that can resolve it — the contract is one source of truth, the implementations are by target",
+      "read": "rules/expect-actual-across-source-sets.md"
+    },
+    {
+      "name": "source-set-layout",
+      "type": "norm",
+      "when": "required",
+      "summary": "Source sets are the layout: commonMain holds what every target compiles, androidMain / iosMain / jvmMain hold what only their target does, intermediate source sets hold shared subsets of targets",
+      "read": "rules/source-set-layout.md"
+    },
+    {
+      "name": "platform-tests-and-dependencies",
+      "type": "norm",
+      "when": "required",
+      "summary": "Platform-specific tests live in the matching test source set, dependencies per target declare the dependency for the targets that need it — a test in androidTest is not a test in commonTest",
+      "read": "rules/platform-tests-and-dependencies.md"
+    },
+    {
+      "name": "cocoapods-swift-interop",
+      "type": "norm",
+      "when": "required",
+      "summary": "Cocoapods integration is declared once, per pod, with its iOS deployment target and the Swift bridging configuration — no pod reaches the build twice, no Swift consumer wires twice",
+      "read": "rules/cocoapods-swift-interop.md"
+    },
+    {
+      "name": "kmp-target-declaration",
+      "type": "norm",
+      "when": "required",
+      "summary": "Targets declare the triples a target family actually ships — iosArm64 / iosX64 / iosSimulatorArm64 for Apple, androidTarget for Android, jvm(\"…\") for desktop — and the list is the one source of truth, not the IDE's view",
+      "read": "rules/kmp-target-declaration.md"
+    },
+    {
+      "name": "kmp-shaped-gradle-wiring",
+      "type": "norm",
+      "when": "required",
+      "summary": "KMP-shaped Gradle wiring: the kotlin {} block applies the Kotlin Multiplatform plugin, source-set dependencies go through dependencies { \"commonMainImplementation\"(...) }, convention plugins expose kotlin(\"…\") targets without re-declaring them",
+      "read": "rules/kmp-shaped-gradle-wiring.md"
+    }
+  ],
+  "review": [
+    {
+      "name": "Kotlin Multiplatform Mobile refusals",
+      "type": "refusal",
+      "when": "required",
+      "summary": "expect/actual in the wrong source set, source-set layout that mixes commonMain with platform code, platform-specific tests in commonTest, undeclared Cocoapods pods, a missing iosArm64 or androidTarget, Gradle wiring that bypasses the Kotlin Multiplatform plugin",
+      "read": "skills/scrumia-kotlin-multiplatform-mobile/SKILL.md"
+    }
+  ],
+  "find-spec": [
+    {
+      "name": "Kotlin Multiplatform Mobile reference",
+      "type": "method",
+      "when": "optional",
+      "summary": "The KMP-specific rule set: expect/actual across source sets, the source-set layout, the iOS/Android split, Cocoapods and Swift interop, target declaration, KMP-shaped Gradle wiring",
+      "read": "skills/scrumia-kotlin-multiplatform-mobile/SKILL.md"
+    }
+  ]
+}

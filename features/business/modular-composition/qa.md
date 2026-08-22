@@ -379,6 +379,104 @@ restate-inline obligation as not optional: the home-repo's installation is the
 easiest reader for the inline statement to look redundant in, and the easiest for
 it to be silently dropped from — exactly the failure the clause exists to forbid.
 
+## The scrumia-kotlin-multiplatform-mobile lane
+
+The Kotlin Multiplatform Mobile composition preset re-exports six satellites by
+configuration. Its ACs are scoped to the lane so a reviewer reading the preset's
+own rules can fail each one against the composition mechanism this feature
+states.
+
+### KMM-AC-1 — Declaring the preset reaches the pivot's rows alongside the satellites'
+
+```gherkin
+Given a project that declares
+  `tibs245/scrumia:scrumia-kotlin-multiplatform-mobile` in `.scrumia/config.yaml`
+  along with the six satellites (`scrumia-kotlin`, `scrumia-gradle`,
+  `scrumia-ktor`, `scrumia-material3`, `scrumia-effect`,
+  `scrumia-functional-programming`)
+When `scrumia-extends implement` is run
+Then the table prints the pivot's six rows in the project's own scope tier,
+  followed by each satellite's rows in the order the project declared them, and
+  the pivot's rows are not restatements of the satellites' rows
+```
+
+### KMM-AC-2 — The satellites work without the pivot
+
+```gherkin
+Given a project that declares only the six satellites (no
+  `scrumia-kotlin-multiplatform-mobile`)
+When `scrumia-extends implement` is run
+Then the table prints each satellite's rows unchanged, the pivot's rows do not
+  appear, and the pivot is not a prerequisite for any satellite
+```
+
+### KMM-AC-3 — The pivot duplicates no satellite's rule
+
+```gherkin
+Given the pivot's `extends.json` and each satellite's `extends.json`
+When a reviewer reads them side by side, line by line
+Then no rule in the pivot's `extends.json` restates a rule owned by a satellite —
+  a Kotlin language rule belongs to `scrumia-kotlin`, a Gradle-the-tool rule
+  belongs to `scrumia-gradle`, an HTTP rule belongs to `scrumia-ktor`, a UI
+  rule belongs to `scrumia-material3`, an effect rule belongs to `scrumia-effect`,
+  a paradigm rule belongs to `scrumia-functional-programming` — and any
+  overlap is a finding
+```
+
+### KMM-AC-4 — The pivot lands and merges independently of the satellites
+
+```gherkin
+Given the pivot's own tree (`SKILL.md`, `extends.json`, `README.md`,
+  `CHANGELOG.md`, `rules/`, the lane in `features/business/modular-composition/`)
+When a reviewer greps the pivot's own code, docs, tests and fragments for any
+  "X must be present" wording naming a satellite
+Then no such wording is found — every rule is reachable without the pivot
+  requiring a satellite to be active, including any wording in prose, in code,
+  in tests, and in the fragments the rules resolve to
+```
+
+### KMM-AC-5 — The pivot contributes to the right registers and opens none named `init`
+
+```gherkin
+Given the pivot's `extends.json` and `scrumia-extends --list` before the pivot lands
+When the pivot lands and `scrumia-extends --list` runs again
+Then the pivot contributes rows to the `implement`, `review` and `find-spec`
+  registers, the pivot does not open a register named `init`, and the list of
+  register names is unchanged — the pivot adds no register and removes none
+```
+
+### KMM-AC-6 — Every fragment path resolves inside the pivot
+
+```gherkin
+Given the pivot's `extends.json`
+When a reviewer reads each `read` path the pivot declares
+Then every path resolves inside `plugins/scrumia-kotlin-multiplatform-mobile/`,
+  no path climbs out of the module, and `tools/validate.py` exits clean
+```
+
+### KMM-AC-7 — The six KMP-specific rule families are all present, named and typed
+
+```gherkin
+Given the pivot's `extends.json` and the rules in `rules/`
+When a reviewer reads the rule families the issue names — expect/actual across
+  source sets, source-set layout (commonMain, androidMain, iosMain, JVM desktop),
+  iOS/Android split (platform-specific tests and dependencies per target),
+  Cocoapods and Swift interop, KMP target declaration, KMP-shaped Gradle wiring
+Then each family is present as one directive with a `name`, a `type` from
+  `{norm, refusal, method}`, a `when` from `{required, optional}`, and a `read`
+  that lands on a self-contained fragment the pivot ships
+```
+
+### KMM-AC-8 — The dissociation is visible by file structure alone
+
+```gherkin
+Given the pivot's `extends.json` and each satellite's `extends.json`
+When a reviewer reads them side by side without the prose
+Then the pivot's `extends.json` lists no fragment under a satellite's root, and
+  no satellite's `extends.json` lists a fragment under the pivot's root — the
+  dissociation is visible from the file paths alone
+```
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor or

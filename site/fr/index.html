@@ -536,6 +536,10 @@
           <input type="checkbox" name="c-add" value="scrumia-material3">
           <b>scrumia-material3</b><span>Material 3 le système, énoncé dans ses termes — Compose par défaut, Views par choix, tokens et composants depuis la source.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-kotlin-multiplatform-mobile">
+          <b>scrumia-kotlin-multiplatform-mobile</b><span>Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques et une clé unique qui re-exporte les satellites qu&#x27;un projet KMP fait tourner.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -946,6 +950,19 @@ apps:
       <p class="mod-desc">Material 3 le système d'UI, énoncé dans ses termes — Compose comme boîte à outils par défaut, Views comme choix explicite, tokens et composants tirés de Material 3 plutôt que réinventés par projet. Huit règles, une compétence d'audit qui mesure une surface Android ou Kotlin Multiplatform Mobile existante contre elles.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">claude plugin install scrumia-material3@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🌐</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-kotlin-multiplatform-mobile.html">scrumia-kotlin-multiplatform-mobile</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Le preset de composition Kotlin Multiplatform Mobile — six familles de règles KMP spécifiques (expect/actual entre source sets, disposition des source sets, split iOS/Android, interop Cocoapods et Swift, déclaration de targets, câblage Gradle en forme KMP) et une clé unique qui re-exporte les six satellites qu'un projet KMP fait tourner.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-kotlin-multiplatform-mobile@scrumia</code>
     </div>
 
   </div>
