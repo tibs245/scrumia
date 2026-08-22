@@ -182,5 +182,8 @@
   "mod_kotlin_cmd": "claude plugin install scrumia-kotlin@scrumia",
   "mod_slot_effect": "no slot",
   "mod_effect_d": "Effects as values, not exceptions — the typed-effect discipline that sits above Result, Either, IO/suspend, and effect.website without substituting for any of them. Six refusals, a reference skill, and ten guides spanning the discipline and the four approaches.",
-  "mod_effect_cmd": "claude plugin install scrumia-effect@scrumia"
+  "mod_effect_cmd": "claude plugin install scrumia-effect@scrumia",
+  "mod_slot_fp": "no slot",
+  "mod_fp_d": "The Functional Programming paradigm, language-neutral — purity, total functions, referential transparency, immutability by default, composition over inheritance, and effect discipline. A reference skill and a vocabulary check that enforces the rule fragments stay language-agnostic.",
+  "mod_fp_cmd": "claude plugin install scrumia-functional-programming@scrumia"
 }

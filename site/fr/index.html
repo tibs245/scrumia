@@ -552,6 +552,10 @@
           <input type="checkbox" name="c-add" value="scrumia-effect">
           <b>scrumia-effect</b><span>Les effets comme valeurs, pas comme exceptions — la discipline qui se place au-dessus de Result, Either, IO/suspend, et effect.website sans s&#x27;y substituer.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-functional-programming">
+          <b>scrumia-functional-programming</b><span>Le paradigme de programmation fonctionnelle, neutre en langage — pureté, totalité, transparence référentielle, immuabilité par défaut, composition plutôt qu&#x27;héritage, discipline des effets.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -1014,6 +1018,19 @@ apps:
       <p class="mod-desc">Les effets comme valeurs, pas comme exceptions — la discipline des effets typés qui se place au-dessus de Result, Either, IO/suspend, et effect.website sans s'y substituer. Six refus, une compétence de référence, et dix guides couvrant la discipline et les quatre approches.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">claude plugin install scrumia-effect@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🌀</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-functional-programming.html">scrumia-functional-programming</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Le paradigme de programmation fonctionnelle, neutre en langage — pureté, fonctions totales, transparence référentielle, immuabilité par défaut, composition plutôt qu'héritage, et discipline des effets. Une compétence de référence et une vérification de vocabulaire qui garantit que les fragments de règles restent agnostiques du langage.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-functional-programming@scrumia</code>
     </div>
 
   </div>

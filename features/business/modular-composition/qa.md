@@ -583,6 +583,27 @@ And a `val` or `fun` on a class that *is* a published surface — a library API,
   a module's outward-facing type — is not subject to this rule
 ```
 
+### AC-24 — A paradigm module's rule that drifts into one language's terms is misplaced
+
+```gherkin
+Given a paradigm module whose rule fragments live under its own `rules/` directory
+And a contributor whose edit adds a language-specific token — a syntax keyword,
+  a type name, an effect-system identifier — drawn from one language (Kotlin,
+  JavaScript, or Rust in this composition; the principle is paradigm-wide)
+When the module's vocabulary check runs over its own rule fragments
+Then it exits non-zero with a one-line message naming each occurrence, the
+  contributing rule is named as misplaced, and the rule is removed or rewritten
+  in language-neutral terms before the PR merges
+```
+
+The check is the paradigm module's own — `bin/<paradigm>-check-vocabulary` — and
+skips `README.md` and any line whose first non-blank characters match `Verified in:`,
+the meta-information footer that names the two cited languages a contributor
+verified the rule against. The check is the textual enforcement of BR-17: a
+paradigm-level rule that needs a reader fluent in one language to interpret has
+already drifted, and a CI gate is what makes the drift visible before review
+spends the time to notice it.
+
 ## Out of scope
 
 - **Module versioning and migration on a breaking change** — what a major, minor or

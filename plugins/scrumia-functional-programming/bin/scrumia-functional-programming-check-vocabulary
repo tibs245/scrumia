@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+# scrumia-functional-programming-check-vocabulary
+#
+# Gates the module's own rule fragments against language-specific syntax tokens.
+# BR-17 / AC-6: a paradigm module's rule is restated in language-neutral terms; a
+# rule that can only be stated in one language's terms is misplaced. This script is
+# the textual enforcement — it greps the plugin's own markdown for syntax tokens
+# of one language and exits non-zero with a one-line message naming each occurrence.
+#
+# What it skips:
+#   - README.md — meta-information about the module, not a rule fragment.
+#   - CHANGELOG.md — release history, not a rule fragment.
+#   - SKILL.md — the routing document, not a rule fragment.
+#   - Any line whose first non-blank characters match `Verified in:` — the AC-7
+#     footer that names the two cited languages a contributor verified the rule
+#     against. The footer is provenance, not the rule.
+#
+# What it scans:
+#   - Every other *.md file under the plugin's own root — guides, decisions,
+#     rules under `rules/`, explanatory pages.
+#
+# Exit codes:
+#   0 — no token found, the rule fragments are language-neutral.
+#   1 — one or more tokens found; a one-line message names each occurrence.
+#
+# The token list is the starter set named in the AC. The implementer may extend it
+# at PR time — the script's behaviour is the contract, the list is the writing
+# choice.
+#
+# Called by tools/validate.py under SCRUMIA_MODULE_DIR. The script resolves its
+# own location to find the plugin root.
+
+set -uo pipefail
+
+# Resolve the plugin root from the script's own location. readlink -f handles
+# the symlink-aware case; python3 falls back when readlink doesn't have -f
+# (e.g. on macOS without coreutils).
+SCRIPT="$(readlink -f -- "$0" 2>/dev/null || python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$0")"
+PLUGIN_ROOT="$(dirname -- "$(dirname -- "$SCRIPT")")"
+
+# Two pattern families:
+#   KEYWORD_PATTERNS — lowercase syntax tokens (suspend, async, await, `impl
+#     Trait`). Case-insensitive matching, because the keyword is lowercase in
+#     every language that has it; a stray capitalisation is still the same
+#     token.
+#   TYPENAME_PATTERNS — PascalCase or UPPERCASE identifiers (Promise, Either,
+#     Effect, Option, IO, Future, FutureBuilder, Stream, Channel, Deferred,
+#     task). Case-sensitive so prose words do not match: "the effect on the
+#     program" should not trip on `Effect`. The AC's wording — "as a type
+#     name" — is what this gating enforces, and a type-name token must be in a
+#     code-like context (`<`, `(`, `.`, or `::` after it) to count.
+KEYWORD_PATTERNS=(
+  '\bsuspend\b'
+  '\basync\b'
+  '\bawait\b'
+  'impl[[:space:]]+Trait'
+)
+TYPENAME_PATTERNS=(
+  '\bPromise[[:space:]]*([<(.]|::)'
+  '\bEither[[:space:]]*([<(.]|::)'
+  '\bEffect[[:space:]]*([<(.]|::)'
+  '\bOption[[:space:]]*([<(.]|::)'
+  '\bIO[[:space:]]*([<(.]|::)'
+  '\btask[[:space:]]*([<(.]|::)'
+  '\bFuture[[:space:]]*([<(.]|::)'
+  '\bFutureBuilder\b'
+  '\bStream[[:space:]]*([<(.]|::)'
+  '\bChannel[[:space:]]*([<(.]|::)'
+  '\bDeferred[[:space:]]*([<(.]|::)'
+)
+
+# Whole-file skip list — the AC names README.md; CHANGELOG.md and SKILL.md are
+# also meta-information, not rule fragments, and a contributor adding one does
+# not have to extend this list (the path-component match below picks SKILL.md
+# up by position, not by basename).
+SKIP_BASENAMES=("README.md" "CHANGELOG.md")
+
+VIOLATIONS=0
+MESSAGES=""
+
+while IFS= read -r -d '' md; do
+  base="$(basename -- "$md")"
+  skip=0
+  for s in "${SKIP_BASENAMES[@]}"; do
+    if [ "$base" = "$s" ]; then skip=1; break; fi
+  done
+  if [ "$skip" -eq 1 ]; then continue; fi
+
+  # SKILL.md: any skills/<name>/SKILL.md is the routing document, not a rule.
+  rel="${md#"$PLUGIN_ROOT"/}"
+  case "$rel" in
+    skills/*/SKILL.md) continue ;;
+  esac
+
+  # Per-line skip: drop `Verified in:` footer lines before pattern matching.
+  # The footer may be indented; the test is on the first non-blank characters.
+  filtered="$(mktemp)"
+  awk '
+    {
+      stripped = $0
+      sub(/^[[:space:]]+/, "", stripped)
+      if (stripped !~ /^Verified in:/) print
+    }
+  ' "$md" > "$filtered"
+
+  for pat in "${KEYWORD_PATTERNS[@]}" "${TYPENAME_PATTERNS[@]}"; do
+    # Decide case-sensitivity: KEYWORD_PATTERNS are lowercase tokens, so the
+    # contributor who capitalises them still trips. TYPENAME_PATTERNS are
+    # PascalCase / UPPERCASE identifiers, and case-sensitive matching is what
+    # keeps prose words out of the report.
+    grep_args=(-nE -H)
+    case "$pat" in
+      '\\b'*) grep_args+=(-i) ;;
+    esac
+
+    # grep emits "<filtered-path>:<line_no>:<line_text>". awk renumbers the
+    # line numbers, so we walk back to the original via `sed -n '<n>p'`.
+    matches="$(grep "${grep_args[@]}" -e "$pat" "$filtered" || true)"
+    if [ -z "$matches" ]; then continue; fi
+
+    while IFS= read -r m; do
+      line_no="${m%%:*}"; rest="${m#*:}"
+      line_no="${rest%%:*}"
+      line_text="$(sed -n "${line_no}p" "$md")"
+      VIOLATIONS=$((VIOLATIONS + 1))
+      MESSAGES="${MESSAGES}${rel}:${line_no}: vocabulary drift — pattern ${pat} → ${line_text}
+"
+    done <<< "$matches"
+  done
+
+  rm -f "$filtered"
+done < <(find "$PLUGIN_ROOT" -type f -name '*.md' -print0)
+
+if [ "$VIOLATIONS" -gt 0 ]; then
+  printf '%s' "$MESSAGES"
+  printf 'scrumia-functional-programming-check-vocabulary: %d violation(s) — a paradigm rule that needs one language to interpret is misplaced; move the rule to that language'\''s module.\n' "$VIOLATIONS"
+  exit 1
+fi
+
+exit 0

@@ -378,6 +378,15 @@
       "category": "workflow",
       "tags": ["scrumia", "effect", "effects", "result", "either", "io", "suspend", "functional-programming"],
       "author": { "name": "tibs245" }
+    },
+    {
+      "name": "scrumia-functional-programming",
+      "source": "./plugins/scrumia-functional-programming",
+      "description": "The Functional Programming paradigm, language-neutral — purity, total functions, referential transparency, immutability by default, composition over inheritance, and effect discipline. The principles hold with the same wording in Kotlin, JavaScript, Rust, Scala, F#, Haskell and Swift. Plugs in app by app; activates alone.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["scrumia", "paradigm", "functional-programming", "language-neutral"],
+      "author": { "name": "tibs245" }
     }
   ]
 }

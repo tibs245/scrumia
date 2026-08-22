@@ -1,0 +1,35 @@
+{
+  "implement": [
+    { "name": "Purity", "type": "norm", "when": "required",
+      "summary": "A function whose result depends only on its arguments and whose evaluation changes nothing outside its return value; the impure boundary is named where it is",
+      "read": "skills/scrumia-functional-programming/rules/purity.md" },
+    { "name": "Total functions", "type": "norm", "when": "required",
+      "summary": "Every input maps to an output; failure is a value the signature carries, not a throw the runtime raises",
+      "read": "skills/scrumia-functional-programming/rules/total-functions.md" },
+    { "name": "Referential transparency", "type": "norm", "when": "required",
+      "summary": "An expression is replaceable by its value without changing the program's behaviour, and any expression that fails this is the leak to find",
+      "read": "skills/scrumia-functional-programming/rules/referential-transparency.md" },
+    { "name": "Immutability by default", "type": "refusal", "when": "required",
+      "summary": "A value that mutates when an equivalent immutable value would have written less, and the line where mutation becomes acceptable",
+      "read": "skills/scrumia-functional-programming/rules/immutability.md" },
+    { "name": "Composition over inheritance", "type": "refusal", "when": "required",
+      "summary": "Inheritance is not the default reuse mechanism; typeclasses, extension functions and function composition are the smaller, more local choice when it fits",
+      "read": "skills/scrumia-functional-programming/rules/composition-over-inheritance.md" },
+    { "name": "Effect discipline", "type": "norm", "when": "required",
+      "summary": "An effect is described as a value the program composes, executed at the boundary — not performed at the call site",
+      "read": "skills/scrumia-functional-programming/rules/effect-discipline.md" }
+  ],
+  "review": [
+    { "name": "A misplaced rule is a finding", "type": "refusal", "when": "required",
+      "summary": "A rule that can only be stated in one language's terms belongs to that language's module; the review names it and proposes the move before the PR merges",
+      "read": "skills/scrumia-functional-programming/rules/misplaced-rule.md" },
+    { "name": "Functional Programming paradigm review", "type": "method", "when": "optional",
+      "summary": "Measure a change against the six principles, finding by finding, each citing the rule it broke",
+      "read": "skills/scrumia-functional-programming/SKILL.md" }
+  ],
+  "find-spec": [
+    { "name": "Paradigm rules reach the spec", "type": "norm", "when": "required",
+      "summary": "The same six principles apply when loading the spec context a ticket needs; finding the rule and the spec is one operation, not two",
+      "read": "skills/scrumia-functional-programming/SKILL.md" }
+  ]
+}

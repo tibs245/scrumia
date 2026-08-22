@@ -23,6 +23,11 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Category: Added
 - Breaking: no
 
+## 2026-08-22 — A paradigm module's misplaced rule is named and moved before merge (BR-17, AC-24)
+- Issue: #450
+- Category: Added
+- Breaking: no
+
 ## 2026-08-19 — A plugin citing its own home-repo's features/ restates the operative rule inline (BR-7, AC-22)
 - Issue: #227
 - Category: Changed
