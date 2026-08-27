@@ -3,6 +3,18 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-27 — The ticket PR targets the sprint branch during a sprint; the close lives on the sprint's PR
+- Issue: #468
+- Category: Added
+- Breaking: yes — during a sprint, a ticket's pull request is opened against
+  `sprint/<milestone-slug>` and its body carries `Refs: #<n>` without a closing
+  keyword. The close is carried exactly once per ticket, in the body of the
+  sprint's own PR into the default branch, as one `Closes #<n>` line per ticket.
+  A ticket's card stays in `in_review` while its PR is merged into the sprint
+  branch and the sprint is not yet validated; it reaches `done` only when the
+  sprint's PR lands. The rule itself is stated once in `features/business/dev-flow/`
+  § *The sprint branch*; this file materialises it on GitHub.
+
 ## 2026-08-17 — A role's verdict is a comment on the ticket's issue, with the role's name
 - Issue: #125
 - Category: Added

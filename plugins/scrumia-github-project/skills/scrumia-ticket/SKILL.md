@@ -138,6 +138,20 @@ The branch naming follows the project's commit-type vocabulary from
 [`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary* —
 `<type>/<n>-<slug>` — but writing that branch is the orchestrator's job, not this skill's.
 
+**Resolve the base once, here, before any step that reads a diff.** The rule, the
+fallback, and the merge form are stated once in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*; this
+step applies it.
+
+```bash
+gh issue view <n> --json milestone --jq '.milestone.title // ""'
+git branch --list 'sprint/*'
+git merge-base <base> HEAD
+```
+
+A `<base>` whose tip is not `HEAD`'s merge base comments on the issue and stops —
+that is the failure the rule exists to catch.
+
 Once the branch is right, move the card to the `in_progress` step:
 
 ```bash
@@ -166,6 +180,12 @@ The scope is not optional, and the `Refs:` trailer goes on **every** commit of t
 The rule, and what counts as yielding control, are stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Who decides, on each path* → **Execution**. Read it there rather than inferring it from this skill: it is written as the general case, so it covers yields the steps below do not name — including ones added to this skill after this sentence.
 
 This sits before Step 3 because Step 2 is where the branch starts existing and Step 3 can already yield. The steps that name it — 3, 5, 6, and *When you're blocked* — are where it bites in practice, not the extent of it.
+
+**The base that Step 2 computed is what Step 6's diff and Step 7's PR read.**
+Storing it once and reusing it — rather than re-resolving per step — is what keeps
+the two surfaces consistent. The rule and the fallback are stated in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*; this skill
+cites it.
 
 ## Step 3 — Update the spec first
 
@@ -218,7 +238,7 @@ Commit those fixes before going further, per *Commit before you yield* above.
 git status --porcelain   # must print nothing before a role is spawned
 ```
 
-`git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else.
+`git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else. **`<base>` is whatever Step 2 resolved.** Step 6 reads the base Step 2 stored; it does not re-derive it. The rule is in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*.
 
 If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
@@ -273,12 +293,22 @@ The same holds when the role itself could not be reached. Handing your own gener
 ## Step 7 — Open the PR
 
 ```bash
-gh pr create --title "<type>(<scope>): <expected outcome>" --body "..."
+gh pr create --base <base> --title "<type>(<scope>): <expected outcome>" --body "..."
 ```
+
+**`<base>` is what Step 2 resolved.** The rule is in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch* and the
+materialisation in [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)
+§ *The close lives on the sprint's PR*; this step passes the base and lets
+GitHub do the rest.
 
 Same `<type>` vocabulary as the branch and the commits, same mandatory scope.
 
-The description contains: what was done, `Closes #<n>` **exactly once** — the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — echoing the label/diff gap Step 6 recorded, where there was one, the comment on the issue being the record and this its copy — and the open reservations with their issues.
+The description contains: what was done, the criterion-by-criterion mapping (each
+acceptance identifier in `ac_id_format` → its test, if a specs module is documented),
+the specs modified, the verdict of the agent reviews — echoing the label/diff gap
+Step 6 recorded, where there was one, the comment on the issue being the record and
+this its copy — and the open reservations with their issues.
 
 **The description names the roles consulted during execution, their answers, and where the answer is recorded — or states that no role was needed and which condition did not apply.** A review that ran as a fallback because the agent type did not resolve is named as such, never reported as the role itself (AC-20).
 

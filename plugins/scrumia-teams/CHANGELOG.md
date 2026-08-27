@@ -7,6 +7,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 - `registers.json` and `dependencies.jsonl` — this module opens the `convene` and `sprint`
   registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
   register rather than from a list it maintained about modules it does not own.
+- `scrumia-sprint` creates and pushes `sprint/<milestone-slug>` from the default
+  branch before the first ticket worktree is cut, then cuts every ticket worktree
+  from that branch. A ticket branch is named after its final intent — what it
+  delivers at merge — not after the phase it starts in. Step 5's gather reports
+  the sprint branch's state alongside the per-ticket verdict. The rule is stated
+  once in `features/business/dev-flow/` § *The sprint branch*; this skill cites
+  it.
 ### Changed
 - The manager role now says that gate 2's scoping signal reaches it recorded against the
   ticket rather than mentioned in passing, and on what condition it is owed at all: only

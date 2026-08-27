@@ -3,6 +3,19 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-08-27 — A sprint runs on its own integration branch; ticket branches are cut from it
+- Issue: #468
+- Category: Added
+- Breaking: yes — `scrumia-sprint` Step 4 now requires `sprint/<milestone-slug>` to
+  exist before the first worktree is cut, and uses it as the start point of every
+  ticket branch. `scrumia-ticket` resolves its base to the sprint branch when one
+  exists, falling back to the default branch otherwise. The ticket PR targets the
+  sprint branch and carries only `Refs:`; the close is carried by the sprint's own
+  PR. The sprint branch merges as a merge commit (never a squash) and is deleted
+  on merge. A ticket branch is named after its final intent, not its first phase.
+  Both skills cite the rule from `business.md` § *The sprint branch* rather than
+  restating it.
+
 ## 2026-08-20 — The orchestrator decides the execution mode; the executor does not isolate itself
 - Issue: #124
 - Category: Added
