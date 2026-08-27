@@ -3,6 +3,8 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [0.5.0] - 2026-08-27
 ### Added
 - `registers.json` and `dependencies.jsonl` — this module opens the `convene`, `sprint`
   and `sprint-fast` registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
