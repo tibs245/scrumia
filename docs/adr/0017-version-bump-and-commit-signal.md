@@ -299,6 +299,26 @@ and a sibling may already have fetched the branch — so a force push on anythin
 reads destroys work that was committed precisely so it could not be lost. The branch
 boundary is what keeps that contained.
 
+**The sprint branch joins the blessed surface, bounded to the post-execution phase
+and to the orchestrator.** A `sprint-fast` sprint's review and fixups land here
+(`features/business/dev-flow/` § *sprint-fast*), and the conditions under which
+the rewrite is allowed are tighter than the ticket-branch case:
+
+- Each `fixup!` commit is authored on a fix branch cut from the sprint branch's tip,
+  in a fix agent's own worktree — no fix agent writes on the sprint branch itself.
+- The orchestrator is the only executor that runs `git rebase --autosquash` on the
+  sprint branch, and only after the gather has verified that every ticket worktree
+  of the sprint is closed and no ticket branch cut from the sprint branch is live.
+  The precondition is verified, not assumed.
+- The pre-existing worktree-concurrency rule still binds: a force push on the sprint
+  branch invalidates every ticket branch cut from it, which is the work-loss failure
+  this section forbids.
+
+The sprint branch becomes a blessed surface **only** for this post-execution
+autosquash, performed by the orchestrator after the gather. Outside that window,
+the sprint branch obeys the same rule as the default branch — banned — because a
+ticket worktree reading it is the sibling that loses work otherwise.
+
 ### Where these rules live
 
 By the replacement test in `features/business/dev-flow/business.md` — restate the rule for

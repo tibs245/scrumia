@@ -579,6 +579,187 @@ Then they must command the same behaviour: the same start point for ticket
   spec-to-skill references rather than to the type vocabulary
 ```
 
+## sprint-fast
+
+### AC-39 — A sprint-fast ticket merges on green CI with no per-ticket role verdict
+
+```gherkin
+Given a ticket of a `sprint-fast` sprint whose CI is green and whose issue carries
+  no role-signed verdict comment
+When the merge into `sprint/<slug>` runs
+Then it merges on gate 1 alone, and no executor waits for a per-ticket verdict — the
+  per-ticket role review is the normal sprint's path, not this one's
+```
+
+```gherkin
+Given the same ticket, and CI is red
+When the merge into the sprint branch runs
+Then it is refused — green CI is the only release valve, and a sprint-fast ticket
+  that fails CI does not merge
+```
+
+### AC-40 — The absence of a verdict between the merge and the global review is readable as pending global review
+
+```gherkin
+Given a ticket of a `sprint-fast` sprint whose PR has merged into `sprint/<slug>`
+  and no global review has run yet
+When the sprint's state is read
+Then the ticket is reported as `pending global review`, not as approved — an
+  absence of a verdict is not an approval, and the gather reports the state in
+  those words
+```
+
+### AC-41 — The global review routes on the union of each ticket's file set
+
+```gherkin
+Given a `sprint-fast` sprint whose tickets, merged, touch union of file sets F
+When the global review runs
+Then it applies the routing table to each ticket and takes the union of the
+  answers — a single ticket touching a business feature draws the business role
+  for the whole review, and a `scope/S` ticket does not add or subtract from
+  the union
+```
+
+```gherkin
+Given a single ticket touching only `scope/S`-shaped paths
+When the union is computed
+Then it adds no reviewer — `scope/S` is `not_required`, and absent-required stays
+  absent
+```
+
+### AC-42 — The global review also reads the aggregate diff for what no per-ticket review could see
+
+```gherkin
+Given a `sprint-fast` sprint whose tickets each pass the per-ticket routing
+  review but two of them contradict each other on the aggregate
+When the global review runs
+Then it surfaces the contradiction as a finding, because a sum that passes per
+  item is not the same as a whole that passes — the union of per-ticket verdicts
+  is necessary but not sufficient
+```
+
+### AC-43 — The sprint-level verdict is a valid gate-2 record for every ticket of a sprint-fast sprint
+
+```gherkin
+Given a `sprint-fast` sprint whose sprint PR carries a role-signed verdict in
+  the format `features/business/agent-team/` defines
+When the gather reads each ticket of the sprint
+Then every ticket is reported `run` at gate 2, citing the sprint PR as the
+  carrier — the venue moves for sprint-fast, the verdict does not
+```
+
+```gherkin
+Given the same sprint, and the sprint PR carries no role-signed verdict
+When the gather reads any ticket of the sprint
+Then every ticket is reported `not_run` with the cause "no role-signed comment
+  on the sprint PR" — the absence reads as a refusal to author condition (4)
+  for every ticket, the same way a missing per-ticket verdict does
+```
+
+### AC-44 — A `fixup!` carries the scope of the commit it corrects
+
+```gherkin
+Given a sprint-fast sprint where the global review produces a finding that fixes
+  a defect in scope `X`
+When a fix agent authors the fixup
+Then the `fixup!` commit is `fix(<X>): …` — the same scope as its target —
+  because autosquash keeps the target's subject and drops the fixup's, so the
+  only place the scope can live is on the fixup, and a scope that widened would
+  land under a target whose scope is narrower
+```
+
+```gherkin
+Given a finding whose fix widens the scope past the target's scope — a defect
+  fix that also moves a token, a rule change beside a bug fix
+When the fix is authored
+Then it is a commit of its own, not a fixup — the scope it carries belongs to
+  it, not to the commit it would otherwise be squashed into
+```
+
+### AC-45 — Gate 1 and the global review both re-run on the post-squash state before the sprint PR opens
+
+```gherkin
+Given a `sprint-fast` sprint whose fix agents have produced `fixup!` commits and
+  the orchestrator has autosquashed the sprint branch
+When the sprint PR is about to open
+Then gate 1 (CI) and the global review both run again on the post-squash state
+  — a green CI taken before the squash is not a certification of the state after
+  it, and the sprint PR is opened only on a clean re-run
+```
+
+### AC-46 — Gate 3 stays human on the sprint's PR whatever the autonomy level
+
+```gherkin
+Given a `sprint-fast` sprint whose sprint PR has cleared the re-run of gate 1
+  and the global review, with a role-signed verdict on the sprint PR
+When gate 3 is evaluated
+Then the human merges, regardless of `settings.autonomy.level` and regardless of
+  `settings.autonomy.auto_merge` — `sprint-fast` is not a category that opens gate
+  3 unattended, and the sprint's PR waits for the human at gate 3 like any other
+```
+
+### AC-47 — `scrumia-sprint` is unchanged in its review policy
+
+```gherkin
+Given the existing `scrumia-sprint` skill, with its per-ticket role review and
+  its per-issue verdict rule
+When the diff for `sprint-fast` is read
+Then the existing skill is untouched in its review policy — it keeps the
+  per-ticket path, the per-issue verdict, and the gate-2 completeness check
+  exactly as they were; a weakened normal sprint is the defect this ticket
+  refuses by construction, and the new skill owns only what differs
+```
+
+### AC-48 — Both verdict-reading scenarios in dev-flow/qa.md state what they read for a sprint-fast sprint
+
+```gherkin
+Given the scenario headed *A ticket at gate 2 reads as complete only with a
+  role-signed verdict, or a stated `not_run` cause* above
+When it is read for a `sprint-fast` sprint whose sprint-level verdict is absent
+Then the ticket is reported as `not_run` with the cause "no role-signed comment
+  on the sprint PR" — the gather reads the sprint PR for the carrier, and the
+  absence is the same refusal a missing per-ticket verdict is, at the same gate
+```
+
+```gherkin
+Given the scenario headed *A `not_run` or absent verdict blocks an unattended
+  merge* in the `auto_merge` section below
+When it is read for a `sprint-fast` sprint whose sprint-level verdict is absent
+Then gate 3 does not open unattended for the same reason it does not open on
+  any absent verdict — the sprint-level verdict is a gate-2 record for every
+  ticket, and its absence fails condition (4) of § *Gate 3 opens only on four
+  cumulative conditions* in `business.md`, in the same way a missing per-ticket
+  verdict does
+```
+
+```gherkin
+Given the same sprint, and the sprint PR carries a role-signed verdict
+When gate 3 is evaluated
+Then condition (4) holds for every ticket — the sprint-level record is the
+  record, and the verdict reads on the sprint PR
+```
+
+### AC-49 — Every ticket of a sprint-fast sprint carries the `process/sprint-fast` label
+
+```gherkin
+Given a `sprint-fast` sprint's tickets, before any of them starts
+When the labels are read
+Then each carries `process/sprint-fast`, so a reader two months later can tell
+  that this ticket's gate 2 was a sprint-level verdict — without the label, a
+  ticket reviewed globally is indistinguishable from one whose review never ran
+```
+
+### AC-50 — The autosquash does not start while any ticket worktree is open or any ticket branch cut from the sprint branch is live
+
+```gherkin
+Given a `sprint-fast` sprint whose ticket worktrees are still open, or whose
+  ticket branches cut from `sprint/<slug>` are still live
+When the orchestrator considers the autosquash
+Then it does not run — the precondition is verified, not assumed; the gather is
+  what answers it, and a force push on the sprint branch while a sibling holds
+  it is the work-loss failure `docs/adr/0017` §9 names
+```
+
 ### AC-18 — `auto_merge` eligibility rules (value-space, not-run verdict, partial-credit, self-widening, single-definition)
 
 **Spec note.** Each scenario below states the rule unambiguously, on the

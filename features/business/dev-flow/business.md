@@ -455,6 +455,134 @@ scrumia-sprint` and `scrumia-github-project:scrumia-ticket` cite it; neither
 restates a trigger or an obligation beside the citation. A restated trigger is a
 finding — the test is whether two copies could ever command different behaviour.
 
+### sprint-fast — one global review at the end, fixups autosquashed under the orchestrator
+
+`sprint-fast` is the mode a small batch of tickets chooses when N per-ticket role reviews
+cost more than they protect. Its steps 1–3 are the sprint's — batch from the milestone,
+conflicts discarded, model per ticket, human validation before anything runs. What
+differs is everything after execution:
+
+1. **Each ticket runs `scrumia-ticket` without its per-ticket role review.** Its PR
+   merges into the sprint branch as soon as CI is green — gate 1 alone. A
+   `process/sprint-fast` label carries what the per-issue verdict no longer does
+   (`features/business/github-tracking/`), so a reader two months later can tell that
+   this ticket's gate 2 was a sprint-level verdict and knows where to find it.
+2. **When every ticket is merged, one global review runs** on the sprint branch against
+   the default branch. Its reviewers are the union of gate 2's answers over each
+   ticket's own file set: each ticket's file set is still knowable because its PR is
+   merged, not lost, so the table in `scrumia-review` applies per ticket and the
+   reviewers are the union. A single ticket touching a business feature draws the
+   business role for the whole review. The global review also reads the aggregate
+   diff for what no per-ticket review could see — two tickets that each make sense
+   alone and contradict each other, a rule changed by one and consumed by another,
+   a style drift visible only across five diffs. One pass, both readings.
+3. **The findings are applied by one or more fix agents as `fixup!` commits**, on
+   fix branches cut from the sprint branch's tip, never on the sprint branch
+   itself. The orchestrator alone collects those commits and runs `git rebase
+   --autosquash` on the sprint branch, exactly once.
+4. **A full re-check runs on the post-squash state** before the sprint's PR opens
+   against the default branch. Gate 1 and the global review both run again — a
+   green CI taken before the squash is not a certification of the state after it.
+   Gate 3 stays human on the sprint's PR, whatever the autonomy level: `sprint-fast`
+   is not a category that opens it unattended.
+
+**A `fixup!` carries the scope of the commit it corrects.** Autosquash keeps the
+target's subject and drops the fixup's, so a fix that widens the scope would land
+under an incomplete one — that fix is a commit of its own, not a fixup.
+
+**The autosquash does not start while any ticket worktree of the sprint is open or
+any ticket branch cut from the sprint branch is live.** That is a precondition to
+verify, not an assumption: the gather is what answers it. A force push on the
+sprint branch while a sibling holds it would destroy work a sibling committed
+precisely so it could not be lost, which is the failure `docs/adr/0017` §9
+already names for epic and ticket branches — the sprint branch becomes a blessed
+surface for autosquash under the same boundary, **bounded to the post-execution
+phase and to the orchestrator**.
+
+**The sprint's PR opens against the default branch and carries the close once per
+ticket** — exactly one `Closes #<n>` line per ticket of the sprint, and no closing
+keyword in any ticket PR. A ticket PR closing on its merge into the sprint branch
+is earlier than the ticket's own merge into the default branch, which is the drift
+this rule refuses.
+
+**The `sprint-fast` skill owns only what actually differs from the normal sprint.**
+Steps 1–3 — batch assembly, conflict discard, model per ticket, human validation
+before execution — are the normal sprint's and the new skill cites them
+(`plugins/scrumia-teams/skills/scrumia-sprint-fast/` cites
+`plugins/scrumia-teams/skills/scrumia-sprint/` for the shared steps). The
+`scrumia-sprint` skill is unchanged in its review policy: a per-ticket review and a
+per-issue verdict remain its path. Anything that copies that prose into the new
+skill is restating a rule this section already states, which is the drift the
+"stated once" form exists to refuse.
+
+### Gate 2's verdict — recorded by the role, not asserted by the executor
+
+**A ticket is not complete at gate 2 unless the outcome of its review is recorded.**
+The outcome is one of three states, named here once and reused by every reader of the
+review:
+
+- **`run`** — the review ran *as the role*, and a verdict is attached. The transport
+  that reached the role (`claude -p --agent`, a subagent invocation, anything else) is
+  not a state in itself: what makes a review `run` is that it ran *as the role*, not
+  that the transport happened.
+- **`not_required`** — the ticket's scope prescribes no review. This is the case
+  `scope/S` reaches, and only this one — `not_required` is **derived from the scope
+  label, never asserted** by an executor. An executor cannot declare a ticket
+  `not_required` on a `scope/M` or `scope/L`; doing so reads as the executor choosing
+  which role reviews it, which is the gate-2-substitution failure the rule exists to
+  prevent.
+- **`not_run`** — a required review did not run as its role. **Cause is mandatory:**
+  the same record that names the state names the reason the role did not run.
+  `not_run` is the only failure state at this gate; everything else is reporting.
+
+**Skip** and **unreachable** are *causes* of `not_run`, not states. A self-applied
+review — the executor reading its own diff through a general agent handed the role's
+definition — is not a role review; it is gate 2's self-review equivalent
+(`features/business/agent-team/`'s AC-10 names why the substitution is invisible to the
+reader it fools), and at the role gate it counts as `not_run`. The human at gate 3
+takes the same decision for any required-and-absent review, regardless of cause.
+
+**The verdict is recorded by the role, not by the executor.** The role's agent posts
+its own verdict on the ticket's issue, in a form a later reader can find; the executor
+neither writes the verdict nor writes a declaration that the review did not run.
+A record written by the same run that ran the review is exactly the record that
+fails on the executor's death, and an executor asserting that a review did not run
+is the executor whose report the gate-3 read cannot trust — both at once. The
+vocabulary the role uses and the markers it posts are `features/business/agent-team/`'s
+to define; this feature states only that the verdict is the role's, and that an
+absent role-signed entry makes the ticket's report incomplete.
+
+**A verdict counts only if it is attributable.** A verdict that does not name the
+role that produced it is treated as absent: `not_run`. This closes the substitution
+path that a structured field written by the executor's own return would reopen —
+the executor's report is not the record, and a record that the executor could have
+written is not the record either.
+
+**The orchestrator runs the role review as a net, on the absence of the carrier.**
+Where the role's verdict is not on the ticket at gate 3, the orchestrator triggers
+the review on that absence — a checkable fact, not a declaration by the executor. A
+PR for which the tracker holds no role-signed verdict goes through the net.
+
+**A `sprint-fast` sprint carries its gate-2 verdict on the sprint's PR, not on each
+ticket's issue.** The verdict is still role-signed and still attributable; the venue
+differs because the review itself is sprint-level. A ticket of a `sprint-fast`
+sprint is `run` at gate 2 once the sprint's PR carries a role-signed verdict in the
+format `features/business/agent-team/` defines, and is `not_run` otherwise — for the
+same reason a single ticket is: the orchestrator's net reads the carrier's absence
+as `not_run` with a cause, never as approval. The carrier is the comment on the
+sprint's PR; the role's name and verdict are written there once, and every ticket
+of the sprint reads from the same place. This is the human override of the
+business role's "verdict per ticket" rule, and the override is recorded here once
+so neither the skill nor a spec reads it as a divergence: the verdict is still
+role-signed and attributable, only the venue moves.
+
+`features/business/github-tracking/` materialises the carrier — the issue comment,
+the pull-request body echo, the read that finds it. `features/business/agent-team/`
+carries the verdict vocabulary and the rule that the role posts its own verdict;
+this feature cites rather than restates it. Strip the tracker and the obligation
+stands word for word: the verdict is the role's; a missing verdict is `not_run`
+with a stated cause; the report is incomplete either way.
+
 ### The replacement test — which feature does a rule belong to?
 
 Apply it before filing any rule about how code ships, at refinement time and when
