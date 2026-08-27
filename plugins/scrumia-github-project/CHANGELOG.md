@@ -37,6 +37,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   flags a cross-cutting rule newly nested under a SKILL.md step past an earlier yield
   point, greps for stale cross-skill behavior claims on a `plugins/` change, and checks
   that a reservation's issue carries a board card before calling it handled.
+- `scrumia-review` recognises a sprint-level review when the PR's head is
+  `sprint/<slug>` and the merged tickets carry `process/sprint-fast` — a
+  `sprint-fast` sprint reads the union of per-ticket file sets for its routing
+  and adds an aggregate read for cross-ticket findings; the verdict is written
+  once, on the sprint PR, in the role-signed format `features/business/agent-team/`
+  defines, and serves as the gate-2 record for every ticket of the sprint.
+  The rule is stated once in `features/business/dev-flow/` § *sprint-fast* and
+  in `features/business/github-tracking/` § *A sprint-fast sprint carries its
+  verdict on the sprint's PR*; this skill cites them.
 ### Changed
 - `scrumia-ticket` and `scrumia-review` — the module's two implementations of gate 2 — record
   the scoping signal as a comment on the ticket's issue when they find the gap, and carry only
