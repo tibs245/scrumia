@@ -144,15 +144,13 @@ fallback, and the merge form are stated once in
 step applies it.
 
 ```bash
-# Derive <milestone-slug> from the ticket's milestone, if any
 gh issue view <n> --json milestone --jq '.milestone.title // ""'
+git branch --list 'sprint/*'
+git merge-base <base> HEAD
 ```
 
-If the milestone is non-empty and a local branch `sprint/<slug>` resolves, the base
-is `sprint/<slug>`; otherwise the base is the default branch (read from `origin/HEAD`
-if it resolves, else `main`). Verify the ticket branch's merge base matches:
-`git merge-base <base> HEAD` must equal the tip of `<base>`. A mismatch comments on
-the issue and stops, naming the branch the orchestrator was supposed to cut from.
+A `<base>` whose tip is not `HEAD`'s merge base comments on the issue and stops —
+that is the failure the rule exists to catch.
 
 Once the branch is right, move the card to the `in_progress` step:
 
@@ -298,9 +296,7 @@ The same holds when the role itself could not be reached. Handing your own gener
 gh pr create --base <base> --title "<type>(<scope>): <expected outcome>" --body "..."
 ```
 
-**`<base>` is what Step 2 resolved.** During a sprint the PR targets the sprint
-branch and the body carries `Refs: #<n>` without a closing keyword; outside a
-sprint the body carries `Closes #<n>` **exactly once**. The rule is in
+**`<base>` is what Step 2 resolved.** The rule is in
 [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch* and the
 materialisation in [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)
 § *The close lives on the sprint's PR*; this step passes the base and lets
