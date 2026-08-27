@@ -181,6 +181,16 @@ and the type `specs` are different words in different positions.
 **The same vocabulary serves the branch prefix and the PR title.** One list, three uses.
 That is what makes the specs branch prefix conforming rather than an orphan.
 
+**A ticket branch is named after its final intent — what it delivers at merge — not
+after the phase it starts in.** A ticket that begins with spec commits and continues
+into implementation carries the implementation's type from its first commit; the
+specs phase and the implementation phase share one branch, closed by one PR. So
+`specs` remains a valid branch prefix for a ticket whose deliverable is a rule
+under the specs root and nothing else — the use-restriction carve-out `business`
+proposed at #468's framing is explicitly not what this rule writes, because a type
+admissible in two of its three uses is the second list "one list, three uses"
+exists to prevent.
+
 ### 4. Below `1.0.0`, the mapping shifts by one
 
 Every module is at `0.4.0`, where semver promises nothing. Rather than pretend otherwise

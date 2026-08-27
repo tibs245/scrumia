@@ -60,7 +60,9 @@ ScrumIA adopt a board that already exists — columns renamed, vocabulary alread
 | `Ready for dev` → `To dev` | a ticket is selected into a sprint's batch | none named today — not automated today |
 | `To dev` → `In progress` | execution starts on the ticket | `in_progress` |
 | `In progress` → `In review` | the PR opens | `in_review` |
-| `In review` → `Done` | the PR merges | `done` — not automated today either |
+| `In review` → `Done` | the PR merges into the **default** branch (no sprint running) | `done` — not automated today either |
+| `In review` → `In review` (dwell) | the PR merged into the **sprint branch** while the sprint is not yet validated | none — the intermediate state is read off the PR, not the card |
+| `In review` → `Done` | the sprint's own PR merges into the default branch | `done` |
 
 Only four flow steps exist in the config (`ready`, `in_progress`, `in_review`,
 `done`). `Backlog` is entered by its literal column name, once, at filing. `To dev`
@@ -402,6 +404,28 @@ missing. Measured on one already-merged ticket of this repository before the rul
 `git log --grep` returned five commits: one of the four its pull request delivered, and
 four belonging to other tickets — 25% recall, 20% precision, from a search whose output
 reads complete. Redundant references are fine; incomplete ones are what break the lookup.
+
+### The close lives on the sprint's PR; a ticket PR carries only `Refs:`
+
+When a sprint is running, a ticket's pull request targets the sprint branch, not the
+default branch — the rule is `features/business/dev-flow/business.md` § *The sprint
+branch*; what follows is its materialisation here.
+
+**A ticket's PR carries `Refs: #<n>` in its body, not a closing keyword.** The ticket PR
+merges into the sprint branch, never the default branch; a closing keyword would close
+the issue at that moment, which is earlier than the ticket's own merge into the default
+branch — that early close is the drift the rule refuses.
+
+**The close is carried by the sprint's own PR.** One closing keyword per ticket, in
+the body of the PR that takes the sprint branch into the default branch, written once
+per ticket: a list of `Closes #<n>` lines, one per ticket of the sprint. That is the
+artefact that performs the close, and it is performed when that PR merges.
+
+**A ticket PR that does carry a closing keyword is non-conforming.** A reader of the
+ticket PR alone sees the close; a reader of the sprint PR sees another close; a run
+that diffs two histories cannot tell which one performed it. The two carriers disagree
+about the same fact, and the disagreement is the defect — not a duplicate, two
+authorities.
 
 ## Reading discipline: a board is read through a filter, never whole
 

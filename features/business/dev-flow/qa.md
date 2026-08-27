@@ -379,6 +379,206 @@ Then it may use the `*` escape hatch (`refactor(*): …`), which derives no bump
   (`refactor(specs,*): …`)
 ```
 
+## The sprint branch
+
+### AC-19 — A sprint runs on its own integration branch, cut from the default branch and pushed before the first worktree
+
+```gherkin
+Given `scrumia-sprint` Step 4 is about to cut the first ticket worktree of a sprint
+  whose milestone is `<name>`
+When the sprint orchestrator runs
+Then a branch `sprint/<milestone-slug>` exists locally with the default branch's
+  tip as its only commit and is pushed to `origin` before any `git worktree add`
+  runs; the first ticket worktree is cut from this branch, not from the default
+  branch
+```
+
+```gherkin
+Given a sprint whose first worktree was created with no sprint branch on the
+  remote — the orchestrator skipped or failed the push
+When the gather looks for the sprint branch
+Then no `sprint/<slug>` resolves and the first ticket branch's merge base with the
+  default branch is the default branch's tip, not a sprint tip; the criterion fails
+  before any ticket PR is opened
+```
+
+### AC-20 — Every ticket branch of the sprint has the sprint branch's tip as its merge base at the moment of the cut
+
+```gherkin
+Given a sprint with `sprint/<slug>` at tip `T`, and a ticket branch `<type>/<n>-<slug>`
+  cut by the orchestrator
+When `git merge-base sprint/<slug> <type>/<n>-<slug>` runs
+Then it returns `T` — the ticket branch was cut from the sprint branch, not from
+  the default branch
+```
+
+```gherkin
+Given a `git worktree add` that omits the start point
+When the same `git merge-base` runs on its result
+Then it returns the default branch's tip, not the sprint branch's tip; the
+  criterion fails the moment the command's start-point argument is missing
+```
+
+### AC-21 — A ticket branch's prefix is the type of what the ticket delivers at merge, not the phase it starts in
+
+```gherkin
+Given a ticket whose deliverable is a feature under the specs root together with
+  the implementation of that feature, and whose first commit is a spec edit
+When the orchestrator names the branch
+Then the branch is `<feat-type>/<n>-<slug>` from the start, with the spec edit
+  and the implementation under the same prefix; a `specs/<n>-<slug>` branch that
+  later gets renamed or whose work is continued under a second branch is
+  non-conforming
+```
+
+```gherkin
+Given a skill, doc or example that names a ticket branch after its first phase —
+  `specs/<n>-<slug>` for a ticket that continues into implementation
+When a reader follows the example
+Then the ticket ends up with a `specs/` prefix and the implementation phase lands
+  on a second branch, or on a renamed branch — both are the defect the rule exists
+  to remove
+```
+
+### AC-22 — Spec edits and implementation of one ticket share one branch, closed by one PR
+
+```gherkin
+Given a ticket whose first phase is spec edits and whose second phase is
+  implementation, on the same ticket number
+When the reader counts the branches and the PRs
+Then there is exactly one ticket branch and exactly one PR; a second branch for
+  the implementation phase, or a PR per phase, is non-conforming
+```
+
+```gherkin
+Given a skill that instructs the executor to cut a second branch for the
+  implementation phase of a ticket whose first phase was spec edits
+When the executor follows the skill
+Then the criterion fails: a single ticket branch carries both phases, and the
+  skill's instruction is the drift this rule refuses
+```
+
+### AC-23 — A ticket's PR targets the sprint branch and carries no closing keyword
+
+```gherkin
+Given a sprint with `sprint/<slug>` in flight, and a ticket whose PR is ready to
+  open
+When `gh pr create` runs
+Then it is called with `--base sprint/<milestone-slug>`, and the PR body carries
+  `Refs: #<n>` without any of GitHub's closing keywords (`Closes`, `Fixes`,
+  `Resolves`, …); the close is carried exactly once per ticket, by the sprint's
+  own PR into the default branch
+```
+
+```gherkin
+Given a ticket PR whose body carries `Closes #<n>` while the sprint branch exists
+When the same PR's closing status is read
+Then GitHub has already closed the issue (or is about to, on merge into the
+  sprint branch), earlier than the ticket's own merge into the default branch;
+  the criterion fails on a closing keyword in a ticket PR
+```
+
+### AC-24 — The review diff of a ticket reads `git diff sprint/<slug>...HEAD`
+
+```gherkin
+Given a ticket branch cut from `sprint/<slug>`, and a fix landed on `sprint/<slug>`
+  earlier in the sprint
+When gate 2 reads the diff
+Then it reads `git diff sprint/<slug>...HEAD`, and the early fix is not inside
+  the ticket's diff; the change visible to the reviewer is the ticket's own work
+  plus any commits the orchestrator has since added to the ticket branch itself
+```
+
+```gherkin
+Given the same ticket, and a review diff that reads `git diff origin/main...HEAD`
+  or `git diff origin/<default>...HEAD`
+When gate 2 routes the review
+Then every ticket's diff includes every prior fix landed on the sprint branch,
+  and gate 2 routes on another ticket's changes; the criterion fails the moment
+  the base is the default branch
+```
+
+### AC-25 — The sprint's PR merges as a merge commit and deletes the sprint branch
+
+```gherkin
+Given `sprint/<slug>` carrying N ticket PRs, all merged
+When the sprint's PR is merged into the default branch
+Then the merge is a merge commit (not a squash or fast-forward), the sprint
+  branch is deleted locally and on the remote, and `git rev-parse --verify
+  sprint/<slug>` fails on the deleted branch
+```
+
+```gherkin
+Given the same sprint merged by squash — N ticket commits collapsed into one
+When the merged history is read for `Refs: #<n>`
+Then only one commit (or zero) carries the trailer, and the other tickets' commits
+  have vanished; the criterion fails on a squash because the per-commit reference
+  rule *What a commit carries* requires
+```
+
+### AC-26 — A ticket's card stays in `in_review` while its PR is merged into the sprint branch, and reaches `done` only when the sprint's PR lands
+
+```gherkin
+Given a ticket whose PR has merged into `sprint/<slug>` and the sprint's own PR is
+  not yet merged
+When the card's status is read
+Then the card is still `in_review`; a move to `done` at this point is
+  non-conforming because the ticket's change has not yet reached the default
+  branch
+```
+
+```gherkin
+Given the same state, then the sprint's PR merges into the default branch
+When the card's status is read
+Then the card is `done`, by the same transition any merged PR triggers; the
+  intermediate "merged into sprint branch" state was read off the PR, not off
+  the board
+```
+
+### AC-27 — A ticket invoked directly outside any sprint keeps working unchanged
+
+```gherkin
+Given `scrumia-ticket` invoked by a human outside any sprint — no `sprint/<slug>`
+  exists or the ticket's milestone carries no sprint branch
+When the ticket skill runs
+Then the diff's base falls back to the default branch, the PR targets the
+  default branch, and the close keyword is carried on the ticket PR as before;
+  the criterion fails if the standalone path now refuses to run or insists on a
+  sprint branch
+```
+
+```gherkin
+Given the same invocation, and a milestone whose `sprint/<slug>` does not resolve
+  — the orchestrator has not created it, or a direct call from outside any
+  sprint has reached the executor
+When the executor computes its base
+Then it reads the default branch's tip; the standalone path is unchanged
+```
+
+### AC-28 — The sprint branch rule is stated once and both skills cite it
+
+```gherkin
+Given the sprint branch rule — integration branch, ticket branches cut from it,
+  ticket PR target, merge-commit close, branch deletion, the no-rewrite rule,
+  the card's dwell, the standalone fallback
+When a reader — human or skill — looks the rule up
+Then it is stated once, in `features/business/dev-flow/business.md` § *The
+  sprint branch*; `plugins/scrumia-teams/skills/scrumia-sprint/SKILL.md` and
+  `plugins/scrumia-github-project/skills/scrumia-ticket/SKILL.md` cite it rather
+  than restating a trigger or an obligation beside the citation
+```
+
+```gherkin
+Given the same rule, and a copy of it (a trigger or an obligation) written into
+  either skill, or into another spec
+When the two copies are diffed
+Then they must command the same behaviour: the same start point for ticket
+  branches, the same PR base, the same merge form, the same deletion rule; any
+  divergence between the two is a finding the criterion catches — a restated
+  rule is the second list "one list, three uses" exists to prevent, applied to
+  spec-to-skill references rather than to the type vocabulary
+```
+
 ### AC-18 — `auto_merge` eligibility rules (value-space, not-run verdict, partial-credit, self-widening, single-definition)
 
 **Spec note.** Each scenario below states the rule unambiguously, on the

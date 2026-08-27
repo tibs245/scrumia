@@ -382,6 +382,73 @@ features read as authoritative in isolation: each is a spec, written in the same
 voice, and an agent that opens only one has no way to tell it is reading the
 subordinate half.
 
+### The sprint branch — every ticket branch of a sprint is cut from it
+
+**A sprint runs on its own integration branch.** `sprint/<milestone-slug>`, cut from the
+default branch at sprint opening and pushed before the first worktree exists. The
+milestone is the sprint's boundary — two successive sprints cannot share a branch
+by accident, and the name says which sprint it is. The sprint branch is deleted
+when it merges into the default branch; one left in place becomes the next sprint's
+ancestor by accident, which is the drift "one branch per ticket" refuses by
+construction.
+
+**Every ticket branch of the sprint is cut from the sprint branch, never from the
+default branch.** A ticket branch's merge base at the moment of the cut is the sprint
+branch's tip — `git merge-base sprint/<slug> <ticket-branch>` returns the sprint
+branch's tip. A `git worktree add` that carries no start point returns whatever the
+orchestrator happened to have checked out, in practice the default branch: that is
+the bug the rule exists to remove.
+
+**A ticket branch is named after its final intent — what it delivers at merge — never
+after the phase it starts in.** A ticket that begins with spec commits and continues
+into implementation carries the implementation's type from its first commit; the
+specs phase and the implementation phase share one branch, closed by one PR. There
+is no second branch and no handover between two. The type vocabulary that names the
+branch — `[ADR-0017](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md)`
+§3 — stays one list with three uses; what this rule fixes is which type a given
+branch takes, not which types exist.
+
+**A ticket's PR targets the sprint branch, not the default branch.** `gh pr create
+--base sprint/<slug>`, and the PR body carries `Refs: #<n>` without a closing keyword.
+The close is carried exactly once per ticket, by the sprint's own PR into the
+default branch. A closing keyword in a ticket PR closes the issue the moment the
+sprint branch merges, which is earlier than the ticket's own merge into the default
+branch — that early close is the drift this rule refuses.
+
+**The review's diff reads against the sprint branch.** `git diff sprint/<slug>...HEAD`,
+not `origin/<default>`. A fix landed early in the sprint branch would otherwise
+appear inside every later ticket's diff, and gate 2 would route on another ticket's
+changes.
+
+**The sprint branch merges into the default branch as a merge commit, never a squash.**
+A squash leaves one `Refs:` trailer standing for N tickets' commits, and *What a
+commit carries* (above) requires every commit of a branch to reference its own work
+item. The merge commit carries the close for the whole sprint; each ticket PR carries
+only `Refs:`.
+
+**The sprint branch is not rewritten while any ticket branch cut from it is live.**
+A force push on the sprint branch invalidates every ticket branch cut from it —
+which is the work-loss failure *Who may rewrite* (above) forbids. The autosquash
+case that needs more than this belongs to its own ticket (`sprint-fast`), where the
+conditions for rewriting under live ticket branches are written.
+
+**A ticket's card stays in `in_review` from the moment its PR merges into the sprint
+branch until the sprint itself is validated; it reaches `done` when the sprint's PR
+lands.** The intermediate state is read off the PR (merged, base = the sprint branch),
+never off the board — a column for it would be a second copy of state already
+derivable from the PR.
+
+**A ticket invoked outside any sprint keeps working unchanged.** With no milestone, or
+a milestone whose `sprint/<slug>` branch does not exist, the base falls back to the
+default branch. The fallback is the same as before this rule existed — the ticket
+skill does not require a sprint branch to run, and an orchestrator that never
+assembles a sprint is not asked to start one.
+
+**This section is the one statement of the sprint branch rule.** Both `scrumia-teams:
+scrumia-sprint` and `scrumia-github-project:scrumia-ticket` cite it; neither
+restates a trigger or an obligation beside the citation. A restated trigger is a
+finding — the test is whether two copies could ever command different behaviour.
+
 ### The replacement test — which feature does a rule belong to?
 
 Apply it before filing any rule about how code ships, at refinement time and when

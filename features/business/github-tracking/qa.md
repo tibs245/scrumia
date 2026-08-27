@@ -270,6 +270,64 @@ Then they are returned by a search over comment text on the `Verdict:` prefix an
   this criterion
 ```
 
+## The sprint branch
+
+### AC-19 — A ticket PR opened during a sprint targets `sprint/<milestone-slug>` and carries `Refs: #<n>` without a closing keyword
+
+```gherkin
+Given a sprint with `sprint/<milestone-slug>` open in the repo, and a ticket whose
+  PR is being created during the sprint
+When `gh pr create` runs
+Then the command is called with `--base sprint/<milestone-slug>`, the PR body
+  carries `Refs: #<n>` once or more, and the body carries none of GitHub's closing
+  keywords (`Closes`, `Fixes`, `Resolves`, `close`, `fix`, `resolve`, …) — the
+  close is carried by the sprint's own PR into the default branch, not by this PR
+```
+
+```gherkin
+Given the same ticket PR, but the body carries `Closes #<n>` in the body
+When the body is read
+Then the criterion fails on the closing keyword; the ticket's PR must not be a
+  second source of truth about when the work landed
+```
+
+### AC-20 — The sprint's PR closes every ticket of the sprint, exactly once each
+
+```gherkin
+Given a sprint whose ticket PRs have all merged into `sprint/<milestone-slug>`,
+  and the sprint's own PR into the default branch is about to open
+When the sprint PR's body is composed
+Then it carries `Closes #<n>` once per ticket of the sprint — one line per
+  number, no closing keyword carried on a ticket PR
+```
+
+```gherkin
+Given the same sprint PR, but its body carries a closing keyword twice for one
+  ticket number, or omits one ticket number
+When the body is read
+Then the criterion fails — one closing keyword per ticket, and one ticket per
+  closing keyword, is the count GitHub acts on
+```
+
+### AC-21 — A card stays in `in_review` while the ticket PR is merged into the sprint branch and the sprint is not yet validated
+
+```gherkin
+Given a ticket whose PR has merged into `sprint/<slug>` and the sprint's own PR is
+  still open
+When the card's Status is read
+Then it is `in_review`; the intermediate state is read off the PR (merged, base =
+  the sprint branch), not off the board, so no skill moves the card to `done` at
+  this point
+```
+
+```gherkin
+Given the same state, then the sprint's PR merges into the default branch
+When the card's Status is read
+Then it is `done`, by the same transition any merged PR triggers; the move to
+  `done` is triggered once per ticket — when the sprint's PR merges — and never
+  when the ticket's own PR merges into the sprint branch
+```
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.
