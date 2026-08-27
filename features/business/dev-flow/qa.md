@@ -381,7 +381,7 @@ Then it may use the `*` escape hatch (`refactor(*): …`), which derives no bump
 
 ## The sprint branch
 
-### AC-19 — A sprint runs on its own integration branch, cut from the default branch and pushed before the first worktree
+### AC-29 — A sprint runs on its own integration branch, cut from the default branch and pushed before the first worktree
 
 ```gherkin
 Given `scrumia-sprint` Step 4 is about to cut the first ticket worktree of a sprint
@@ -402,7 +402,7 @@ Then no `sprint/<slug>` resolves and the first ticket branch's merge base with t
   before any ticket PR is opened
 ```
 
-### AC-20 — Every ticket branch of the sprint has the sprint branch's tip as its merge base at the moment of the cut
+### AC-30 — Every ticket branch of the sprint has the sprint branch's tip as its merge base at the moment of the cut
 
 ```gherkin
 Given a sprint with `sprint/<slug>` at tip `T`, and a ticket branch `<type>/<n>-<slug>`
@@ -419,7 +419,7 @@ Then it returns the default branch's tip, not the sprint branch's tip; the
   criterion fails the moment the command's start-point argument is missing
 ```
 
-### AC-21 — A ticket branch's prefix is the type of what the ticket delivers at merge, not the phase it starts in
+### AC-31 — A ticket branch's prefix is the type of what the ticket delivers at merge, not the phase it starts in
 
 ```gherkin
 Given a ticket whose deliverable is a feature under the specs root together with
@@ -440,7 +440,7 @@ Then the ticket ends up with a `specs/` prefix and the implementation phase land
   to remove
 ```
 
-### AC-22 — Spec edits and implementation of one ticket share one branch, closed by one PR
+### AC-32 — Spec edits and implementation of one ticket share one branch, closed by one PR
 
 ```gherkin
 Given a ticket whose first phase is spec edits and whose second phase is
@@ -458,7 +458,7 @@ Then the criterion fails: a single ticket branch carries both phases, and the
   skill's instruction is the drift this rule refuses
 ```
 
-### AC-23 — A ticket's PR targets the sprint branch and carries no closing keyword
+### AC-33 — A ticket's PR targets the sprint branch and carries no closing keyword
 
 ```gherkin
 Given a sprint with `sprint/<slug>` in flight, and a ticket whose PR is ready to
@@ -478,7 +478,7 @@ Then GitHub has already closed the issue (or is about to, on merge into the
   the criterion fails on a closing keyword in a ticket PR
 ```
 
-### AC-24 — The review diff of a ticket reads `git diff sprint/<slug>...HEAD`
+### AC-34 — The review diff of a ticket reads `git diff sprint/<slug>...HEAD`
 
 ```gherkin
 Given a ticket branch cut from `sprint/<slug>`, and a fix landed on `sprint/<slug>`
@@ -498,7 +498,7 @@ Then every ticket's diff includes every prior fix landed on the sprint branch,
   the base is the default branch
 ```
 
-### AC-25 — The sprint's PR merges as a merge commit and deletes the sprint branch
+### AC-35 — The sprint's PR merges as a merge commit and deletes the sprint branch
 
 ```gherkin
 Given `sprint/<slug>` carrying N ticket PRs, all merged
@@ -516,7 +516,7 @@ Then only one commit (or zero) carries the trailer, and the other tickets' commi
   rule *What a commit carries* requires
 ```
 
-### AC-26 — A ticket's card stays in `in_review` while its PR is merged into the sprint branch, and reaches `done` only when the sprint's PR lands
+### AC-36 — A ticket's card stays in `in_review` while its PR is merged into the sprint branch, and reaches `done` only when the sprint's PR lands
 
 ```gherkin
 Given a ticket whose PR has merged into `sprint/<slug>` and the sprint's own PR is
@@ -535,7 +535,7 @@ Then the card is `done`, by the same transition any merged PR triggers; the
   the board
 ```
 
-### AC-27 — A ticket invoked directly outside any sprint keeps working unchanged
+### AC-37 — A ticket invoked directly outside any sprint keeps working unchanged
 
 ```gherkin
 Given `scrumia-ticket` invoked by a human outside any sprint — no `sprint/<slug>`
@@ -555,7 +555,7 @@ When the executor computes its base
 Then it reads the default branch's tip; the standalone path is unchanged
 ```
 
-### AC-28 — The sprint branch rule is stated once and both skills cite it
+### AC-38 — The sprint branch rule is stated once and both skills cite it
 
 ```gherkin
 Given the sprint branch rule — integration branch, ticket branches cut from it,

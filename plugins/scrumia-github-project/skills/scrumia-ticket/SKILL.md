@@ -138,27 +138,21 @@ The branch naming follows the project's commit-type vocabulary from
 [`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary* —
 `<type>/<n>-<slug>` — but writing that branch is the orchestrator's job, not this skill's.
 
-**Resolve the base once, here, before any step that reads a diff.** During a sprint the
-ticket branch is cut from `sprint/<milestone-slug>` and the base is that sprint branch;
-outside a sprint the base is the default branch. The rule, the fallback, and the merge
-form are stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
-§ *The sprint branch*; this skill computes the base from it, no prose beside the
-citation:
+**Resolve the base once, here, before any step that reads a diff.** The rule, the
+fallback, and the merge form are stated once in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*; this
+step applies it.
 
 ```bash
 # Derive <milestone-slug> from the ticket's milestone, if any
 gh issue view <n> --json milestone --jq '.milestone.title // ""'
 ```
 
-If the milestone is non-empty and a local branch `sprint/<slug>` resolves (the `<slug>`
-derivation is the one stated in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) §
-*The sprint branch*, applied identically by `scrumia-sprint` Step 4a — two
-implementations diverging here would resolve a branch that does not exist), the
-base is `sprint/<slug>`; otherwise the base is the default branch (read from
-`origin/HEAD` if it resolves, else `main`). Verify the ticket branch's merge base
-matches: `git merge-base <base> HEAD` must equal the tip of `<base>`. A mismatch is
-the drift the rule exists to catch — comment on the issue and stop, naming the
-branch the orchestrator was supposed to cut from.
+If the milestone is non-empty and a local branch `sprint/<slug>` resolves, the base
+is `sprint/<slug>`; otherwise the base is the default branch (read from `origin/HEAD`
+if it resolves, else `main`). Verify the ticket branch's merge base matches:
+`git merge-base <base> HEAD` must equal the tip of `<base>`. A mismatch comments on
+the issue and stops, naming the branch the orchestrator was supposed to cut from.
 
 Once the branch is right, move the card to the `in_progress` step:
 
@@ -189,10 +183,9 @@ The rule, and what counts as yielding control, are stated once in [`features/bus
 
 This sits before Step 3 because Step 2 is where the branch starts existing and Step 3 can already yield. The steps that name it — 3, 5, 6, and *When you're blocked* — are where it bites in practice, not the extent of it.
 
-**The base that Step 2 computed is what Step 6's diff and Step 7's PR read.** During a
-sprint that is `sprint/<milestone-slug>`; outside a sprint that is the default branch.
-Storing it once and reusing it — rather than re-resolving per step — is what keeps the
-two surfaces consistent. The rule and the fallback are stated in
+**The base that Step 2 computed is what Step 6's diff and Step 7's PR read.**
+Storing it once and reusing it — rather than re-resolving per step — is what keeps
+the two surfaces consistent. The rule and the fallback are stated in
 [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*; this skill
 cites it.
 
@@ -247,7 +240,7 @@ Commit those fixes before going further, per *Commit before you yield* above.
 git status --porcelain   # must print nothing before a role is spawned
 ```
 
-`git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else. **`<base>` is whatever Step 2 resolved** — `sprint/<milestone-slug>` during a sprint, the default branch otherwise. The reason it cannot be the default branch during a sprint is the rule in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch* — a fix landed early on the sprint branch would otherwise appear inside every later ticket's diff, and gate 2 would route on another ticket's changes. Step 6 reads the base Step 2 stored; it does not re-derive it.
+`git diff <base>...HEAD` below reads committed history, so a role routed off it reviews the branch and nothing else. **`<base>` is whatever Step 2 resolved.** Step 6 reads the base Step 2 stored; it does not re-derive it. The rule is in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*.
 
 If a team module is plugged in, route the review by what your diff actually touches. List it first — `git diff <base>...HEAD --name-only` from the worktree — then apply gate 2's table ([`docs/adr/0005-validation-gates.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0005-validation-gates.md)), in the specs module's own vocabulary from Step 1:
 
@@ -305,11 +298,21 @@ The same holds when the role itself could not be reached. Handing your own gener
 gh pr create --base <base> --title "<type>(<scope>): <expected outcome>" --body "..."
 ```
 
-**`<base>` is what Step 2 resolved**: `sprint/<milestone-slug>` during a sprint, the default branch otherwise. During a sprint the PR targets the sprint branch — the rule and the close form are stated in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*; this step passes the base and lets GitHub do the rest, no prose beside the citation.
+**`<base>` is what Step 2 resolved.** During a sprint the PR targets the sprint
+branch and the body carries `Refs: #<n>` without a closing keyword; outside a
+sprint the body carries `Closes #<n>` **exactly once**. The rule is in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch* and the
+materialisation in [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)
+§ *The close lives on the sprint's PR*; this step passes the base and lets
+GitHub do the rest.
 
 Same `<type>` vocabulary as the branch and the commits, same mandatory scope.
 
-The description contains: what was done, **and what it does not contain is as important**: during a sprint the body carries `Refs: #<n>` and no closing keyword. The close is carried exactly once per ticket, by the sprint's own PR into the default branch; a closing keyword in a ticket PR closes the issue at the moment the sprint branch merges, earlier than the ticket's own merge into the default branch — that early close is the drift this rule refuses. Outside a sprint the body carries `Closes #<n>` **exactly once**, the PR body is where the close lives, and GitHub performs it; no step of this skill closes an issue, and the commits' `Refs:` trailers close nothing. The two cases differ on whether the PR targets the default branch or a sprint branch, and that is the only thing that differs — the criterion-by-criterion mapping (each acceptance identifier in `ac_id_format` → its test, if a specs module is documented), the specs modified, the verdict of the agent reviews — echoing the label/diff gap Step 6 recorded, where there was one, the comment on the issue being the record and this its copy — and the open reservations with their issues, are written in both cases.
+The description contains: what was done, the criterion-by-criterion mapping (each
+acceptance identifier in `ac_id_format` → its test, if a specs module is documented),
+the specs modified, the verdict of the agent reviews — echoing the label/diff gap
+Step 6 recorded, where there was one, the comment on the issue being the record and
+this its copy — and the open reservations with their issues.
 
 **The description names the roles consulted during execution, their answers, and where the answer is recorded — or states that no role was needed and which condition did not apply.** A review that ran as a fallback because the agent type did not resolve is named as such, never reported as the role itself (AC-20).
 

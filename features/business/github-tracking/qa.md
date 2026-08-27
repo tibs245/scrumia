@@ -272,7 +272,7 @@ Then they are returned by a search over comment text on the `Verdict:` prefix an
 
 ## The sprint branch
 
-### AC-19 — A ticket PR opened during a sprint targets `sprint/<milestone-slug>` and carries `Refs: #<n>` without a closing keyword
+### AC-39 — A ticket PR opened during a sprint targets `sprint/<milestone-slug>` and carries `Refs: #<n>` without a closing keyword
 
 ```gherkin
 Given a sprint with `sprint/<milestone-slug>` open in the repo, and a ticket whose
@@ -291,7 +291,7 @@ Then the criterion fails on the closing keyword; the ticket's PR must not be a
   second source of truth about when the work landed
 ```
 
-### AC-20 — The sprint's PR closes every ticket of the sprint, exactly once each
+### AC-40 — The sprint's PR closes every ticket of the sprint, exactly once each
 
 ```gherkin
 Given a sprint whose ticket PRs have all merged into `sprint/<milestone-slug>`,
@@ -309,7 +309,7 @@ Then the criterion fails — one closing keyword per ticket, and one ticket per
   closing keyword, is the count GitHub acts on
 ```
 
-### AC-21 — A card stays in `in_review` while the ticket PR is merged into the sprint branch and the sprint is not yet validated
+### AC-41 — A card stays in `in_review` while the ticket PR is merged into the sprint branch and the sprint is not yet validated
 
 ```gherkin
 Given a ticket whose PR has merged into `sprint/<slug>` and the sprint's own PR is
