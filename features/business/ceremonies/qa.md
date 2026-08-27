@@ -162,6 +162,35 @@ Then all three stay open, because a venue is not an accountable reader and this
   speaks for neither of the other two candidate venues
 ```
 
+### AC-14 — A sprint-level verdict is one of the records the retrospective reads
+
+```gherkin
+Given a `sprint-fast` sprint that has just ended, with one role-signed verdict on
+  its sprint PR and no per-issue verdict on any of its tickets
+When the retrospective reads the period
+Then the sprint-level verdict is one of the records its trigger counts — the
+  record is on the sprint PR, and a `Blocked` verdict there is read the same way
+  a per-ticket Blocked verdict is
+```
+
+```gherkin
+Given the same sprint, with no role-signed verdict on the sprint PR and no
+  per-issue verdict on any ticket
+When the boundary is reached
+Then the period reads as silent: the trigger finds nothing recorded, and a
+  `sprint-fast` sprint that landed without a sprint-level verdict is no more a
+  clean period than a normal sprint that landed without per-ticket verdicts
+```
+
+```gherkin
+Given the same silent period, but a human notices the absence and asks for a
+  retrospective
+When the ceremony runs
+Then it produces no edit on the claim that the period was clean — a silent
+  period is not a clean one, and the same refusal of the zero applies to the
+  sprint-level venue
+```
+
 ## Out of scope
 
 - The gates (`ADR-0005`) — they sit inside the execution path, on one change, and are

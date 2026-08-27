@@ -70,6 +70,16 @@ refused split, in `features/business/execution-policy/`'s own two senses), a gat
 **No new records, no retrospective.** That is the trigger working, not a degenerate case
 of it.
 
+A `sprint-fast` sprint produces one role-signed verdict on the sprint's PR for the
+whole batch, not one per ticket (`features/business/dev-flow/`). A sprint-level
+verdict that reads **Blocked** is one of the records this trigger reads: the
+trigger's verb is *recorded*, and the sprint PR is a recorded venue. Per-ticket
+verdicts are not on those tickets' issues, and counting the absence of a
+per-ticket verdict as a silent period is the wrong read — the record is on the
+sprint PR, and the retro must look there. A `sprint-fast` sprint that closes on
+no role-signed verdict anywhere — sprint PR or per-issue — is a silent period on
+both venues, and the trigger reads what is on the record, which is nothing.
+
 The word *recorded* is doing work there, and the feature it borrows from says why: a
 count of zero is evidence of nothing, because nothing forces a deviation to be written
 down and an omitted record is indistinguishable from a compliant run

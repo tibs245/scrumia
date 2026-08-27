@@ -18,6 +18,45 @@ gh pr diff <n>
 
 The scope that matters is the diff's, not the one announced in the issue. A `scope/S` ticket whose PR touches three apps is a badly scoped ticket: treat it according to what it does.
 
+**If the PR's head branch is `sprint/<slug>` and the tickets merged into it carry
+`process/sprint-fast`**, this is a sprint-level review — route to Step 1a
+(*Sprint-level routing*), then continue at Step 3. The per-ticket routing in
+Step 2 is the wrong tool here: a single reviewer's verdict on one ticket's diff
+does not see the contradictions between two tickets, and a single verdict for
+the whole sprint is the mode `features/business/dev-flow/` § *sprint-fast*
+defines. The base of `gh pr diff <n>` is the default branch, which is the right
+read for the aggregate — every ticket PR is in the head branch's history.
+
+### Step 1a — Sprint-level routing
+
+For a sprint-level review, the reviewers are the **union** of gate 2's answers
+over each ticket's own file set. Each ticket's PR is merged into the sprint
+branch and still discoverable, so the routing table in Step 2 applies per
+ticket and the reviewers are the union:
+
+1. List the ticket PRs that merged into `sprint/<slug>`:
+
+   ```bash
+   gh pr list --state merged --base sprint/<slug> --json number,title,files
+   ```
+2. For each ticket PR, apply the Step 2 routing table to its file set and
+   record the answer. A `scope/S` ticket draws no one; a ticket touching
+   `features/business/**` draws the business role; a ticket touching an
+   interface-contract file draws business when business is at stake.
+3. Take the union. One reviewer may answer multiple tickets; run them once.
+
+The aggregate diff (`gh pr diff <n>` against the default branch) is also read
+in this step, for what no per-ticket review could see — two tickets that each
+make sense alone and contradict each other, a rule changed by one and consumed
+by another, a style drift visible only across five diffs. One pass, both
+readings. Findings from the per-ticket routing and the aggregate read both
+land in Step 5's synthesis; the verdict itself is written once, on the sprint
+PR, in the format `features/business/agent-team/` defines. The carrier is the
+sprint PR, not any ticket of the sprint — see
+[`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)
+§ *A sprint-fast sprint carries its verdict on the sprint's PR* for the venue
+and the read.
+
 **The gap becomes a reportable scoping signal only when the axis's own three questions — how many apps, does a rule consumed beyond one feature or app change, does an interface contract change — would have answered higher than the label carries.** The two grids disagree routinely and correctly, so a disagreement on its own reports nothing; calling every one of them a mislabel fires on a whole class of correctly-labelled ticket. The questions, the label conditions and the reach-not-medium reading of question 2 are in [`rules/gate-2-scoping-signal.md`](../../rules/gate-2-scoping-signal.md) — read it before deciding, not after.
 
 **Where it is owed, record it on the issue, addressed to the manager** — the role that set the label and routes on it — before Step 5 rather than inside it:
@@ -86,6 +125,17 @@ Deliver a synthesis, not a compilation. The human must be able to decide in one 
 - **The reservations** and the issues created for them
 - **The disagreements between reviewers**, passed on as is, without merging them into an average opinion
 
+**For a sprint-level review, the synthesis also names the union it routed from.**
+List the ticket PRs whose file sets drew each reviewer — a reader two months
+later needs to see which tickets put each role on the union, because the
+verdict is one record for the whole sprint and the audit trail that reaches
+it is the union's components. The synthesis carries the verdict in the same
+`Verdict: … — #<sprint-pr> — by scrumia-*` format the per-ticket venue uses;
+the ticket number in the format is **the sprint PR's number**, not any
+ticket's, because the carrier names the artefact the verdict sits on
+(`features/business/github-tracking/` § *A sprint-fast sprint carries its
+verdict on the sprint's PR*).
+
 **Name which role ran each verdict, or name the fallback.** When the agent type did not resolve — or any other condition of [`rules/when-a-role-must-be-consulted.md`](../../rules/when-a-role-must-be-consulted.md) § *Unreachable roles* applies — the synthesis says so and names what did run; a general agent handed the role's `.md` is reported as such, never as the role itself (AC-20). This is the same rule the skill that opens the PR applies to its own description; the two must not disagree about who was asked and who answered.
 
 When Business and Tech diverge, that is first-order information: it's exactly the case that calls for human arbitration. Don't smooth it over.
@@ -93,6 +143,16 @@ When Business and Tech diverge, that is first-order information: it's exactly th
 ## Step 6 — Publish
 
 Post the synthesis as a comment on the PR (`gh pr comment`). Blocking objections go into a GitHub review on the relevant lines, where they'll be read in the right place.
+
+**For a sprint-level review, the role-signed verdict is posted by the role's
+agent, not by this skill.** The verdict — `Verdict: … — #<sprint-pr> — by
+scrumia-<role>` — is the gate-2 record for every ticket of the sprint, and the
+carrier is a comment on the sprint PR. This skill posts the synthesis and any
+blocking-objection review threads; the role's agent posts the verdict, in the
+same way `scrumia-ticket` Step 6 has the role post its verdict on the
+ticket's issue and not in the executor's report. The substitution path the
+attribution clause closes is the one a verdict written by this skill would
+reopen.
 
 A reservation's ticket is not done at `gh issue create`: a bare `gh issue create` lands the issue with no board card at all, and `gh issue create --project "<title>"` lands one with no Status — either way `scrumia-board find <n>` must report `found: true` before the reservation counts as handled. Why a card is what makes an issue count as work is [`features/business/github-tracking/`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)'s, in its ticket lifecycle — a reservation is work, so it takes one. The part that is this skill's: a card with no Status is still invisible to a sprint prepared from `ready`, so finding the card is not the end of it. If the card is missing, add it (`gh project item-add`) before calling the reservation closed.
 

@@ -116,6 +116,7 @@ the label is a signal, not the source of truth.
 | `scope/*` | `scrumia-pick-model`, and `scrumia-manager` at entry (routes who is asked) | the scope × risk cell of the execution matrix |
 | `risk/*` | `scrumia-pick-model` | the same matrix, the other axis |
 | `epic` | nobody, programmatically | a human-facing marker only — see above |
+| `process/sprint-fast` | the gather at gate 3, the retrospective's trigger | a ticket of a `sprint-fast` sprint, whose gate-2 verdict lives on the sprint's PR rather than on its own issue |
 | `discussion` | `scrumia-board issues --search "label:discussion"`, which finds them; `scrumia-status` and the next-step reading, which **subtract** them — through the board read where one was carded, and on the label itself where the status reading falls back to an issue list | an issue holding something unresolved that is not work waiting to be started |
 
 `discussion` is the only label read as a subtraction, and that is what earns it a place
@@ -326,6 +327,49 @@ declaration by the executor. "The executor says no review ran" is exactly the re
 that is not trusted: an executor that wrote the absence would have written a verdict
 in the same place, and both are the same record. The net is the checkable fact, and
 the gather's report is what closes the substitution path.
+
+### A sprint-fast sprint carries its verdict on the sprint's PR
+
+`features/business/dev-flow/` § *sprint-fast* describes the mode: each ticket's
+PR merges into the sprint branch on green CI, with no per-ticket role verdict,
+and one global review at the end produces a single verdict for the sprint. The
+human override of the business role's "verdict per ticket" rule lands in that
+section, and here is the carrier on this tracker.
+
+**The venue is a comment on the sprint's PR**, posted by the reviewing role's
+agent at the end of the global review, in the same format a per-ticket verdict
+uses — `Verdict: Approved | Reservations | Blocked — #<n> — by scrumia-<role>`.
+The ticket number in the format is **the sprint's PR number**, not any ticket of
+the sprint: the carrier names the artefact it sits on, and one verdict lives on
+one artefact. The role's name and verdict are written once; the gather reads
+them once for every ticket of the sprint, and the absence is one absence for all
+of them.
+
+**Why the sprint's PR and not each ticket's issue.** Per-ticket verdict on each
+ticket's issue would re-create the per-ticket role review the mode skips — N
+reviews for N tickets is exactly the cost `sprint-fast` is buying its way out of,
+and an executor writing a per-ticket verdict in the absence of a per-ticket
+review is the substitution path `dev-flow` § *Gate 2's verdict* already closes
+on the standalone path. A comment on the sprint PR is the same role-signed
+record in a different venue, with the same format, the same `by scrumia-*`
+attribution, and the same refusal of an executor-written verdict: the role's
+agent writes it, not the orchestrator and not the gather.
+
+**How it is read back.** The gather at the sprint's PR — one read, not N — and
+the same `Verdict:` prefix plus `by scrumia-*` token that the per-ticket read
+uses. The read's answer applies to every ticket of the sprint: one verdict,
+one carrier, one attribution. The retrospective's trigger reads the same
+sprint PR for the same reason a per-ticket `Blocked` verdict is read on its
+ticket's issue (`features/business/ceremonies/`).
+
+**Every ticket of the sprint carries `process/sprint-fast`.** The label is what
+tells the gather and the retrospective which tickets to read the sprint PR
+for, instead of each ticket's issue. Without the label, a ticket reviewed
+globally is indistinguishable from one whose review never ran; with the label,
+the gather knows where to look and the read is over the right set of carriers.
+The label is set on every ticket before execution starts — by the
+`sprint-fast` orchestrator, not by the ticket skill, because the orchestrator
+is the one that decided this is a sprint-fast sprint.
 
 ## Gate 3 reads the verdict and the file set through two tracker-side artefacts
 

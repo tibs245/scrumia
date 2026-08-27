@@ -3,9 +3,11 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [0.5.0] - 2026-08-27
 ### Added
-- `registers.json` and `dependencies.jsonl` — this module opens the `convene` and `sprint`
-  registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
+- `registers.json` and `dependencies.jsonl` — this module opens the `convene`, `sprint`
+  and `sprint-fast` registers, and declares the names it runs, qualified by their source. `scrumia-standup` picks up a role another module ships from the `convene`
   register rather than from a list it maintained about modules it does not own.
 - `scrumia-sprint` creates and pushes `sprint/<milestone-slug>` from the default
   branch before the first ticket worktree is cut, then cuts every ticket worktree
@@ -14,6 +16,19 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   the sprint branch's state alongside the per-ticket verdict. The rule is stated
   once in `features/business/dev-flow/` § *The sprint branch*; this skill cites
   it.
+- `scrumia-sprint-fast` — a `sprint-fast` mode for a small batch of ready tickets,
+  opened by `/sprint-fast`. Each ticket runs `scrumia-ticket` without its
+  per-ticket role review and merges into the sprint branch on gate 1 alone; one
+  global review runs on the sprint branch against the default branch; findings
+  land as `fixup!` commits on fix branches cut from the sprint branch's tip;
+  the orchestrator is the only executor that autosquashes the sprint branch,
+  after the gather has verified every ticket worktree is closed and no ticket
+  branch cut from the sprint branch is live; gate 1 and the global review
+  re-run on the post-squash state before the sprint PR opens; gate 3 stays
+  human. Steps 1–3 are the normal sprint's and are cited, not restated — the
+  normal sprint is unchanged in its review policy, and the new skill owns only
+  what differs. The rule is stated once in `features/business/dev-flow/`
+  § *sprint-fast*; this skill cites it.
 ### Changed
 - The manager role now says that gate 2's scoping signal reaches it recorded against the
   ticket rather than mentioned in passing, and on what condition it is owed at all: only
