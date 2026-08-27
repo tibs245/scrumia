@@ -150,13 +150,15 @@ citation:
 gh issue view <n> --json milestone --jq '.milestone.title // ""'
 ```
 
-If the milestone is non-empty and a local branch `sprint/<slug>` resolves (where `<slug>`
-is the milestone title lowercased, with non-alphanumeric runs collapsed to `-` and
-trimmed), the base is `sprint/<slug>`; otherwise the base is the default branch (read
-from `origin/HEAD` if it resolves, else `main`). Verify the ticket branch's merge base
-matches: `git merge-base <base> HEAD` must equal the tip of `<base>`. A mismatch is the
-drift the rule exists to catch — comment on the issue and stop, naming the branch the
-orchestrator was supposed to cut from.
+If the milestone is non-empty and a local branch `sprint/<slug>` resolves (the `<slug>`
+derivation is the one stated in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) §
+*The sprint branch*, applied identically by `scrumia-sprint` Step 4a — two
+implementations diverging here would resolve a branch that does not exist), the
+base is `sprint/<slug>`; otherwise the base is the default branch (read from
+`origin/HEAD` if it resolves, else `main`). Verify the ticket branch's merge base
+matches: `git merge-base <base> HEAD` must equal the tip of `<base>`. A mismatch is
+the drift the rule exists to catch — comment on the issue and stop, naming the
+branch the orchestrator was supposed to cut from.
 
 Once the branch is right, move the card to the `in_progress` step:
 

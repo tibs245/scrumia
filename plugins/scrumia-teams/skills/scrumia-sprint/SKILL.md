@@ -82,12 +82,13 @@ git checkout -b sprint/<milestone-slug> origin/<default-branch>
 git push -u origin sprint/<milestone-slug>
 ```
 
-The `<milestone-slug>` is the milestone title lowercased, with non-alphanumeric runs
-collapsed to a single `-` and leading/trailing `-` trimmed. If `sprint/<slug>` already
-exists locally or on the remote, do not recreate it: a sprint branch left in place from
-a prior sprint is the drift the rule refuses by construction, and the human at gate 3
-is the one who decides what to do with one (typically: delete it and start fresh,
-or amend it deliberately).
+The `<milestone-slug>` derivation is stated in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*;
+both this step (creating the branch) and `scrumia-ticket`'s base resolution apply
+it. If `sprint/<slug>` already exists locally or on the remote, do not recreate it:
+a sprint branch left in place from a prior sprint is the drift the rule refuses by
+construction, and the human at gate 3 is the one who decides what to do with one
+(typically: delete it and start fresh, or amend it deliberately).
 
 The default branch is read off the orchestrator's own checkout — `origin/HEAD` if it
 resolves, otherwise the project's `apps[].default_branch` in `.scrumia/config.yaml`,

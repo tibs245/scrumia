@@ -392,6 +392,12 @@ when it merges into the default branch; one left in place becomes the next sprin
 ancestor by accident, which is the drift "one branch per ticket" refuses by
 construction.
 
+**`<milestone-slug>` is the milestone title lowercased, with runs of non-alphanumeric
+characters collapsed to a single `-` and leading/trailing `-` trimmed.** Both the
+sprint orchestrator (creating the branch) and the ticket executor (resolving its
+base) derive the slug the same way — divergence here is a defect, since the
+ticket skill would then resolve a branch that does not exist.
+
 **Every ticket branch of the sprint is cut from the sprint branch, never from the
 default branch.** A ticket branch's merge base at the moment of the cut is the sprint
 branch's tip — `git merge-base sprint/<slug> <ticket-branch>` returns the sprint
