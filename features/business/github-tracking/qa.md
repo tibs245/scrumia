@@ -328,6 +328,64 @@ Then it is `done`, by the same transition any merged PR triggers; the move to
   when the ticket's own PR merges into the sprint branch
 ```
 
+## The sprint-fast label and the sprint-level verdict
+
+### AC-42 — Every ticket of a sprint-fast sprint carries the `process/sprint-fast` label
+
+```gherkin
+Given a `sprint-fast` sprint's tickets, before any of them starts
+When the labels on each ticket are read
+Then every one of them carries `process/sprint-fast` — set by the sprint
+  orchestrator, not by the ticket skill, because the orchestrator is the one
+  that decided this is a sprint-fast sprint
+```
+
+```gherkin
+Given the same sprint, and a ticket that was missed at label time
+When the gather reads it
+Then the absence reads as a normal-sprint ticket — it looks for the verdict on
+  the ticket's issue, finds none, and reports `not_run`; the criterion fails
+  because the label is the only signal the gather has to read the sprint PR
+  instead
+```
+
+### AC-43 — The sprint-level verdict lives on the sprint PR, in the role-signed format
+
+```gherkin
+Given a `sprint-fast` sprint whose global review has run
+When the gather reads the sprint's PR for a verdict
+Then it finds a `Verdict: … — #<sprint-pr> — by scrumia-*` comment in the
+  same format the per-ticket venue uses, posted by the reviewing role's agent,
+  not by the orchestrator and not by the gather
+```
+
+```gherkin
+Given the same sprint, and the verdict is written into the PR body and nowhere
+  on the PR as a comment
+When the gather reads
+Then it is reported as absent — the PR body is an echo of the record, not the
+  record, and the substitution path the venue rule closes is reopened by an
+  echo-only verdict
+```
+
+```gherkin
+Given the same sprint, and the verdict carries the right format but no
+  `by scrumia-*` attribution
+When the gather reads it
+Then it is treated as absent and the state is `not_run` — the attribution
+  clause is not a courtesy, and an unattributed verdict is the substitution
+  path `dev-flow` § *Gate 2's verdict* names by name
+```
+
+```gherkin
+Given the same sprint, and the verdict references a ticket number rather than
+  the sprint PR number
+When the gather reads
+Then the carrier's ticket-issuer is wrong: the format names the artefact the
+  verdict sits on, and a verdict on a ticket's issue about a different number
+  is not on this PR — the gather reports the verdict absent on this carrier
+```
+
 ## Out of scope
 
 - Who reads the deviation records once they accumulate, and on what occasion — open.
