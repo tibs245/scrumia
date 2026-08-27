@@ -6,5 +6,9 @@
   "sprint": {
     "skill": "scrumia-sprint",
     "purpose": "Assemble a batch of ready tickets that can run in parallel"
+  },
+  "sprint-fast": {
+    "skill": "scrumia-sprint-fast",
+    "purpose": "Assemble a batch of ready tickets, run each on gate 1 alone, then one global review and autosquashed fixups"
   }
 }

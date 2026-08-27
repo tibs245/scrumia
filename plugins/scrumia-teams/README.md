@@ -24,12 +24,13 @@ starts, and how many tickets a sprint can run at once without saturating human r
 |---|---|
 | `scrumia-standup` | Brings up the enabled roles to answer a question or give a state read. Launches nothing. |
 | `scrumia-sprint` | Assembles a batch of ready, non-conflicting tickets, gets human validation, then launches one isolated worktree per ticket. |
+| `scrumia-sprint-fast` | A `sprint-fast` mode for a small batch — each ticket merges on gate 1 alone, one global review at the end, fixups autosquashed under the orchestrator. |
 | `scrumia-team-setup` | Configures which roles are active, on which models, and the execution-policy matrix. |
 | `scrumia-pick-model` | Published on `PATH`. Given a ticket, reads its scope and risk labels and returns which model runs it, or that it should split. |
 | `scrumia-manager` (agent) | Owns the board, ticket routing, sprint cadence; arbitrates business vs. tech and escalates what it cannot resolve. |
 | `scrumia-business` (agent) | Owns business rules, vocabulary consistency, legal and compliance constraints. |
 | `scrumia-tech` (agent) | Owns cross-app architecture, API contracts, technical debt, implementation review. |
-| `/sprint`, `/standup` | Slash commands — each loads the matching skill above and passes its arguments through. |
+| `/sprint`, `/sprint-fast`, `/standup` | Slash commands — each loads the matching skill above and passes its arguments through. |
 
 ## Settings it reads
 
