@@ -69,15 +69,47 @@ The convention that puts `.worktrees/` inside the project directory (not `../<re
 is a permission-scope choice: a worktree outside the project triggers extra prompts or
 fails outright in restricted modes. Both rules apply to whatever cwd this skill runs in.
 
-Create one worktree per ticket:
+### Step 4a — Create and push the sprint branch, once
+
+Before any worktree is cut, create `sprint/<milestone-slug>` from the default branch
+and push it. The trigger, the obligation, the close form, and the deletion rule are
+stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+§ *The sprint branch* — this step performs them, no prose beside the citation.
 
 ```bash
-git worktree add .worktrees/<branch> -b <branch>
+git fetch origin <default-branch>
+git checkout -b sprint/<milestone-slug> origin/<default-branch>
+git push -u origin sprint/<milestone-slug>
+```
+
+The `<milestone-slug>` is the milestone title lowercased, with non-alphanumeric runs
+collapsed to a single `-` and leading/trailing `-` trimmed. If `sprint/<slug>` already
+exists locally or on the remote, do not recreate it: a sprint branch left in place from
+a prior sprint is the drift the rule refuses by construction, and the human at gate 3
+is the one who decides what to do with one (typically: delete it and start fresh,
+or amend it deliberately).
+
+The default branch is read off the orchestrator's own checkout — `origin/HEAD` if it
+resolves, otherwise the project's `apps[].default_branch` in `.scrumia/config.yaml`,
+otherwise `main`. The first ticket worktree below runs only after the push returns,
+because the ticket skill resolves its base off the remote and the worktree is cut off
+the local branch.
+
+### Step 4b — Cut one worktree per ticket, from the sprint branch
+
+```bash
+git worktree add .worktrees/<branch> -b <branch> sprint/<milestone-slug>
 ```
 
 The branch name follows the project's commit-type vocabulary from
 [`docs/adr/0017-version-bump-and-commit-signal.md`](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) § *The type vocabulary*
-— `<type>/<n>-<slug>`.
+— `<type>/<n>-<slug>`. The `<type>` is **what the ticket delivers at merge**, not the
+phase the ticket starts in — a ticket that begins with spec commits and continues into
+implementation carries the implementation's type from its first commit, per
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch* and
+[ADR-0017](https://github.com/tibs245/scrumia/blob/main/docs/adr/0017-version-bump-and-commit-signal.md) §3. The `sprint/<milestone-slug>` argument is the
+start point; without it, `git worktree add` returns whatever the orchestrator happens
+to have checked out, in practice the default branch — the bug the rule exists to remove.
 
 If the command fails with a `.lock: File exists` error, a sibling holds it briefly:
 retry, up to three times, a few seconds apart. If it still fails after that, the lock is
@@ -137,10 +169,24 @@ named by `features/business/dev-flow/`:
    not — and the verdict is the role's, not the executor's word for it. A **Blocked**
    verdict lands on an open PR: the PR stays open, the card returns to `in_progress`,
    and the gather flags the ticket. Gate 3 keeps the merge regardless.
+   **During a sprint, the PR targets `sprint/<milestone-slug>` and carries
+   `Refs: #<n>` without a closing keyword.** What the PR body should and should not
+   carry is the rule in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+   § *The sprint branch* and its materialisation in
+   [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md)
+   § *The close lives on the sprint's PR* — the gather reads the PR's base and body
+   and reports the drift, it does not restate it.
 3. **The net.** If the ticket's issue carries no role-signed verdict at gate 3, the
    orchestrator runs the role review on that absence — a checkable fact, not a
    declaration by the executor. The net is the immune system to the executor's
    report failing twice.
+
+**The sprint branch's state** is read alongside the per-ticket verdict: where the
+remote `sprint/<slug>` was rewritten under a live ticket branch, or where a ticket
+PR carries a closing keyword the sprint branch rule forbids, the gather names the
+sprint rather than the ticket — the rule it is reading is the one in
+[`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *The sprint branch*, and the
+gather is the place that surface sits.
 
 The gather's report carries, per ticket: the verdict state, the role (or `not_required`),
 and the cause for `not_run` — never silence. A ticket whose verdict is absent is
