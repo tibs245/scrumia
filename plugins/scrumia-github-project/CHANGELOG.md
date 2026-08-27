@@ -8,6 +8,13 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `implement`, `review` and `audit` registers, and declares the published names it runs,
   qualified by their source. Its four main skills now ask `scrumia-extends` what governs
   the work instead of restating another module's rules.
+- `scrumia-ticket` resolves its base to `sprint/<milestone-slug>` when the
+  ticket's milestone points to a sprint branch, and to the default branch
+  otherwise. The base is read once in Step 2 and reused by Step 6's diff and
+  Step 7's `--base`; the ticket PR carries `Refs: #<n>` without a closing
+  keyword during a sprint, and the close is carried by the sprint's own PR. The
+  rule is stated once in `features/business/dev-flow/` § *The sprint branch*;
+  this skill cites it.
 - `scrumia-board issues --search <terms>` — searches issues in every state and never the
   board, for finding out whether something has been raised before. A board read is scoped
   to live work, so it answers "never raised" for anything settled; this command takes no
