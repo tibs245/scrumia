@@ -30,6 +30,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0022](0022-a-skill-carries-the-doc-it-needs.md) | A skill carries the doc it needs, and `docs/` points inward | accepted — amends [0018](0018-modules-reach-by-name.md) |
 | [0023](0023-source-key-comes-from-the-manifest.md) | A module's `<owner>/<repo>` source is its manifest's claim, not the marketplace | accepted |
 | [0024](0024-no-category-of-module.md) | There is no category of module, and no vocabulary naming one | accepted — completes [0019](0019-extends-replaces-composition-and-practices.md) |
+| [0025](0025-sprint-design-one-analysis-before-the-sprint.md) | A sprint is designed once, before its first worktree; tickets carry a footprint the design crosses | accepted |
 
 ## Scope of the decisions
 
@@ -48,6 +49,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The project** — every module it ships | 0018 (a module reaches another by name, refining 0009) |
 | **The project** — every project's `.scrumia/config.yaml` | 0019 (`extends` replaces `composition:`, folding in the `practices` slot, superseding 0010) |
 | **The project** — every module it ships, and what an agent reads before acting | 0020 (a skill is extended by data, amending 0009 and extending 0018) |
+| **The `team` module, plus `tracker` and the work-item form** | 0025 (a sprint is designed once; a ticket carries a footprint) |
 
 A module decision is contested by writing another module, not by debating this one.
 
@@ -58,6 +60,7 @@ A module decision is contested by writing another module, not by debating this o
 - **0009** — if a project changes modules frequently on the same slot
 - **0011** — if the three-concern floor for staying single-file proves wrong once real modules have gone through the migration
 - **0016** — if a specs module ships with a fundamentally different shape (no per-feature catalog) than the seven-key vocabulary assumes
+- **0025** — after three sprints designed this way on a consuming project: does the crossing find what a reviewer finds, and is the per-app section read
 - **0013** — as soon as a project needs its issues in one tool and its PRs in GitHub; that case is blocked until the slot splits
 - **0018** — if the harness stops putting every enabled plugin's `bin/` on the session PATH, or publishes a contract that supersedes the observation this rests on
 - **0017** — when the first module reaches `1.0.0`, which lifts the `0.x` shift; or the first time a type in daily use is missing from its vocabulary, since admitting one takes a superseding ADR

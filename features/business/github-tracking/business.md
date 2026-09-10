@@ -465,6 +465,17 @@ the body of the PR that takes the sprint branch into the default branch, written
 per ticket: a list of `Closes #<n>` lines, one per ticket of the sprint. That is the
 artefact that performs the close, and it is performed when that PR merges.
 
+**The sprint's PR is opened as a draft at sprint design, on the design commit, and its
+body is the design's ephemeral part.** The rule is `features/business/dev-flow/business.md`
+§ *Sprint design*; here is its materialisation: `gh pr create --draft --base <default>
+--head sprint/<milestone-slug>` right after the design commit is pushed and before the
+first ticket worktree exists, with a body that carries the order, the merged lots and the
+sprint's conditions — and no closing keyword yet. The `Closes #<n>` lines are added to
+that same body when the sprint is gathered, and the draft is marked ready then; the PR
+number does not change, so a ticket's executor and gate 3 read the same artefact. A
+sprint whose PR is opened only at the gather has run with no carrier for its design,
+which is the failure `dev-flow` AC-53 names.
+
 **A ticket PR that does carry a closing keyword is non-conforming.** A reader of the
 ticket PR alone sees the close; a reader of the sprint PR sees another close; a run
 that diffs two histories cannot tell which one performed it. The two carriers disagree

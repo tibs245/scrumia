@@ -3,6 +3,8 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+- `scrumia-split` step 4 — a ticket is created with the footprint at the grain a split can
+  know: apps, what it creates for the units after it, what it reuses (#476).
 ### Added
 - `registers.json` and `dependencies.jsonl` — this module opens the `scope-idea` and
   `split` registers, and both skills ask what this project scopes against.

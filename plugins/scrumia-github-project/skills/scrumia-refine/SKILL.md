@@ -18,7 +18,7 @@ Four conditions, all verifiable:
    being the canonical instance). "A feature will probably show up" does not
    satisfy this.
 2. The acceptance criteria are written, identified in the format named by `ac_id_format`, and can fail
-3. The scope is known: which apps, which anticipated files
+3. The footprint is written and resolves: what the ticket reuses (cited where it is written), creates, retires, and which surfaces it touches — `work-item-format/standard` BR-5
 4. No open question blocks the start
 
 A ticket that doesn't meet all four stays in the backlog. Moving it forward anyway shifts the problem to execution, where it costs more.
@@ -122,6 +122,17 @@ Size and risk are independent, and their independence is the point. A one-line c
 
 If the ticket carries no risk label, execution assumes `execution.unrated_risk` and says so; the assumption is visible, not silent. Setting it here is still better than having it guessed.
 
+## Step 6b — Write the footprint
+
+The footprint replaces the free-text scope; its form is [`features/business/work-item-format/standard/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/work-item-format/standard/business.md) BR-5, four entries under *Additional information*:
+
+- **Reuses** — every rule, port, decision or symbol the ticket builds on, cited where it is written: a spec section in the specs module's vocabulary, or a symbol of the code. **Search before you write it**: the decision the ticket needs is often already written in a `tech.md` nobody cited — this entry is what makes it findable, and the sprint's design reads it.
+- **Creates** — what the ticket adds that others will reuse, and for whom, by ticket number when known.
+- **Retires** — what it removes or renames. This is what the sprint design and the global review grep for.
+- **Surfaces** — apps, directories, files, spec files it touches. Paths as they exist today.
+
+Then check that every citation under *reuses* resolves — the section exists under the specs root, the symbol is in the code. One that does not is a blocker of the same weight as an open question: the ticket stays in `Backlog` and the report names the entry. An empty entry is written as empty, never omitted.
+
 ## Step 7 — Decide whether the human must validate
 
 Escalate to the human when:
@@ -135,7 +146,7 @@ Otherwise, move the ticket to `Ready for dev` directly. The configured autonomy 
 
 ## Step 8 — Report back
 
-On the issue: what was clarified, the specs updated, the sub-issues created, the scope chosen and why, the questions left open.
+On the issue: what was clarified, the specs updated, the sub-issues created, the scope chosen and why, the footprint and what it resolved against, the questions left open.
 
 **The report names the roles consulted, their answers, and where the answer is recorded — or states that no role was needed and which condition of the rule did not apply.** A silent report has not consulted, regardless of whether one was reached (AC-18).
 

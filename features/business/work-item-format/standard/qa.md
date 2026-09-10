@@ -109,3 +109,16 @@ And it carries open questions
 And it states no acceptance criterion of its own, naming the feature that
   holds them instead
 ```
+
+### AC-12 — A ready issue carries a footprint whose citations resolve
+
+```gherkin
+Given an issue judged ready to start
+When its Additional information is read
+Then it carries a footprint with the four entries — reuses, creates, retires, surfaces —
+  each present, empty ones stated as empty
+And every entry under reuses resolves: a spec section that exists under the project's
+  specs root, or a symbol found in the code
+And an issue whose reuses entry names a section or symbol that does not resolve is not
+  ready, and the report names the entry
+```

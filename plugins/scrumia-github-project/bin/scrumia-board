@@ -32,11 +32,15 @@ scrumia-board <command> [args]
   move <issue> <column>         Move a card to a column
   read [--query Q] [--limit N]  Read the board, grouped by status
   ready [--milestone M]         Tickets ready for dev, optionally one sprint
+  overlap --milestone M [--milestone M2]
+                                Cross the footprints of a milestone's open tickets against the tree
   epic <issue>                  An epic and its native sub-issues
   issues --search <terms> [--limit N]
                                 Search issues in every state — not the board
 
 `read` defaults to "-status:Done"; pass --all to lift it.
+`overlap` computes what only the tickets' meeting shows (features/business/dev-flow/,
+§ Sprint design) and decides nothing; run it from the repository root so surfaces resolve.
 `issues` searches issues, never the board: a board read is scoped to live work, which is
 why it takes no --state flag and always covers open and closed alike. --limit defaults to
 30 and the answer reports truncated when it is reached.
@@ -450,6 +454,87 @@ cmd_epic() {
      sub_issues: $kids}' <<<"$out"
 }
 
+# Crosses footprints (features/business/work-item-format/standard/, BR-5) — the sprint
+# design's input (features/business/dev-flow/, § Sprint design). Reads issues, not the
+# board: a footprint is body text, and a collision with a ticket already in flight is a
+# collision, so no column filters it. Surfaces resolve against the current directory,
+# which is why the caller runs it from the repository root.
+cmd_overlap() {
+  local milestones=()
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --milestone) [ $# -ge 2 ] || die "overlap: --milestone needs a value"; milestones+=("$2"); shift 2 ;;
+      *) usage ;;
+    esac
+  done
+  [ ${#milestones[@]} -gt 0 ] || die "overlap: --milestone <sprint> is required — the whole backlog is not a batch"
+  command -v python3 >/dev/null 2>&1 || die "overlap: python3 not found"
+  local all="[]" m out
+  for m in "${milestones[@]}"; do
+    out=$(gh issue list --repo "$REPO" --milestone "$m" --state open --limit 200 \
+            --json number,title,body,milestone 2>&1) || die "issue list failed for milestone '$m': $out"
+    all=$(jq -s 'add' <(printf '%s' "$all") <(printf '%s' "$out"))
+  done
+  printf '%s' "$all" | python3 -c '
+import json, os, re, sys, itertools
+issues = json.load(sys.stdin)
+KEYS = {"reuses": ("reuses", "réutilise", "reutilise"), "creates": ("creates", "crée", "cree"),
+        "retires": ("retires", "retire"), "surfaces": ("surfaces", "surface")}
+def footprint(body):
+    m = re.search(r"(?im)^\s*(?:#+\s*|\*\*)?footprint\**\s*$", body or "")
+    if not m: return None
+    fp = {k: [] for k in KEYS}
+    for line in body[m.end():].splitlines():
+        if re.match(r"^\s*(#+\s|\*\*[A-Z])", line): break
+        mm = re.match(r"^\s*[-*]\s*([A-Za-zéè]+)\s*:\s*(.*)$", line)
+        if not mm: continue
+        word = mm.group(1).lower()
+        key = next((k for k, al in KEYS.items() if word in al), None)
+        if not key: continue
+        for item in re.split(r"\s*;\s*", mm.group(2)):
+            item = item.strip().strip("`").strip()
+            item = re.sub(r"\s+[—-]+\s+for\s+.*$", "", item)
+            if item and item.lower() not in ("none", "aucun", "aucune", "—", "-", "empty"):
+                fp[key].append(item)
+    return fp
+def norm(x): return re.sub(r"[`\s]+", " ", x).strip().lower()
+def symbol(x): return re.split(r"[\s(§]", norm(x))[0].split("/")[-1]
+def is_path(x): return "/" in x and " " not in x.strip() and "§" not in x
+def same_surface(a, b):
+    a, b = norm(a).rstrip("/"), norm(b).rstrip("/")
+    return a == b or a.startswith(b + "/") or b.startswith(a + "/")
+tickets, findings = [], []
+for i in issues:
+    fp = footprint(i.get("body", ""))
+    tickets.append({"number": i["number"], "title": i["title"], "milestone": (i.get("milestone") or {}).get("title"), "footprint": fp is not None})
+    if fp is None:
+        findings.append({"kind": "no_footprint", "tickets": [i["number"]], "detail": "no Footprint section in the issue body"}); continue
+    i["_fp"] = fp
+    for sfc in fp["surfaces"]:
+        if is_path(sfc) and not os.path.exists(sfc.strip("`")):
+            findings.append({"kind": "stale_surface", "tickets": [i["number"]], "detail": f"{sfc} does not exist in the tree"})
+with_fp = [i for i in issues if "_fp" in i]
+for a, b in itertools.combinations(with_fp, 2):
+    pair = [a["number"], b["number"]]
+    for sa in a["_fp"]["surfaces"]:
+        for sb in b["_fp"]["surfaces"]:
+            if same_surface(sa, sb) and not norm(sa).endswith(".md") and not norm(sb).endswith(".md"):
+                findings.append({"kind": "shared_surface", "tickets": pair, "detail": f"{sa} ~ {sb}"})
+    for x, y in ((a, b), (b, a)):
+        for r in x["_fp"]["retires"]:
+            for u in y["_fp"]["reuses"] + y["_fp"]["surfaces"]:
+                if symbol(r) and (symbol(r) in norm(u) or symbol(u) in norm(r)):
+                    findings.append({"kind": "retired_while_reused", "tickets": [x["number"], y["number"]], "detail": f"#{x[chr(110)+chr(117)+chr(109)+chr(98)+chr(101)+chr(114)]} retires {r}; #{y[chr(110)+chr(117)+chr(109)+chr(98)+chr(101)+chr(114)]} reuses {u}"})
+    for ca in a["_fp"]["creates"]:
+        for cb in b["_fp"]["creates"]:
+            if symbol(ca) and symbol(ca) == symbol(cb):
+                findings.append({"kind": "duplicate_creation", "tickets": pair, "detail": f"{ca} ~ {cb}"})
+json.dump({"ok": True, "surface": "issues", "tickets": tickets, "count": len(tickets),
+           "findings": findings, "decides": "nothing"}, sys.stdout, ensure_ascii=False, indent=1)
+print()
+'
+}
+
 # Deliberately leaves Projects v2 alone: a board read is scoped to live work, so it answers
 # "never raised" for anything settled — the one answer this search must not give (BR-6,
 # features/business/knowledge-placement/). No `--state` flag for the same reason: making it
@@ -490,6 +575,7 @@ case "$cmd" in
   move)    load_config; cmd_move "$@" ;;
   read)    load_config; cmd_read "$@" ;;
   ready)   load_config; cmd_ready "$@" ;;
+  overlap) load_config; cmd_overlap "$@" ;;
   epic)    load_config; cmd_epic "$@" ;;
   # SOFT_SETTINGS makes an unresolved cascade a non-event — not a warning, nothing is
   # emitted — which is safe here and nowhere else: this command reads `project.repo`,
