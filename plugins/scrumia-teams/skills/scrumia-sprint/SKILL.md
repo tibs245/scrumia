@@ -19,7 +19,7 @@ A milestone is the sprint's boundary. Without it you are reading the whole ready
 
 `scrumia-board` is the name that module publishes on the session's PATH; this skill holds no path to it and must not construct one, because where that module is installed is not knowable from here. Another tracker module fills the slot differently, and the name will not be found at all: ask it for what's ready in its own terms rather than assuming this one's layout. A name that is not found is a slot answered differently, never a cue to read the board by hand — an unfiltered `gh project` read is silently truncated at 30 items.
 
-Then cross the footprints. Every ready ticket carries one — what it reuses, creates, retires, and which surfaces it touches (`work-item-format/standard` BR-5) — and the tracker module crosses them against the tree as it is today:
+Then cross the footprints. Every ready ticket carries one under *Additional information* — what it reuses, what it creates, what it retires, which surfaces it touches — and the tracker module crosses them against the tree as it is today:
 
 ```bash
 scrumia-board overlap --milestone "<sprint>"
@@ -52,14 +52,22 @@ matrix above is the whole constraint.
 
 ## Step 2b — Design the sprint
 
-The rule is stated once, in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Sprint design* — this step performs it.
+One analysis of the batch, made once, before any worktree — so that executors implement, test and debug along stated lines instead of each redoing it and colliding at merge.
 
-Convene the roles the batch's surfaces draw — tech always, business when a rule moves, design when a screen does — through `scrumia-standup`, with the batch, the crossing's report and the specs the footprints cite. One page comes out, in this order:
+Convene the roles the batch's surfaces draw — tech always, business when a rule moves, design when a screen does — through `scrumia-standup`, with the batch, the crossing's report and the specs the footprints cite. **The model that writes the design is the project's, not the role's frontmatter**: resolve it through the cascade and pass it as the agent's model override —
+
+```bash
+scrumia-extends --settings "<this module's key>" | jq -r '.sprint.design.model // empty'
+```
+
+An empty answer means no layer carries `sprint.design.model`: `opus` stands in, and the presentation of Step 3 says so — a model nobody configured must never read like a policy. The tech role's agent type writes the page on that model; the other roles drawn are convened on the same model, each on the seams its domain owns. Above `opus` (`fable`, at twice the price) is a value a project writes deliberately into its own configuration, never a default — `scrumia-team-setup` Step 4b.
+
+One page comes out, in this order:
 
 1. **The seams** — what crosses apps: a shared contract that changes, a migration and its order, a port two tickets need, a spec file two tickets write, a retirement another ticket reads. Each seam ends in a decision: merge these two into one lot, order those two, name this surface, write that rule here.
 2. **Per app** — what the sprint does in each app, on which files, consuming the seams.
 
-**Bounded.** A line that changes neither a file, nor an order, nor a lot has no place in it; the inside of a ticket stays the ticket's. **Durable decisions become spec edits** — under the specs module's own authoring rules, with a changelog entry naming the sprint — committed in Step 4a; the page is their copy, the spec is the record. What is true only for this sprint (order, merged lots, "this ticket leaves the batch if that PR is not merged") stays on the page and becomes the draft sprint PR's body in Step 4a.
+**Bounded.** A line that changes neither a file, nor an order, nor a lot has no place in it; the inside of a ticket stays the ticket's. **Durable decisions become spec edits** — a named port, a changed contract, a reserved migration, written into the features' own files under the specs module's authoring rules, with a changelog entry naming the sprint — committed in Step 4a. The page is their copy; the spec is the record, and a decision that exists only on the page has not been made. What is true only for this sprint (order, merged lots, "this ticket leaves the batch if that PR is not merged") stays on the page and becomes the draft sprint PR's body in Step 4a.
 
 ## Step 3 — Get the batch validated
 
@@ -124,7 +132,7 @@ gh pr create --draft --base <default-branch> --head sprint/<milestone-slug> \
   --title "<type>(teams,*): <milestone>: sprint batch" --body-file <design-page>
 ```
 
-The rule and its materialisation are [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Sprint design* and [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md) § *The close lives on the sprint's PR*. Every ticket branch cut in Step 4b starts at or after this commit, which is what puts the same decision in front of every executor; the ticket skill reads the draft PR before the ticket. A sprint with no durable decision still opens the draft PR — an empty seams section is a statement, a missing carrier is not.
+Every ticket branch cut in Step 4b starts at or after this commit, which is what puts the same decision in front of every executor; the ticket skill reads the draft PR before the ticket. The draft carries no `Closes` line yet — those are added at the gather, on this same PR. A sprint with no durable decision still opens the draft PR: an empty seams section is a statement, a missing carrier is not.
 
 ### Step 4b — Cut one worktree per ticket, from the sprint branch
 
@@ -218,7 +226,7 @@ policy's answer.
 
 A deviation reported here is a **second copy for the human in front of you**, not the record — the record is on the ticket, written when the deviation was decided, and it is the copy that survives this session.
 
-The sprint's PR is the draft opened in Step 4a: the gather adds one `Closes #<n>` line per ticket to its body and marks it ready for review — never a second PR. The rule is the tracker feature's § *The close lives on the sprint's PR*.
+The sprint's PR is the draft opened in Step 4a: the gather adds one `Closes #<n>` line per ticket to its body and marks it ready for review — never a second PR.
 
 Merge nothing. Don't automatically relaunch a ticket that failed — a failure has a cause, and relaunching it unchanged reproduces it.
 

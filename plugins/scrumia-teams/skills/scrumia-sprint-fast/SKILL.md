@@ -28,9 +28,9 @@ apply unchanged:
   A `split_or_model` ticket enters on its fallback model, with the refused split
   recorded on the ticket. A `split` ticket returns to refinement.
 - **Step 2 — Load what this project batches against.** `scrumia-extends sprint`.
-- **Step 2b — Design the sprint.** Seams first, then per app; durable decisions as
-  spec edits, the ephemeral part as the draft sprint PR's body. The rule is
-  `features/business/dev-flow/business.md` § *Sprint design*; the sprint skill performs it.
+- **Step 2b — Design the sprint.** One analysis of the batch, seams first then per
+  app; durable decisions as spec edits on the sprint branch, the ephemeral part as the
+  draft sprint PR's body.
 - **Step 3 — Get the batch validated.** Present the batch and the design with the model
   each will run on; the human launches.
 

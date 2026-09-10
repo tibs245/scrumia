@@ -10,7 +10,7 @@
       "name": "scrumia-core",
       "source": "./plugins/scrumia-core",
       "description": "The kernel: describes the project's active composition, its configuration, and the shared conventions. Does nothing on its own.",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -58,7 +58,7 @@
       "name": "scrumia-github-project",
       "source": "./plugins/scrumia-github-project",
       "description": "The tracker slot — issues, sub-issues, GitHub Projects columns, branches and PRs. Replaceable by an equivalent module for another tool.",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -74,7 +74,7 @@
       "name": "scrumia-teams",
       "source": "./plugins/scrumia-teams",
       "description": "The team slot — standing roles and sprint execution as dynamic workflows. Configurable: roles, models, escalation thresholds.",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -90,7 +90,7 @@
       "name": "scrumia-discovery",
       "source": "./plugins/scrumia-discovery",
       "description": "The discovery slot — brainstorming and design. Produces issues and a branch carrying up-to-date specs.",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -367,8 +367,17 @@
       "description": "Idiomatic Kotlin language rules — val/var, null-safety and platform types, coroutines and Flow, data/sealed/value classes, object vs companion vs top-level, and visibility. Pinned to the Kotlin language docs, applicable to any Kotlin codebase without requiring Functional Programming or Multiplatform modules. Plugs in app by app.",
       "version": "0.2.0",
       "category": "workflow",
-      "tags": ["scrumia", "kotlin", "language", "idiomatic", "coroutines", "null-safety"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "kotlin",
+        "language",
+        "idiomatic",
+        "coroutines",
+        "null-safety"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-effect",
@@ -376,8 +385,19 @@
       "description": "The typed-effect discipline — describe before execute, failure as a value, the effect boundary, and which approach to reach for (Result, Either, IO/suspend, or effect.website). Library-agnostic on the pattern; cites effect.website as the reference implementation rather than wrapping it. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "effect", "effects", "result", "either", "io", "suspend", "functional-programming"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "effect",
+        "effects",
+        "result",
+        "either",
+        "io",
+        "suspend",
+        "functional-programming"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     },
     {
       "name": "scrumia-functional-programming",
@@ -385,8 +405,15 @@
       "description": "The Functional Programming paradigm, language-neutral — purity, total functions, referential transparency, immutability by default, composition over inheritance, and effect discipline. The principles hold with the same wording in Kotlin, JavaScript, Rust, Scala, F#, Haskell and Swift. Plugs in app by app; activates alone.",
       "version": "0.1.0",
       "category": "workflow",
-      "tags": ["scrumia", "paradigm", "functional-programming", "language-neutral"],
-      "author": { "name": "tibs245" }
+      "tags": [
+        "scrumia",
+        "paradigm",
+        "functional-programming",
+        "language-neutral"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     }
   ]
 }

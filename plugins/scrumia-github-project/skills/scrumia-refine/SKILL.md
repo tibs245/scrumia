@@ -18,7 +18,7 @@ Four conditions, all verifiable:
    being the canonical instance). "A feature will probably show up" does not
    satisfy this.
 2. The acceptance criteria are written, identified in the format named by `ac_id_format`, and can fail
-3. The footprint is written and resolves: what the ticket reuses (cited where it is written), creates, retires, and which surfaces it touches — `work-item-format/standard` BR-5
+3. The footprint is written and resolves: what the ticket reuses (cited where it is written), creates, retires, and which surfaces it touches
 4. No open question blocks the start
 
 A ticket that doesn't meet all four stays in the backlog. Moving it forward anyway shifts the problem to execution, where it costs more.
@@ -124,7 +124,7 @@ If the ticket carries no risk label, execution assumes `execution.unrated_risk` 
 
 ## Step 6b — Write the footprint
 
-The footprint replaces the free-text scope; its form is [`features/business/work-item-format/standard/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/work-item-format/standard/business.md) BR-5, four entries under *Additional information*:
+The footprint replaces the free-text scope: four entries under *Additional information*, under a `Footprint` heading, one bullet each, items separated by `;`:
 
 - **Reuses** — every rule, port, decision or symbol the ticket builds on, cited where it is written: a spec section in the specs module's vocabulary, or a symbol of the code. **Search before you write it**: the decision the ticket needs is often already written in a `tech.md` nobody cited — this entry is what makes it findable, and the sprint's design reads it.
 - **Creates** — what the ticket adds that others will reuse, and for whom, by ticket number when known.

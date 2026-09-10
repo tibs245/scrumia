@@ -480,6 +480,12 @@ files that app's tickets touch, consuming the seams. Per app is the grain of the
 and the reviewers; it is the wrong grain to start from, since the collisions this rule
 exists for were never inside an app.
 
+**Written on the model the project names.** One setting of the team module's configuration
+(`sprint.design.model`), resolved through the cascade and passed to the role that writes
+the page; absent, the module's ceiling stands in and the presentation says so. The
+project chooses the exact model because the design is the one moment the batch is read for
+everybody.
+
 **Bounded.** The design names surfaces, an order and shared decisions; it does not design
 the inside of a ticket. A line that changes neither a file, nor an order, nor a lot has no
 place in it. One page, one convening.
