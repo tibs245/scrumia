@@ -36,7 +36,8 @@ starts, and how many tickets a sprint can run at once without saturating human r
 
 Under `settings.team` in `.scrumia/config.yaml`: `roles`, `execution` (the model-policy
 matrix by scope × risk, plus label prefixes and aliases), `escalation.to_human`,
-`sprint.max_tickets`.
+`sprint.max_tickets`, `sprint.design.model` (the exact model that writes a sprint's design,
+`opus` standing in when absent).
 
 `scrumia-pick-model` resolves `execution` through the composition's settings cascade rather
 than reading the configuration file, so an override typed into `.scrumia/config.local.yaml`

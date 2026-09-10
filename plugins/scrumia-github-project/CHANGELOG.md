@@ -3,6 +3,8 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [0.6.0] - 2026-09-10
 ### Added
 - `scrumia-board overlap --milestone M [--milestone M2]` — crosses the footprints of a
   milestone's open tickets against the tree of the day: shared non-spec surfaces, a

@@ -3,6 +3,11 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [0.4.1] - 2026-09-10
+### Changed
+- `scrumia-init` seeds `sprint.design.model: opus` beside `sprint.max_tickets` in the team
+  settings it writes — the model that writes a sprint's design (#476).
 ### Changed
 - `scrumia-extends --claims` — walks the root `CLAUDE.md` and every `apps[].path/CLAUDE.md`
   that exists, reconciling each declaration against the file of its own scope. The verdict

@@ -111,7 +111,7 @@ Read `CLAUDE.md`'s `## Specs contract` section first — it names the specs modu
 
 Otherwise, read, in this order, and stop as soon as you know enough:
 
-0. **The sprint design, when a sprint is running** — the body of the draft pull request from `sprint/<milestone-slug>` to the default branch (`gh pr list --head sprint/<slug> --state open`), and the spec edits of its design commit on that branch. It says which seams this ticket consumes, what it must not create because a neighbour does, and in which order it lands. Implement along its lines; a line you cannot follow is a comment on the sprint PR and a yield, not a private re-design. The rule is [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Sprint design*. No sprint, no draft PR: skip.
+0. **The sprint design, when a sprint is running** — the body of the draft pull request from `sprint/<milestone-slug>` to the default branch (`gh pr list --head sprint/<slug> --state open`), and the spec edits of its design commit on that branch. It says which seams this ticket consumes, what it must not create because a neighbour does, and in which order it lands. Implement along its lines; a line you cannot follow is a comment on the sprint PR and a yield, not a private re-design. No sprint, no draft PR: skip.
 1. The ticket's own footprint (*Additional information*): what it reuses is what you cite, what it retires is what you grep for readers before removing
 2. The parent feature's file named by `feature_index` — it says which files exist and why
 3. The file named by `acceptance_file` — the criteria you must satisfy, identified in `ac_id_format`

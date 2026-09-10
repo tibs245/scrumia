@@ -120,6 +120,8 @@ modules:
           - contract change consumed by another app
       sprint:
         max_tickets: 5       # caps the batch — beyond it, human review saturates
+        design:
+          model: opus                # writes the sprint design — scrumia-team-setup Step 4b
 
   "tibs245/scrumia:scrumia-discovery": {}
 

@@ -57,6 +57,8 @@ settings:
         - contract change consumed by another app
     sprint:
       max_tickets: 5               # beyond this, human review saturates
+      design:
+        model: opus                # writes the sprint design (scrumia-sprint Step 2b) — see Step 4b
 ```
 
 If `settings.team` is absent, propose these values and write them. There is no `sprint.parallel` key: every sprint runs one isolated worktree per ticket unconditionally (`scrumia-sprint`, Step 3) — a setting nothing reads is worse than no setting, so it isn't offered.
@@ -120,6 +122,14 @@ labels:
 - **A disagreement between roles** — that's exactly the case that requires human arbitration; blending it into an averaged opinion would destroy the information.
 - **A missing business rule** — a rule invented along the way becomes everyone's reference without anyone having decided it.
 - **A contract change consumed elsewhere** — the error isn't visible in the app that commits it.
+
+## Step 4b — Choose the model that designs a sprint
+
+`sprint.design.model` names the model `scrumia-sprint` Step 2b writes the sprint design on — the one analysis of the batch that every executor then follows. It is one setting, resolved through the cascade like the grid, and it is the project's exact choice: an alias (`opus`) or a full model identifier, whatever the platform accepts as an agent's `model`.
+
+Seed `opus`. The design is the moment the batch is read once for everybody — a weaker model here is paid back N times by executors that redo the analysis, and a stronger one (`fable`, twice the price) is a deliberate spend the human writes into the file, never a default. Absent, `opus` stands in and the sprint's presentation says so.
+
+The roles' own models (their frontmatter, Step 2) are untouched by this key: it overrides the model for the design page and the convening that writes it, nothing else.
 
 ## Step 5 — Provide its composition line
 
