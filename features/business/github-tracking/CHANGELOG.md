@@ -3,6 +3,12 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-09-10 — The sprint's PR is opened as a draft on the design commit and carries the design's ephemeral part (AC-44)
+- Issue: #476
+- Category: Added
+- Breaking: no — the sprint PR already existed; it is now opened first, as a draft, and
+  marked ready at the gather instead of created there.
+
 ## 2026-08-27 — The ticket PR targets the sprint branch during a sprint; the close lives on the sprint's PR
 - Issue: #468
 - Category: Added

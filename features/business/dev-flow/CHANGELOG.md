@@ -3,6 +3,15 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-09-10 — A sprint is designed once before its first worktree; its durable decisions ride the sprint branch, its ephemeral part the draft sprint PR (AC-51 to AC-55)
+- Issue: #476
+- Category: Added
+- Breaking: yes — `scrumia-sprint` gains a design step between the batch and its
+  validation, and Step 4b does not cut a worktree before the design commit is on
+  `sprint/<milestone-slug>` and the draft sprint PR is open on it. `scrumia-ticket`
+  reads the draft sprint PR before the ticket. `sprint-fast` inherits the step by
+  citing Steps 1–3 and its global review reads the aggregate against the design.
+
 ## 2026-08-27 — A sprint runs on its own integration branch; ticket branches are cut from it
 - Issue: #468
 - Category: Added

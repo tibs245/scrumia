@@ -405,3 +405,14 @@ Then the carrier's ticket-issuer is wrong: the format names the artefact the
 - Authentication and reachability failures — `gh` not logged in, the `project` scope
   missing, the board unreachable. `scrumia-board doctor` names which one; that is
   operational resilience, not a tracking business rule.
+
+### AC-44 — The sprint's PR is opened as a draft on the design commit, before the first ticket worktree
+
+```gherkin
+Given a sprint whose design commit is pushed on `sprint/<milestone-slug>`
+When the first ticket worktree is about to be cut
+Then a draft pull request from the sprint branch to the default branch exists, its body
+  carries the sprint's order, merged lots and conditions, and carries no closing keyword
+And at the gather the same pull request gains one `Closes #<n>` line per ticket and is
+  marked ready for review; a second sprint PR opened at the gather is the failure case
+```

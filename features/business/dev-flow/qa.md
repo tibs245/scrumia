@@ -760,6 +760,64 @@ Then it does not run — the precondition is verified, not assumed; the gather i
   it is the work-loss failure `docs/adr/0017` §9 names
 ```
 
+### AC-51 — A sprint is designed once, between its batch and its validation, seams first then per app
+
+```gherkin
+Given `scrumia-sprint` has built a batch (Step 1) and loaded what the project batches
+  against (Step 2)
+When the orchestrator prepares Step 3
+Then a sprint design exists: one page opening with the seams — what crosses apps — then
+  one section per app touched by the batch, written by the roles the batch's surfaces
+  draw; the human is shown the batch and the design together
+And a batch launched with no design, or with per-app sections and no seams, is the
+  failure case
+```
+
+### AC-52 — The design's durable decisions are on the sprint branch before the first worktree is cut
+
+```gherkin
+Given a sprint design that names a shared port, a changed contract or a reserved
+  migration
+When Step 4b is about to cut the first ticket worktree
+Then those decisions are spec edits committed and pushed on `sprint/<milestone-slug>`,
+  with a changelog entry naming the sprint, and `git merge-base` of every ticket branch
+  is at or after that commit
+And a decision present in the design page and absent from every spec file is the
+  failure case: the page is a copy, the spec is the record
+```
+
+### AC-53 — The ephemeral part of the design is the body of the sprint's PR, opened as a draft on the design commit
+
+```gherkin
+Given the design commit is pushed on the sprint branch
+When the orchestrator proceeds to Step 4b
+Then a draft pull request from `sprint/<milestone-slug>` to the default branch exists,
+  whose body carries the order, the merged lots and the conditions of the sprint
+And `scrumia-ticket` reads that body before the ticket's own context; the sprint's
+  global review reads the aggregate against it
+```
+
+### AC-54 — The crossing is computed from the tickets' footprints against the tree of the day
+
+```gherkin
+Given a milestone whose open tickets carry footprints, one of which names a surface that
+  no longer exists in the tree and one of which retires a symbol another reuses
+When `scrumia-board overlap --milestone "<sprint>"` runs from the repository root
+Then it reports the stale surface against its ticket and the retirement against the two
+  tickets, with the pair and the surface named, and decides nothing
+And a ticket of the milestone with no footprint is reported as such, never silently
+  skipped
+```
+
+### AC-55 — The design is bounded to what changes a file, an order or a lot
+
+```gherkin
+Given a sprint design under review by the human at Step 3
+When a line of it designs the inside of a ticket — an algorithm, a class layout, a test
+  list — without naming a surface, an order or a lot it changes
+Then that line is out of the design and back to the ticket
+```
+
 ### AC-18 — `auto_merge` eligibility rules (value-space, not-run verdict, partial-credit, self-widening, single-definition)
 
 **Spec note.** Each scenario below states the rule unambiguously, on the

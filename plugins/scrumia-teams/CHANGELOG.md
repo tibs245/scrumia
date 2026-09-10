@@ -3,6 +3,15 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `scrumia-sprint` Step 2b — the sprint is designed once between the batch and its
+  validation, seams first then per app; Step 4a commits the design's durable decisions as
+  spec edits on the sprint branch and opens the sprint PR as a draft on them before any
+  worktree is cut; Step 1 crosses the tickets' footprints with `scrumia-board overlap`
+  instead of reading a free-text scope (#476, ADR-0025).
+- `scrumia-sprint-fast` inherits Step 2b; its global review reads the aggregate against
+  the design and greps every retired symbol; Step 11 marks the draft ready instead of
+  opening a second PR (#476).
 
 ## [0.5.0] - 2026-08-27
 ### Added

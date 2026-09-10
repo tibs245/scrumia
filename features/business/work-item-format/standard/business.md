@@ -70,7 +70,7 @@ Criteria live in the issue in the form's own words. Where the project runs a spe
 the criteria the issue satisfies are cited by that module's identifiers as well — the spec
 holds the authority, the issue holds the reference.
 
-## BR-5 — The rattachement names the parent feature and the anticipated scope
+## BR-5 — The rattachement names the parent feature and the footprint
 
 Two entries under *Additional information*, and they answer different questions:
 
@@ -78,9 +78,28 @@ Two entries under *Additional information*, and they answer different questions:
   through the specs module's own vocabulary, never as a path typed in from memory: a
   project with a differently-shaped specs module has a different root, and a hard-coded
   path stops being true there without anything reporting it.
-- **The anticipated scope** — which apps and which files this is expected to touch. It is
-  what makes the issue sizeable before anyone opens an editor, and what a classification
-  is set from.
+- **The footprint** — four entries, each a list, each allowed to be empty and said so:
+  what the issue **reuses** (a rule, a port, a decision — cited where it is written, in the
+  specs module's vocabulary or as a symbol of the code), what it **creates** and for whom,
+  what it **retires**, and which **surfaces** it touches (apps, directories, files, spec
+  files). It is what makes the issue sizeable before anyone opens an editor, what a
+  classification is set from, and what a sprint's design crosses against the other issues
+  of its batch (`features/business/dev-flow/` § *Sprint design*). A citation under
+  *reuses* is a condition like any other (`work-item-format` BR-7): it resolves, or the
+  issue is not ready. That is what makes a written decision findable by the issue that
+  needs it — the executor cites, it does not rediscover.
+
+  ```
+  Footprint
+  - Reuses: temps-reel/tech.md § Canal inter-processus; TableStandingReadPort
+  - Creates: scenes (migration); clocks.is_narrative — for the knowledge-registry and spatial-graph tickets
+  - Retires: freshSceneId("scene-<table>-<n>")
+  - Surfaces: server/turnengine/adapter; core/turn; app/…/SessionHubScreen.kt; navigation-et-ecrans/qa.md
+  ```
+
+  The four headings are the form's; the vocabulary of a surface — what must run alone,
+  what blocks its consumers — is the project's, contributed through the `sprint` register
+  the tracker's crossing reads (ADR-0020).
 
 **Nothing derivable is written here.** A branch name, an identifier, a column: whatever a
 tool computes, the issue does not restate. A field a tool can derive and a human can

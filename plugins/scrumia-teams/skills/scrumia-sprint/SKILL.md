@@ -19,7 +19,15 @@ A milestone is the sprint's boundary. Without it you are reading the whole ready
 
 `scrumia-board` is the name that module publishes on the session's PATH; this skill holds no path to it and must not construct one, because where that module is installed is not knowable from here. Another tracker module fills the slot differently, and the name will not be found at all: ask it for what's ready in its own terms rather than assuming this one's layout. A name that is not found is a slot answered differently, never a cue to read the board by hand — an unfiltered `gh project` read is silently truncated at 30 items.
 
-Then discard the conflicts. Two tickets touching the same files get serialized or merged; they don't go out together. The most reliable signal is the scope declared in the ticket; failing that, two tickets on the same app feature almost always overlap.
+Then cross the footprints. Every ready ticket carries one — what it reuses, creates, retires, and which surfaces it touches (`work-item-format/standard` BR-5) — and the tracker module crosses them against the tree as it is today:
+
+```bash
+scrumia-board overlap --milestone "<sprint>"
+```
+
+It reports what only the tickets' meeting shows: a non-spec surface two tickets share, a retirement another ticket reuses, two identical creations, a surface that no longer exists, a ticket with no footprint. **It computes; Step 2b decides.** A shared surface is serialized or merged, never sent out twice; a stale footprint sends its ticket back to refinement; a missing one is not a ready ticket, whatever the column says. Pass a second `--milestone` for a sprint still in flight: a collision with running work is a collision.
+
+The same name is the tracker's published one; a tracker module that answers the slot differently is asked in its own terms, and a name not found is never a cue to cross by hand.
 
 Then ask the execution policy about each surviving ticket:
 
@@ -42,9 +50,20 @@ run alone, a contract change that blocks everything consuming it. It arrives her
 module that owns the rule, rather than being remembered. An empty table means the conflict
 matrix above is the whole constraint.
 
+## Step 2b — Design the sprint
+
+The rule is stated once, in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Sprint design* — this step performs it.
+
+Convene the roles the batch's surfaces draw — tech always, business when a rule moves, design when a screen does — through `scrumia-standup`, with the batch, the crossing's report and the specs the footprints cite. One page comes out, in this order:
+
+1. **The seams** — what crosses apps: a shared contract that changes, a migration and its order, a port two tickets need, a spec file two tickets write, a retirement another ticket reads. Each seam ends in a decision: merge these two into one lot, order those two, name this surface, write that rule here.
+2. **Per app** — what the sprint does in each app, on which files, consuming the seams.
+
+**Bounded.** A line that changes neither a file, nor an order, nor a lot has no place in it; the inside of a ticket stays the ticket's. **Durable decisions become spec edits** — under the specs module's own authoring rules, with a changelog entry naming the sprint — committed in Step 4a; the page is their copy, the spec is the record. What is true only for this sprint (order, merged lots, "this ticket leaves the batch if that PR is not merged") stays on the page and becomes the draft sprint PR's body in Step 4a.
+
 ## Step 3 — Get the batch validated
 
-Present the batch before launching: number, title, scope, risk, the model each will run on, apps touched, and the reason for excluding the discarded tickets. Showing the model matters — it is where an unrated risk becomes visible as a cost, and where the human can object before anything runs.
+Present the batch **and the sprint design** before launching: number, title, scope, risk, the model each will run on, apps touched, the reason for excluding the discarded tickets — then the seams and their decisions, and the per-app sections. The two are validated together, in one presentation; a design the human amends is amended before Step 4a commits it. Showing the model matters — it is where an unrated risk becomes visible as a cost, and where the human can object before anything runs.
 
 **A human objecting to a model is an override**, and this is the only moment its reason exists. Keep it in the batch, in the human's own words, against the ticket it applies to — Step 4 hands it to the execution, which is what records it. Don't record it yourself here: a deviation is a property of a run, and the batch you are presenting may not launch. Reconstructed a day later the reason is a guess, and a deviation whose reason is a guess is worth nothing to the reader it was recorded for.
 
@@ -91,6 +110,21 @@ resolves, otherwise the project's `apps[].default_branch` in `.scrumia/config.ya
 otherwise `main`. The first ticket worktree below runs only after the push returns,
 because the ticket skill resolves its base off the remote and the worktree is cut off
 the local branch.
+
+**Then, still before any worktree: the design commit and the draft sprint PR.** The
+design's durable decisions (Step 2b) are spec edits on the sprint branch — one commit,
+`specs(<features>): <milestone>: sprint design`, pushed — and the sprint's own PR is
+opened as a **draft** on it, its body the design's ephemeral part (order, merged lots,
+conditions), no closing keyword yet:
+
+```bash
+git commit -m "specs(<features>): <milestone>: sprint design" -- <spec files>
+git push origin sprint/<milestone-slug>
+gh pr create --draft --base <default-branch> --head sprint/<milestone-slug> \
+  --title "<type>(teams,*): <milestone>: sprint batch" --body-file <design-page>
+```
+
+The rule and its materialisation are [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Sprint design* and [`features/business/github-tracking/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/github-tracking/business.md) § *The close lives on the sprint's PR*. Every ticket branch cut in Step 4b starts at or after this commit, which is what puts the same decision in front of every executor; the ticket skill reads the draft PR before the ticket. A sprint with no durable decision still opens the draft PR — an empty seams section is a statement, a missing carrier is not.
 
 ### Step 4b — Cut one worktree per ticket, from the sprint branch
 
@@ -183,6 +217,8 @@ contradictions raised, tickets sent back, and any ticket that deviated from the
 policy's answer.
 
 A deviation reported here is a **second copy for the human in front of you**, not the record — the record is on the ticket, written when the deviation was decided, and it is the copy that survives this session.
+
+The sprint's PR is the draft opened in Step 4a: the gather adds one `Closes #<n>` line per ticket to its body and marks it ready for review — never a second PR. The rule is the tracker feature's § *The close lives on the sprint's PR*.
 
 Merge nothing. Don't automatically relaunch a ticket that failed — a failure has a cause, and relaunching it unchanged reproduces it.
 

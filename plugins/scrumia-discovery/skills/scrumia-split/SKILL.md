@@ -59,7 +59,7 @@ One ticket per executable unit of work. Each issue carries:
 - A title that states the expected outcome, not the task
 - The feature it belongs to (path under `specs_root`, if a specs module is documented)
 - The acceptance criteria involved (identifiers in `ac_id_format`, from the file named by `acceptance_file`, if a specs module is documented)
-- The scope: which apps, which anticipated files
+- The footprint, at the grain a split can know: which apps, which shared surfaces this unit **creates for the units after it** and which it **reuses** from the units before — the entry the sprint's design crosses (`work-item-format/standard` BR-5); refinement completes the four entries
 - A `scope/*` label — apply the Manager's grid: number of apps, spec modified or not, type of spec touched
 
 A ticket without an acceptance criterion will not be executable. Create it anyway if needed, but leave it without a `scope/*` label: it will show up as unscoped in `scrumia-status`, which is exactly the intended signal.

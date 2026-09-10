@@ -3,6 +3,15 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `scrumia-board overlap --milestone M [--milestone M2]` — crosses the footprints of a
+  milestone's open tickets against the tree of the day: shared non-spec surfaces, a
+  retirement another ticket reuses, two identical creations, stale surfaces, missing
+  footprints. Computes, decides nothing (#476, `dev-flow` AC-54).
+- `scrumia-refine` Step 6b writes the footprint (reuses / creates / retires / surfaces)
+  and refuses "ready" while a citation under *reuses* does not resolve (#476).
+- `scrumia-ticket` Step 1 reads the sprint design — the draft sprint PR's body and the
+  design commit — before the ticket's own context (#476).
 
 ## [0.5.0] - 2026-08-27
 ### Added

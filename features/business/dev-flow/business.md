@@ -455,6 +455,65 @@ scrumia-sprint` and `scrumia-github-project:scrumia-ticket` cite it; neither
 restates a trigger or an obligation beside the citation. A restated trigger is a
 finding — the test is whether two copies could ever command different behaviour.
 
+### Sprint design — one analysis before the sprint; its decisions ride the sprint branch
+
+**A sprint is designed once, between its batch and its launch, and no ticket worktree is
+cut before the design's durable decisions are on the sprint branch.** The design is one
+analysis of the batch — specs and code together — made by the roles the batch's surfaces
+draw: tech always, business when a rule moves, design when a screen does. Executors
+implement, test and debug along the lines it states; they do not redo the analysis.
+Decided in [ADR-0025](https://github.com/tibs245/scrumia/blob/main/docs/adr/0025-sprint-design-one-analysis-before-the-sprint.md).
+
+**Its input is the tickets' footprints, crossed by a tool.** Every ticket of the batch
+carries a footprint — what it reuses, creates, retires, and which surfaces it touches —
+under the work-item form's rattachement (`work-item-format/standard` BR-5). The tracker
+module crosses them against the tree as it is that day (`scrumia-board overlap`) and
+reports what only their meeting shows: a non-spec surface two tickets share, a retirement
+another ticket reuses, two identical creations, a surface that no longer exists. The
+crossing computes; the design decides.
+
+**Seams first, then one section per app.** The design opens with what crosses apps — a
+shared contract that changes, a migration and its order, a port two tickets need, a spec
+file two tickets write, a retirement another ticket reads — because that is where lots
+merge, order is set and a shared surface gets its name. Then one section per app, on the
+files that app's tickets touch, consuming the seams. Per app is the grain of the modules
+and the reviewers; it is the wrong grain to start from, since the collisions this rule
+exists for were never inside an app.
+
+**Bounded.** The design names surfaces, an order and shared decisions; it does not design
+the inside of a ticket. A line that changes neither a file, nor an order, nor a lot has no
+place in it. One page, one convening.
+
+**Durable decisions are spec edits committed on the sprint branch before the first
+worktree** — the named port, the changed contract, the reserved migration number, written
+into the features' own files under the specs module's authoring rules, with a changelog
+entry naming the sprint. Every ticket branch inherits them at its cut, so two executors
+find the same name in the same file. A decision that exists only in the design page and
+not in a spec has not been made: the page is a copy, the spec is the record.
+
+**The ephemeral part is the body of the sprint's own PR, opened as a draft on the design
+commit.** The order, the merged lots, a condition ("this ticket leaves the batch if that
+PR is not merged") — what is true for this sprint and false after it. The sprint's PR
+already exists in this flow (§ *The close lives on the sprint's PR*, in the tracker
+feature); opening it first makes the design the first thing the sprint shows, what
+`scrumia-ticket` reads before the ticket, and what gate 3 reads last against the
+aggregate.
+
+**The human validates the batch and the design together**, at the same moment and in the
+same presentation as Step 3 of the sprint skill. Launching stays a human decision; the
+design adds no gate (ADR-0005).
+
+**What it does not prevent, named.** A lot that removes a symbol another lot uses in a
+file it *creates during the sprint* is invisible to any footprint written before it. The
+design's *retires* list tells the global review which symbols to grep over the merged
+tree; that grep stays the last net.
+
+**This section is the one statement of the sprint design rule.** `scrumia-teams:
+scrumia-sprint` performs it, `scrumia-sprint-fast` inherits it by citing the sprint's
+Steps 1–3, `scrumia-github-project:scrumia-ticket` reads its carrier, `scrumia-refine`
+and `scrumia-split` fill the footprint it consumes. None restates a trigger beside the
+citation.
+
 ### sprint-fast — one global review at the end, fixups autosquashed under the orchestrator
 
 `sprint-fast` is the mode a small batch of tickets chooses when N per-ticket role reviews

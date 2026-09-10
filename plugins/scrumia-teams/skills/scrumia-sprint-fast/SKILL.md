@@ -28,8 +28,11 @@ apply unchanged:
   A `split_or_model` ticket enters on its fallback model, with the refused split
   recorded on the ticket. A `split` ticket returns to refinement.
 - **Step 2 — Load what this project batches against.** `scrumia-extends sprint`.
-- **Step 3 — Get the batch validated.** Present the batch with the model each will
-  run on; the human launches.
+- **Step 2b — Design the sprint.** Seams first, then per app; durable decisions as
+  spec edits, the ephemeral part as the draft sprint PR's body. The rule is
+  `features/business/dev-flow/business.md` § *Sprint design*; the sprint skill performs it.
+- **Step 3 — Get the batch validated.** Present the batch and the design with the model
+  each will run on; the human launches.
 
 **The one addition is the sprint label.** Every ticket of the batch carries
 `process/sprint-fast` from the moment it is selected, set by the orchestrator —
@@ -40,6 +43,10 @@ ticket's issue), and the absence of it is the failure `features/business/github-
 AC-42 names by name. Add the label here, before any ticket worktree is cut.
 
 ## Step 4 — Create and push the sprint branch, once
+
+Step 4a of `scrumia-sprint` applies unchanged, including its second half: the design
+commit is on the sprint branch and the sprint PR is open as a draft on it **before**
+Step 5 cuts a worktree. Step 11 below marks that draft ready; it opens nothing.
 
 Step 4a of `scrumia-sprint` — the sprint branch itself — applies unchanged. The
 trigger, the obligation, the close form, and the deletion rule are stated once
@@ -108,6 +115,13 @@ set.** Each ticket's file set is still knowable because its PR is merged, not
 lost — the routing table in `scrumia-review` applies per ticket and the
 reviewers are the union. A single ticket touching a business feature draws the
 business role for the whole review; a `scope/S` ticket draws no one.
+
+**The review reads the aggregate against the sprint design first** — the draft
+sprint PR's body and the design commit's spec edits: is the aggregate what the
+design announced, is every seam's decision honoured, does any retirement the
+design listed still have a reader in the merged tree (`grep` each retired
+symbol — the one collision no footprint written beforehand can see). A drift
+from the design is a finding like any other.
 
 **The review also reads the aggregate diff for what no per-ticket review
 could see.** Two tickets that each pass alone and contradict each other, a
@@ -188,10 +202,14 @@ it. Re-run:
 The sprint PR opens only when this re-check is clean. A red CI or a new
 finding sends the sprint back to Step 8.
 
-## Step 11 — Open the sprint PR
+## Step 11 — Mark the sprint PR ready
+
+The sprint PR exists since Step 4a — the draft opened on the design commit. This step
+completes its body and marks it ready; it opens nothing:
 
 ```bash
-gh pr create --base <default-branch> --head sprint/<slug> --title "<type>(teams,*): <milestone>: sprint batch" --body "..."
+gh pr edit <sprint-pr> --body-file <completed-body>
+gh pr ready <sprint-pr>
 ```
 
 The PR body carries **one closing keyword per ticket of the sprint** — `Closes
