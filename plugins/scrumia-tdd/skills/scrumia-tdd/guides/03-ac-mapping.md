@@ -5,6 +5,7 @@
 ## Prerequisites
 
 - [01-the-cycle](01-the-cycle.md) — this guide feeds the "next invariant" of the cycle's red step.
+- [06-test-levels](06-test-levels.md) — a criterion is covered at a level, and Rule 4 below says which one.
 
 ## Rules
 
@@ -19,6 +20,12 @@ Write them at the top of the suite. A ticket with no verifiable invariant does n
 ### Rule 3: Cover the nominal case, then the systematic edge cases
 
 Zero, boundary, duplicate, concurrency, cancellation, expiration, insufficient permissions. These are the cases that produce bug tickets.
+
+### Rule 4: A criterion is covered at the lowest level where it can fail
+
+Rule 1 says every `AC-n` gets a test; this one says where that test lives. Take the criterion's invariant to [06-test-levels, Rule 3](06-test-levels.md) and keep the **lowest** level that can actually go red on it — a criterion about a calculation is not covered by an end-to-end journey that happens to walk through it, and a criterion about what a constraint refuses is not covered by a unit test, which cannot fail on it whatever it asserts.
+
+One criterion may need more than one level: the calculation at unit, what the store persists of it at integration. Each level's test cites the same identifier, and the mapping stays readable in both directions.
 
 ## Settings
 

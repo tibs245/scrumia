@@ -11,15 +11,19 @@ An audit observes, it does not fix. The output is a list of situated findings �
 
 Ask which app to audit if it isn't obvious. Read its implementation module if one is plugged in (mapping in `CLAUDE.md`): it tells you where the tests live and how they are named. Without a module, deduce it from the code.
 
-## The six passes, in order
+## The seven passes, in order
 
 ### 1. Holes in the safety net
 
 Production code that no test constrains. Don't trust line-by-line coverage: look for **invariants** without a test — the calculation rule, the state transition, the error case. A function covered at 100% where no test would fail if you inverted its central condition is a hole in the safety net. The invariant, not the function or the coverage number, is the unit to check for: [`scrumia-tdd`, guides/01-the-cycle.md, Rule 7](${CLAUDE_SKILL_DIR}/../scrumia-tdd/guides/01-the-cycle.md).
 
-### 2. Tests that cannot fail
+### 2. Tests that cannot fail, and tests filed at the wrong level
 
 The catalog is in the module's [`guides/05-useless-tests-catalog.md`](${CLAUDE_SKILL_DIR}/../scrumia-tdd/guides/05-useless-tests-catalog.md): tautological, assertion-free, implementation mirrors, massive snapshots, timing-fragile, shared mutable state, integration disguised as unit. Count them — their proportion measures the suite's complacency.
+
+**Count misclassified tests in both directions**, against the levels in [`guides/06-test-levels.md`](${CLAUDE_SKILL_DIR}/../scrumia-tdd/guides/06-test-levels.md): a test that needs a real service sitting in the fast suite (the catalog's Rule 7), *and* a test that needs nothing but doubles sitting in a slow suite behind a lock. The first slows the cycle until it dies; the second pays integration's price for a unit invariant and makes the impacted selection widen for nothing. Report the two counts separately — they have opposite fixes.
+
+Tests that need only doubles but assert the integration of a screen or a route are **not** misclassified: the level follows what a test needs. Count them apart as *in-process integration*, so the unit figure of pass 7 is read for what it is.
 
 ### 3. The mutation probe
 
@@ -42,9 +46,19 @@ Look for mocks of the project's own internal modules. Each one is a finding: the
 
 ### 6. Mechanical health
 
-- Duration of the fast suite — beyond a minute, the red-green cycle no longer holds in practice.
+- Duration of each level's suite — the unit level beyond a minute, and the red-green cycle no longer holds in practice; the integration level's duration against what the project's gates run by impact.
 - Disabled tests (`skip`, `ignore`, commented out): each with its age (`git log`). A disabled test that was once red and never fixed is a violation, not a finding to soften: [`scrumia-tdd`, guides/01-the-cycle.md, Rule 6](${CLAUDE_SKILL_DIR}/../scrumia-tdd/guides/01-the-cycle.md).
 - Known flaky tests — look for CI re-runs if you have access.
+
+### 7. Coverage by level, and the union
+
+Line coverage is not a target — pass 1 already refuses it as a proxy for invariants. It is still the cheapest map of **where no level reaches**, and only under three rules.
+
+1. **Report per level, and report the union.** One column per level plus a union column, per area of the app. Read alone, a unit figure over a storage adapter looks like a gap and an integration figure looks like weak branch testing; the union shows the levels doing what each is for. **The headline figure is the union** — a line exercised only by integration tests is covered, and reporting it as uncovered is the error this pass exists to prevent. What the union leaves uncovered is the finding: an adapter wired into production that no test runs, a dead table definition, a path only end-to-end can reach.
+2. **Measure a shared module with every suite that exercises it**, not only with its own. A core measured alone reads far below what it is actually held to once the apps that consume it are counted in.
+3. **No threshold, and nothing blocks on this number.** A coverage threshold is a metric that climbs without proving anything, and this module sets none. Report the figure and its trend since the last audit; the invariant findings of pass 1 are what carry severity.
+
+Where the project declares per-level commands (`levels` under this module's `params:`, see [`guides/06-test-levels.md`, Settings](${CLAUDE_SKILL_DIR}/../scrumia-tdd/guides/06-test-levels.md)), run each level's own measurement from that declaration. Where it declares none, say which levels you could measure and which you could not — a level you could not run is named, never folded into the union in silence. An end-to-end automation declared deferred is read here too: the deferral's date against the age of the journeys it excuses, per that guide's Rule 6.
 
 ## The output
 

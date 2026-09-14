@@ -1,7 +1,7 @@
 {
   "name": "scrumia-tdd",
   "description": "Test-driven development, situated for an agent — the red-green-refactor cycle, the mock boundary, the AC → test link. Reference, audit, refactor. Applies app by app, with or without an implementation module.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": {
     "name": "tibs245"
   },
