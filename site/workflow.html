@@ -170,7 +170,7 @@ Human     │ review PR, test → Done</code></pre>
           <li>Load context through the specs module</li>
           <li><strong>Update the spec before the code</strong>, if behaviour changes</li>
           <li>Implement <strong>following the app's implementation module and the modules plugged in beside it</strong> — specific beats generic</li>
-          <li>Cover each <code>AC-n</code> with a test that can fail</li>
+          <li>Cover each <code>AC-n</code> with a test that can fail, at the lowest level where it could</li>
           <li>Self-review, then role review based on blast radius</li>
           <li>Open the PR</li>
         </ol>
@@ -201,7 +201,7 @@ Human     │ review PR, test → Done</code></pre>
     <table>
       <thead><tr><th>Gate</th><th>Who</th><th>When</th></tr></thead>
       <tbody>
-        <tr><td><strong>1 — Automatic</strong></td><td>CI, linter, tests</td><td>Always. Blocking, no human.</td></tr>
+        <tr><td><strong>1 — Automatic</strong></td><td>CI, linter, the test levels the diff reaches</td><td>Always. Blocking, no human — all unit tests, only the impacted integration tests, and a level not run is named with its reason.</td></tr>
         <tr><td><strong>2 — Agent</strong></td><td>The roles</td><td>Routed by the actual diff, not the declared label.</td></tr>
         <tr><td><strong>3 — Human</strong></td><td>You</td><td>The merge, unless explicitly delegated.</td></tr>
       </tbody>

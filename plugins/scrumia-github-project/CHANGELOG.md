@@ -4,6 +4,15 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-14
+### Changed
+- `scrumia-ticket` Step 4 — which tests a ticket runs, and when: the touched app's unit
+  suite inside the cycle, all unit tests plus only the impacted integration tests at
+  gate 1 and after every rebase, and no full integration suite or end-to-end journey at a
+  ticket's gate. Cited from `features/business/dev-flow/` § *Which test level runs when*;
+  the per-level commands and the path-to-test mapping are read from the project's own
+  declaration, never carried by this skill (#480).
+
 ## [0.6.0] - 2026-09-10
 ### Added
 - `scrumia-board overlap --milestone M [--milestone M2]` — crosses the footprints of a

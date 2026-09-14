@@ -896,6 +896,88 @@ Then they are stated once, in `features/business/dev-flow/business.md` § *Gate
   rather than restating the predicate alongside their reading of it
 ```
 
+## Test levels and when each runs
+
+### AC-56 — Gate 1 of a ticket or a lot runs every unit test and only the impacted integration tests
+
+```gherkin
+Given a ticket or a lot whose diff touches one app's code
+When its gate 1 runs, or runs again after a rebase
+Then every unit test of the touched app runs, and of the integration tests only those
+  the diff impacts, and no end-to-end journey runs
+And a gate 1 that runs the full integration suite, or an end-to-end journey, for a diff
+  that impacts neither is the failure case — it holds a shared lock away from the lot
+  that needs it
+```
+
+### AC-57 — The impacted set is derived from the diff against declared project data, and widens on doubt
+
+```gherkin
+Given a project that declares, under the params of the module owning the test levels,
+  the per-level commands and a mapping from paths to the integration tests they reach
+When a gate derives what to run from `git diff --name-only <base>...HEAD`
+Then the selection comes from that mapping, read through `scrumia-extends --settings`,
+  and a path no row answers for selects the whole integration suite rather than none
+And a skill that carries a stack's test command instead of reading the declaration is
+  the failure case, as is a selection narrowed by judgement rather than by a row
+```
+
+### AC-58 — A level that did not run is named, with its reason, in the gate report
+
+```gherkin
+Given a gate that ran the unit level and skipped the integration level as unimpacted
+When it reports
+Then the report names the skipped level and the reason it was skipped
+And a report that names only what ran is the failure case: it cannot be told apart from
+  one where everything ran
+```
+
+### AC-59 — The end-of-sprint full run happens on the rebased sprint branch, before gate 3
+
+```gherkin
+Given a sprint whose lots are all merged into `sprint/<milestone-slug>`
+When the sprint branch has been rebased on the default branch and before gate 3 opens
+Then all three levels run in full — every unit test, every integration test, every
+  automated journey, or the declared manual walk where end-to-end automation is deferred
+And that run is a routine against side effects: when it goes red the red is fixed and
+  the retrospective asks which row of the mapping missed it
+```
+
+### AC-60 — A red end-to-end run blocks gate 3 of the sprint's PR; a non-deterministic measurement never blocks
+
+```gherkin
+Given the end-of-sprint full run reports a red end-to-end journey
+When the human reaches gate 3 on the sprint's PR
+Then the gate is blocked on that red, because that run is the only one validating the
+  batch as a batch
+And an evaluation that depends on a model provider or costs per run is reported but
+  blocks nothing — a gate blocking on it is the failure case
+```
+
+### AC-61 — The coverage report rides the end-of-sprint run, per level and as a union, with no threshold
+
+```gherkin
+Given the end-of-sprint full run
+When it completes
+Then a coverage report is produced per level and as a union, and the union summary is in
+  the sprint PR's body
+And no gate blocks on a coverage figure: a threshold introduced anywhere in this flow is
+  the failure case
+```
+
+### AC-62 — The cadence is stated once here; the level definitions belong to the testing module
+
+```gherkin
+Given `scrumia-ticket`, `scrumia-sprint` and `scrumia-sprint-fast`, each of which runs
+  one of the three moments
+When each names which levels its step runs
+Then it cites this feature's § *Which test level runs when* and restates no moment, and
+  what a level *is* comes from the module the app extends for its testing practice,
+  found through `scrumia-extends implement --app <name>`
+And a skill whose steps name a level cadence differing from this feature's table is the
+  one that must change
+```
+
 ## Out of scope
 
 - Which model executes a ticket (`scope/*` × `risk/*` → `scrumia-pick-model`) — specified
@@ -912,3 +994,8 @@ Then they are stated once, in `features/business/dev-flow/business.md` § *Gate
   bump promises, and how long a renamed thing keeps working. Specified by
   `features/business/release-versioning/`, not here: this feature says a commit carries
   them, that one says what they buy.
+- What a test level *is* — what unit, integration and end-to-end each need to run, what
+  each asserts, how each is written, and when end-to-end automation may be declared
+  deferred. Specified by the module the app extends for its testing practice (today
+  `scrumia-tdd`), not here: this feature says when each level runs, that module says
+  what each one is.

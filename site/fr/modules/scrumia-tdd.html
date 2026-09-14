@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>scrumia-tdd — ScrumIA</title>
-<meta name="description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
+<meta name="description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, trois niveaux de test, AC-to-test.">
 <link rel="canonical" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="scrumia-tdd — ScrumIA">
-<meta property="og:description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.">
+<meta property="og:description" content="scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, trois niveaux de test, AC-to-test.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
@@ -84,17 +84,17 @@
 
 <p class="mod-foot">
   <span class="pill">slot · aucun</span>
-  <span class="pill">version · 0.4.0</span>
+  <span class="pill">version · 0.5.0</span>
 </p>
 
 <section id="responsibilities">
   <h2>Ce dont il est responsable</h2>
-  <p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer.</p>
+  <p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, auquel des trois niveaux — unitaire, intégration, bout en bout — appartient un invariant, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer, au niveau le plus bas où il le pourrait.</p>
 </section>
 
 <section id="refusals">
   <h2>Ce qu'il refuse</h2>
-  <p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne.</p>
+  <p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne. Il ne porte aucune commande de test et ne fixe aucun seuil de couverture : les commandes de chaque niveau sont celles du projet, et l'union des couvertures est une carte de ce qu'aucun niveau n'atteint, jamais une barrière.</p>
 </section>
 
 <section id="philosophy">

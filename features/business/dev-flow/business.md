@@ -73,7 +73,7 @@ Four gates govern both paths. Gate 0 is on brainstorming; Gates 1–3 are on exe
 | Gate | Path | Who | Blocks on |
 |---|---|---|---|
 | 0 — Content validation | Brainstorming | Agent proposes; human decides | Refusal, re-route, or pending clarity |
-| 1 — Automatic | Execution | CI, linter, tests | A red check |
+| 1 — Automatic | Execution | CI, linter, tests | A red check, at the levels this gate runs (§ *Which test level runs when*) |
 | 2 — Agent | Execution | The roles, routed by the diff's actual scope | A **Blocked** verdict |
 | 3 — Human | Execution | The human | The merge — always, unless `settings.autonomy.auto_merge` names a category whose allowed-path set contains every file in the change, **and** the other three cumulative conditions (level, CI, verdict) hold |
 
@@ -579,6 +579,79 @@ before execution — are the normal sprint's and the new skill cites them
 per-issue verdict remain its path. Anything that copies that prose into the new
 skill is restating a rule this section already states, which is the drift the
 "stated once" form exists to refuse.
+
+### Which test level runs when — the gate's scope is derived from the diff
+
+**Gate 1 is not one undifferentiated "tests".** A batch that replays every check on
+every pass pays hours per pass for a red that is almost never in the part it
+replayed; a batch that picks what to run by hand skips the one thing that would
+have gone red. Between the two sits a derivation: **what a gate runs is derived
+from the diff, and what it does not run it names.**
+
+**The levels are not defined here.** Unit, integration and end-to-end are defined by
+the module that owns the project's testing practice — what each level needs to run,
+what each asserts, and which invariant belongs to which. This feature names the
+moments and cites those definitions; that module states no moment of its own.
+Which module it is, for a given app, is answered by `scrumia-extends implement
+--app <name>`, never assumed.
+
+**Three moments, and only three.**
+
+| Moment | Unit | Integration | End-to-end |
+|---|---|---|---|
+| **During a ticket**, inside the TDD cycle | the touched app's unit suite, continuously | no | no |
+| **At every gate 1** of a ticket or a lot, **and after every rebase** | **all** unit tests, which is what "fast" is for | **only the tests the diff impacts** | no |
+| **End of sprint**, the sprint branch rebased on the default branch, before gate 3 | all | **all** | **all** automated journeys, or the declared manual walk |
+
+Gate 1 of a ticket or of a lot therefore never requires the full integration suite
+and never requires an end-to-end run. A gate that takes the shared lock for a change
+that reaches nothing behind it is not being careful; it is holding the lock away from
+the lot that needs it.
+
+**"Impacted" is derived, not guessed.** The gate reads `git diff --name-only
+<base>...HEAD` and maps those paths to the tests they reach, against a mapping the
+project declares — by module, package or adapter — under the params of the module that
+owns the levels, resolved through `scrumia-extends --settings`. The same derivation
+answers the broader question of which checks run at all, from broadest to narrowest,
+first match wins: a change to the root build files or to a shared core reaches
+everything, a change to a server or a migration reaches that server's checks under its
+lock, a change to an app alone reaches that app's checks and the repo-wide guards, a
+change to documents alone reaches the guards. **A path the mapping does not answer for
+is the whole suite, and when in doubt the selection widens**: one extra level costs
+minutes, one missing level costs a red found by the next batch.
+
+**No skill hard-codes a stack's test command.** The per-level commands and the mapping
+are project data, like the model grid of `features/business/execution-policy/`; a skill
+that carries a command for a stack has made the project's declaration unreadable.
+
+**A level that did not run is named, with its reason, in the gate report.** A silent
+skip reads as a green, and a report that names nothing cannot be told apart from one
+where everything ran. This is the same guardrail gate 2 applies to a review that did
+not run — `not_run` with a mandatory cause — applied one gate down.
+
+**The end-of-sprint full run is a routine against side effects, and it should never
+fire.** It runs on the sprint branch once rebased on the default branch, before gate 3.
+When it does go red the red is fixed, and the sprint's retrospective asks why the
+per-lot impacted selection missed it — the answer is a row of the mapping, not a
+sentence about vigilance. **A red end-to-end run blocks gate 3 of the sprint's PR**,
+because that run is the only one that validates the whole batch as a batch.
+
+**A non-deterministic or paid measurement never enters a blocking gate.** An evaluation
+that depends on a model provider, or that costs per run, runs on demand and is reported;
+a gate that blocks on it blocks on the provider's mood. A project that declared its
+end-to-end automation deferred runs its declared manual walk at that moment instead, and
+the report says so — the declaration is dated up front, under the testing module's rules,
+and is never discovered at this gate.
+
+**The coverage report runs with the end-of-sprint full run**, per level and as a union,
+and its union summary goes in the sprint PR's body. It is a map of what no level reaches,
+not a threshold: nothing in this feature blocks on a coverage number.
+
+**This section is the one statement of the cadence.** `scrumia-github-project:scrumia-ticket`
+(gate 1 of a ticket), `scrumia-teams:scrumia-sprint` (its execution outline and its gather)
+and `scrumia-teams:scrumia-sprint-fast` (its per-ticket merge, its autosquash and its
+post-squash re-check) cite it and restate no moment beside the citation. A skill naming a
+level cadence that differs from this table is the one that must change.
 
 ### Gate 2's verdict — recorded by the role, not asserted by the executor
 

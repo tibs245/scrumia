@@ -167,9 +167,17 @@ Each execution follows the same outline:
 1. Load the context via the specs module
 2. Update the spec if the behavior changes — before the code
 3. Implement per the implementation module of the app concerned
-4. Cover each acceptance criterion with a test
+4. Cover each acceptance criterion with a test, at the level that can fail on it
 5. Self-review, then review by the roles according to scope
 6. Open the PR
+
+**Which test level each of those steps runs is stated once** in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+§ *Which test level runs when* — inside the cycle, the touched app's unit suite; at the
+ticket's gate 1 and after every rebase, all unit tests and only the integration tests the
+diff impacts. This skill cites it and names no cadence of its own; a level a gate did not
+run is named with its reason in that gate's report. What a level *is*, and the per-level
+commands and path mapping, come from the module the app extends for its testing practice
+— `scrumia-extends implement --app <name>` says which module that is.
 
 The modules carrying these steps are the ones the project's `extends` names. Where nothing covers a step, it is simplified, not silently skipped: say so in the PR.
 
@@ -226,7 +234,16 @@ policy's answer.
 
 A deviation reported here is a **second copy for the human in front of you**, not the record — the record is on the ticket, written when the deviation was decided, and it is the copy that survives this session.
 
-The sprint's PR is the draft opened in Step 4a: the gather adds one `Closes #<n>` line per ticket to its body and marks it ready for review — never a second PR.
+**Before the sprint's PR is marked ready, the end-of-sprint full run.** The sprint branch
+is rebased on the default branch, then all three levels run in full — every unit test,
+every integration test, every automated journey, or the project's declared manual walk
+where end-to-end automation is deferred. It is a routine against side effects and should
+never fire; when it does, the red is fixed and the retrospective asks which row of the
+impact mapping missed it. A red end-to-end run blocks gate 3 on this PR. The trigger, the
+scope and the blocking are [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+§ *Which test level runs when*; this step performs them.
+
+The sprint's PR is the draft opened in Step 4a: the gather adds one `Closes #<n>` line per ticket to its body and marks it ready for review — never a second PR. Its body also carries the full run's coverage summary, per level and as a union — a map of what no level reaches, never a threshold: nothing here blocks on a coverage figure.
 
 Merge nothing. Don't automatically relaunch a ticket that failed — a failure has a cause, and relaunching it unchanged reproduces it.
 

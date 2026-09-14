@@ -27,6 +27,10 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
   says a commit carries them; that one says what they buy.
 - Defers to: `features/business/agent-team/` for who the roles are — this feature says gate
   2's scoping signal is addressed to the manager, that one says what a manager is and owns.
+- Defers to: the module the app extends for its testing practice (today `scrumia-tdd`) for
+  what a test level *is* — what unit, integration and end-to-end each need to run and each
+  assert. This feature says when each level runs; that module says what each one is, and
+  neither restates the other.
 - Defers to: `features/business/ceremonies/` for what happens beside the ticket path —
   which occasions are admitted, on what trigger, and what each leaves behind. This
   feature owns the gates, which are decision points inside the path and not ceremonies.
@@ -35,7 +39,7 @@ the mechanics of the cycle, and the ownership rule against a tracker feature.
 
 | File | Read it when |
 |---|---|
-| `business.md` | need who decides what on each path, where the human gate sits and the four cumulative conditions that open it, the self-widening rule and the constraints any category list must satisfy, when gate 2 owes a scoping signal and to whom, what a commit must carry, who may rewrite a branch, who owns the code cycle, or when a sprint is designed and where its decisions ride |
-| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), the cumulative-conditions scenario for gate 3, the `auto_merge` eligibility rules (the value-space rule, the `not_run`-verdict rule, the partial-credit rule, the self-widening rule, the single-definition rule), or what routes gate 2's review and what its scoping signal owes, as falsifiable scenarios |
+| `business.md` | need who decides what on each path, where the human gate sits and the four cumulative conditions that open it, the self-widening rule and the constraints any category list must satisfy, when gate 2 owes a scoping signal and to whom, what a commit must carry, who may rewrite a branch, who owns the code cycle, when a sprint is designed and where its decisions ride, or which test level runs at which moment and how a gate derives what it runs |
+| `qa.md` | need the brainstorming content validation gate (Gate 0), the autonomy gates on execution (Gates 1–3), the three moments at which each test level runs, the cumulative-conditions scenario for gate 3, the `auto_merge` eligibility rules (the value-space rule, the `not_run`-verdict rule, the partial-credit rule, the self-widening rule, the single-definition rule), or what routes gate 2's review and what its scoping signal owes, as falsifiable scenarios |
 | `CHANGELOG.md` | need history of this feature's changes |
 
