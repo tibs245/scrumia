@@ -13,6 +13,7 @@ This module refines one point of the implementation contract: **how we test**. I
 
 - Red, green, refactor, repeat — never skip running the red, it is the only step that cannot be faked → [guides/01-the-cycle.md](guides/01-the-cycle.md), founding rule in [D-01](decisions/D-01-no-code-without-red-test.md), agent-specific rationale in [D-02](decisions/D-02-agent-bias.md)
 - We simulate what we don't own; we never simulate our own modules → [guides/02-mock-boundary.md](guides/02-mock-boundary.md)
+- Three levels — unit, integration, end-to-end — each decided by what a test needs to run; an invariant is held at the lowest level that can fail on it → [guides/06-test-levels.md](guides/06-test-levels.md)
 - Every acceptance criterion in scope becomes at least one test, link kept visible → [guides/03-ac-mapping.md](guides/03-ac-mapping.md)
 - It stops at the spike, at declarative configuration, at visual styling — declared the moment the exception is taken, never after → [guides/04-where-tdd-stops.md](guides/04-where-tdd-stops.md)
 - Seven test patterns that pass the suite and protect nothing → [guides/05-useless-tests-catalog.md](guides/05-useless-tests-catalog.md)
@@ -26,6 +27,7 @@ This module refines one point of the implementation contract: **how we test**. I
 | [03-ac-mapping](guides/03-ac-mapping.md) | Turn acceptance criteria (or a raw request) into a test list; configure `ac_mapping` / `exempt_paths` |
 | [04-where-tdd-stops](guides/04-where-tdd-stops.md) | Recognize a legitimate exemption before writing untested code |
 | [05-useless-tests-catalog](guides/05-useless-tests-catalog.md) | Recognize a test that will never protect anything |
+| [06-test-levels](guides/06-test-levels.md) | Decide which level an invariant belongs to, write one of the three, or declare end-to-end automation deferred; configure `levels` / `impact` |
 
 ## Routing table
 
@@ -44,6 +46,12 @@ This module refines one point of the implementation contract: **how we test**. I
 
 "I want to check whether an existing test is worth keeping"
   → 05-useless-tests-catalog
+
+"I don't know whether this is a unit, an integration or an end-to-end test"
+  → 06-test-levels (assumes 01 and 02)
+
+"I need to know when each level runs"
+  → not here — the project's development flow owns the cadence, 06-test-levels owns the definitions
 ```
 
 ## Dependencies between guides
@@ -54,6 +62,7 @@ This module refines one point of the implementation contract: **how we test**. I
 03-ac-mapping            ← requires 01 (feeds the "next invariant" of the cycle's red step)
 04-where-tdd-stops       ← requires 01 (an exemption is a deliberate exit from the cycle)
 05-useless-tests-catalog ← independent — a checklist usable standalone, also used by scrumia-tdd-audit
+06-test-levels           ← requires 01 (the cycle's suite is the unit level) and 02 (the unit level's doubles)
 ```
 
 ## Decisions

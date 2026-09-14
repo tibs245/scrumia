@@ -68,4 +68,6 @@ Two tests that read the same mutable fixture pass alone, fail together — in on
 
 It goes through the database and three modules, but lives in the fast suite. The "unit" suite takes twelve minutes; we stop running it before every commit — and the red-green cycle dies (see [01-the-cycle, Rule 5](01-the-cycle.md)).
 
-**Instead**: put it where the app's integration tests live, with their own cadence. The cycle's suite stays under a minute.
+**Instead**: put it where the app's integration tests live, with their own cadence — [06-test-levels](06-test-levels.md) defines the three levels and which invariant belongs to which. The cycle's suite stays under a minute.
+
+The pattern is the level decided by what the test *asserts* instead of by what it *needs to run*, and it has a twin the same guide names: a test that needs nothing but doubles, sitting in a slow suite behind a lock because of what it is about. Both are misclassifications, and `scrumia-tdd-audit` counts them in both directions. An in-process screen or route test is neither — it needs only doubles, so the unit suite is where it belongs, counted apart as *in-process integration*.

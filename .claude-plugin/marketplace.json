@@ -58,7 +58,7 @@
       "name": "scrumia-github-project",
       "source": "./plugins/scrumia-github-project",
       "description": "The tracker slot — issues, sub-issues, GitHub Projects columns, branches and PRs. Replaceable by an equivalent module for another tool.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -74,7 +74,7 @@
       "name": "scrumia-teams",
       "source": "./plugins/scrumia-teams",
       "description": "The team slot — standing roles and sprint execution as dynamic workflows. Configurable: roles, models, escalation thresholds.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -155,7 +155,7 @@
       "name": "scrumia-tdd",
       "source": "./plugins/scrumia-tdd",
       "description": "Test-driven development, situated for an agent — the red-green-refactor cycle, the mock boundary, AC-to-test mapping. Reference, audit and refactor skills. Plugs in app by app.",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "category": "workflow",
       "tags": [
         "scrumia",
