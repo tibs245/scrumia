@@ -4,6 +4,19 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-14
+### Changed
+- `scrumia-sprint` — its execution outline names the level each step runs (the touched
+  app's unit suite inside the cycle; all unit tests plus only the impacted integration
+  tests at gate 1 and after every rebase), and Step 5 runs the end-of-sprint full run on
+  the rebased sprint branch before marking the sprint PR ready, with the union coverage
+  summary in its body. The cadence is cited from `features/business/dev-flow/`
+  § *Which test level runs when*, never restated (#480).
+- `scrumia-sprint-fast` — Step 6 says what "green CI alone" runs, Step 9 names the
+  autosquash as the rebase that triggers the re-run, and Step 10's re-check is the
+  end-of-sprint full run: all three levels, or the project's declared manual walk, with a
+  red end-to-end run blocking gate 3 on the sprint PR (#480).
+
 ## [0.6.0] - 2026-09-10
 ### Added
 - `scrumia-sprint` Step 2b — the sprint is designed once between the batch and its

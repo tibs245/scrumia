@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>scrumia-tdd — ScrumIA</title>
-<meta name="description" content="scrumia-tdd: a ScrumIA module — the TDD cycle situated for an agent, mock boundary, AC-to-test.">
+<meta name="description" content="scrumia-tdd: a ScrumIA module — the TDD cycle situated for an agent, mock boundary, three test levels, AC-to-test.">
 <link rel="canonical" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="en" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="fr" href="https://tibs245.github.io/scrumia/fr/modules/scrumia-tdd.html">
 <link rel="alternate" hreflang="x-default" href="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="scrumia-tdd — ScrumIA">
-<meta property="og:description" content="scrumia-tdd: a ScrumIA module — the TDD cycle situated for an agent, mock boundary, AC-to-test.">
+<meta property="og:description" content="scrumia-tdd: a ScrumIA module — the TDD cycle situated for an agent, mock boundary, three test levels, AC-to-test.">
 <meta property="og:url" content="https://tibs245.github.io/scrumia/modules/scrumia-tdd.html">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#000B1C" media="(prefers-color-scheme: dark)">
@@ -84,17 +84,17 @@
 
 <p class="mod-foot">
   <span class="pill">slot · none</span>
-  <span class="pill">version · 0.4.0</span>
+  <span class="pill">version · 0.5.0</span>
 </p>
 
 <section id="responsibilities">
   <h2>What it is responsible for</h2>
-  <p>Refines a single question the implementation module leaves open — the red-green-refactor cycle operationalised for an agent, where the mock boundary sits, and how an acceptance criterion maps to a test that can actually fail.</p>
+  <p>Refines a single question the implementation module leaves open — the red-green-refactor cycle operationalised for an agent, where the mock boundary sits, which of the three levels — unit, integration, end-to-end — an invariant belongs to, and how an acceptance criterion maps to a test that can actually fail at the lowest level where it could.</p>
 </section>
 
 <section id="refusals">
   <h2>What it refuses</h2>
-  <p>It does not own the stack, the file structure or the design principles — and where it disagrees with the implementation module, the implementation module wins.</p>
+  <p>It does not own the stack, the file structure or the design principles — and where it disagrees with the implementation module, the implementation module wins. It carries no test command of its own, and sets no coverage threshold: the per-level commands are the project's, and the coverage union is a map of what no level reaches, never a gate.</p>
 </section>
 
 <section id="philosophy">

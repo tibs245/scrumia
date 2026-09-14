@@ -222,6 +222,8 @@ The order the table prints is the precedence: this project's own `.scrumia/exten
 
 Whether an implementation module is plugged in or not: if a specs module is documented, cover each criterion in `ac_id_format` from the file named by `acceptance_file` with a test that can fail; in every case, run the project's tests and linter.
 
+**Which tests, and when, is stated once** in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md) § *Which test level runs when*: inside the cycle you run the touched app's unit suite continuously, and at gate 1 — the PR of Step 7, and again after every rebase — all of its unit tests plus only the integration tests your diff impacts. No full integration suite and no end-to-end journey belongs to a ticket's gate. The per-level commands and the path-to-test mapping are the project's own, declared under the params of whichever module the app extends for its testing practice; the `implement` table above is what names that module, and a level you did not run is named with its reason in what you report.
+
 Stay within the ticket's scope. What you notice in passing that exceeds it becomes an issue, not an extra line of diff. A PR that overflows is hard to validate — and human validation is the system's bottleneck.
 
 ## Step 5 — Self-review

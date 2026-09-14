@@ -1,9 +1,9 @@
 {
   "title": "scrumia-tdd — ScrumIA",
-  "meta_description": "scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, AC-to-test.",
+  "meta_description": "scrumia-tdd : un module ScrumIA — le cycle TDD situé pour un agent, limite des mocks, trois niveaux de test, AC-to-test.",
   "og_title": "scrumia-tdd — ScrumIA",
   "tagline": "Un point nommé du contrat d'implémentation : comment nous testons.",
-  "responsibilities": "<p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer.</p>",
-  "refusals": "<p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne.</p>",
+  "responsibilities": "<p>Affine une seule question que le module d'implémentation laisse ouverte — le cycle rouge-vert-refactor opérationnalisé pour un agent, où passe la limite des mocks, auquel des trois niveaux — unitaire, intégration, bout en bout — appartient un invariant, et comment un critère d'acceptation se traduit en un test qui peut vraiment échouer, au niveau le plus bas où il le pourrait.</p>",
+  "refusals": "<p>Il ne possède ni la pile, ni la structure de fichiers, ni les principes de conception — et en cas de désaccord avec le module d'implémentation, c'est ce dernier qui gagne. Il ne porte aucune commande de test et ne fixe aucun seuil de couverture : les commandes de chaque niveau sont celles du projet, et l'union des couvertures est une carte de ce qu'aucun niveau n'atteint, jamais une barrière.</p>",
   "philosophy": "<p>Présume qu'un test qui échoue est la spécification la moins chère à écrire. Coûte une première passe plus lente, remboursée seulement si le code survit au sprint qui l'a produit.</p>"
 }

@@ -93,7 +93,12 @@ sprint PR for the carrier instead.
 ## Step 6 — Wait for every ticket to merge into the sprint branch
 
 Each ticket's PR targets `sprint/<slug>` per `features/business/dev-flow/`
-§ *The sprint branch* and merges on green CI alone. The intermediate state — a
+§ *The sprint branch* and merges on green CI alone. **Green means gate 1 at the levels
+that gate runs**: every unit test of the touched app, and of the integration tests only
+those the diff impacts — no full integration suite and no journey here, per [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+§ *Which test level runs when*. Same after a rebase: a lot that rebases on the sprint
+branch re-runs that same selection, and a level it skipped is named with its reason in
+its report. This skill names no cadence of its own. The intermediate state — a
 ticket's PR merged into the sprint branch while the sprint is not yet
 validated — is read off the PR, not off the board; the card stays `in_review`
 until the sprint's own PR lands. That is `scrumia-sprint`'s behaviour, not a
@@ -188,16 +193,33 @@ orchestrator runs this command, and only after Step 9's check. A second run
 after a sibling rebased locally is a finding — the lease protects against the
 common case, the rule protects against the rest.
 
+The autosquash **is** a rebase, so the "after every rebase" moment of [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+§ *Which test level runs when* applies to the state it produces — which is what Step 10
+performs, and the reason a green taken before the squash certifies nothing after it.
+
 ## Step 10 — Re-check on the post-squash state
 
 A green CI taken before the squash is not a certification of the state after
-it. Re-run:
+it. Rebase `sprint/<slug>` on the default branch, then re-run:
 
-1. **Gate 1** on the post-squash `sprint/<slug>`.
+1. **The end-of-sprint full run** on the post-squash, post-rebase
+   `sprint/<slug>` — all three levels in full: every unit test, every
+   integration test, every automated journey, or the project's declared manual
+   walk where end-to-end automation is deferred. This is the sprint's one full
+   run, and it is a routine against side effects that should never fire; when
+   it does, the red is fixed and the retrospective asks which row of the impact
+   mapping let it through. The moment, its scope and the fact that a red
+   end-to-end run blocks gate 3 on the sprint PR are stated once in [`features/business/dev-flow/business.md`](https://github.com/tibs245/scrumia/blob/main/features/business/dev-flow/business.md)
+   § *Which test level runs when*; this step performs them. A non-deterministic
+   or paid measurement is reported and blocks nothing.
 2. **The global review** on the post-squash diff. Same routing, same
    reviewers, same aggregate read. Findings on the post-squash state that did
    not exist on the pre-squash state are fixed in a second fixup pass —
    the same Step 8 mechanics, bounded again by Step 9's precondition.
+
+The coverage report runs with the full run, per level and as a union; its union
+summary goes into the sprint PR's body at Step 11. It is a map of what no level
+reaches, not a threshold — nothing here blocks on the figure.
 
 The sprint PR opens only when this re-check is clean. A red CI or a new
 finding sends the sprint back to Step 8.
@@ -216,6 +238,10 @@ The PR body carries **one closing keyword per ticket of the sprint** — `Closes
 #<n>` once per ticket, on its own line. None of the ticket PRs carries a
 closing keyword; the close is carried by this PR and performed by GitHub on
 its merge.
+
+The PR body also carries the union coverage summary of Step 10's full run, and the
+level that did not run with its reason where one was skipped — a level absent from
+the body reads as a level that passed.
 
 The PR body also carries the role-signed verdict from the post-squash global
 review — `Verdict: … — #<sprint-pr> — by scrumia-<role>` — for the human

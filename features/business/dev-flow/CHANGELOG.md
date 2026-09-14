@@ -3,6 +3,15 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-09-14 — Gate 1 is no longer one undifferentiated "tests": three moments, an impacted selection derived from the diff, a full run at the end of the sprint (AC-56 to AC-62)
+- Issue: #480
+- Category: Added
+- Breaking: no — a gate that already ran everything everywhere still satisfies the table;
+  what changes is that it may now run less, and owes a named reason for every level it
+  skips. `scrumia-ticket`, `scrumia-sprint` and `scrumia-sprint-fast` cite the section
+  rather than carrying a cadence of their own, and the per-level commands and the
+  path-to-test mapping become project data under the testing module's `params:`.
+
 ## 2026-09-10 — A sprint is designed once before its first worktree; its durable decisions ride the sprint branch, its ephemeral part the draft sprint PR (AC-51 to AC-55)
 - Issue: #476
 - Category: Added

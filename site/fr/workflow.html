@@ -170,7 +170,7 @@ Human     │ revue PR, test → Done</code></pre>
           <li>Charger le contexte par le module de specs</li>
           <li><strong>Mettre à jour la spec avant le code</strong>, si le comportement change</li>
           <li>Implémenter <strong>en suivant le module d'implémentation de l'app et les modules branchés à côté</strong> — spécifique bat générique</li>
-          <li>Couvrir chaque <code>AC-n</code> avec un test qui peut échouer</li>
+          <li>Couvrir chaque <code>AC-n</code> avec un test qui peut échouer, au niveau le plus bas où il le pourrait</li>
           <li>Autorevue, puis revue par les rôles selon le périmètre d'impact</li>
           <li>Ouvrir la PR</li>
         </ol>
@@ -201,7 +201,7 @@ Human     │ revue PR, test → Done</code></pre>
     <table>
       <thead><tr><th>Porte</th><th>Qui</th><th>Quand</th></tr></thead>
       <tbody>
-        <tr><td><strong>1 — Automatique</strong></td><td>CI, linter, tests</td><td>Toujours. Bloquant, aucun humain.</td></tr>
+        <tr><td><strong>1 — Automatique</strong></td><td>CI, linter, les niveaux de test que le diff atteint</td><td>Toujours. Bloquant, aucun humain — tous les tests unitaires, seulement les tests d'intégration impactés, et un niveau non joué est nommé avec sa raison.</td></tr>
         <tr><td><strong>2 — Agent</strong></td><td>Les rôles</td><td>Acheminé par le diff réel, pas le label déclaré.</td></tr>
         <tr><td><strong>3 — Humain</strong></td><td>Vous</td><td>La fusion, sauf délégation explicite.</td></tr>
       </tbody>
