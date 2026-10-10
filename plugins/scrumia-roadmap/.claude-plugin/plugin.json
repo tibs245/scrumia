@@ -1,0 +1,17 @@
+{
+  "name": "scrumia-roadmap",
+  "description": "Experimental mod: a roadmap. The agent records the sprints it planned from the lots the person asked it to take into account, with their tickets and what will really be testable at the end of each, and the person reads them in a pane.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "roadmap",
+    "sprint",
+    "mod"
+  ]
+}

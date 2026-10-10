@@ -12,3 +12,8 @@ The reasoning is in the issues; earlier history is in git and the tracker.
 - Issue: #483
 - Category: Added
 - Breaking: no
+
+## 2026-10-10 — Section added: the roadmap (AC-48 to AC-59)
+- Issue: #485
+- Category: Added
+- Breaking: no

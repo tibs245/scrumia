@@ -446,6 +446,22 @@
       "author": {
         "name": "tibs245"
       }
+    },
+    {
+      "name": "scrumia-roadmap",
+      "source": "./plugins/scrumia-roadmap",
+      "description": "Experimental mod: a roadmap. The agent records the sprints it planned from the lots the person asked it to take into account, with their tickets and what will really be testable at the end of each, and the person reads them in a pane.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": [
+        "scrumia",
+        "mod",
+        "roadmap",
+        "sprint"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     }
   ]
 }

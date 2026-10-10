@@ -480,4 +480,124 @@ Test: none automated. What a mocked session cannot prove is whether the pane dra
 
 ## scrumia-roadmap
 
-Placeholder, completed when the mod is specified.
+Each criterion names the test of `plugins/scrumia-roadmap/hooks/register.test.ts` that proves it; the tests that run on two surfaces run on the terminal and the desktop app.
+
+### AC-48 — A sprint is recorded, then updated in place by its name (`BR-r3`)
+
+```gherkin
+Given a sprint recorded, then recorded again under the same name with another objective and state, and a second sprint under another name
+When the roadmap is read
+Then the first sprint shows its latest objective only, and both sprints show
+```
+
+Test: records a sprint, then updates it in place by name.
+
+### AC-49 — A malformed sprint is refused with its reason and stores nothing (`BR-r1`)
+
+```gherkin
+Given a call with no name, an order that is not an integer, a source of unknown kind or empty reference, an empty objective, no testable list, an unknown state, no tickets, a ticket without description, or a ticket number twice
+When the agent records it
+Then the call is refused with a reason naming the fault, and the roadmap shows no sprint
+```
+
+Test: a malformed call is refused with its reason and stores nothing (twelve cases, including those of AC-50).
+
+### AC-50 — The testable list is never silently empty (`BR-r2`)
+
+```gherkin
+Given an empty testable list without the statement that nothing is testable, then that statement beside a non-empty list, then the statement beside an empty list
+When each is recorded
+Then the first two are refused, and the third is recorded and the pane says in words that nothing is testable
+```
+
+Test: a malformed call is refused with its reason and stores nothing (empty testable list, nothingTestable with a list); a sprint with nothing testable says so in words.
+
+### AC-51 — Each sprint is a card with its objective, what is testable, its tickets and its progress, on both surfaces (`BR-r4, BR-r5`)
+
+```gherkin
+Given a sprint of two tickets, one done, with a testable item
+When the pane is opened on a terminal surface and on a desktop surface
+Then the card shows its source, its objective, the testable item, each ticket with title, description and status, and the progress one over two
+```
+
+Test: the pane draws sprints as cards with tickets and progress (terminal, desktop).
+
+### AC-52 — The sprints are drawn in their order (`BR-r4`)
+
+```gherkin
+Given two sprints recorded in the reverse of their order
+When the pane is opened
+Then the one of lower order comes first
+```
+
+Test: the sprints are drawn in their order, not in the order they were recorded.
+
+### AC-53 — The view can be narrowed to one state (`BR-r4`)
+
+```gherkin
+Given a planned sprint and a running one
+When the person narrows the view to running, then to planned, then back to all
+Then each view shows only the sprints of that state, and all shows both
+```
+
+Test: the state filter narrows the view (terminal, desktop).
+
+### AC-54 — A sprint shows when it was resolved and is marked possibly stale if not recorded in this session (`BR-r3, BR-r6`)
+
+```gherkin
+Given a sprint stored by an earlier session and a sprint recorded now
+When the pane is opened
+Then both show a resolved time, the first carries the mark possibly stale and the second does not, and recording the first again removes its mark
+```
+
+Test: a sprint stored by an earlier session is marked possibly stale, one recorded now is not; the stamp is the clock at recording.
+
+### AC-55 — Two project roots do not see each other's sprints (`BR-r8`)
+
+```gherkin
+Given a sprint recorded in one project and another in a second project
+When the pane is opened in the second
+Then it shows only its own sprint
+```
+
+Test: two project roots do not see each other.
+
+### AC-56 — Parallel recordings keep every sprint (`BR-r8`)
+
+```gherkin
+Given three sprints recorded at the same moment
+When the calls resolve
+Then all three show
+```
+
+Test: three parallel calls keep three sprints.
+
+### AC-57 — A sprint stored in an older shape still draws (`BR-r9`)
+
+```gherkin
+Given a sprint stored with only a name, an order and an objective
+When the pane is opened
+Then it draws, saying its source and its testable list are not recorded
+```
+
+Test: a sprint stored in an older shape still draws.
+
+### AC-58 — A sprint can be removed from the pane (`BR-r7`)
+
+```gherkin
+Given a recorded sprint
+When the person presses Remove on its card
+Then it no longer shows
+```
+
+Test: Remove takes a sprint out (terminal, desktop).
+
+### AC-59 — The roadmap is tried by a person on a terminal session and a desktop session
+
+```gherkin
+Given the plugin installed in a terminal session and in a desktop-app session
+When the agent records a sprint in each and the person opens the pane
+Then the result is recorded where the work is tracked, with the surface it was tried on
+```
+
+Test: none automated. What a mocked surface cannot prove is whether the pane draws and stays readable on the real surface; a person tries it and records the result.

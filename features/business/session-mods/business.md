@@ -245,4 +245,74 @@ board; the only thing it reads of the other modules is the list of columns.
 
 ## scrumia-roadmap
 
-Placeholder. This mod is specified by its own ticket, which adds its section here.
+The roadmap. The person asks the session to take some lots of tickets into account; the
+agent plans them as sprints and records each one; the person reads, from a pane, what each
+sprint holds and what they will really be able to try at its end. Placement: a plugin of
+its own, per `docs/adr/0026-session-mods-are-plugins-of-their-own.md`; no new decision.
+
+A **lot** is whatever the person asks the session to take into account: a milestone, a
+list of ticket numbers, a board column, or something else. The agent resolves it and
+records it with its **source**; the mod reads no tracker, so it holds only what the agent
+recorded and says when it did.
+
+### The shape of a sprint
+
+A sprint carries:
+
+- a **name**, which identifies it, and an **order**, an integer, its place in the roadmap;
+- a **source** — a kind (milestone, tickets, column, other) and a reference in free text;
+- an **objective** — what the sprint is for;
+- **testable at the end** — what a person can really try once the sprint is over, not what
+  is merely implemented; a sprint with nothing to try says so explicitly instead of
+  leaving the list empty;
+- its **tickets**, each with a number, a title, a description and its board status;
+- a **state**: planned, running or done;
+- the time it was last **resolved** from its source, stamped by the mod, not given by the agent.
+
+**BR-r1** — A sprint missing any of its mandatory parts, or whose parts are malformed, is
+refused with the reason, and nothing is stored. Name and objective are non-empty text; the
+order is an integer; the source has a known kind and a non-empty reference; the state is
+one of the three; the tickets are a non-empty list, each with a positive number, a title,
+a description and a status, no number twice in one sprint. The agent reads the reason and
+records again, so the roadmap never holds a sprint it cannot show.
+
+**BR-r2** — The testable list is never silently empty. Either it names what a person can
+try, or it is empty together with an explicit statement that nothing is testable, which
+the pane shows in words. An empty list without that statement is refused, and so is that
+statement beside a non-empty list.
+
+**BR-r3** — Recording is an upsert by name: a sprint recorded under a name that exists
+replaces it whole, under a new name it is added. Each recording restamps the time.
+
+### What the person sees
+
+**BR-r4** — The pane lists the sprints in order, each as a bordered card: its state, its
+objective, what is testable at its end, and its tickets, each with number, title,
+description and a colour for its status. The person can narrow the view to one state.
+
+**BR-r5** — A sprint shows its progress, the number of its tickets whose status is done
+over the number of its tickets. Progress is counted from the statuses the agent recorded,
+nothing else.
+
+**BR-r6** — A sprint shows when it was last resolved from its source. A sprint the agent
+has not recorded in the current session is marked as possibly stale, since the board may
+have moved since.
+
+**BR-r7** — The person may remove a sprint they no longer want on the roadmap, from the
+pane; it is gone, its number of order free for another.
+
+### Where it lives
+
+**BR-r8** — The roadmap belongs to the machine and to the project root it was recorded
+in; nothing is written in the repository, and a session in another project never sees it.
+Writes go through one queue, so sprints recorded at the same moment are all kept. Two
+processes writing the same project at the same instant are not protected.
+
+**BR-r9** — A sprint stored in an older shape, with parts missing, still shows what it
+has and says what it lacks, rather than failing to draw.
+
+### What it is not
+
+It is not the board and not a planner: it computes no plan, reads no tracker, and a
+ticket status shown is the one the agent last recorded. The tracker holds the project's
+state; the roadmap is a buffer of the agent's reading of it.
