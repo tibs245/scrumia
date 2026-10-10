@@ -31,6 +31,7 @@ Each ADR freezes a decision, its reasoning and what was rejected. An accepted AD
 | [0023](0023-source-key-comes-from-the-manifest.md) | A module's `<owner>/<repo>` source is its manifest's claim, not the marketplace | accepted |
 | [0024](0024-no-category-of-module.md) | There is no category of module, and no vocabulary naming one | accepted — completes [0019](0019-extends-replaces-composition-and-practices.md) |
 | [0025](0025-sprint-design-one-analysis-before-the-sprint.md) | A sprint is designed once, before its first worktree; tickets carry a footprint the design crosses | accepted |
+| [0026](0026-session-mods-are-plugins-of-their-own.md) | A session mod is a plugin of its own, without a slot | accepted |
 
 ## Scope of the decisions
 
@@ -50,6 +51,7 @@ Not all carry the same weight. Some commit the whole project, others commit only
 | **The project** — every project's `.scrumia/config.yaml` | 0019 (`extends` replaces `composition:`, folding in the `practices` slot, superseding 0010) |
 | **The project** — every module it ships, and what an agent reads before acting | 0020 (a skill is extended by data, amending 0009 and extending 0018) |
 | **The `team` module, plus `tracker` and the work-item form** | 0025 (a sprint is designed once; a ticket carries a footprint) |
+| **The session mods** — each plugin that is a Claude Code mod | 0026 (a plugin of its own, no slot) |
 
 A module decision is contested by writing another module, not by debating this one.
 

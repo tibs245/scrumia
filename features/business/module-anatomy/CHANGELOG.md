@@ -3,6 +3,11 @@
 Reverse-chronological. One entry per notable change, one category each.
 The reasoning is in the issues; earlier history is in git and the tracker.
 
+## 2026-10-10 — BR-13 names the component fields, `types` among them, and AC-22 accepts it
+- Issue: #483
+- Category: Changed
+- Breaking: no — a field the check refused is now accepted; no manifest that passed fails
+
 ## 2026-08-21 — A `bin/` entry that resolves to nothing is a finding, named as such (AC-19); AC-9 covers every "cannot be run" shape
 - Issue: #312
 - Category: Changed

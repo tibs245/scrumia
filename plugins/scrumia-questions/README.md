@@ -3,6 +3,10 @@
 Experimental. A proof of concept of a Claude Code **mod** — function hooks, not a skill
 module — that gives questions to the person a place to wait.
 
+Specified in [`features/business/session-mods/`](https://github.com/tibs245/scrumia/blob/main/features/business/session-mods/business.md)
+(section `scrumia-questions`); where it lives is
+[ADR-0026](https://github.com/tibs245/scrumia/blob/main/docs/adr/0026-session-mods-are-plugins-of-their-own.md).
+
 ## What it answers
 
 A session often reaches a decision that belongs to the person while the work could go on
@@ -48,7 +52,7 @@ in an inbox, in one format, and the person answers when they choose.
 | What | Role |
 |---|---|
 | `hooks/register.tsx` | The tool, the band, the command, the pane and the prompt hook, all in one module. |
-| `hooks/register.test.ts` | Tests: parking and numbering, parallel calls, malformed calls, the context delivery once, a prompt refused below, one project not seeing another's questions, a question stored in an older shape, the band, and on two surfaces the pane answer, the filter, `Other`, the default recommendation, the grouped send and `Remove`. |
+| `hooks/register.test.ts` | Tests: parking and numbering, parallel calls, malformed calls, the context delivery once and labelled, a prompt refused below, one project not seeing another's questions, the thirty-day purge, a question stored in an older shape, the band, the send limited to the filtered view, and on two surfaces the pane answer, the filter, `Other`, the default recommendation, the grouped send and `Remove`. |
 
 ## Public contract
 
@@ -69,7 +73,9 @@ claude --plugin-dir plugins/scrumia-questions
 - Chrome strings are English; the question text is whatever language the model writes in.
 - A question belongs to the machine and to the project root it was asked in: nothing is
   written in the repo, and two sessions open on the same project share its inbox. The
-  decision taken still belongs in the linked ticket.
+  decision taken still belongs in the linked ticket: the inbox is a buffer, and an answer
+  returns with the ticket's number so the decision can be reported there, since state
+  lives in the tracker.
 - The filter and the open question are per session and start again after a reload.
 - The queue serialises writes inside one process; two processes writing the same project
   at the same instant are not protected.
