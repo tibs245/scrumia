@@ -55,9 +55,12 @@ describe('questions inbox', () => {
       await $.tool.call(ASK)
       const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface, ...PANE })
       await ui.select({ key: 'pick1', value: '30 euros / 6' })
+      await ui.input({ key: 'notes1', text: 'surtout pas plus de 6', kind: 'change' })
+      await ui.press({ key: 'send' })
       await $.prompt.submit({ text: 'go on' })
       await $.prompt.submit({ text: 'and again' })
       expect(reached.texts[0]).toContain('Answer: 30 euros / 6')
+      expect(reached.texts[0]).toContain('Additional notes: surtout pas plus de 6')
       expect(reached.texts[0]).toContain('#1 (#3528)')
       expect(reached.texts[1]).toBe('and again')
       await ui.unmount()
@@ -78,6 +81,35 @@ describe('questions inbox', () => {
       await ui.press({ key: 'filter-non-blocking' })
       expect(await ui.find({ key: 'q1' })).toBeUndefined()
       expect(await ui.find({ key: 'q2' })).toBeDefined()
+      await ui.unmount()
+    })
+  }
+
+  for (const surface of ['terminal', 'desktop'] as const) {
+    test(`Other needs a note, and the note travels with it (${surface})`, async ($, on) => {
+      const reached = prepare(on)
+      await $.tool.call(ASK)
+      const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface, ...PANE })
+      await ui.select({ key: 'pick1', value: 'Other' })
+      await ui.press({ key: 'send' })
+      await $.prompt.submit({ text: 'first' })
+      expect(reached.texts[0]).toBe('first')
+      await ui.input({ key: 'notes1', text: 'on verra', kind: 'change' })
+      await ui.press({ key: 'send' })
+      await $.prompt.submit({ text: 'second' })
+      expect(reached.texts[1]).toContain('Answer: Other')
+      expect(reached.texts[1]).toContain('Additional notes: on verra')
+      await ui.unmount()
+    })
+
+    test(`the recommended answer is sent as is when nothing else is touched (${surface})`, async ($, on) => {
+      const reached = prepare(on)
+      await $.tool.call(ASK)
+      const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface, ...PANE })
+      await ui.press({ key: 'send' })
+      await $.prompt.submit({ text: 'go' })
+      expect(reached.texts[0]).toContain('Answer: 20 euros / 4')
+      expect(reached.texts[0]).not.toContain('Additional notes')
       await ui.unmount()
     })
   }
