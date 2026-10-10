@@ -563,6 +563,18 @@
           <input type="checkbox" name="c-add" value="scrumia-functional-programming">
           <b>scrumia-functional-programming</b><span>The Functional Programming paradigm, language-neutral — purity, totality, referential transparency, immutability by default, composition over inheritance, effect discipline.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-questions">
+          <b>scrumia-questions</b><span>An inbox for the questions that can wait.</span>
+        </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-issues">
+          <b>scrumia-issues</b><span>Which tickets did this session touch, and where does each stand?</span>
+        </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-roadmap">
+          <b>scrumia-roadmap</b><span>The sprints the agent planned, and what you will really be able to test.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -1038,6 +1050,45 @@ apps:
       <p class="mod-desc">The Functional Programming paradigm, language-neutral — purity, total functions, referential transparency, immutability by default, composition over inheritance, and effect discipline. A reference skill and a vocabulary check that enforces the rule fragments stay language-agnostic.</p>
       <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">1 skills</span></div>
       <code class="mod-cmd">claude plugin install scrumia-functional-programming@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">❓</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-questions.html">scrumia-questions</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">A Claude Code mod: an inbox for the questions that can wait.</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">experimental</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-questions@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🎫</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-issues.html">scrumia-issues</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">Which tickets did this session touch, and where does each stand?</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">experimental</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-issues@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">🗺️</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-roadmap.html">scrumia-roadmap</a>
+          <span class="mod-slot">no slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">The sprints the agent planned, and what you will really be able to test.</p>
+      <div class="mod-foot"><span class="pill pill-ok">available</span><span class="pill">experimental</span></div>
+      <code class="mod-cmd">claude plugin install scrumia-roadmap@scrumia</code>
     </div>
 
   </div>

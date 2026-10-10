@@ -185,7 +185,8 @@ def load_modules() -> list[dict]:
         else:
             seen[emoji] = name
         skills = skill_names(name)
-        if not skills:
+        # A Claude Code mod is hooks, not skills: it has no SKILL.md to list.
+        if not skills and not (ROOT / "plugins" / name / "hooks" / "hooks.json").exists():
             ERRORS.append(f"plugins/{name}: no skills/*/SKILL.md to list")
         # AC-13's editorial names, checked against `named` like the emoji already is.
         pairs_with = data.get("pairs_with") or []
@@ -227,13 +228,19 @@ def module_specials(module: dict, labels: dict[str, str]) -> dict[str, str]:
         slot = labels.get("mod_no_slot", "")
         if "mod_no_slot" not in labels:
             ERRORS.append(f"common.json: 'mod_no_slot' is needed by '{module['name']}', which fills none")
+    if module["skills"]:
+        skills_html = "".join(f"<li><code>{html.escape(s)}</code></li>" for s in module["skills"])
+    else:
+        skills_html = f"<li>{labels.get('mod_no_skills', '')}</li>"
+        if "mod_no_skills" not in labels:
+            ERRORS.append(f"common.json: 'mod_no_skills' is needed by '{module['name']}', which ships no skill")
     return {
         "@mod_name": name,
         "@mod_emoji": html.escape(module["emoji"]),
         "@mod_slot": slot,
         "@mod_version": html.escape(module["version"]),
         "@mod_tags": " ".join(f"<li>{html.escape(t)}</li>" for t in module["tags"]),
-        "@mod_skills": "".join(f"<li><code>{html.escape(s)}</code></li>" for s in module["skills"]),
+        "@mod_skills": skills_html,
         "@mod_install": f"/plugin install {name}@scrumia",
         "@mod_source": f"{REPO_URL}/tree/main/plugins/{name}",
     }

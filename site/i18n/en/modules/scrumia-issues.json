@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-issues — ScrumIA",
+  "meta_description": "scrumia-issues: an experimental Claude Code mod — the tickets a session mentions, whether it took each into account, their status and what remains.",
+  "og_title": "scrumia-issues — ScrumIA",
+  "tagline": "Which tickets did this session touch, and where does each stand?",
+  "responsibilities": "<p>An experimental Claude Code mod, made of hooks rather than skills. It keeps, as the session goes, one row per ticket: whether the session worked on it, its board status, and what the agent says remains to do. Tickets typed in a prompt or named in the agent's final text are listed at once as not assessed; <code>/issues</code> opens the pane.</p>",
+  "refusals": "<p>It refuses a status without its reason: what remains must be written, <code>nothing</code> when done. It refuses a status that is not a column of the tracker, never reads a prompt the person did not type, and never mixes the tables of two sessions.</p>",
+  "philosophy": "<p>Assumes the status is what the agent reports, not what the board says. Costs trust in that report: the mod does not read the board, so it cannot tell a stale status from a right one.</p>"
+}

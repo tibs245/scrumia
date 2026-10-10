@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-questions — ScrumIA",
+  "meta_description": "scrumia-questions: an experimental Claude Code mod — the model parks a question, the person answers later, the answer returns on the next prompt.",
+  "og_title": "scrumia-questions — ScrumIA",
+  "tagline": "An inbox for the questions that can wait.",
+  "responsibilities": "<p>An experimental Claude Code mod, made of hooks rather than skills. The model parks a structured question — context, impact, whether it blocks, one to six suggested answers — instead of stopping the session on it. A band above the prompt counts what waits, <code>/questions</code> opens the pane, and the answers ride the next prompt the person typed, once.</p>",
+  "refusals": "<p>It refuses a malformed question with its reason, so the pane never holds one it cannot draw. It delivers an answer once, never twice, and only on a prompt the person typed — never on a task notification or a scheduled trigger. It never lets the model's words pass for the person's.</p>",
+  "philosophy": "<p>Assumes a decision that belongs to the person should not hold the work hostage. Costs a buffer to keep honest: the inbox lives on the machine, not in the repo, so the decision still has to be reported in its ticket.</p>"
+}

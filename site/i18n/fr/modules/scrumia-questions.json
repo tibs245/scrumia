@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-questions — ScrumIA",
+  "meta_description": "scrumia-questions : un mod Claude Code expérimental — le modèle met une question de côté, la personne répond plus tard, la réponse revient au prompt suivant.",
+  "og_title": "scrumia-questions — ScrumIA",
+  "tagline": "Une boîte pour les questions qui peuvent attendre.",
+  "responsibilities": "<p>Un mod Claude Code expérimental, fait de hooks et non de compétences. Le modèle met de côté une question structurée — contexte, enjeu, bloquante ou non, une à six réponses suggérées — au lieu d'arrêter la session dessus. Un bandeau au-dessus du prompt compte ce qui attend, <code>/questions</code> ouvre le panneau, et les réponses accompagnent une seule fois le prochain prompt saisi par la personne.</p>",
+  "refusals": "<p>Il refuse une question mal formée en donnant la raison, si bien que le panneau n'en contient jamais une qu'il ne sait pas dessiner. Il livre une réponse une fois, jamais deux, et seulement sur un prompt saisi par la personne — jamais sur une notification de tâche ou un déclencheur planifié. Il ne laisse jamais les mots du modèle passer pour ceux de la personne.</p>",
+  "philosophy": "<p>Présume qu'une décision qui revient à la personne ne doit pas retenir le travail en otage. Coûte un tampon à garder honnête : la boîte vit sur la machine, pas dans le dépôt, donc la décision doit encore être reportée dans son ticket.</p>"
+}

@@ -186,5 +186,12 @@
   "mod_effect_cmd": "claude plugin install scrumia-effect@scrumia",
   "mod_slot_fp": "aucun slot",
   "mod_fp_d": "Le paradigme de programmation fonctionnelle, neutre en langage — pureté, fonctions totales, transparence référentielle, immuabilité par défaut, composition plutôt qu'héritage, et discipline des effets. Une compétence de référence et une vérification de vocabulaire qui garantit que les fragments de règles restent agnostiques du langage.",
-  "mod_fp_cmd": "claude plugin install scrumia-functional-programming@scrumia"
+  "mod_fp_cmd": "claude plugin install scrumia-functional-programming@scrumia",
+  "pill_experimental": "expérimental",
+  "mod_questions_cmd": "claude plugin install scrumia-questions@scrumia",
+  "mod_issues_cmd": "claude plugin install scrumia-issues@scrumia",
+  "mod_roadmap_cmd": "claude plugin install scrumia-roadmap@scrumia",
+  "mod_questions_d": "Un mod Claude Code : une boîte pour les questions qui peuvent attendre.",
+  "mod_issues_d": "Quels tickets cette session a-t-elle touchés, et où en est chacun ?",
+  "mod_roadmap_d": "Les sprints que l'agent a planifiés, et ce que vous pourrez vraiment tester."
 }
