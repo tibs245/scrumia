@@ -13,9 +13,9 @@ in an inbox, in one format, and the person answers when they choose.
 
 | Piece | Role |
 |---|---|
-| `ask_later` tool | The model parks a question: `context`, `ticket`, `question`, `impact`, `options`, `recommended`. It then carries on. |
-| Band above the prompt | `N questions waiting`, with an Open button. Absent when nothing waits. |
-| `/questions` and its pane | The waiting questions, the detail of one, a picker over the suggested answers (the recommended one preselected), a field for any other answer. |
+| `ask_later` tool | The model parks a question: `context`, `ticket`, `question`, `impact`, `isBlocking`, `options`, `recommended`. It then carries on. |
+| Band above the prompt | `N questions waiting`, the blocking ones counted in red, with an Open button. Absent when nothing waits. |
+| `/questions` and its pane | A filter (All / Blocking / Non-blocking, with counts), the waiting questions blocking first with a coloured badge, one question as a bordered card (context, impact in Markdown), a picker over the suggested answers (the recommended one starred and preselected), a field for any other answer. |
 | `prompt.submit` hook | The answers not yet delivered are appended to the next prompt, once. |
 | `$.store` | Questions and answers survive the session. |
 
@@ -31,7 +31,7 @@ in an inbox, in one format, and the person answers when they choose.
 | What | Role |
 |---|---|
 | `hooks/register.tsx` | The tool, the band, the command, the pane and the prompt hook, all in one module. |
-| `hooks/register.test.ts` | Five tests: parking, numbering, the untouched prompt, and the pane answer on two surfaces. |
+| `hooks/register.test.ts` | Seven tests: parking, numbering, the untouched prompt, the pane answer and the blocking filter, the last two on two surfaces. |
 
 ## Install while it is a POC
 

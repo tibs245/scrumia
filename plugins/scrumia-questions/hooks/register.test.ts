@@ -6,6 +6,7 @@ const ASK = {
   ticket: '#3528',
   question: 'Quota par abonné ?',
   impact: 'Fixe le prix du lot',
+  isBlocking: true,
   options: ['20 euros / 4', '30 euros / 6'],
   recommended: '20 euros / 4',
 }
@@ -59,6 +60,24 @@ describe('questions inbox', () => {
       expect(reached.texts[0]).toContain('Answer: 30 euros / 6')
       expect(reached.texts[0]).toContain('#1 (#3528)')
       expect(reached.texts[1]).toBe('and again')
+      await ui.unmount()
+    })
+  }
+
+  for (const surface of ['terminal', 'desktop'] as const) {
+    test(`the filter keeps blocking questions apart (${surface})`, async ($, on) => {
+      prepare(on)
+      await $.tool.call(ASK)
+      await $.tool.call({ ...ASK, isBlocking: false, question: 'Libell\u00e9 du bouton ?' })
+      const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface, ...PANE })
+      expect(await ui.find({ key: 'q1' })).toBeDefined()
+      expect(await ui.find({ key: 'q2' })).toBeDefined()
+      await ui.press({ key: 'filter-blocking' })
+      expect(await ui.find({ key: 'q1' })).toBeDefined()
+      expect(await ui.find({ key: 'q2' })).toBeUndefined()
+      await ui.press({ key: 'filter-non-blocking' })
+      expect(await ui.find({ key: 'q1' })).toBeUndefined()
+      expect(await ui.find({ key: 'q2' })).toBeDefined()
       await ui.unmount()
     })
   }
