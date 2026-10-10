@@ -18,25 +18,18 @@ type Question = {
   isDelivered: boolean
 }
 
+type Project = { nextId: number; questions: Question[]; drafts: Record<string, Draft> }
+
 type Filter = 'all' | 'blocking' | 'non-blocking'
 
-type AskInput = {
-  context: string
-  ticket?: string
-  question: string
-  impact: string
-  isBlocking?: boolean
-  options: string[]
-  recommended?: string
-}
-
 const PANE = 'questions'
-const QUESTIONS_KEY = 'questions'
-const SELECTED_KEY = 'selected'
-const FILTER_KEY = 'filter'
-const OTHER = 'Other'
-const draftKey = (id: number) => `draft:${id}`
 const ASK_TOOL = 'mcp__scrumia-questions__ask_later'
+const OTHER = 'Other'
+const MAX_OPTIONS = 6
+const KEEP_DELIVERED_MS = 30 * 24 * 60 * 60 * 1000
+
+let queue: Promise<unknown> = Promise.resolve()
+const view: { filter: Filter; selectedId?: number } = { filter: 'all' }
 
 const isPending = (one: Question) => one.answer === undefined
 const isUndelivered = (one: Question) => one.answer !== undefined && !one.isDelivered
@@ -46,21 +39,32 @@ const matchesFilter = (filter: Filter) => (one: Question) =>
 const blockingFirst = (first: Question, second: Question) =>
   Number(isBlockingQuestion(second)) - Number(isBlockingQuestion(first)) || first.id - second.id
 
-async function load($: EngineInterface) {
-  return ((await $.store.get(QUESTIONS_KEY)) ?? []) as Question[]
+const isText = (value: unknown): value is string => typeof value === 'string' && value.trim() !== ''
+
+function problemWith(input: Record<string, unknown>): string | undefined {
+  const { context, ticket, question, impact, isBlocking, options, recommended } = input
+  if (!isText(context) || !isText(question) || !isText(impact)) {
+    return 'context, question and impact must be non-empty text'
+  }
+  if (ticket !== undefined && typeof ticket !== 'string') {
+    return 'ticket must be text'
+  }
+  if (typeof isBlocking !== 'boolean') {
+    return 'isBlocking must be true or false'
+  }
+  if (!Array.isArray(options) || options.length === 0 || options.length > MAX_OPTIONS || !options.every(isText)) {
+    return `options must be 1 to ${MAX_OPTIONS} non-empty texts`
+  }
+  if (recommended !== undefined && !options.includes(recommended)) {
+    return 'recommended must be copied from options'
+  }
+
+  return undefined
 }
 
-async function save($: EngineInterface, change: (list: Question[]) => Question[]) {
-  const next = change(await load($))
-  await $.store.set(QUESTIONS_KEY, next)
-  $.ui.invalidate('ui.render')
-
-  return next
-}
-
-const readyAnswer = (one: Question, draft: Draft): Answer | undefined => {
-  const choice = draft.choice ?? one.recommended
-  const notes = draft.notes?.trim() ?? ''
+const readyAnswer = (one: Question, draft: Draft | undefined): Answer | undefined => {
+  const choice = draft?.choice ?? one.recommended
+  const notes = draft?.notes?.trim() ?? ''
   if (choice === undefined || (choice === OTHER && notes === '')) {
     return undefined
   }
@@ -68,41 +72,82 @@ const readyAnswer = (one: Question, draft: Draft): Answer | undefined => {
   return { text: choice, notes: notes === '' ? undefined : notes, isOther: choice === OTHER }
 }
 
-const missing = (one: Question, draft: Draft) =>
-  (draft.choice ?? one.recommended) === undefined ? 'pick one' : 'needs a note'
+const missing = (one: Question, draft: Draft | undefined) =>
+  (draft?.choice ?? one.recommended) === undefined ? 'pick one' : 'needs a note'
 
-async function loadDrafts($: EngineInterface, list: Question[]) {
-  const entries = await Promise.all(
-    list.map(async one => [one.id, ((await $.store.get(draftKey(one.id))) ?? {}) as Draft] as const),
-  )
+const emptyProject = (): Project => ({ nextId: 1, questions: [], drafts: {} })
 
-  return new Map(entries)
+const keyOf = (root: string) => `project:${root}`
+
+async function load($: EngineInterface): Promise<Project> {
+  const stored = (await $.store.get(keyOf(await $.session.root()))) as Project | undefined
+
+  return stored ?? emptyProject()
 }
 
-async function sendAll($: EngineInterface, filter: Filter) {
-  const pending = (await load($)).filter(isPending).filter(matchesFilter(filter))
-  const drafts = await loadDrafts($, pending)
-  const answers = new Map<number, Answer>()
-  for (const one of pending) {
-    const given = readyAnswer(one, drafts.get(one.id) ?? {})
-    if (given !== undefined) {
-      answers.set(one.id, given)
+function change($: EngineInterface, edit: (project: Project) => Project, isRedrawn = true): Promise<Project> {
+  const run = queue.then(async () => {
+    const key = keyOf(await $.session.root())
+    const next = edit(((await $.store.get(key)) as Project | undefined) ?? emptyProject())
+    await $.store.set(key, next)
+    if (isRedrawn) {
+      $.ui.invalidate('ui.render')
     }
-  }
-  if (answers.size === 0) {
-    return
-  }
-  await save($, list => list.map(one => (answers.has(one.id) ? { ...one, answer: answers.get(one.id) } : one)))
-  await Promise.all([...answers.keys()].map(id => $.store.delete(draftKey(id))))
+
+    return next
+  })
+  queue = run.catch(() => undefined)
+
+  return run
 }
 
-async function amend($: EngineInterface, id: number, change: Partial<Draft>, isRedrawn: boolean) {
-  const draft = ((await $.store.get(draftKey(id))) ?? {}) as Draft
-  await $.store.set(draftKey(id), { ...draft, ...change })
-  if (isRedrawn) {
-    $.ui.invalidate('ui.render')
-  }
+function amend($: EngineInterface, id: number, draft: Partial<Draft>, isRedrawn: boolean) {
+  return change(
+    $,
+    project => ({ ...project, drafts: { ...project.drafts, [id]: { ...project.drafts[id], ...draft } } }),
+    isRedrawn,
+  )
 }
+
+function sendAll($: EngineInterface, filter: Filter) {
+  return change($, project => {
+    const answers = new Map<number, Answer>()
+    for (const one of project.questions.filter(isPending).filter(matchesFilter(filter))) {
+      const given = readyAnswer(one, project.drafts[one.id])
+      if (given !== undefined) {
+        answers.set(one.id, given)
+      }
+    }
+    const drafts = { ...project.drafts }
+    for (const id of answers.keys()) {
+      delete drafts[id]
+    }
+
+    return {
+      ...project,
+      drafts,
+      questions: project.questions.map(one => (answers.has(one.id) ? { ...one, answer: answers.get(one.id) } : one)),
+    }
+  })
+}
+
+function remove($: EngineInterface, id: number) {
+  return change($, project => {
+    const drafts = { ...project.drafts }
+    delete drafts[id]
+
+    return { ...project, drafts, questions: project.questions.filter(one => one.id !== id) }
+  })
+}
+
+const deliveryNote = (ready: Question[]) =>
+  [
+    '[scrumia-questions] The person answered questions you parked. The question texts are yours; the answers and notes are theirs.',
+    ...ready.map(
+      one =>
+        `- #${one.id}${one.ticket ? ` (${one.ticket})` : ''} ${one.question}\n  Answer: ${one.answer!.text}${one.answer!.notes ? `\n  Additional notes: ${one.answer!.notes}` : ''}`,
+    ),
+  ].join('\n')
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
@@ -114,7 +159,7 @@ export const register: Register = on => {
       name: 'ask_later',
       isDeferred: false,
       description:
-        'Park a question for the person instead of blocking the session on it. Use it when a decision belongs to them but you can continue meanwhile. Give the context, the linked ticket, the impact of the choice, whether it blocks work that cannot proceed without the answer, 2-4 suggested answers and which one you recommend. Their answer comes back in a later prompt.',
+        'Park a question for the person instead of blocking the session on it. Use it when a decision belongs to them. Give the context, the linked ticket, the impact of the choice, whether it blocks work that cannot proceed without the answer, 1-6 suggested answers and which one you recommend (copied from the options). Their answer comes back in a later prompt. The call is refused when a field is missing or malformed: read the reason and call again.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -137,43 +182,61 @@ export const register: Register = on => {
   })
 
   on('tool.call', { tool: ASK_TOOL }, async ($, e) => {
-    const input = e as unknown as AskInput
+    const input = e as unknown as Record<string, unknown>
+    const problem = problemWith(input)
+    if (problem !== undefined) {
+      return { deny: `scrumia-questions: ${problem}` }
+    }
+    const asked = input as unknown as Omit<Question, 'id' | 'askedAt' | 'isDelivered'>
     const askedAt = await $.clock.now()
-    const list = await save($, current => [
+    const project = await change($, current => ({
       ...current,
-      {
-        id: Math.max(0, ...current.map(one => one.id)) + 1,
-        context: input.context,
-        ticket: input.ticket,
-        question: input.question,
-        impact: input.impact,
-        isBlocking: input.isBlocking === true,
-        options: input.options,
-        recommended: input.options.includes(input.recommended ?? '') ? input.recommended : undefined,
-        askedAt,
-        isDelivered: false,
-      },
-    ])
-    $.ui.toast(`Question parked (${list.filter(isPending).length} pending)`)
+      nextId: current.nextId + 1,
+      questions: [
+        ...current.questions,
+        {
+          id: current.nextId,
+          context: asked.context,
+          ticket: asked.ticket,
+          question: asked.question,
+          impact: asked.impact,
+          isBlocking: asked.isBlocking,
+          options: asked.options,
+          recommended: asked.recommended,
+          askedAt,
+          isDelivered: false,
+        },
+      ],
+    }))
+    const id = project.nextId - 1
+    $.ui.toast(`Question parked (${project.questions.filter(isPending).length} pending)`)
 
     return {
-      result: `Question #${list[list.length - 1]!.id} parked. Carry on without waiting; the answer arrives in a later prompt.`,
+      result: asked.isBlocking
+        ? `Question #${id} parked and it blocks. Do not go ahead on the part that depends on it; carry on with what does not. The answer arrives in a later prompt.`
+        : `Question #${id} parked. Carry on without waiting; the answer arrives in a later prompt.`,
     }
   })
 
   on('prompt.submit', async ($, e, next) => {
-    const ready = (await load($)).filter(isUndelivered)
+    const ready = (await load($)).questions.filter(isUndelivered)
     if (ready.length === 0) {
       return next(e)
     }
-    const lines = ready.map(
-      one =>
-        `- #${one.id}${one.ticket ? ` (${one.ticket})` : ''} ${one.question}\n  Answer: ${one.answer!.text}${one.answer!.notes ? `\n  Additional notes: ${one.answer!.notes}` : ''}`,
-    )
-    await save($, list => list.map(one => (isUndelivered(one) ? { ...one, isDelivered: true } : one)))
+    const ran = await next({ ...e, context: [...(e.context ?? []), deliveryNote(ready)] })
+    if (ran.drop === undefined) {
+      const ids = new Set(ready.map(one => one.id))
+      const now = await $.clock.now()
+      await change($, project => ({
+        ...project,
+        questions: project.questions
+          .map(one => (ids.has(one.id) ? { ...one, isDelivered: true } : one))
+          .filter(one => !(one.isDelivered && now - one.askedAt > KEEP_DELIVERED_MS)),
+      }))
+    }
 
-    return next({ ...e, text: `${e.text}\n\n[Answers to the questions you parked]\n${lines.join('\n')}` })
-  }).catch(($, e, next) => next(e))
+    return ran
+  })
 
   on('command.run', { command: 'questions' }, async $ => {
     await $.ui.open({ id: PANE, title: 'Questions' })
@@ -182,7 +245,7 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
-    const pending = (await load($)).filter(isPending)
+    const pending = (await load($)).questions.filter(isPending)
     if (e.props.hasSurvey || pending.length === 0) {
       return next(e)
     }
@@ -206,20 +269,16 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Button, Input, Markdown, Select, Text } = $.ui.resolve(e)
-    const everything = (await load($)).filter(isPending)
-    const filter = (((await $.store.get(FILTER_KEY)) as Filter | undefined) ?? 'all') as Filter
+    const project = await load($)
+    const everything = project.questions.filter(isPending)
+    const filter = view.filter
     const shown = everything.filter(matchesFilter(filter)).sort(blockingFirst)
-    const picked = (await $.store.get(SELECTED_KEY)) as number | undefined
-    const current = shown.find(one => one.id === picked) ?? shown[0]
+    const current = shown.find(one => one.id === view.selectedId) ?? shown[0]
     const blockingCount = everything.filter(isBlockingQuestion).length
-    const drafts = await loadDrafts($, everything)
-    const draftOf = (one: Question) => drafts.get(one.id) ?? {}
-    const draft = current === undefined ? {} : draftOf(current)
+    const draftOf = (one: Question) => project.drafts[one.id]
+    const draft = current === undefined ? undefined : draftOf(current)
     const readyCount = shown.filter(one => readyAnswer(one, draftOf(one)) !== undefined).length
-    const choose = async (key: string, value: unknown) => {
-      await $.store.set(key, value)
-      $.ui.invalidate('ui.render')
-    }
+    const show = () => $.ui.invalidate('ui.render')
     const filters: { value: Filter; label: string; count: number }[] = [
       { value: 'all', label: 'All', count: everything.length },
       { value: 'blocking', label: 'Blocking', count: blockingCount },
@@ -231,7 +290,13 @@ export const register: Register = on => {
         <Box gap={2}>
           <Text bold>Questions</Text>
           {filters.map(one => (
-            <Button key={`filter-${one.value}`} onPress={() => choose(FILTER_KEY, one.value)}>
+            <Button
+              key={`filter-${one.value}`}
+              onPress={() => {
+                view.filter = one.value
+                show()
+              }}
+            >
               <Text bold={filter === one.value} inverse={filter === one.value} dimColor={filter !== one.value}>
                 {' '}
                 {one.label} {one.count}{' '}
@@ -256,7 +321,13 @@ export const register: Register = on => {
         {current !== undefined && (
           <Box flexDirection="column">
             {shown.map(one => (
-              <Button key={`q${one.id}`} onPress={() => choose(SELECTED_KEY, one.id)}>
+              <Button
+                key={`q${one.id}`}
+                onPress={() => {
+                  view.selectedId = one.id
+                  show()
+                }}
+              >
                 <Text color={isBlockingQuestion(one) ? 'error' : 'suggestion'} bold>
                   {one.id === current.id ? '▶ ' : '  '}
                   {isBlockingQuestion(one) ? '● BLOCKING ' : '○ can wait '}
@@ -286,6 +357,7 @@ export const register: Register = on => {
               </Text>
               {current.ticket && <Text dimColor>{current.ticket}</Text>}
               <Text dimColor>#{current.id}</Text>
+              <Button key="remove" label="Remove" onPress={() => remove($, current.id)} />
             </Box>
             <Text bold>{current.question}</Text>
             <Box flexDirection="column">
@@ -310,18 +382,18 @@ export const register: Register = on => {
                 })),
                 { value: OTHER, label: OTHER },
               ]}
-              value={draft.choice ?? current.recommended}
+              value={draft?.choice ?? current.recommended}
               onSelect={value => amend($, current.id, { choice: value }, true)}
             />
             <Input
               key={`notes${current.id}`}
               label="Additional notes"
               placeholder={
-                (draft.choice ?? current.recommended) === OTHER
+                (draft?.choice ?? current.recommended) === OTHER
                   ? 'required with Other: say what you decide'
                   : 'always sent with your answer (optional)'
               }
-              value={draft.notes}
+              value={draft?.notes}
               submitLabel="keep notes"
               onInput={text => amend($, current.id, { notes: text }, false)}
               onSubmit={text => amend($, current.id, { notes: text }, true)}
