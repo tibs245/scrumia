@@ -58,20 +58,42 @@ async function save($: EngineInterface, change: (list: Question[]) => Question[]
   return next
 }
 
-async function send($: EngineInterface, id: number, recommended: string | undefined) {
-  const draft = ((await $.store.get(draftKey(id))) ?? {}) as Draft
-  const choice = draft.choice ?? recommended
+const readyAnswer = (one: Question, draft: Draft): Answer | undefined => {
+  const choice = draft.choice ?? one.recommended
   const notes = draft.notes?.trim() ?? ''
-  const isOther = choice === OTHER
-  if (choice === undefined || (isOther && notes === '')) {
+  if (choice === undefined || (choice === OTHER && notes === '')) {
+    return undefined
+  }
+
+  return { text: choice, notes: notes === '' ? undefined : notes, isOther: choice === OTHER }
+}
+
+const missing = (one: Question, draft: Draft) =>
+  (draft.choice ?? one.recommended) === undefined ? 'pick one' : 'needs a note'
+
+async function loadDrafts($: EngineInterface, list: Question[]) {
+  const entries = await Promise.all(
+    list.map(async one => [one.id, ((await $.store.get(draftKey(one.id))) ?? {}) as Draft] as const),
+  )
+
+  return new Map(entries)
+}
+
+async function sendAll($: EngineInterface, filter: Filter) {
+  const pending = (await load($)).filter(isPending).filter(matchesFilter(filter))
+  const drafts = await loadDrafts($, pending)
+  const answers = new Map<number, Answer>()
+  for (const one of pending) {
+    const given = readyAnswer(one, drafts.get(one.id) ?? {})
+    if (given !== undefined) {
+      answers.set(one.id, given)
+    }
+  }
+  if (answers.size === 0) {
     return
   }
-  await save($, list =>
-    list.map(one =>
-      one.id === id ? { ...one, answer: { text: choice, notes: notes === '' ? undefined : notes, isOther } } : one,
-    ),
-  )
-  await $.store.delete(draftKey(id))
+  await save($, list => list.map(one => (answers.has(one.id) ? { ...one, answer: answers.get(one.id) } : one)))
+  await Promise.all([...answers.keys()].map(id => $.store.delete(draftKey(id))))
 }
 
 async function amend($: EngineInterface, id: number, change: Partial<Draft>, isRedrawn: boolean) {
@@ -190,7 +212,10 @@ export const register: Register = on => {
     const picked = (await $.store.get(SELECTED_KEY)) as number | undefined
     const current = shown.find(one => one.id === picked) ?? shown[0]
     const blockingCount = everything.filter(isBlockingQuestion).length
-    const draft = current === undefined ? {} : (((await $.store.get(draftKey(current.id))) ?? {}) as Draft)
+    const drafts = await loadDrafts($, everything)
+    const draftOf = (one: Question) => drafts.get(one.id) ?? {}
+    const draft = current === undefined ? {} : draftOf(current)
+    const readyCount = shown.filter(one => readyAnswer(one, draftOf(one)) !== undefined).length
     const choose = async (key: string, value: unknown) => {
       await $.store.set(key, value)
       $.ui.invalidate('ui.render')
@@ -214,6 +239,19 @@ export const register: Register = on => {
             </Button>
           ))}
         </Box>
+        {current !== undefined && (
+          <Box gap={2}>
+            <Button key="send-all" onPress={() => sendAll($, filter)}>
+              <Text bold inverse={readyCount > 0} dimColor={readyCount === 0}>
+                {' '}
+                Send {readyCount} answer{readyCount === 1 ? '' : 's'}{' '}
+              </Text>
+            </Button>
+            <Text dimColor>
+              {shown.length - readyCount > 0 ? `${shown.length - readyCount} not ready` : 'all ready'}
+            </Text>
+          </Box>
+        )}
         {current === undefined && <Text dimColor>No question here. Nothing waits on you.</Text>}
         {current !== undefined && (
           <Box flexDirection="column">
@@ -222,6 +260,9 @@ export const register: Register = on => {
                 <Text color={isBlockingQuestion(one) ? 'error' : 'suggestion'} bold>
                   {one.id === current.id ? '▶ ' : '  '}
                   {isBlockingQuestion(one) ? '● BLOCKING ' : '○ can wait '}
+                </Text>
+                <Text color={readyAnswer(one, draftOf(one)) ? 'success' : 'warning'}>
+                  {readyAnswer(one, draftOf(one)) ? '✓ ready ' : `… ${missing(one, draftOf(one))} `}
                 </Text>
                 <Text bold={one.id === current.id}>
                   #{one.id} {one.ticket ? `${one.ticket} · ` : ''}
@@ -281,14 +322,10 @@ export const register: Register = on => {
                   : 'always sent with your answer (optional)'
               }
               value={draft.notes}
-              submitLabel="send answer"
+              submitLabel="keep notes"
               onInput={text => amend($, current.id, { notes: text }, false)}
-              onSubmit={async text => {
-                await amend($, current.id, { notes: text }, false)
-                await send($, current.id, current.recommended)
-              }}
+              onSubmit={text => amend($, current.id, { notes: text }, true)}
             />
-            <Button key="send" label="Send answer" onPress={() => send($, current.id, current.recommended)} />
           </Box>
         )}
       </Box>

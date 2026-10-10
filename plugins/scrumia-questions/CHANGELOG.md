@@ -13,5 +13,6 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   blocking first with a coloured badge, the open one as a bordered card, a picker over the
   suggested answers (the recommended one starred and preselected) that always ends with
   `Other`, an `Additional notes` field always sent with the answer (required with `Other`),
-  and a `Send answer` button.
+  a `ready` mark per question and one `Send N answers` button that sends the ready answers
+  of the filtered view. The preselected recommendation is the answer unless another is picked.
 - Answers return once, appended to the next prompt; questions persist across sessions.

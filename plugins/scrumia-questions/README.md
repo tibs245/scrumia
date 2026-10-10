@@ -15,7 +15,7 @@ in an inbox, in one format, and the person answers when they choose.
 |---|---|
 | `ask_later` tool | The model parks a question: `context`, `ticket`, `question`, `impact`, `isBlocking`, `options`, `recommended`. It then carries on. |
 | Band above the prompt | `N questions waiting`, the blocking ones counted in red, with an Open button. Absent when nothing waits. |
-| `/questions` and its pane | A filter (All / Blocking / Non-blocking, with counts), the waiting questions blocking first with a coloured badge, one question as a bordered card (context, impact in Markdown), a picker over the suggested answers (the recommended one starred and preselected) that always ends with `Other`, an `Additional notes` field, and a `Send answer` button. |
+| `/questions` and its pane | A filter (All / Blocking / Non-blocking, with counts), the waiting questions blocking first with a coloured badge, one question as a bordered card (context, impact in Markdown), a picker over the suggested answers (the recommended one starred and preselected) that always ends with `Other`, an `Additional notes` field, a `ready` mark per question, and one `Send N answers` button on top. |
 | `prompt.submit` hook | The answers not yet delivered are appended to the next prompt, once. |
 | `$.store` | Questions and answers survive the session. |
 
@@ -25,7 +25,8 @@ in an inbox, in one format, and the person answers when they choose.
 - A question without its context, impact and a recommended answer: the tool schema
   requires them, so an unstructured question has nowhere to go.
 - A silent answer: it returns once, appended to the prompt, never re-delivered.
-- An `Other` answer without a note: it is not sent, since it would say nothing.
+- An `Other` answer without a note: it is not ready, since it would say nothing.
+- One click per question: choices and notes are kept as drafts, and a single button sends every ready answer of the filtered view. The preselected recommendation counts as the answer when nothing else is picked.
 - Notes left behind: `Additional notes` travel with the answer whichever choice is picked.
 
 ## What it ships
@@ -33,7 +34,7 @@ in an inbox, in one format, and the person answers when they choose.
 | What | Role |
 |---|---|
 | `hooks/register.tsx` | The tool, the band, the command, the pane and the prompt hook, all in one module. |
-| `hooks/register.test.ts` | Seven tests: parking, numbering, the untouched prompt, the pane answer and the blocking filter, the last two on two surfaces. |
+| `hooks/register.test.ts` | Thirteen tests: parking, numbering, the untouched prompt, and on two surfaces the pane answer, the blocking filter, `Other` with its note, the default recommendation and the grouped send. |
 
 ## Install while it is a POC
 
