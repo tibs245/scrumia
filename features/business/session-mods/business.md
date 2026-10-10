@@ -123,7 +123,125 @@ ticket is free text.
 
 ## scrumia-issues
 
-Placeholder. This mod is specified by its own ticket, which adds its section here.
+The tickets of the session. The mod keeps one table of every ticket the session named,
+with whether the session took it into account, its status and what exactly remains, so
+the person tells where each one stands without rereading the conversation.
+
+### The table
+
+One row per ticket, four columns:
+
+- the **ticket** — its number, as named by the person or by the agent;
+- **in session** — `yes` when the session worked on or covered the ticket, `no` when it
+  only named it, `?` while nobody has assessed it. A ticket merely named is not taken into
+  account;
+- the **status** — a column of the tracker, or `Unknown`;
+- **remaining** — what exactly is left to do, in a sentence from which the state can be
+  read, or `nothing` when nothing is left. A row never carries a status without that
+  sentence.
+
+Open tickets are listed before the ones in the last column of the tracker, each in
+number order, under a summary line (tickets named, taken into account, open).
+
+**BR-i1** — The agent records a ticket with one tool, `track_issue`: the number, whether
+the session took it into account, its status and what remains, and optionally a short
+title. Recording a ticket already in the table updates its row in place; a ticket is never
+listed twice.
+
+**BR-i2** — The row of a ticket nobody has assessed reads `?`, status `Unknown` and
+`Not assessed yet`. It stays in the table until the agent records it: nothing is silently
+forgotten.
+
+**BR-i3** — A malformed call is refused with the reason, and nothing is stored. The number
+is an integer from 1; the "taken into account" mark is a boolean; the status is one of the
+statuses of BR-i5; the remaining text is non-empty; a title, when given, is text. The agent
+reads the reason and calls again, so the table never holds a row it cannot draw.
+
+**BR-i4** — Writes to the table go through one queue, so tickets recorded or detected at
+the same moment are all kept. Two processes writing the same session at the same instant
+are not protected.
+
+### Where the statuses come from
+
+**BR-i5** — The statuses are the columns the tracker module is configured with (the
+`columns` of `scrumia-github-project`, read through `scrumia-extends --settings`), plus
+`Unknown`, never a list written into the mod. A project with other columns gets its own.
+They are read once, when the session starts, before the tool is registered, so the tool's
+schema lists them. A status is matched whatever its case and stored as the tracker spells
+it. The last column, or the one the tracker's `board.flow.done` names, is the one that
+closes a ticket.
+
+**BR-i6** — When the tracker's columns cannot be read — the command is missing, fails,
+declares no tracker module or no columns — the mod falls back to the six default columns
+(`Backlog`, `Ready for dev`, `To dev`, `In progress`, `In review`, `Done`) plus `Unknown`,
+and says so in the pane with the reason. It never stops working for want of a tracker.
+
+**BR-i7** — The agent reports the status; the mod does not read the board and makes no
+network call. The tool's description tells the agent to read the ticket's status on the
+board first, through `scrumia-board`, and to report that. The mod therefore cannot tell a
+status that is stale or wrong from one that is right: the table is what the agent said,
+which is why `remaining` is written as a sentence the person can check. Reading the board
+from the mod, and what it would do when the board is unreachable, is a refusal here, not a
+gap.
+
+### How a ticket reaches the table without the agent
+
+**BR-i8** — Every ticket number written with a leading hash in a prompt the person typed is added to the table at once as
+not assessed, and the next prompt carries a reminder, labelled with the mod's name, asking
+the agent to read each ticket's status on the board and record it. The reminder rides a
+ticket once: it is marked reminded only when the prompt carrying it went through, so a
+prompt refused further down leaves it for the next one.
+
+**BR-i9** — A prompt the person did not type is never read for ticket numbers: an agent's
+hand-back, a background-task notification, a peer or coordinator message, a scheduled
+trigger, a prompt submitted by another plugin, and a prompt whose origin is not known. Only
+the person's own gesture (the prompt box, the Remote Control bridge) and a plugin submitting
+explicitly as the person count as typed.
+
+**BR-i10** — The mod never reads what it wrote itself, nor what is not a ticket. Lines
+carrying the mod's own label are left out, so its reminder pasted back or quoted by the
+agent names nothing; code spans and fenced code are left out; a number preceded by a word
+character, `&` or `/` (an entity, a link fragment) is not a ticket; a hash followed by zeros is not a
+ticket, since tickets start at 1. A three-digit colour made of other digits, outside code,
+remains read as a ticket: it is a known limit.
+
+**BR-i11** — A ticket the agent names alone reaches the table without depending on the
+agent remembering to call the tool: the final text of each turn the agent completed is read
+as the person's prompt is (BR-i10), the tickets it names are added as not assessed, and the
+next prompt the person types carries the reminder of BR-i8. A turn that was interrupted,
+refused or failed is not read. The gap that remains is a ticket named only in text the agent
+wrote before a tool call within the turn: only the final text is seen, and that is stated
+rather than hidden.
+
+### What "this session" means
+
+**BR-i12** — The table belongs to the session, identified by the id the session answers
+to. The same id back — a session resumed under its own id — shows the same table. A
+`/clear` starts the conversation under a new id, so the table starts empty, and the
+previous one stays stored under its id. A resume that goes on under a new id (a fork)
+starts empty too. Nothing in the table reaches another session.
+
+**BR-i13** — Tables are kept on the machine for the thirty most recent sessions; the
+oldest beyond that are dropped. Nothing is written in the repository: the table is a
+buffer, and the state of a ticket lives in the tracker.
+
+### What it shows
+
+**BR-i14** — `/issues` opens a pane showing the table, drawn on the terminal and on the
+desktop app. With no ticket named, the pane says so. It always says where its statuses come
+from: the tracker's columns, or the defaults and why.
+
+### Where it lives
+
+**BR-i15** — A plugin of its own, without a slot in the composition, as decided in
+`docs/adr/0026-session-mods-are-plugins-of-their-own.md`. The plugin name `scrumia-issues`
+and the tool name `mcp__scrumia-issues__track_issue` are frozen at merge: a later version
+keeps them, or announces the change in its changelog.
+
+### What it is not
+
+It is not the tracker and does not move a ticket on the board. It reads nothing of the
+board; the only thing it reads of the other modules is the list of columns.
 
 ## scrumia-roadmap
 

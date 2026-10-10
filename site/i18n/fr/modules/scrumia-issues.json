@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-issues — ScrumIA",
+  "meta_description": "scrumia-issues : un mod Claude Code expérimental — les tickets qu'une session mentionne, si elle a pris chacun en compte, leur statut et ce qui reste.",
+  "og_title": "scrumia-issues — ScrumIA",
+  "tagline": "Quels tickets cette session a-t-elle touchés, et où en est chacun ?",
+  "responsibilities": "<p>Un mod Claude Code expérimental, fait de hooks et non de compétences. Il tient, au fil de la session, une ligne par ticket : la session l'a-t-elle travaillé, son statut sur le tableau, et ce qu'il reste à faire selon l'agent. Les tickets saisis dans un prompt ou nommés dans le texte final de l'agent sont listés aussitôt comme non évalués ; <code>/issues</code> ouvre le panneau.</p>",
+  "refusals": "<p>Il refuse un statut sans sa raison : ce qui reste doit être écrit, <code>nothing</code> quand c'est fini. Il refuse un statut qui n'est pas une colonne du tracker, ne lit jamais un prompt que la personne n'a pas saisi, et ne mélange jamais les tableaux de deux sessions.</p>",
+  "philosophy": "<p>Présume que le statut est ce que l'agent rapporte, non ce que dit le tableau. Coûte une confiance dans ce rapport : le mod ne lit pas le tableau, il ne peut donc pas distinguer un statut périmé d'un statut juste.</p>"
+}
