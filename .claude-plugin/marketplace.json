@@ -430,6 +430,22 @@
       "author": {
         "name": "tibs245"
       }
+    },
+    {
+      "name": "scrumia-issues",
+      "source": "./plugins/scrumia-issues",
+      "description": "Experimental mod: the tickets mentioned in a session, with whether the session took each into account, its board status, and what the agent says remains to do.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": [
+        "scrumia",
+        "mod",
+        "issues",
+        "session"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     }
   ]
 }

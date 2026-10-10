@@ -2,7 +2,7 @@
 
 One scenario per rule in `business.md`. Each scenario must be able to fail.
 
-Each criterion of the questions inbox names the test of `plugins/scrumia-questions/hooks/register.test.ts` that proves it; the tests that run on two surfaces run on the terminal and the desktop app.
+Each criterion of a mod names the test of that plugin's `hooks/register.test.ts` that proves it (`plugins/scrumia-questions/` for the questions inbox, `plugins/scrumia-issues/` for the issues table); the tests that run on two surfaces run on the terminal and the desktop app.
 
 ## scrumia-questions
 
@@ -188,7 +188,295 @@ Test: none automated. What a mocked surface cannot prove is whether the pane dra
 
 ## scrumia-issues
 
-Placeholder, completed when the mod is specified.
+### AC-19 — A ticket is recorded with its status and what remains (`BR-i1`)
+
+```gherkin
+Given a ticket not yet in the table
+When the agent records it with its status and what remains
+Then it is accepted and counted as open
+```
+
+Test: recording > records a ticket with its status and what remains.
+
+### AC-20 — Recording a ticket again updates its row in place (`BR-i1`)
+
+```gherkin
+Given a ticket recorded as `Backlog`
+When the agent records it again as `Done` with nothing remaining
+Then the table still holds one row for it and no ticket is open
+```
+
+Test: recording > updates a ticket in place instead of listing it twice.
+
+### AC-21 — A malformed call is refused with its reason and stores nothing (`BR-i3`)
+
+```gherkin
+Given a call whose number is text, fractional, below one or missing, whose taken-into-account mark is missing or not a boolean, whose status is outside the columns or missing, whose remaining text is empty or missing, or whose title is not text
+When the agent records it
+Then the call is refused with a reason naming the fault, and the pane lists no such ticket
+```
+
+Test: recording > a malformed call is refused with its reason and stores nothing (eleven cases).
+
+### AC-22 — The status is matched whatever its case, and `Unknown` is always accepted (`BR-i3, BR-i5`)
+
+```gherkin
+Given the default columns
+When the agent records a ticket as `in review`, then another as `Unknown`
+Then the first is stored as `In review`, the second as `Unknown`
+```
+
+Test: recording > the status is matched whatever its case, and kept as the board spells it; recording > Unknown is always accepted.
+
+### AC-23 — Parallel writes lose nothing (`BR-i4`)
+
+```gherkin
+Given three tickets recorded at the same moment, and a prompt naming two more at the same moment as two other records
+When the calls resolve
+Then every ticket is in the table, numbered in the answers one after another
+```
+
+Test: recording > three parallel calls keep three tickets; recording > parallel calls and a prompt naming tickets lose nothing.
+
+### AC-24 — The statuses are the tracker's columns, and others are refused with the list (`BR-i5`)
+
+```gherkin
+Given a tracker configured with the columns `Todo`, `Doing`, `Shipped`
+When the session starts, then the agent records a ticket as `Doing`, then as `In progress`
+Then the first is accepted, the second is refused with `Todo, Doing, Shipped, Unknown`; the tool's schema lists the same
+```
+
+Test: the status vocabulary comes from the tracker > the columns of the tracker are read at session start and others are refused with the list; the status vocabulary comes from the tracker > the tool description tells the agent to read the board and the schema lists the columns.
+
+### AC-25 — The last column closes a ticket (`BR-i5`)
+
+```gherkin
+Given a tracker whose columns end with `Shipped`
+When the agent records a ticket as `Shipped` with nothing remaining
+Then no ticket is counted open
+```
+
+Test: the status vocabulary comes from the tracker > the last column counts as done.
+
+### AC-26 — The columns are read on the first call when no session start came first (`BR-i5`)
+
+```gherkin
+Given a session in which the start hook did not run before the tool is called
+When the agent records a ticket with a column of the tracker
+Then it is accepted
+```
+
+Test: the status vocabulary comes from the tracker > the status is read lazily when no session start came first.
+
+### AC-27 — With no readable tracker, the defaults serve and the pane says so (`BR-i6`)
+
+```gherkin
+Given a tracker command that fails
+When the session starts, the agent records a ticket as `Ready for dev`, then as `Elsewhere`, and the pane is opened
+Then the first is accepted, the second is refused with the six default columns and `Unknown`, and the pane says the defaults are used and why
+```
+
+Test: the status vocabulary comes from the tracker > the six default columns serve when the tracker cannot be read, and the pane says so; the status vocabulary comes from the tracker > the pane says when it uses the tracker columns.
+
+### AC-28 — The agent is told to report the status it read on the board, and the mod reads none (`BR-i7`)
+
+```gherkin
+Given the tool registered at session start
+When the registration is read
+Then its description tells the agent to read the board first and says the tool does not check it; the mod runs no command but the two reading the columns
+```
+
+Test: the status vocabulary comes from the tracker > the tool description tells the agent to read the board and the schema lists the columns; the status vocabulary comes from the tracker > the columns of the tracker are read at session start and others are refused with the list (the two commands it ran).
+
+### AC-29 — A typed prompt that names new tickets asks the agent to record them, once (`BR-i2, BR-i8`)
+
+```gherkin
+Given a prompt typed by the person naming tickets 3528 and 12, then another naming 3528 and 99
+When each goes through
+Then the first carries a reminder naming the first two, the second names only 99
+```
+
+Test: what is detected, and from where > a prompt the person typed that names new tickets asks the agent to record them, once.
+
+### AC-30 — A prompt without a ticket number passes untouched (`BR-i8`)
+
+```gherkin
+Given a typed prompt naming no ticket
+When it goes through
+Then its context is unchanged
+```
+
+Test: what is detected, and from where > a prompt without a ticket number passes untouched.
+
+### AC-31 — A reminder in a prompt refused below is carried again (`BR-i8`)
+
+```gherkin
+Given a typed prompt naming a ticket and refused further down, then another
+When each goes through
+Then the second carries the reminder
+```
+
+Test: what is detected, and from where > a reminder carried by a prompt refused below is carried again.
+
+### AC-32 — A ticket the agent already recorded is not reminded (`BR-i8`)
+
+```gherkin
+Given a ticket recorded by the agent
+When the person types a prompt naming it
+Then no reminder is added
+```
+
+Test: what is detected, and from where > a ticket recorded by the agent is not reminded.
+
+### AC-33 — A prompt the person did not type is not read (`BR-i9`)
+
+```gherkin
+Given a prompt naming a ticket and arriving as a task notification, a peer message, a coordinator hand-off, a scheduled trigger, an unclassified prompt, a prompt submitted by another plugin, or with no origin
+When it goes through
+Then the ticket is not in the table and no reminder is added
+```
+
+Test: what is detected, and from where > a prompt the person did not type is not read (seven cases).
+
+### AC-34 — The person typing through the bridge, or a plugin submitting as the person, is read (`BR-i9`)
+
+```gherkin
+Given a prompt naming a ticket, arriving from the Remote Control bridge, and another submitted by a plugin as the person
+When each goes through
+Then both tickets are in the table
+```
+
+Test: what is detected, and from where > the Remote Control bridge is the person typing; what is detected, and from where > a prompt the person did not type is not read > a plugin that submits as the person is read.
+
+### AC-35 — The mod's own note is not read, pasted or quoted (`BR-i10, BR-i11`)
+
+```gherkin
+Given the mod's reminder naming ticket 77 pasted into a typed prompt beside ticket 78, and the same reminder quoted by the agent beside ticket 78
+When the prompt goes through and the turn completes
+Then ticket 78 is in the table, ticket 77 is not
+```
+
+Test: what is detected, and from where > the note the mod injected is not read, even pasted into a prompt; what is detected, and from where > what the agent says > the mod's own note quoted by the agent is not read.
+
+### AC-36 — Code, a colour of zeros, a link fragment and an entity are not tickets (`BR-i10`)
+
+```gherkin
+Given a typed prompt carrying a colour of zeros, an inline code span with a number, a link fragment, an entity, a fenced block with a number, and one real ticket
+When it goes through
+Then only the real ticket is in the table
+```
+
+Test: what is detected, and from where > numbers in code, a colour of zeros, a url fragment and an entity are not tickets.
+
+### AC-37 — A ticket the agent names alone reaches the table (`BR-i11`)
+
+```gherkin
+Given a turn that completed with a final text naming ticket 321
+When the turn completes
+Then ticket 321 is in the table as not assessed
+```
+
+Test: what is detected, and from where > what the agent says > a ticket the agent names alone reaches the table, as not assessed.
+
+### AC-38 — The next typed prompt carries the reminder for it, once (`BR-i8, BR-i11`)
+
+```gherkin
+Given a ticket named only by the agent
+When the person types two prompts in a row
+Then the first carries the reminder, the second nothing
+```
+
+Test: what is detected, and from where > what the agent says > the next prompt the person types asks the agent to record it, once.
+
+### AC-39 — An interrupted or failed turn is not read (`BR-i11`)
+
+```gherkin
+Given a turn ended by interruption naming ticket 400, and one that failed naming ticket 401
+When they complete
+Then neither ticket is in the table
+```
+
+Test: what is detected, and from where > what the agent says > a turn that was interrupted or failed is not read.
+
+### AC-40 — A ticket already known is not listed twice (`BR-i1, BR-i11`)
+
+```gherkin
+Given a ticket recorded by the agent, then named again in a final text
+When the turn completes and the agent records it again
+Then the table holds one row
+```
+
+Test: what is detected, and from where > what the agent says > a ticket already known is not listed twice.
+
+### AC-41 — The same session id brings the same table back, as after a resume (`BR-i12`)
+
+```gherkin
+Given a ticket recorded in a session, the session answering to another id, then to the first again
+When the pane is opened and a ticket is recorded
+Then the first ticket is there and the new one makes two
+```
+
+Test: the scope of the session > the table of a session is back when the same session id returns, as after a resume.
+
+### AC-42 — After a `/clear` the table starts empty and the old one is kept under its id (`BR-i12`)
+
+```gherkin
+Given a ticket recorded, then the session answering to a new id as after a `/clear`
+When the pane is opened, a ticket is recorded, then the first id returns
+Then the new table holds only the new ticket; the first holds only the first
+```
+
+Test: the scope of the session > after a /clear the id changes and the table starts empty, the old one kept under its id.
+
+### AC-43 — One session never sees the tickets of another (`BR-i12`)
+
+```gherkin
+Given a ticket named by a typed prompt in one session
+When another session opens its pane, then its person names the same ticket
+Then the other pane lists nothing, and the other session is reminded of the ticket as a new one
+```
+
+Test: the scope of the session > a different session never sees the tickets of another.
+
+### AC-44 — Only the thirty most recent sessions are kept (`BR-i13`)
+
+```gherkin
+Given thirty-two sessions each having recorded a ticket
+When the oldest is opened again, then the newest, then the third
+Then the oldest is gone; the newest and the third are there
+```
+
+Test: the scope of the session > only the thirty most recent sessions are kept.
+
+### AC-45 — The pane lists what was named and what was recorded, on both surfaces (`BR-i14`)
+
+```gherkin
+Given a ticket named by a prompt and another recorded by the agent with its remaining text
+When the pane is drawn on the terminal and on the desktop app
+Then both rows show, the recorded one with its remaining text
+```
+
+Test: the pane > lists a mentioned ticket and a recorded one (terminal, desktop).
+
+### AC-46 — The pane says so when nothing was named (`BR-i14`)
+
+```gherkin
+Given a session where no ticket was named
+When the pane is drawn
+Then it says no ticket was mentioned
+```
+
+Test: the pane > says so when no ticket was mentioned.
+
+### AC-47 — The issues table is tried by a person on a terminal session and a desktop session
+
+```gherkin
+Given the plugin installed in a terminal session and in a desktop-app session
+When a person names tickets, lets the agent record some, runs `/issues`, then resumes and `/clear`s the session
+Then the result is recorded where the work is tracked, with the surface it was tried on and what the table held after the resume and after the `/clear`
+```
+
+Test: none automated. What a mocked session cannot prove is whether the pane draws on the real surface, whether the engine really hands a resumed session its own id back, and whether the final text of a real turn reaches the detector; a person tries it and records the result.
 
 ## scrumia-roadmap
 
