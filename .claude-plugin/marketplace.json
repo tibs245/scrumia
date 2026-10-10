@@ -419,7 +419,7 @@
       "name": "scrumia-questions",
       "source": "./plugins/scrumia-questions",
       "description": "Experimental mod: a questions inbox. The model parks a structured question instead of blocking, the person answers later from a pane, and the answer returns on the next prompt.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -435,13 +435,29 @@
       "name": "scrumia-issues",
       "source": "./plugins/scrumia-issues",
       "description": "Experimental mod: the tickets mentioned in a session, with whether the session took each into account, its board status, and what the agent says remains to do.",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "category": "workflow",
       "tags": [
         "scrumia",
         "mod",
         "issues",
         "session"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
+    },
+    {
+      "name": "scrumia-roadmap",
+      "source": "./plugins/scrumia-roadmap",
+      "description": "Experimental mod: a roadmap. The agent records the sprints it planned from the lots the person asked it to take into account, with their tickets and what will really be testable at the end of each, and the person reads them in a pane.",
+      "version": "0.1.2",
+      "category": "workflow",
+      "tags": [
+        "scrumia",
+        "mod",
+        "roadmap",
+        "sprint"
       ],
       "author": {
         "name": "tibs245"

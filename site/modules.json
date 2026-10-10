@@ -24,5 +24,8 @@
   "scrumia-ktor": { "emoji": "🛜", "slot": null },
   "scrumia-kotlin": { "emoji": "🟣", "slot": "implementation" },
   "scrumia-effect": { "emoji": "🎭", "slot": null },
-  "scrumia-functional-programming": { "emoji": "🌀", "slot": null }
+  "scrumia-functional-programming": { "emoji": "🌀", "slot": null },
+  "scrumia-questions": { "emoji": "❓", "slot": null },
+  "scrumia-issues": { "emoji": "🎫", "slot": null },
+  "scrumia-roadmap": { "emoji": "🗺️", "slot": null }
 }

@@ -400,6 +400,21 @@
   </div>
 </section>
 
+<section id="questions">
+  <h3><a href="modules/scrumia-questions.html"><code>scrumia-questions</code></a> — mod Claude Code, sans compétence</h3>
+  <p>Un mod expérimental fait de hooks : le modèle met une question de côté au lieu de bloquer la session, la personne répond plus tard depuis un panneau, et la réponse revient une seule fois au prochain prompt qu'elle a saisi. <strong>Refuse</strong> une question mal formée, une réponse livrée deux fois, une réponse livrée sur un prompt que la personne n'a pas saisi, les mots du modèle passant pour ceux de la personne.</p>
+</section>
+
+<section id="issues">
+  <h3><a href="modules/scrumia-issues.html"><code>scrumia-issues</code></a> — mod Claude Code, sans compétence</h3>
+  <p>Un mod expérimental fait de hooks : une ligne par ticket mentionné dans la session — l'a-t-elle pris en compte, son statut, ce qui reste. <strong>Refuse</strong> un statut sans sa raison, un statut qui n'est pas une colonne du tracker, un prompt que la personne n'a pas saisi lu comme le sien, les tableaux de deux sessions mélangés.</p>
+</section>
+
+<section id="roadmap">
+  <h3><a href="modules/scrumia-roadmap.html"><code>scrumia-roadmap</code></a> — mod Claude Code, sans compétence</h3>
+  <p>Un mod expérimental fait de hooks : les sprints que l'agent a planifiés à partir des lots qu'on lui a demandé de prendre en compte, avec ce qui sera testable à la fin de chacun. <strong>Refuse</strong> un sprint mal formé, une liste de testable vide qui n'est pas dite, un sprint qui passe pour frais alors qu'il a été enregistré sous une autre session.</p>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> décrit le projet et ses outils — jamais son état.</p>

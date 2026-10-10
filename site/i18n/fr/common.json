@@ -18,6 +18,7 @@
   "mod_h_refusals": "Ce qu'il refuse",
   "mod_h_philosophy": "L'hypothèse qu'il fait",
   "mod_h_skills": "Ses compétences",
+  "mod_no_skills": "Aucune — un mod Claude Code fait de hooks, pas de compétences.",
   "mod_h_install": "L'installer",
   "mod_h_source": "Lire le source sur GitHub",
   "mod_h_tags": "Étiquettes",

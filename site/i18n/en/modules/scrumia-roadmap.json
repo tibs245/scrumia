@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-roadmap — ScrumIA",
+  "meta_description": "scrumia-roadmap: an experimental Claude Code mod — the sprints the agent planned from the lots you asked for, with what is testable at the end of each.",
+  "og_title": "scrumia-roadmap — ScrumIA",
+  "tagline": "The sprints the agent planned, and what you will really be able to test.",
+  "responsibilities": "<p>An experimental Claude Code mod, made of hooks rather than skills. The agent resolves whatever lot the person asked it to take into account — a milestone, ticket numbers, a column — plans it as sprints and records each with its source, objective, tickets and what will be testable at the end. The person reads them in the <code>/roadmap</code> pane.</p>",
+  "refusals": "<p>It refuses a malformed sprint with its reason, an empty list of testable things unless it is declared as such, and a contradiction between the two. A sprint not recorded under the current session is marked possibly stale rather than passing for fresh.</p>",
+  "philosophy": "<p>Assumes what matters about a sprint is what a person can try at its end. Costs vigilance: the mod checks the form of that list, not its truth, and the tracker stays the source of truth.</p>"
+}

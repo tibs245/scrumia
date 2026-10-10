@@ -400,6 +400,21 @@
   </div>
 </section>
 
+<section id="questions">
+  <h3><a href="modules/scrumia-questions.html"><code>scrumia-questions</code></a> — Claude Code mod, no skill</h3>
+  <p>An experimental mod made of hooks: the model parks a question instead of blocking the session, the person answers later from a pane, and the answer returns once on the next prompt they typed. <strong>Refuses</strong> a malformed question, an answer delivered twice, an answer delivered on a prompt the person did not type, the model's words passing for the person's.</p>
+</section>
+
+<section id="issues">
+  <h3><a href="modules/scrumia-issues.html"><code>scrumia-issues</code></a> — Claude Code mod, no skill</h3>
+  <p>An experimental mod made of hooks: one row per ticket the session mentioned — whether it took the ticket into account, its status, what remains. <strong>Refuses</strong> a status without its reason, a status that is not a column of the tracker, a prompt the person did not type read as theirs, the tables of two sessions mixed.</p>
+</section>
+
+<section id="roadmap">
+  <h3><a href="modules/scrumia-roadmap.html"><code>scrumia-roadmap</code></a> — Claude Code mod, no skill</h3>
+  <p>An experimental mod made of hooks: the sprints the agent planned from the lots it was asked to take into account, with what will be testable at the end of each. <strong>Refuses</strong> a malformed sprint, an empty testable list left unsaid, a sprint passing for fresh when it was recorded under another session.</p>
+</section>
+
 <section id="config">
   <h2>Configuration</h2>
   <p><code>.scrumia/config.yaml</code> describes the project and its tooling — never its state.</p>

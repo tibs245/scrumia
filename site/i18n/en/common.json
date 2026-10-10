@@ -18,6 +18,7 @@
   "mod_h_refusals": "What it refuses",
   "mod_h_philosophy": "The assumption it makes",
   "mod_h_skills": "Its skills",
+  "mod_no_skills": "None — a Claude Code mod made of hooks, not skills.",
   "mod_h_install": "Install it",
   "mod_h_source": "Read the source on GitHub",
   "mod_h_tags": "Tags",

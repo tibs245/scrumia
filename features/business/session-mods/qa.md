@@ -19,12 +19,12 @@ Test: parks a question and numbers them in order.
 ### AC-2 — A malformed question is refused with its reason and stores nothing (`BR-q1`)
 
 ```gherkin
-Given a call with no suggested answers, an empty list, a question that is not text, no blocking mark, or a recommendation outside the suggested answers
+Given a call with no suggested answers, an empty list, more than six, a question that is not text, no blocking mark, or a recommendation outside the suggested answers
 When the model parks it
 Then the call is refused with a reason naming the fault, and the inbox shows no question
 ```
 
-Test: a malformed call is refused with its reason (five cases).
+Test: a malformed call is refused with its reason (six cases); six options are accepted, seven are refused.
 
 ### AC-3 — A blocking question says not to go ahead, one that can wait says to carry on (`BR-q2`)
 
@@ -146,15 +146,15 @@ Then three questions are numbered one to three and all show
 
 Test: three parallel calls keep three questions.
 
-### AC-15 — A question delivered more than thirty days ago is dropped (`BR-q14`)
+### AC-15 — A question is dropped thirty days after its delivery (`BR-q14`)
 
 ```gherkin
-Given a question delivered, then another delivered twenty-nine days later, then a third thirty-one days after the first
+Given a question asked, answered and delivered twenty days later, a second delivered fifteen days after that, and a third delivered sixteen days after the second
 When each is delivered
-Then the first is still stored at twenty-nine days and is gone after thirty-one, the recent ones kept
+Then the first is still stored when thirty-five days have passed since it was asked and fifteen since its delivery, and is gone once thirty-one days have passed since its delivery, the recent ones kept
 ```
 
-Test: a question delivered more than thirty days ago is dropped, a recent one is kept.
+Test: a question is dropped thirty days after its delivery, not after it was asked.
 
 ### AC-16 — A question stored without its blocking mark still shows as one that can wait (`BR-q15`)
 
@@ -185,6 +185,56 @@ Then the result is recorded where the work is tracked, with the surface it was t
 ```
 
 Test: none automated. What a mocked surface cannot prove is whether the pane draws and answers on the real surface; a person tries it and records the result.
+
+### AC-60 — A single-line field refuses a line break or a control character (`BR-q17`)
+
+```gherkin
+Given a call whose question, linked ticket, one suggested answer or recommendation holds a line break, or whose question or ticket holds a control character
+When the model parks it
+Then the call is refused with a reason naming the field, and nothing is stored
+```
+
+Test: a single-line field refuses a line break or a control character, naming the field (question, ticket, an options entry, recommended alone, a control character in the question, a unicode line separator in the ticket).
+
+### AC-61 — A context or an impact may span several lines (`BR-q17`)
+
+```gherkin
+Given a call whose context and impact hold line breaks
+When the model parks it
+Then it is accepted and numbered
+```
+
+Test: a multi-line context and impact are accepted.
+
+### AC-62 — A prompt the person did not type leaves the answers where they are (`BR-q9`)
+
+```gherkin
+Given an answer sent
+When a prompt arrives from a task notification, a peer, a coordinator, a scheduled trigger, an unclassified origin, another plugin, or with no origin, then the person types a prompt
+Then the first carries nothing and the answer is not marked delivered; the typed one carries it
+```
+
+Test: the answers wait for a prompt the person typed (each untyped origin leaves them where they are; a prompt with no origin leaves them where they are).
+
+### AC-63 — A prompt typed by the person, through the prompt box, the bridge, or a plugin submitting as the person, takes the answers (`BR-q9, BR-q12`)
+
+```gherkin
+Given an answer sent, in a project that two sessions share
+When a prompt typed by the person reaches the session that reads the project first
+Then that prompt carries the answer, once
+```
+
+Test: the answers wait for a prompt the person typed (composer, bridge and a plugin submitting as the person take them).
+
+### AC-64 — A delivered question stored without its delivery time is purged from the day it was asked (`BR-q14`)
+
+```gherkin
+Given a delivered question stored without a delivery time, asked forty days ago, and another asked five days ago
+When the next delivery happens
+Then the first is dropped and the second kept
+```
+
+Test: a delivered question stored without deliveredAt is purged from the day it was asked.
 
 ## scrumia-issues
 
@@ -276,14 +326,14 @@ When the session starts, the agent records a ticket as `Ready for dev`, then as 
 Then the first is accepted, the second is refused with the six default columns and `Unknown`, and the pane says the defaults are used and why
 ```
 
-Test: the status vocabulary comes from the tracker > the six default columns serve when the tracker cannot be read, and the pane says so; the status vocabulary comes from the tracker > the pane says when it uses the tracker columns.
+Test: the status vocabulary comes from the tracker > the six default columns serve when the tracker cannot be read, and the pane says so; the status vocabulary comes from the tracker > the pane says when it uses the tracker columns; the status vocabulary comes from the tracker > every way the tracker cannot be read serves the defaults and the pane says why (no tracker module, an absent one, no columns, columns that are not text, settings that are not JSON, a command missing).
 
 ### AC-28 — The agent is told to report the status it read on the board, and the mod reads none (`BR-i7`)
 
 ```gherkin
 Given the tool registered at session start
 When the registration is read
-Then its description tells the agent to read the board first and says the tool does not check it; the mod runs no command but the two reading the columns
+Then its description tells the agent to read the board first (naming `scrumia-board` only as an example, when it is available) and says the tool does not check it; the mod runs no command but the two reading the columns
 ```
 
 Test: the status vocabulary comes from the tracker > the tool description tells the agent to read the board and the schema lists the columns; the status vocabulary comes from the tracker > the columns of the tracker are read at session start and others are refused with the list (the two commands it ran).
@@ -411,9 +461,9 @@ Test: what is detected, and from where > what the agent says > a ticket already 
 ### AC-41 — The same session id brings the same table back, as after a resume (`BR-i12`)
 
 ```gherkin
-Given a ticket recorded in a session, the session answering to another id, then to the first again
+Given a ticket recorded in a session, the session answering to another id in which another ticket is recorded, then to the first id again
 When the pane is opened and a ticket is recorded
-Then the first ticket is there and the new one makes two
+Then the first ticket is there and not the other one, and the new one makes two
 ```
 
 Test: the scope of the session > the table of a session is back when the same session id returns, as after a resume.
@@ -441,12 +491,12 @@ Test: the scope of the session > a different session never sees the tickets of a
 ### AC-44 — Only the thirty most recent sessions are kept (`BR-i13`)
 
 ```gherkin
-Given thirty-two sessions each having recorded a ticket
-When the oldest is opened again, then the newest, then the third
-Then the oldest is gone; the newest and the third are there
+Given thirty sessions each having recorded a ticket at a later moment than the one before, the first of them recording again after all the others, then two more sessions
+When each of the first four and the last two is opened again
+Then the second and the third, the least recently touched, are gone; the first, whose last touch is recent, the fourth and the last two are there
 ```
 
-Test: the scope of the session > only the thirty most recent sessions are kept.
+Test: the scope of the session > only the thirty most recent sessions are kept, the least recently touched going first.
 
 ### AC-45 — The pane lists what was named and what was recorded, on both surfaces (`BR-i14`)
 
@@ -478,6 +528,206 @@ Then the result is recorded where the work is tracked, with the surface it was t
 
 Test: none automated. What a mocked session cannot prove is whether the pane draws on the real surface, whether the engine really hands a resumed session its own id back, and whether the final text of a real turn reaches the detector; a person tries it and records the result.
 
+### AC-65 — A number with a leading zero is not a ticket (`BR-i10`)
+
+```gherkin
+Given a typed prompt naming a hash followed by `0012`, `007` and `000`, beside a hash followed by `12`
+When it goes through
+Then only ticket 12 is in the table
+```
+
+Test: what is detected, and from where > a number with a leading zero is not a ticket.
+
+### AC-66 — A failed read of the tracker is not kept for the process (`BR-i5, BR-i6`)
+
+```gherkin
+Given a tracker whose first read fails and whose second read gives the columns `Todo` and `Shipped`
+When the session starts, then the agent records a ticket as `Todo`, then another as `Backlog`, and the pane is opened
+Then the tool registered at start lists the default columns, the first record is accepted, the second is refused with `Todo, Shipped, Unknown`, the pane names the tracker's columns, and no further read follows
+```
+
+Test: the status vocabulary comes from the tracker > a failed read is not remembered: the next call reads again and the columns change.
+
+### AC-67 — The done column is the one the tracker names, else the last (`BR-i5`)
+
+```gherkin
+Given a tracker with the columns `Todo`, `Shipped`, `Archived` whose `board.flow.done` names `Shipped`, and another that declares only `board.options` keys `Todo`, `Doing`, `Shipped`
+When a ticket is recorded in `Shipped`, then one in `Archived` on the first tracker, and an unknown status is refused on the second
+Then the first ticket is not open and the second is; the second tracker's columns are its option keys, with `Unknown`, and its last one closes a ticket
+```
+
+Test: the status vocabulary comes from the tracker > board.flow.done names the done column, whatever its place; the status vocabulary comes from the tracker > without columns, the keys of board.options are the columns and the last one is done.
+
+### AC-68 — Open tickets are listed first, each group by number, under the summary line (`BR-i14`)
+
+```gherkin
+Given tickets 30 and 1 recorded as `Done`, 5 as `In progress` and 20 as `Backlog`, in that order
+When the pane is drawn
+Then the rows read 5, 20, 1, 30 and the summary line says four mentioned, four taken into account, two open
+```
+
+Test: the pane > open tickets come first, each group by number, under the summary line.
+
 ## scrumia-roadmap
 
-Placeholder, completed when the mod is specified.
+Each criterion names the test of `plugins/scrumia-roadmap/hooks/register.test.ts` that proves it; the tests that run on two surfaces run on the terminal and the desktop app.
+
+### AC-48 — A sprint is recorded, then updated in place by its name (`BR-r3`)
+
+```gherkin
+Given a sprint recorded, then recorded again under the same name with another objective and state, and a second sprint under another name
+When the roadmap is read
+Then the first sprint shows its latest objective only, and both sprints show
+```
+
+Test: records a sprint, then updates it in place by name.
+
+### AC-49 — A malformed sprint is refused with its reason and stores nothing (`BR-r1`)
+
+```gherkin
+Given a call with no name, an order that is not an integer, a source of unknown kind or empty reference, an empty objective, no testable list, an unknown state, no tickets, a ticket without description, or a ticket number twice
+When the agent records it
+Then the call is refused with a reason naming the fault, and the roadmap shows no sprint
+```
+
+Test: a malformed call is refused with its reason and stores nothing (fourteen cases, including those of AC-50 and a ticket number of zero or below).
+
+### AC-50 — The testable list is never silently empty (`BR-r2`)
+
+```gherkin
+Given an empty testable list without the statement that nothing is testable, then that statement beside a non-empty list, then the statement beside an empty list
+When each is recorded
+Then the first two are refused, and the third is recorded and the pane says in words that nothing is testable
+```
+
+Test: a malformed call is refused with its reason and stores nothing (empty testable list, nothingTestable with a list); a sprint with nothing testable says so in words.
+
+### AC-51 — Each sprint is a card with its objective, what is testable, its tickets and its progress, on both surfaces (`BR-r4, BR-r5`)
+
+```gherkin
+Given a sprint of two tickets, one done, with a testable item
+When the pane is opened on a terminal surface and on a desktop surface
+Then the card shows its source, its objective, the testable item, each ticket with its title, its description and its status drawn, and the progress one over two
+```
+
+Test: the pane draws sprints as cards with tickets and progress (terminal, desktop).
+
+### AC-52 — The sprints are drawn in their order (`BR-r4`)
+
+```gherkin
+Given two sprints recorded in the reverse of their order
+When the pane is opened
+Then the one of lower order comes first
+```
+
+Test: the sprints are drawn in their order, not in the order they were recorded.
+
+### AC-53 — The view can be narrowed to one state (`BR-r4`)
+
+```gherkin
+Given a planned sprint and a running one
+When the person narrows the view to running, then to planned, then back to all
+Then each view shows only the sprints of that state, and all shows both
+```
+
+Test: the state filter narrows the view (terminal, desktop).
+
+### AC-54 — A sprint shows when it was resolved and is marked possibly stale if not recorded in this session (`BR-r3, BR-r6`)
+
+```gherkin
+Given a sprint stored by an earlier session and a sprint recorded now
+When the pane is opened
+Then both show a resolved time, the first carries the mark possibly stale and the second does not, and recording the first again removes its mark; a sprint recorded under one session id carries the mark once the session id is another
+```
+
+Test: a sprint stored by an earlier session is marked possibly stale, one recorded now is not; a sprint recorded under another session id is possibly stale; the stamp is the clock at recording.
+
+### AC-55 — Two project roots do not see each other's sprints (`BR-r8`)
+
+```gherkin
+Given a sprint recorded in one project and another in a second project
+When the pane is opened in the second
+Then it shows only its own sprint
+```
+
+Test: two project roots do not see each other.
+
+### AC-56 — Parallel recordings keep every sprint (`BR-r8`)
+
+```gherkin
+Given three sprints recorded at the same moment
+When the calls resolve
+Then all three show
+```
+
+Test: three parallel calls keep three sprints.
+
+### AC-57 — A sprint stored in an older shape still draws (`BR-r9`)
+
+```gherkin
+Given a sprint stored with only a name, an order and an objective
+When the pane is opened
+Then it draws, saying its source and its testable list are not recorded
+```
+
+Test: a sprint stored in an older shape still draws.
+
+### AC-58 — A sprint can be removed from the pane (`BR-r7`)
+
+```gherkin
+Given a recorded sprint
+When the person presses Remove on its card
+Then it no longer shows
+```
+
+Test: Remove takes a sprint out (terminal, desktop).
+
+### AC-69 — A ticket's status is a column of the tracker, and the done column closes it (`BR-r1, BR-r5`)
+
+```gherkin
+Given a tracker with the columns `Todo`, `Doing`, `Shipped`, and another whose `board.flow.done` names `Shipped` among `Todo`, `Shipped`, `Archived`
+When a sprint with one ticket in `Shipped` is recorded and the pane opened, then one with a ticket in `Done` is recorded on the first tracker, and one with the tickets `Shipped` and `Archived` on the second
+Then the first shows one over one done, the `Done` status is refused with `Todo, Doing, Shipped, Unknown`, `Unknown` in any case is accepted, and the second shows one over two done; the tool registered at start lists the columns
+```
+
+Test: the statuses are the columns of the tracker > a tracker whose last column is Shipped counts it as done; the done column named by board.flow.done wins over the last; a status outside the columns is refused with the list; Unknown is allowed; the tool registered at start lists the columns.
+
+### AC-70 — An unreadable tracker gives the default columns, said in the pane, and is read again (`BR-r1, BR-r5`)
+
+```gherkin
+Given a tracker that cannot be read, then one whose first read fails and whose second gives the columns `Todo`, `Doing`, `Shipped`
+When tickets are recorded as `Done` and as `Shipped`, and the pane is opened
+Then on the first the six default columns serve, `Shipped` is refused with them and `Unknown`, the pane says default columns are in use, and one over two is done; on the second a status of the default columns is accepted at first and refused with the tracker's columns once it can be read
+```
+
+Test: the statuses are the columns of the tracker > an unreadable tracker falls back to the default columns, says so, and reads again next time; a failed first read is not kept.
+
+### AC-71 — The order is unique in a project (`BR-r1`)
+
+```gherkin
+Given a sprint recorded at order 1
+When another name is recorded at order 1, then the first name again at order 1
+Then the second call is refused with a reason naming the first sprint and nothing is stored, and the third replaces the first
+```
+
+Test: two sprints with the same order: the second is refused and the first stays.
+
+### AC-72 — A state that disagrees with the tickets is marked, not refused, on both surfaces (`BR-r10`)
+
+```gherkin
+Given a done sprint with three tickets of which one is done, a planned sprint whose two tickets are done, and a running sprint
+When they are recorded and the pane is opened on a terminal surface and on a desktop surface
+Then every call is accepted, the first card reads "state done, 2 ticket(s) not done", the second "state planned, all 2 ticket(s) done", and the running sprint carries no such mark
+```
+
+Test: a state that disagrees with the tickets is marked, not refused (terminal, desktop).
+
+### AC-59 — The roadmap is tried by a person on a terminal session and a desktop session
+
+```gherkin
+Given the plugin installed in a terminal session and in a desktop-app session
+When the agent records a sprint in each and the person opens the pane
+Then the result is recorded where the work is tracked, with the surface it was tried on
+```
+
+Test: none automated. What a mocked surface cannot prove is whether the pane draws and stays readable on the real surface; a person tries it and records the result.
