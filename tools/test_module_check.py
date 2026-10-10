@@ -443,6 +443,19 @@ def test_ac22_manifest_fields(tmp: Path) -> None:
           envelope["state"] == "clean" and envelope["findings"] == [],
           messages(envelope))
 
+    # `types` is a schema field: a mod that keeps values in $.state names its contract there.
+    body = json.dumps({"name": "fixture", "version": "0.1.0",
+                       "description": "The fixture module.",
+                       "types": "./types/index.d.ts"})
+    root = tmp / "ac22t"
+    (root / ".claude-plugin").mkdir(parents=True)
+    fixture(body, name="ac22t")
+    (root / "README.md").write_text(README, encoding="utf-8")
+    _, envelope = verdict(root)
+    check("`types`, the schema field naming a mod's own contract, raises nothing",
+          envelope["state"] == "clean" and envelope["findings"] == [],
+          messages(envelope))
+
     # The failure mode the rule exists against: keys no schema defines.
     body = json.dumps({"name": "fixture", "version": "0.1.0",
                        "description": "The fixture module.",

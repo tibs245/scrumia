@@ -190,6 +190,10 @@ Then no finding is raised against the omission — the absence is itself the sta
   BR-13 takes as conformant
 ```
 
+A manifest carrying `types`, a field the schema defines for a hooks mod's own contract,
+is conformant: the check's list of component fields follows the schema, and a standard
+that refused it would push a mod to keep its state elsewhere only to pass.
+
 The first scenario fails the day a manifest is allowed to grow a key the platform does
 not define, which is the invention the rule exists against. It does not fail on `author`,
 `license` or `keywords`: those are fields the plugin schema defines, every module the

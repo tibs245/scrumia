@@ -15,12 +15,14 @@ const BAND = { component: 'AbovePrompt', props: { hasSurvey: false } } as const
 
 type World = Parameters<Parameters<typeof test>[1]>[1]
 
-type Options = { entries?: Record<string, unknown> }
+type Options = { entries?: Record<string, unknown>; isStoreOwn?: boolean }
 
 const prepare = (on: World, options: Options = {}) => {
   const seen = { root: '/project-a', refuseNext: false, texts: [] as string[], contexts: [] as (readonly string[])[] }
-  mock.clock(on)
-  mock.store(on, options.entries)
+  const clock = mock.clock(on)
+  if (!options.isStoreOwn) {
+    mock.store(on, options.entries)
+  }
   on('session.root', () => ({ value: seen.root }))
   on('prompt.submit', ($, e) => {
     seen.texts.push(e.text)
@@ -34,7 +36,7 @@ const prepare = (on: World, options: Options = {}) => {
     return { text: e.text, context: e.context }
   })
 
-  return seen
+  return Object.assign(seen, { clock })
 }
 
 const said = (ran: { text?: string; result?: unknown; deny?: string }) =>
@@ -239,6 +241,60 @@ describe('questions inbox', () => {
     const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface: 'terminal', ...BAND })
     expect(await ui.find({ key: 'open' })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: /1 blocking/ })).toBeDefined()
+    await ui.unmount()
+  })
+
+  test('the texts of the questions reach the model labelled as its own', async ($, on) => {
+    const seen = prepare(on)
+    await $.tool.call(ASK)
+    const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface: 'terminal', ...PANE })
+    await ui.press({ key: 'send-all' })
+    await $.prompt.submit({ text: 'go' })
+    expect(seen.texts[0]).toBe('go')
+    expect(seen.contexts[0]!.join('\n')).toContain('The question texts are yours; the answers and notes are theirs.')
+    expect(seen.contexts[0]!.join('\n')).toContain('Quota par abonné ?')
+    await ui.unmount()
+  })
+
+  test('the send button sends only the answers of the filtered view', async ($, on) => {
+    const seen = prepare(on)
+    await $.tool.call(ASK)
+    await $.tool.call({ ...ASK, isBlocking: false, question: 'Libellé du bouton ?' })
+    const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface: 'terminal', ...PANE })
+    await ui.press({ key: 'filter-non-blocking' })
+    await ui.press({ key: 'send-all' })
+    await $.prompt.submit({ text: 'go' })
+    expect(seen.contexts[0]!.join('\n')).toContain('#2')
+    expect(seen.contexts[0]!.join('\n')).not.toContain('#1')
+    await ui.press({ key: 'filter-all' })
+    await ui.unmount()
+  })
+
+  test('a question delivered more than thirty days ago is dropped, a recent one is kept', async ($, on) => {
+    const entries = new Map<string, unknown>()
+    const seen = prepare(on, { isStoreOwn: true })
+    on('store.get', (_$, e) => ({ value: entries.get(e.key) }))
+    on('store.set', (_$, e) => {
+      entries.set(e.key, e.value)
+
+      return { value: undefined }
+    })
+    const stored = () => (entries.get('project:/project-a') as { questions: { id: number }[] }).questions.map(one => one.id)
+    await $.tool.call(ASK)
+    const ui = await $.ui.mount({ plugin: 'scrumia-questions', surface: 'terminal', ...PANE })
+    await ui.press({ key: 'send-all' })
+    await $.prompt.submit({ text: 'first' })
+    const day = 24 * 60 * 60 * 1000
+    await seen.clock.advance(29 * day)
+    await $.tool.call({ ...ASK, question: 'Seconde ?' })
+    await ui.press({ key: 'send-all' })
+    await $.prompt.submit({ text: 'second' })
+    expect(stored()).toEqual([1, 2])
+    await seen.clock.advance(2 * day)
+    await $.tool.call({ ...ASK, question: 'Troisième ?' })
+    await ui.press({ key: 'send-all' })
+    await $.prompt.submit({ text: 'third' })
+    expect(stored()).toEqual([2, 3])
     await ui.unmount()
   })
 })

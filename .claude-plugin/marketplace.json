@@ -10,7 +10,7 @@
       "name": "scrumia-core",
       "source": "./plugins/scrumia-core",
       "description": "The kernel: describes the project's active composition, its configuration, and the shared conventions. Does nothing on its own.",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "category": "workflow",
       "tags": [
         "scrumia",
@@ -419,7 +419,7 @@
       "name": "scrumia-questions",
       "source": "./plugins/scrumia-questions",
       "description": "Experimental mod: a questions inbox. The model parks a structured question instead of blocking, the person answers later from a pane, and the answer returns on the next prompt.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "workflow",
       "tags": [
         "scrumia",

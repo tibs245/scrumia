@@ -2,6 +2,13 @@
 
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.1] - 2026-10-10
+### Changed
+- The README links the feature that specifies the module and the decision placing it, and
+  says the inbox is a buffer whose decisions are reported in the linked ticket.
+- Tests added for the thirty-day purge, the send limited to the filtered view and the
+  question texts labelled as the model's own. No change to the code.
+
 ## [0.1.0] - 2026-10-10
 ### Added
 - The module, a proof of concept: a Claude Code mod (function hooks), not a skill module.

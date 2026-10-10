@@ -61,7 +61,7 @@ MANIFEST_METADATA = (
 MANIFEST_COMPONENTS = (
     "skills", "commands", "agents", "workflows", "hooks", "mcpServers",
     "outputStyles", "lspServers", "experimental", "userConfig", "channels",
-    "dependencies",
+    "dependencies", "types",
 )
 MANIFEST_ALLOWED = frozenset(
     MANIFEST_ALWAYS + MANIFEST_METADATA + MANIFEST_COMPONENTS
