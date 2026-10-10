@@ -1,6 +1,8 @@
 import type { EngineInterface, Register } from 'claude-code'
 
-type Answer = { text: string; isFree: boolean }
+type Answer = { text: string; notes?: string; isOther: boolean }
+
+type Draft = { choice?: string; notes?: string }
 
 type Question = {
   id: number
@@ -32,6 +34,8 @@ const PANE = 'questions'
 const QUESTIONS_KEY = 'questions'
 const SELECTED_KEY = 'selected'
 const FILTER_KEY = 'filter'
+const OTHER = 'Other'
+const draftKey = (id: number) => `draft:${id}`
 const ASK_TOOL = 'mcp__scrumia-questions__ask_later'
 
 const isPending = (one: Question) => one.answer === undefined
@@ -54,8 +58,28 @@ async function save($: EngineInterface, change: (list: Question[]) => Question[]
   return next
 }
 
-function answer($: EngineInterface, id: number, given: Answer) {
-  return save($, list => list.map(one => (one.id === id ? { ...one, answer: given } : one)))
+async function send($: EngineInterface, id: number, recommended: string | undefined) {
+  const draft = ((await $.store.get(draftKey(id))) ?? {}) as Draft
+  const choice = draft.choice ?? recommended
+  const notes = draft.notes?.trim() ?? ''
+  const isOther = choice === OTHER
+  if (choice === undefined || (isOther && notes === '')) {
+    return
+  }
+  await save($, list =>
+    list.map(one =>
+      one.id === id ? { ...one, answer: { text: choice, notes: notes === '' ? undefined : notes, isOther } } : one,
+    ),
+  )
+  await $.store.delete(draftKey(id))
+}
+
+async function amend($: EngineInterface, id: number, change: Partial<Draft>, isRedrawn: boolean) {
+  const draft = ((await $.store.get(draftKey(id))) ?? {}) as Draft
+  await $.store.set(draftKey(id), { ...draft, ...change })
+  if (isRedrawn) {
+    $.ui.invalidate('ui.render')
+  }
 }
 
 export const register: Register = on => {
@@ -121,7 +145,8 @@ export const register: Register = on => {
       return next(e)
     }
     const lines = ready.map(
-      one => `- #${one.id}${one.ticket ? ` (${one.ticket})` : ''} ${one.question}\n  Answer: ${one.answer!.text}`,
+      one =>
+        `- #${one.id}${one.ticket ? ` (${one.ticket})` : ''} ${one.question}\n  Answer: ${one.answer!.text}${one.answer!.notes ? `\n  Additional notes: ${one.answer!.notes}` : ''}`,
     )
     await save($, list => list.map(one => (isUndelivered(one) ? { ...one, isDelivered: true } : one)))
 
@@ -165,6 +190,7 @@ export const register: Register = on => {
     const picked = (await $.store.get(SELECTED_KEY)) as number | undefined
     const current = shown.find(one => one.id === picked) ?? shown[0]
     const blockingCount = everything.filter(isBlockingQuestion).length
+    const draft = current === undefined ? {} : (((await $.store.get(draftKey(current.id))) ?? {}) as Draft)
     const choose = async (key: string, value: unknown) => {
       await $.store.set(key, value)
       $.ui.invalidate('ui.render')
@@ -236,20 +262,33 @@ export const register: Register = on => {
             <Select
               key={`pick${current.id}`}
               label="Answer"
-              options={current.options.map(option => ({
-                value: option,
-                label: option === current.recommended ? `★ ${option} (recommended)` : option,
-              }))}
-              value={current.recommended}
-              onSelect={value => answer($, current.id, { text: value, isFree: false })}
+              options={[
+                ...current.options.map(option => ({
+                  value: option,
+                  label: option === current.recommended ? `★ ${option} (recommended)` : option,
+                })),
+                { value: OTHER, label: OTHER },
+              ]}
+              value={draft.choice ?? current.recommended}
+              onSelect={value => amend($, current.id, { choice: value }, true)}
             />
             <Input
-              key={`free${current.id}`}
-              label="Or your own answer"
-              placeholder="free text, Enter to send"
-              submitLabel="answer"
-              onSubmit={text => (text.trim() === '' ? undefined : answer($, current.id, { text, isFree: true }))}
+              key={`notes${current.id}`}
+              label="Additional notes"
+              placeholder={
+                (draft.choice ?? current.recommended) === OTHER
+                  ? 'required with Other: say what you decide'
+                  : 'always sent with your answer (optional)'
+              }
+              value={draft.notes}
+              submitLabel="send answer"
+              onInput={text => amend($, current.id, { notes: text }, false)}
+              onSubmit={async text => {
+                await amend($, current.id, { notes: text }, false)
+                await send($, current.id, current.recommended)
+              }}
             />
+            <Button key="send" label="Send answer" onPress={() => send($, current.id, current.recommended)} />
           </Box>
         )}
       </Box>

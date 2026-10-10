@@ -15,7 +15,7 @@ in an inbox, in one format, and the person answers when they choose.
 |---|---|
 | `ask_later` tool | The model parks a question: `context`, `ticket`, `question`, `impact`, `isBlocking`, `options`, `recommended`. It then carries on. |
 | Band above the prompt | `N questions waiting`, the blocking ones counted in red, with an Open button. Absent when nothing waits. |
-| `/questions` and its pane | A filter (All / Blocking / Non-blocking, with counts), the waiting questions blocking first with a coloured badge, one question as a bordered card (context, impact in Markdown), a picker over the suggested answers (the recommended one starred and preselected), a field for any other answer. |
+| `/questions` and its pane | A filter (All / Blocking / Non-blocking, with counts), the waiting questions blocking first with a coloured badge, one question as a bordered card (context, impact in Markdown), a picker over the suggested answers (the recommended one starred and preselected) that always ends with `Other`, an `Additional notes` field, and a `Send answer` button. |
 | `prompt.submit` hook | The answers not yet delivered are appended to the next prompt, once. |
 | `$.store` | Questions and answers survive the session. |
 
@@ -25,6 +25,8 @@ in an inbox, in one format, and the person answers when they choose.
 - A question without its context, impact and a recommended answer: the tool schema
   requires them, so an unstructured question has nowhere to go.
 - A silent answer: it returns once, appended to the prompt, never re-delivered.
+- An `Other` answer without a note: it is not sent, since it would say nothing.
+- Notes left behind: `Additional notes` travel with the answer whichever choice is picked.
 
 ## What it ships
 
