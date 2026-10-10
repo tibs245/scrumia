@@ -15,4 +15,10 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   `Other`, an `Additional notes` field always sent with the answer (required with `Other`),
   a `ready` mark per question and one `Send N answers` button that sends the ready answers
   of the filtered view. The preselected recommendation is the answer unless another is picked.
-- Answers return once, appended to the next prompt; questions persist across sessions.
+- Answers return once, as context beside the next prompt, once it went through; questions
+  persist across sessions, per project root.
+- A malformed call is refused with its reason, a blocking question tells the model not to go
+  ahead on what depends on it, and `Remove` takes a question out; delivered questions are
+  dropped after 30 days.
+- Data shape, to read again by any later version: `$.store`, key `project:<root>`: `{ nextId, questions, drafts }`. A question stored without
+  `isBlocking` still draws, as one that can wait.
