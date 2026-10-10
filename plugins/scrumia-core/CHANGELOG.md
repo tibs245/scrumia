@@ -4,6 +4,12 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-10
+### Changed
+- `scrumia-module check` accepts `types` in a manifest, the plugin schema field naming the
+  contract of a hooks mod that adds a noun to the engine (`module-anatomy` BR-13, AC-22).
+  It was refused as an invented key (#483).
+
 ## [0.4.1] - 2026-09-10
 ### Changed
 - `scrumia-init` seeds `sprint.design.model: opus` beside `sprint.max_tickets` in the team

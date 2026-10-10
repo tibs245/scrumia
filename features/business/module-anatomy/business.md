@@ -265,6 +265,11 @@ is what this feature exists to replace.
   forge, `homepage` when it publishes a docs URL, `author`, `license` and `keywords` when
   the module has one to state — and absent otherwise, on the rule
   `module-authoring/business.md` states: absent rather than filled with a placeholder.
+  The component fields the schema defines (`skills`, `commands`, `hooks`, `mcpServers`,
+  and the others) follow the same rule: present when the module ships the component. That
+  includes `types`, the field by which a hooks mod that adds a noun to the engine names the
+  file declaring that noun's contract — a module that keeps values in `$.state` states it
+  there, and the standard does not push it to keep them elsewhere to stay conformant.
   The set is the schema's, not this standard's invention: a rule that forbade a field the
   platform defines would make conformity to the standard and conformity to the loader
   exclusive, and a module has to be both. What the rule catches is the invented key — one

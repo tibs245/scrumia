@@ -2,6 +2,27 @@
 
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.2] - 2026-10-10
+### Changed
+- The answers are delivered only with a prompt the person typed (prompt box, Remote Control
+  bridge, or a plugin submitting as the person); a task notification, a sub-agent's return,
+  a scheduled trigger or a prompt of unknown origin leaves them waiting.
+- The delivered questions are purged thirty days after their delivery, not after they were
+  asked; a stored question without a delivery time falls back to the day it was asked. The
+  stored shape gains an optional `deliveredAt`.
+- The question, ticket, options and recommendation refuse a line break or a control
+  character, so the model cannot forge a line that passes for the person's answer.
+### Fixed
+- The README says unanswered questions are never purged, is no longer called a proof of
+  concept, and gains an `## Install` section.
+
+## [0.1.1] - 2026-10-10
+### Changed
+- The README links the feature that specifies the module and the decision placing it, and
+  says the inbox is a buffer whose decisions are reported in the linked ticket.
+- Tests added for the thirty-day purge, the send limited to the filtered view and the
+  question texts labelled as the model's own. No change to the code.
+
 ## [0.1.0] - 2026-10-10
 ### Added
 - The module, a proof of concept: a Claude Code mod (function hooks), not a skill module.

@@ -1,7 +1,7 @@
 {
   "name": "scrumia-questions",
   "description": "Experimental mod: a questions inbox. The model parks a structured question instead of blocking the session, the person answers later from a pane, and the answer returns on the next prompt.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": {
     "name": "tibs245"
   },
