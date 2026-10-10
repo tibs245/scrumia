@@ -8,6 +8,7 @@ type Question = {
   ticket?: string
   question: string
   impact: string
+  isBlocking?: boolean
   options: string[]
   recommended?: string
   askedAt: number
@@ -15,11 +16,14 @@ type Question = {
   isDelivered: boolean
 }
 
+type Filter = 'all' | 'blocking' | 'non-blocking'
+
 type AskInput = {
   context: string
   ticket?: string
   question: string
   impact: string
+  isBlocking?: boolean
   options: string[]
   recommended?: string
 }
@@ -27,10 +31,16 @@ type AskInput = {
 const PANE = 'questions'
 const QUESTIONS_KEY = 'questions'
 const SELECTED_KEY = 'selected'
+const FILTER_KEY = 'filter'
 const ASK_TOOL = 'mcp__scrumia-questions__ask_later'
 
 const isPending = (one: Question) => one.answer === undefined
 const isUndelivered = (one: Question) => one.answer !== undefined && !one.isDelivered
+const isBlockingQuestion = (one: Question) => one.isBlocking === true
+const matchesFilter = (filter: Filter) => (one: Question) =>
+  filter === 'all' || (filter === 'blocking') === isBlockingQuestion(one)
+const blockingFirst = (first: Question, second: Question) =>
+  Number(isBlockingQuestion(second)) - Number(isBlockingQuestion(first)) || first.id - second.id
 
 async function load($: EngineInterface) {
   return ((await $.store.get(QUESTIONS_KEY)) ?? []) as Question[]
@@ -58,7 +68,7 @@ export const register: Register = on => {
       name: 'ask_later',
       isDeferred: false,
       description:
-        'Park a question for the person instead of blocking the session on it. Use it when a decision belongs to them but you can continue meanwhile. Give the context, the linked ticket, the impact of the choice, 2-4 suggested answers and which one you recommend. Their answer comes back in a later prompt.',
+        'Park a question for the person instead of blocking the session on it. Use it when a decision belongs to them but you can continue meanwhile. Give the context, the linked ticket, the impact of the choice, whether it blocks work that cannot proceed without the answer, 2-4 suggested answers and which one you recommend. Their answer comes back in a later prompt.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -66,10 +76,14 @@ export const register: Register = on => {
           ticket: { type: 'string', description: 'Linked ticket, e.g. #3528' },
           question: { type: 'string' },
           impact: { type: 'string', description: 'What changes depending on the answer' },
+          isBlocking: {
+            type: 'boolean',
+            description: 'true when part of the work cannot proceed without the answer, false when it can wait',
+          },
           options: { type: 'array', items: { type: 'string' }, description: 'Suggested answers' },
           recommended: { type: 'string', description: 'The recommended option, copied from options' },
         },
-        required: ['context', 'question', 'impact', 'options'],
+        required: ['context', 'question', 'impact', 'isBlocking', 'options'],
       },
     })
 
@@ -87,6 +101,7 @@ export const register: Register = on => {
         ticket: input.ticket,
         question: input.question,
         impact: input.impact,
+        isBlocking: input.isBlocking === true,
         options: input.options,
         recommended: input.options.includes(input.recommended ?? '') ? input.recommended : undefined,
         askedAt,
@@ -120,70 +135,123 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
-    const pending = (await load($)).filter(isPending).length
-    if (e.props.hasSurvey || pending === 0) {
+    const pending = (await load($)).filter(isPending)
+    if (e.props.hasSurvey || pending.length === 0) {
       return next(e)
     }
+    const blocking = pending.filter(isBlockingQuestion).length
     const { Box, Button, Text } = $.ui.resolve(e)
 
     return (
-      <Box>
-        <Text>
-          {pending} question{pending > 1 ? 's' : ''} waiting{' '}
+      <Box gap={1}>
+        <Text bold>
+          {pending.length} question{pending.length > 1 ? 's' : ''} waiting
         </Text>
+        {blocking > 0 && (
+          <Text color="error" bold>
+            {blocking} blocking
+          </Text>
+        )}
         <Button key="open" label="Open" onPress={() => $.ui.open({ id: PANE, title: 'Questions' })} />
       </Box>
     )
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Button, Input, Select, Text } = $.ui.resolve(e)
-    const pending = (await load($)).filter(isPending)
+    const { Box, Button, Input, Markdown, Select, Text } = $.ui.resolve(e)
+    const everything = (await load($)).filter(isPending)
+    const filter = (((await $.store.get(FILTER_KEY)) as Filter | undefined) ?? 'all') as Filter
+    const shown = everything.filter(matchesFilter(filter)).sort(blockingFirst)
     const picked = (await $.store.get(SELECTED_KEY)) as number | undefined
-    const current = pending.find(one => one.id === picked) ?? pending[0]
-
-    if (current === undefined) {
-      return <Text dimColor>No question waiting.</Text>
+    const current = shown.find(one => one.id === picked) ?? shown[0]
+    const blockingCount = everything.filter(isBlockingQuestion).length
+    const choose = async (key: string, value: unknown) => {
+      await $.store.set(key, value)
+      $.ui.invalidate('ui.render')
     }
+    const filters: { value: Filter; label: string; count: number }[] = [
+      { value: 'all', label: 'All', count: everything.length },
+      { value: 'blocking', label: 'Blocking', count: blockingCount },
+      { value: 'non-blocking', label: 'Non-blocking', count: everything.length - blockingCount },
+    ]
 
     return (
-      <Box flexDirection="column">
-        <Box flexDirection="column">
-          {pending.map(one => (
-            <Button
-              key={`q${one.id}`}
-              onPress={async () => {
-                await $.store.set(SELECTED_KEY, one.id)
-                $.ui.invalidate('ui.render')
-              }}
-            >
-              {one.id === current.id ? '> ' : '  '}#{one.id} {one.question.slice(0, 50)}
+      <Box flexDirection="column" gap={1}>
+        <Box gap={2}>
+          <Text bold>Questions</Text>
+          {filters.map(one => (
+            <Button key={`filter-${one.value}`} onPress={() => choose(FILTER_KEY, one.value)}>
+              <Text bold={filter === one.value} inverse={filter === one.value} dimColor={filter !== one.value}>
+                {' '}
+                {one.label} {one.count}{' '}
+              </Text>
             </Button>
           ))}
         </Box>
-        <Text bold>{current.question}</Text>
-        {current.ticket && <Text dimColor>Ticket: {current.ticket}</Text>}
-        <Text dimColor>Context</Text>
-        <Text>{current.context}</Text>
-        <Text dimColor>Impact</Text>
-        <Text>{current.impact}</Text>
-        <Select
-          key={`pick${current.id}`}
-          label="Answer"
-          options={current.options.map(option => ({
-            value: option,
-            label: option === current.recommended ? `${option} (recommended)` : option,
-          }))}
-          value={current.recommended}
-          onSelect={value => answer($, current.id, { text: value, isFree: false })}
-        />
-        <Input
-          key={`free${current.id}`}
-          label="Or your own answer"
-          placeholder="free text, Enter to send"
-          submitLabel="answer"
-          onSubmit={text => (text.trim() === '' ? undefined : answer($, current.id, { text, isFree: true }))}
-        />
+        {current === undefined && <Text dimColor>No question here. Nothing waits on you.</Text>}
+        {current !== undefined && (
+          <Box flexDirection="column">
+            {shown.map(one => (
+              <Button key={`q${one.id}`} onPress={() => choose(SELECTED_KEY, one.id)}>
+                <Text color={isBlockingQuestion(one) ? 'error' : 'suggestion'} bold>
+                  {one.id === current.id ? '▶ ' : '  '}
+                  {isBlockingQuestion(one) ? '● BLOCKING ' : '○ can wait '}
+                </Text>
+                <Text bold={one.id === current.id}>
+                  #{one.id} {one.ticket ? `${one.ticket} · ` : ''}
+                  {one.question.slice(0, 60)}
+                </Text>
+              </Button>
+            ))}
+          </Box>
+        )}
+        {current !== undefined && (
+          <Box
+            flexDirection="column"
+            gap={1}
+            padding={1}
+            borderStyle="round"
+            borderColor={isBlockingQuestion(current) ? 'error' : 'suggestion'}
+          >
+            <Box gap={2}>
+              <Text color={isBlockingQuestion(current) ? 'error' : 'suggestion'} bold>
+                {isBlockingQuestion(current) ? '● BLOCKING' : '○ CAN WAIT'}
+              </Text>
+              {current.ticket && <Text dimColor>{current.ticket}</Text>}
+              <Text dimColor>#{current.id}</Text>
+            </Box>
+            <Text bold>{current.question}</Text>
+            <Box flexDirection="column">
+              <Text color="subtle" bold>
+                CONTEXT
+              </Text>
+              <Markdown text={current.context} />
+            </Box>
+            <Box flexDirection="column">
+              <Text color="subtle" bold>
+                IMPACT
+              </Text>
+              <Markdown text={current.impact} />
+            </Box>
+            <Select
+              key={`pick${current.id}`}
+              label="Answer"
+              options={current.options.map(option => ({
+                value: option,
+                label: option === current.recommended ? `★ ${option} (recommended)` : option,
+              }))}
+              value={current.recommended}
+              onSelect={value => answer($, current.id, { text: value, isFree: false })}
+            />
+            <Input
+              key={`free${current.id}`}
+              label="Or your own answer"
+              placeholder="free text, Enter to send"
+              submitLabel="answer"
+              onSubmit={text => (text.trim() === '' ? undefined : answer($, current.id, { text, isFree: true }))}
+            />
+          </Box>
+        )}
       </Box>
     )
   })
