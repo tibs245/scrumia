@@ -414,6 +414,22 @@
       "author": {
         "name": "tibs245"
       }
+    },
+    {
+      "name": "scrumia-questions",
+      "source": "./plugins/scrumia-questions",
+      "description": "Experimental mod: a questions inbox. The model parks a structured question instead of blocking, the person answers later from a pane, and the answer returns on the next prompt.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": [
+        "scrumia",
+        "mod",
+        "questions",
+        "inbox"
+      ],
+      "author": {
+        "name": "tibs245"
+      }
     }
   ]
 }
