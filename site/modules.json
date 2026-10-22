@@ -27,5 +27,6 @@
   "scrumia-functional-programming": { "emoji": "🌀", "slot": null },
   "scrumia-questions": { "emoji": "❓", "slot": null },
   "scrumia-issues": { "emoji": "🎫", "slot": null },
-  "scrumia-roadmap": { "emoji": "🗺️", "slot": null }
+  "scrumia-roadmap": { "emoji": "🗺️", "slot": null },
+  "scrumia-web-audience": { "emoji": "📊", "slot": null }
 }

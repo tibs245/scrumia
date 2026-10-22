@@ -575,6 +575,10 @@
           <input type="checkbox" name="c-add" value="scrumia-roadmap">
           <b>scrumia-roadmap</b><span>Les sprints que l&#x27;agent a planifiés, et ce que vous pourrez vraiment tester.</span>
         </label>
+        <label class="opt opt-add">
+          <input type="checkbox" name="c-add" value="scrumia-web-audience">
+          <b>scrumia-web-audience</b><span>Mesurer l&#x27;audience, rester dans l&#x27;exemption.</span>
+        </label>
         <!-- A div, not a label: a label wrapping the field would toggle the box on
              every click into it. Absent without script rather than inert — text
              cannot become YAML through :has(), and a field that silently does
@@ -933,6 +937,19 @@ apps:
       <p class="mod-desc">Le schéma fait autorité, les erreurs ciblent le champ là où un utilisateur les lit, et le parsing se fait à la frontière de confiance — pas sur des valeurs que le compilateur a déjà prouvées. Épinglé à Zod v4, avec une compétence d'audit et un détecteur de frontières.</p>
       <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
       <code class="mod-cmd">/plugin install scrumia-zod@scrumia</code>
+    </div>
+
+    <div class="mod">
+      <div class="mod-head">
+        <span class="mod-ico">📊</span>
+        <span class="mod-id">
+          <a class="mod-name" href="modules/scrumia-web-audience.html">scrumia-web-audience</a>
+          <span class="mod-slot">aucun slot</span>
+        </span>
+      </div>
+      <p class="mod-desc">La mesure d'audience sans bandeau de consentement : un catalogue d'événements fermé, un module unique qui possède le traceur, des adresses nettoyées avant de partir, la production seulement, une opposition qui dure, et les conditions de l'exemption en questions. Matomo en exemple, avec une compétence d'audit et un détecteur.</p>
+      <div class="mod-foot"><span class="pill pill-ok">disponible</span><span class="pill">1 compétences</span></div>
+      <code class="mod-cmd">/plugin install scrumia-web-audience@scrumia</code>
     </div>
 
     <div class="mod">

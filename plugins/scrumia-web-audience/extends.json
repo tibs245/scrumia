@@ -1,0 +1,36 @@
+{
+  "implement": [
+    { "name": "Closed event catalogue", "type": "refusal", "when": "required",
+      "summary": "An event is sent only if the specification lists it, and the code holds the same list as a typed constant",
+      "read": "rules/closed-event-catalogue.md" },
+    { "name": "One module owns the tracker", "type": "refusal", "when": "required",
+      "summary": "Pages declare events by attribute; only the measurement module touches the tracker queue",
+      "read": "rules/one-module-declarative-markup.md" },
+    { "name": "Cleaned addresses", "type": "refusal", "when": "required",
+      "summary": "The address sent is the path template, with no query, no fragment and a referrer reduced to its origin",
+      "read": "rules/cleaned-addresses.md" },
+    { "name": "Production only, browser signals honoured", "type": "refusal", "when": "required",
+      "summary": "The site identifier is a build setting, empty means nothing is rendered, and the tracker never loads when the browser says no",
+      "read": "rules/production-only-and-browser-signals.md" },
+    { "name": "An opt-out that lasts", "type": "refusal", "when": "required",
+      "summary": "A control in the privacy policy with three states, and a refusal cookie that outlasts the measurement cookie",
+      "read": "rules/opt-out-that-lasts.md" },
+    { "name": "Exemption conditions", "type": "norm", "when": "required",
+      "summary": "Fifteen closed questions to answer before a measurement change is called exempt from consent; campaigns are outside",
+      "read": "rules/exemption-conditions.md" },
+    { "name": "Auditing audience measurement", "type": "method", "when": "optional",
+      "summary": "Six questions that find an event outside the catalogue, a direct tracker call, a raw address, a missing signal or opt-out, and a failed exemption condition",
+      "read": "skills/web-audience-audit/SKILL.md" }
+  ],
+  "review": [
+    { "name": "An event outside the catalogue or a direct tracker call", "type": "refusal", "when": "required",
+      "summary": "A name the specification does not list, or a page that reaches the tracker itself, escapes the catalogue and the cleaning",
+      "read": "rules/one-module-declarative-markup.md" },
+    { "name": "A raw address sent to the measurement", "type": "refusal", "when": "required",
+      "summary": "A query string, fragment or variable path segment turns a page count into a record about a person",
+      "read": "rules/cleaned-addresses.md" },
+    { "name": "A change that leaves the exemption", "type": "norm", "when": "required",
+      "summary": "A new event, cookie, field or feature is checked against the fifteen conditions before it merges",
+      "read": "rules/exemption-conditions.md" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "scrumia-web-audience",
+  "description": "Audience measurement on a web app kept inside the consent exemption: a closed event catalogue, one module that owns the tracker, cleaned addresses, nothing outside production, an opt-out that lasts, and the exemption conditions to verify against the regulator's text. Matomo is the worked example, not a requirement.",
+  "version": "0.1.0",
+  "author": {
+    "name": "tibs245"
+  },
+  "homepage": "https://github.com/tibs245/scrumia",
+  "repository": "https://github.com/tibs245/scrumia",
+  "license": "MIT",
+  "keywords": [
+    "scrumia",
+    "analytics",
+    "audience",
+    "privacy",
+    "consent"
+  ]
+}

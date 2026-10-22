@@ -1,0 +1,9 @@
+{
+  "title": "scrumia-web-audience — ScrumIA",
+  "meta_description": "scrumia-web-audience : la mesure d'audience gardée dans l'exemption de consentement — un catalogue d'événements fermé, un module qui possède le traceur, des adresses nettoyées, une opposition qui dure.",
+  "og_title": "scrumia-web-audience — ScrumIA",
+  "tagline": "Mesurer l'audience, rester dans l'exemption.",
+  "responsibilities": "<p>Cinq règles de refus et une liste de contrôle : les événements viennent d'un catalogue fermé ; un module possède le traceur et les pages déclarent leurs événements par attribut ; l'adresse envoyée est le gabarit du chemin ; rien n'est mesuré hors production ni contre un signal du navigateur ; l'opposition est dans la politique de confidentialité et dure plus que le cookie de mesure. La liste de contrôle transforme les conditions de l'exemption en quinze questions fermées. Livre une compétence <code>web-audience-audit</code> et un détecteur qui liste les fichiers hors du module qui touchent la file du traceur — une recherche de texte, donc un appel sous un alias n'est pas trouvé.</p>",
+  "refusals": "<p>Un événement que la spécification ne liste pas. Une page qui appelle elle-même le traceur. Une chaîne de requête, un fragment ou un code dans un chemin envoyés à la mesure. Une mesure hors production. Une opposition qui dure moins que le cookie qu'elle refuse. Une attribution par campagne présentée comme exemptée.</p>",
+  "philosophy": "<p>Présume que la mesure est exemptée en bloc ou pas du tout, donc chaque ajout est confronté aux conditions avant de partir. La liste paraphrase l'autorité française et dit que son texte en vigueur prévaut ; un projet sous une autre autorité garde la structure et change la liste. Coûte une modification de la spécification par événement, et rend une politique de confidentialité qui reste vraie.</p>"
+}
