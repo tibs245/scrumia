@@ -30,5 +30,6 @@
 | [release-versioning](business/release-versioning/index.md) | business | active | What a module's version number promises a project that has already adopted it, and what moves that number. |
 | [runtime-validation](business/runtime-validation/index.md) | business | draft | Type-safe runtime validation at trust boundaries, applicable to React and SolidJS implementations. |
 | [session-mods](business/session-mods/index.md) | business | draft | What a session mod is and what each one promises the person driving a session. |
+| [web-audience-measurement](business/web-audience-measurement/index.md) | business | draft | Audience measurement on a web app that stays inside the conditions under which a data-protection authority exempts it from consent: a… |
 | [work-item-format](business/work-item-format/index.md) | business | draft | What any form of work item has to satisfy, whichever module supplies it and whichever tracker renders it. |
 | [standard](business/work-item-format/standard/index.md) | business | draft | The form this repository ships: five sections, three of them written by whoever opens the issue and two composed from the modules the… |

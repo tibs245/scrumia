@@ -165,6 +165,8 @@
   "mod_slot_compound": "aucun slot",
   "mod_zod_d": "Le schéma fait autorité, les erreurs ciblent le champ là où un utilisateur les lit, et le parsing se fait à la frontière de confiance — pas sur des valeurs que le compilateur a déjà prouvées. Épinglé à Zod v4, avec une compétence d'audit et un détecteur de frontières.",
   "mod_slot_zod": "aucun slot",
+  "mod_webaudience_d": "La mesure d'audience sans bandeau de consentement : un catalogue d'événements fermé, un module unique qui possède le traceur, des adresses nettoyées avant de partir, la production seulement, une opposition qui dure, et les conditions de l'exemption en questions. Matomo en exemple, avec une compétence d'audit et un détecteur.",
+  "mod_slot_webaudience": "aucun slot",
   "mod_slot_tdd": "aucun slot",
   "mod_slot_solid": "aucun slot",
   "mod_slot_tanstack": "aucun slot",

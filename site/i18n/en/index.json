@@ -165,6 +165,8 @@
   "mod_slot_compound": "no slot",
   "mod_zod_d": "The schema is the source of truth, errors are field-targeted where a user reads them, and parsing happens at the trust boundary — not on values the compiler already proved. Pinned to Zod v4, with an audit skill and a boundary detector.",
   "mod_slot_zod": "no slot",
+  "mod_webaudience_d": "Audience measurement without a consent banner: a closed event catalogue, one module that owns the tracker, addresses cleaned before they leave, production only, an opt-out that lasts, and the exemption conditions as questions. Matomo as the example, with an audit skill and a detector.",
+  "mod_slot_webaudience": "no slot",
   "mod_slot_tdd": "no slot",
   "mod_slot_solid": "no slot",
   "mod_slot_tanstack": "no slot",
