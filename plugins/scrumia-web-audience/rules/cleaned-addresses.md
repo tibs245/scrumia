@@ -15,17 +15,20 @@ page count into a record about a person. The tracker's default is to send it all
 
 ## What is written instead
 
-The module computes the address it sends, with a pure function, and hands it to the
-tracker explicitly (`setCustomUrl` in Matomo) instead of letting the tracker read it.
+The module computes the address it sends, with a pure function, and puts it in the body
+itself (`url` in Umami's payload) or hands it to the tracker explicitly (`setCustomUrl`
+in Matomo), instead of letting a tracker read it.
 
 - **The path is reduced to its template.** `/join/8F3K-22QA` becomes `/join/:code`,
   `/fr/join/8F3K-22QA` becomes `/fr/join/:code`. The list of routes that carry a
   variable part is the application's own, kept next to the routes.
 - **No query string, no fragment.** None is sent, whatever its name.
 - **The referrer is reduced to its origin**, and is empty for a navigation inside
-  the site (`setReferrerUrl`).
+  the site (`setReferrerUrl` in Matomo; in a body sent directly, the field is simply
+  empty). A referrer that does not parse is empty too.
 - **The title is the page's own title** and never contains the variable part. A page
-  whose title would carry it is given a fixed one for measurement.
+  whose title would carry it is given a fixed one for measurement, or, when the body
+  is built by the module, no title is sent at all.
 - **A page that reads a token does not load the tracker at all** when even the
   template is more than the purpose needs. Say which in the specification.
 - **Campaign tags are not kept.** Attribution by campaign name or tag is marketing

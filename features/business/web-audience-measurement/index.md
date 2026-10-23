@@ -7,8 +7,9 @@
 Audience measurement on a web app that stays inside the conditions under which a
 data-protection authority exempts it from consent: a closed event catalogue, one module
 that owns the tracker, cleaned addresses, nothing outside production, an opposition that
-lasts. The plugin that carries it (`scrumia-web-audience`) is generic — Matomo is the
-worked example — and its exemption checklist is drawn from the French authority's
+lasts, sent straight to the tool's collection on the site's own domain, with the tool and
+its database kept apart. The plugin that carries it (`scrumia-web-audience`) is generic —
+Umami is the worked example, Matomo another — and its exemption checklist is drawn from the French authority's
 published conditions.
 
 ## Links

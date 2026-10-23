@@ -26,13 +26,16 @@ neither imports it for the queue nor mentions the product.
   wrong name does not compile.
 - **An event with no element to carry it** (a confirmation shown after an
   asynchronous step) is a function exported by the module, named after the event.
-- **The tracker is loaded by the module** from a same-origin path, so the content
-  security policy stays as it was. A configuration script the build processes keeps
-  its fingerprint out of the policy; an inline one does not.
+- **The module owns the way out.** It either loads the tracker from a same-origin
+  path or, better, sends to the tool's collection itself
+  (`send-to-the-collection-directly.md`), so the content security policy stays as it
+  was. A script the build processes keeps its fingerprint out of the policy; an
+  inline one does not.
 - **A test makes the rule fail.** It lists the source files outside the module and
-  fails if any contains the queue's name (`_paq` for Matomo). The bundled script
+  fails if any contains the queue's name (`_paq` for Matomo) or, for a module that
+  sends directly, the collection path written in quotes. The bundled script
   `scripts/detect-direct-tracker-calls.sh` is the same check for a codebase with no
-  such test yet.
+  such test yet (`--queue /audience/collect` for the path).
 
 ## Why
 

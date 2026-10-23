@@ -1,6 +1,6 @@
 {
   "name": "scrumia-web-audience",
-  "description": "Audience measurement on a web app kept inside the consent exemption: a closed event catalogue, one module that owns the tracker, cleaned addresses, nothing outside production, an opt-out that lasts, and the exemption conditions to verify against the regulator's text. Matomo is the worked example, not a requirement.",
+  "description": "Audience measurement on a web app kept inside the consent exemption: a closed event catalogue, one module that owns the tracker, cleaned addresses, a direct send on the site's own domain, nothing outside production, an opt-out that lasts, the tool and its database kept apart, and the exemption conditions to verify against the regulator's text. Umami is the worked example, not a requirement.",
   "version": "0.1.0",
   "author": {
     "name": "tibs245"

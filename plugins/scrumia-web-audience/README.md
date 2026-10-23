@@ -3,13 +3,14 @@
 Audience measurement for a web app that wants figures without asking visitors for
 consent. It keeps the measurement inside the conditions a data-protection authority
 sets for that exemption: a closed list of events, one module that owns the tracker,
-addresses cleaned before they leave, nothing outside production, and an opposition
-that lasts. Matomo is the worked example; no rule requires it.
+addresses cleaned before they leave, a send that goes straight to the tool's collection
+on the site's own domain, nothing outside production, and an opposition that lasts.
+Umami is the worked example, Matomo another; no rule requires either.
 
 ## What it answers
 
 How a web app measures its audience, and goes on changing that measurement, without
-drifting out of the exemption one reasonable event at a time. Five refusals mark the
+drifting out of the exemption one reasonable event at a time. Nine refusals mark the
 seams where it drifts, and a checklist of the exemption conditions turns "is this
 still exempt?" into questions with a yes or a no.
 
@@ -17,11 +18,21 @@ still exempt?" into questions with a yes or a no.
 
 - An event name the specification does not list.
 - A page, component or script that calls the tracker itself, or names the product.
+- The tool's own script in the pages, or a send to another domain than the site's, or a
+  body carrying more than the specification lists.
+- A proxy that relays more than the collection route, that lets the visitor choose the
+  address the tool sees, or that logs the measurement.
+- A measurement that delays the page, or whose failure shows on it.
+- A tool whose database an application role can read, that calls out, or whose
+  administration is on the Internet.
 - The page's real address sent to the measurement: query string, fragment, a token or
   a code in the path.
 - A measurement that runs outside production, or loads after the browser said no.
-- An opt-out that is missing, hidden outside the privacy policy, or shorter-lived
-  than the measurement it refuses.
+- An opt-out that is missing, hidden outside the privacy policy, that the tool does
+  not recognise, shorter-lived than the measurement it refuses, or ignored when it
+  cannot be read.
+- A privacy policy that says "no tracker" because there is no cookie, or "anonymous"
+  of lines that carry a computed identifier.
 - Campaign attribution presented as exempt. It is marketing measurement and needs consent.
 
 ## What it ships
@@ -31,10 +42,14 @@ still exempt?" into questions with a yes or a no.
 | `rules/closed-event-catalogue.md` | The events are a table in the specification and a typed constant in the code. |
 | `rules/one-module-declarative-markup.md` | One module owns the tracker; pages declare events by attribute. |
 | `rules/cleaned-addresses.md` | The path template, no query, no fragment, the referrer as an origin. |
-| `rules/production-only-and-browser-signals.md` | Build-time site identifier, empty means nothing, signals honoured. |
-| `rules/opt-out-that-lasts.md` | The control, its three states, the cookie that outlasts. |
-| `rules/exemption-conditions.md` | Fifteen conditions as closed questions, and what lies outside. |
-| `web-audience-audit` (skill) | Six questions, one per rule, for an app that already measures. |
+| `rules/send-to-the-collection-directly.md` | The module posts the listed keys to the tool's collection, same domain, no vendor script. |
+| `rules/the-proxy-opens-one-route.md` | One route, bounded; the proxy writes the client address; no access log. |
+| `rules/measurement-after-the-page.md` | Starts when the page is idle, swallows every failure, and a test proves it. |
+| `rules/production-only-and-browser-signals.md` | Build-time site identifier, empty means nothing, signals read before every send. |
+| `rules/opt-out-that-lasts.md` | The control, its states, the marker the tool respects, and what lasts. |
+| `rules/tool-and-database-apart.md` | Its own database, no outgoing call, administration off the Internet, a purge. |
+| `rules/exemption-conditions.md` | Fifteen conditions as closed questions, no cookie is not no tracker, and what lies outside. |
+| `web-audience-audit` (skill) | Ten questions, one per rule, for an app that already measures. |
 | `scripts/detect-direct-tracker-calls.sh` | Lists files outside the module that mention the tracker queue. |
 
 The rules reach the `implement` and `review` registers through `extends.json`.
@@ -44,7 +59,9 @@ The rules reach the `implement` and `review` registers through `extends.json`.
 The exemption conditions are paraphrased from the French data-protection authority
 (CNIL): the guidelines and the recommendation on cookies and other trackers, the
 self-assessment tool for an audience measurement exempt from consent (July 2025), and
-the configuration guide it publishes for Matomo. They are read on cnil.fr, and the
+the configuration guide it publishes for a product, where it publishes one. What the
+module says of Umami comes from Umami's own documentation and source, for the version
+in use. They are read on cnil.fr, and the
 paraphrase does not replace them: the regulator's current text prevails. A project
 outside France takes the module's structure and replaces the checklist with its own
 authority's conditions.
@@ -52,7 +69,8 @@ authority's conditions.
 ## What it expects to find
 
 A web app with a build step that can read a build-time setting, a privacy policy page
-the app controls, and a specification where the event catalogue can live. The rules
+the app controls, a specification where the event catalogue can live, and, for the
+proxy and database rules, a deployment the project controls. The rules
 are about where things sit, not about which framework surrounds them.
 
 ## Not shipped yet
