@@ -466,7 +466,7 @@
     {
       "name": "scrumia-web-audience",
       "source": "./plugins/scrumia-web-audience",
-      "description": "Audience measurement on a web app kept inside the consent exemption — a closed event catalogue, one module that owns the tracker, cleaned addresses, production only, an opt-out that lasts, and the exemption conditions as questions. Matomo as the example. Plugs in app by app.",
+      "description": "Audience measurement on a web app kept inside the consent exemption — a closed event catalogue, one module that owns the tracker, cleaned addresses, a direct send, production only, an opt-out that lasts, the tool and its database apart, and the exemption conditions as questions. Umami as the example. Plugs in app by app.",
       "version": "0.1.0",
       "category": "workflow",
       "tags": [

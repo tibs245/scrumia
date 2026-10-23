@@ -15,8 +15,10 @@ loads after the browser has sent a do-not-track signal.
   environment and declared in the environment type. The inventory of the production
   deployment sets it; every other environment leaves it empty.
 - **Empty means nothing is rendered**: no script, no configuration, no opt-out
-  control. A value that is present and is not a positive integer stops the build and
-  names the variable, rather than measuring the wrong site.
+  control. A value that is present and not in the tool's identifier format (a positive
+  integer for Matomo, a lowercase UUID for Umami) stops the build and names the
+  variable, rather than measuring the wrong site. The identifier is not a secret:
+  it travels in every send.
 - **No banner.** If the measurement stays inside the exemption, nothing asks for
   consent, and a banner would announce a choice that does not exist. A banner is
   what the application needs the day it leaves the exemption, and that is a
@@ -25,7 +27,9 @@ loads after the browser has sent a do-not-track signal.
   (`navigator.globalPrivacyControl`) and Do Not Track (`navigator.doNotTrack`,
   `window.doNotTrack`, values `1` or `yes`). If either is set, the tracker is not
   loaded. Configuring the tracker to respect it is not enough: a tracker never
-  loaded sends nothing and sets no cookie.
+  loaded sends nothing and sets no cookie. The tools' own trackers do not all read
+  Global Privacy Control, which is another reason the module reads both itself, and
+  does so before every send, not once at load.
 - **Pages that must not be measured at all** (the ones that read a token, an
   administration area) are a list in the module, tested.
 

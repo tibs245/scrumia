@@ -40,31 +40,78 @@ Then a finding names the file, the rule (`web-audience-measurement/BR-4`) and wh
 ```gherkin
 Given a literal site identifier in the source, or a tracker loaded although
   `navigator.globalPrivacyControl` is true
-When the audit's fourth question is answered
+When the audit's seventh question is answered
 Then a finding names the file and the rule (`web-audience-measurement/BR-5`)
 And an empty identifier that renders no script, no configuration and no control is not a
   finding
 ```
 
-### AC-5 — An opt-out shorter than the measurement cookie is refused
+### AC-5 — An opt-out shorter than the measurement, or ignored when unreadable, is refused
 
 ```gherkin
-Given a refusal cookie whose lifetime is shorter than the measurement cookie's
-When the audit's fifth question is answered
-Then a finding names the rule (`web-audience-measurement/BR-6`) and both durations
+Given a refusal cookie whose lifetime is shorter than the measurement cookie's, or a
+  module that sends when the refusal marker cannot be read
+When the audit's eighth question is answered
+Then a finding names the rule (`web-audience-measurement/BR-6`) and, for a cookie, both
+  durations
 And a missing control in the privacy policy is a finding of the same rule
+And a storage marker with no expiry that the policy says lasts until cleared is not a
+  finding
 ```
 
 ### AC-6 — The checklist is answered question by question
 
 ```gherkin
 Given a measured app and the rule `exemption-conditions.md`
-When the audit's sixth question is answered
+When the audit's tenth question is answered
 Then each of the fifteen questions is reported yes, no or not verifiable, with the file
   or setting that answered it
 And a question about the server is answered from the server's configuration and the
   report says so
 And a campaign tag kept from the address is reported as outside the exemption
+And a privacy policy that says "no tracker" for a computed identifier, or "anonymous"
+  for stored lines that carry it, is reported against question 11 or 12
+```
+
+### AC-8 — A vendor script, another domain or a loose body is refused
+
+```gherkin
+Given a page that loads the tool's own script, or a module that posts to another domain,
+  or a payload carrying a key the specification does not list
+When the audit's fourth question is answered
+Then a finding names the file and the rule (`web-audience-measurement/BR-9`)
+And a module that posts the listed keys to a path on the site's own domain is not a
+  finding
+```
+
+### AC-9 — A proxy that relays more than the collection is refused
+
+```gherkin
+Given a reverse proxy configuration that relays the whole prefix, or leaves the client
+  address header to the visitor, or logs the route
+When the audit's fifth question is answered from that configuration
+Then a finding names the file and the rule (`web-audience-measurement/BR-10`)
+And with no configuration in the repository the question is reported not verifiable,
+  never yes
+```
+
+### AC-10 — A failure that reaches the page is refused
+
+```gherkin
+Given a module with no test that makes the send throw, reject or reach nothing
+When the audit's sixth question is answered
+Then a finding names the rule (`web-audience-measurement/BR-11`)
+And a module that starts only after load and idle, with those three tests, is not a
+  finding
+```
+
+### AC-11 — A tool that shares the application's database is refused
+
+```gherkin
+Given a tool whose schema sits in the application's database, or an application role
+  that can read the tool's, or a tool with no retention and no purge
+When the audit's ninth question is answered from the deployment's configuration
+Then a finding names the rule (`web-audience-measurement/BR-12`)
 ```
 
 ## Plumbing
@@ -76,7 +123,7 @@ Given the plugin's tree
 When `scrumia-module check plugins/scrumia-web-audience` and `python3 tools/validate.py` run
 Then both pass, naming no finding
 And no file of the plugin names a project, a repository outside this one, or a ticket
-And Matomo appears only as an example, never as a condition of a rule
+And Umami and Matomo appear only as examples, never as a condition of a rule
 And the plugin's entry in `site/modules.json` carries an emoji distinct from every other
   module's, with the prose for both `en` and `fr`
 ```
