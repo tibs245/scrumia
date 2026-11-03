@@ -24,6 +24,9 @@
     { "name": "contentDescription on icon-only controls", "type": "refusal", "when": "required",
       "summary": "An `IconButton` or icon-only `Button` without a `contentDescription` is refused; the TalkBack label is part of the contract, not a finishing touch",
       "read": "rules/content-description.md" },
+    { "name": "Navigation stack tolerates a double touch", "type": "refusal", "when": "required",
+      "summary": "A gesture that opens a screen must not push the same destination twice (guard at the one place a screen is added), and an action closing several screens stops at a named destination, never after a fixed count",
+      "read": "rules/navigation-stack-idempotent.md" },
     { "name": "Material 3 audit", "type": "method", "when": "optional",
       "summary": "Measure an Android or Kotlin Multiplatform Mobile surface against these refusals, finding by finding",
       "read": "skills/material3-audit/SKILL.md" }
@@ -52,11 +55,14 @@
       "read": "rules/contrast-ratios.md" },
     { "name": "Icon-only control without contentDescription", "type": "refusal", "when": "required",
       "summary": "An `IconButton` without a TalkBack-readable label is refused",
-      "read": "rules/content-description.md" }
+      "read": "rules/content-description.md" },
+    { "name": "Double touch pushes a screen twice", "type": "refusal", "when": "required",
+      "summary": "A bare `backStack.add(...)` from a gesture, or a back action that removes a fixed number of screens, is refused",
+      "read": "rules/navigation-stack-idempotent.md" }
   ],
   "audit": [
     { "name": "Material 3 audit", "type": "method", "when": "optional",
-      "summary": "Measure an Android or Kotlin Multiplatform Mobile surface against the seven refusals above, finding by finding",
+      "summary": "Measure an Android or Kotlin Multiplatform Mobile surface against the eight refusals above, finding by finding",
       "read": "skills/material3-audit/SKILL.md" }
   ]
 }

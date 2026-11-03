@@ -35,6 +35,10 @@ asserting it.
   ≥14sp bold) 3:1. Numbers, not aesthetic judgement.
 - **Icon-only controls carry `contentDescription`** — an `IconButton` without a
   TalkBack label fails. The label is part of the contract.
+- **The navigation stack tolerates a double touch** — a gesture that opens a screen
+  pushes it twice when it runs twice, and an action that closes a fixed number of
+  screens then lands on the wrong one. The push is guarded in one place, and a
+  multi-screen close stops at a named destination.
 
 Each rule is a short file under `rules/`; each contributes to `implement` and
 `review` through `extends.json`, so the same rule applies while code is written and
@@ -45,7 +49,7 @@ again while it is reviewed.
 | Skill | Role |
 |---|---|
 | `scrumia-material3` | The entry point — Compose default, Views explicit, dissociation boundaries, the contract with the rest of the composition. |
-| `material3-audit` | The audit against the seven refusals above. Reports; rewrites nothing without agreement. |
+| `material3-audit` | The audit against the eight refusals above. Reports; rewrites nothing without agreement. |
 
 No `material3-setup` (no design tree to install — Material 3 tokens live in the
 Kotlin source). No `material3-guardian` role shipped today — see
@@ -107,7 +111,7 @@ exactly the question a designer must guard, and whether that role lives here or 
 `scrumia-design` is a human call recorded on the implementing ticket (#454). No
 `material3-setup` skill — there is no design tree to install; Material 3 tokens
 live in Kotlin source. No `material3-refactor` skill — the audit reports and a
-human fixes; the seven refusals do not lend themselves to a wholesale rewrite
+human fixes; the eight refusals do not lend themselves to a wholesale rewrite
 pass, and a refactor that automates "rewrite a custom Button as `Button(...)`"
 already exists in IDE tooling the project owns.
 

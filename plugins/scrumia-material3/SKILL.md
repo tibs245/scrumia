@@ -38,6 +38,10 @@ Kotlin Multiplatform Mobile.
 - **Icon-only controls without a label.** An `IconButton` (or its View-side
   equivalent) without `contentDescription` is refused — the TalkBack label is part
   of the contract, not a finishing touch.
+- **A double touch must not corrupt the stack.** A gesture that opens a screen does not
+  push a destination already on top (the guard lives where screens are added, once),
+  and an action closing several screens stops at a named destination, never after a
+  fixed count.
 
 Each rule is a short file under `rules/`; each contributes to the `implement` and
 `review` registers through `extends.json`, so the same rule applies while code is

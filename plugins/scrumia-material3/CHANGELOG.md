@@ -3,6 +3,19 @@
 All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepachangelog.com/en/0.1.0/).
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-11-03
+### Added
+- `rules/navigation-stack-idempotent.md` — a gesture that opens a screen does not push
+  a destination already on top (one guard where screens are added), and an action
+  closing several screens stops at a named destination instead of a fixed count; the
+  rule states how to prove it in a test. Contributed to `implement` and `review`.
+- `skills/material3-audit/SKILL.md` — a ninth check for the navigation stack.
+
+### Changed
+- `README.md`, `SKILL.md` — the new refusal is listed.
+
+## [0.1.0] - 2026-08-22
 ### Added
 - `extends.json`, `dependencies.jsonl` — the module contributes to `implement`,
   `review` and `audit` through the seven refusals below; no register is opened
@@ -33,8 +46,6 @@ All notable changes to this module, on [Keep a Changelog 1.0.0](https://keepacha
   it answers, what it refuses, what it ships, and the dissociation boundaries with
   sibling modules.
 
-## [0.1.0] - 2026-08-22
-### Added
 - First release of `scrumia-material3`: the Material 3 UI capability for an Android
   or Kotlin Multiplatform Mobile project. Tokens, components, theming and
   accessibility, stated as falsifiable directives, with Compose as the default
