@@ -1,11 +1,11 @@
 ---
 name: material3-audit
-description: Audits an Android or Kotlin Multiplatform Mobile app against the seven Material 3 refusals this module ships — Compose as default, tokens from Material 3, components from Material 3, dynamic color, touch target size, contrast ratios, contentDescription on icon-only controls. Use it before adopting the module on an existing codebase, when a UI bug ships, or to take stock after a phase of rapid screen additions.
+description: Audits an Android or Kotlin Multiplatform Mobile app against the eight Material 3 refusals this module ships — Compose as default, tokens from Material 3, components from Material 3, dynamic color, touch target size, contrast ratios, contentDescription on icon-only controls, a navigation stack that tolerates a double touch. Use it before adopting the module on an existing codebase, when a UI bug ships, or to take stock after a phase of rapid screen additions.
 ---
 
 # Auditing a Material 3 surface
 
-Seven questions, one per rule. Answer them in order — the first three are read
+Nine checks, one per rule. Answer them in order — the first three are read
 from the Kotlin source, the fourth from the manifest, the last three from a
 rendered surface. Report findings; change nothing without being asked.
 
@@ -27,8 +27,10 @@ The seven refusals are stated in `rules/`:
    3:1 large (WCAG AA).
 8. [`rules/content-description.md`](../../rules/content-description.md) —
    `contentDescription` on icon-only controls.
+9. [`rules/navigation-stack-idempotent.md`](../../rules/navigation-stack-idempotent.md) —
+   one guarded push, close down to a named destination.
 
-(That's eight — `compose-default` and `views-explicit-choice` are the same
+(That's nine — `compose-default` and `views-explicit-choice` are the same
 question from two sides, and both are listed in `extends.json`.)
 
 ## Step 1 — Establish the toolkit
@@ -165,6 +167,25 @@ string, or a description that names the pixels rather than the action
 [`content-description`](../../rules/content-description.md). The rule for
 decorative icons — non-interactive icons, separators, logos — is that `null`
 is correct; the audit only reports `null` when the icon is interactive.
+
+## Step 9 — Navigation stack
+
+Find where screens are added and where several are closed:
+
+```bash
+# Every push; each one must go through the single guarded operation
+grep -rn "backStack\.add(\|\.add(.*Route" --include=*.kt src
+# Back actions that remove a fixed number of screens
+grep -rn "removeLastOrNull()\|removeLast()\|repeat(.*) *{" --include=*.kt src
+```
+
+A destination added from a gesture without the top-of-stack check, or a check copied
+screen by screen instead of living in one function, is a finding of
+[`navigation-stack-idempotent`](../../rules/navigation-stack-idempotent.md). So is a
+back action with two or more removals in a row, or a `repeat(n)` removal. Then read
+the tests: two `performClick()` calls do not prove the guard; the proof invokes the
+`OnClick` action twice inside one `runOnUiThread { }` and checks Back returns to the
+origin screen.
 
 ## Reporting
 
