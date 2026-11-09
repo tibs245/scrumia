@@ -41,3 +41,5 @@ A finding without a source citation is a finding against the plugin, not the pro
 ## Step 4 — Accessibility, separately
 
 These are not refusal rules and not opinions: contrast, visible focus, `prefers-reduced-motion`, target sizes, label association. Tests fail or they pass, with the measured ratio and the pair. List them apart, distinct from the three refusals.
+
+Contrast an automated measure could not resolve is not a pass. When the tool sets text aside because its background is a gradient or an image — axe-core files it under `incomplete` with `bgGradient` or `bgImage` — recompute each case against the lowest-contrast colour actually painted behind the text, gradient stops composited with the layers above them, at 4.5:1 or 3:1 for large text. A report that says "0 violations" with such cases still open has not measured contrast. The method is `rules/contrast-incomplete-is-unmeasured.md`.

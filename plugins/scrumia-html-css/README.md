@@ -11,6 +11,7 @@ A web app that ships with this module asks the same question the same way on eve
 - **Semantic element over ARIA role** — `<div role="button">` (or any non-semantic element with a role that names a behaviour a native element already implements) fails. A native `<button>` carries keyboard activation, focus and announcement for free.
 - **Element follows the purpose** — a `<div>` or `<span>` styled to look like a button, with `cursor: pointer` and an `onClick`, fails. The element must match the purpose, not the appearance.
 - **Tests query by accessibility role** — when vitest is present, a component test that queries through `data-testid` or a CSS-class selector fails. The accessibility-based selector is the default; the implementation-detail selector is the exception, and is commented to say why.
+- **Contrast left incomplete is not measured** — text an automated contrast check sets aside because its background is a gradient or an image is recomputed by hand before contrast is reported as passing; "0 violations" with such cases open is not a measure.
 
 Each rule is a short file under `rules/`: one paragraph, the source URL, the licence line.
 
@@ -18,7 +19,7 @@ Each rule is a short file under `rules/`: one paragraph, the source URL, the lic
 
 | Skill | Role |
 |---|---|
-| `html-css-audit` | The audit against the three rules above. Reports; rewrites nothing without agreement. |
+| `html-css-audit` | The audit against the rules above. Reports; rewrites nothing without agreement. |
 
 The vitest detection is a shell script the plugin publishes under `bin/` (`bin/detect-vitest.sh`); the conditional directive `tests-query-by-role` activates on zero and otherwise contributes nothing.
 
