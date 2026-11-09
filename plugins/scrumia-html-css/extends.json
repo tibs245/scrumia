@@ -29,6 +29,13 @@
       "when": "required",
       "summary": "A non-semantic element with a role, a styled widget that ignores the element matching its purpose, and tests that query the wrong layer",
       "read": "skills/html-css-audit/SKILL.md"
+    },
+    {
+      "name": "Contrast left incomplete is not measured",
+      "type": "refusal",
+      "when": "required",
+      "summary": "Text an automated contrast check leaves incomplete because of a background gradient or image is recomputed against the colour actually behind it before contrast is reported as passing",
+      "read": "rules/contrast-incomplete-is-unmeasured.md"
     }
   ]
 }
